@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>trsplit</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="trshift.html" title="trshift" />
+    <link rel="next" href="turnoff.html" title="turnoff" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">trsplit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="trshift.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="turnoff.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="trsplit">
+      <a id="trsplit"></a>
+      <div class="titlepage"></div>
+      <a id="Indextrsplit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">trsplit</span>
+        </h2>
+        <p>trsplit — 
+    Streaming partial track frequency splitting.
+      
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3657416"></a>
+        <h2>Description</h2>
+        <p>
+  The trsplit opcode takes an input containg a TRACKS pv streaming signal (as generated,
+  for instance by partials) and splits it into two signals according to a k-rate frequency 'split point'. 
+  The first output will contain all tracks up from 0Hz to the split frequency and the second will 
+  contain the tracks from the split frequency up to the Nyquist.
+  It can also, optionally, scale the gain of the output signals by a k-rate amount (default 1). 
+  The result is two output signals containing only part of the original spectrum.
+	</p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3657426"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsiglow, fsighi <span class="command"><strong>trsplit</strong></span> fin, ksplit[, kgainlow, kgainhigh]</pre>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3657464"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsiglow</em></span> -- output pv stream in TRACKS format containing the tracks below
+	  the split point.
+    </p>
+        <p>
+	      <span class="emphasis"><em>fsighi</em></span> -- output pv stream in TRACKS format containing the tracks above and
+		  including the split point.
+    </p>
+        <p>
+      <span class="emphasis"><em>fin</em></span> -- input pv stream in TRACKS format
+    </p>
+        <p>
+      <span class="emphasis"><em>ksplit</em></span> -- frequency split point in Hz
+    </p>
+        <p>
+      <span class="emphasis"><em>kgainlow, kgainhig</em></span> -- amplitude scaling of each one of the
+	  outputs (default 1).
+    </p>
+        <p>
+    
+  </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3658238"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="id3658246"></a>
+          <p class="title">
+            <b>Example 544. Example</b>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+ain inch 1                  ; input signal
+fs1,fsi2 pvsifd ain,2048,512,1 ; ifd analysis
+fst  partials fs1,fsi2,.003,1,3,500  ; partial tracking
+fslo,fshi trsplit  fst, 1500 ; split partial tracks at 1500 Hz
+      aout  tradsyn fshi, 1, 1, 500, 1 ; resynthesis of tracks above 1500Hz
+out aout
+        </pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+
+    </p>
+        <p>
+The example above shows partial tracking of an ifd-analysis signal and
+linear additive resynthesis of the upper part of the spectrum (from 1500Hz). 
+    
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3658271"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>February 2006 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound5.01</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="trshift.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="turnoff.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">trshift </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> turnoff</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

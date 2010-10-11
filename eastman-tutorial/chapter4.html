@@ -1,0 +1,672 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML VERSION="2.0">
+<HEAD>
+<!-- WEBMAGIC VERSION NUMBER="2.0.1" -->
+<!-- WEBMAGIC TRANSLATION NAME="ServerRoot" SRC="/var/www/htdocs/" DST="/" -->
+<!-- WEBMAGIC TRANSLATION NAME="ProjectRoot" SRC="./" DST="" -->
+<TITLE>chapter4.html</TITLE>
+</HEAD>
+<BODY>
+<A NAME="chapter4.html#"></A>
+<HR><CENTER><FONTSIZE="-1"><I>Eastman Csound Tutorial</I></FONT></CENTER>
+<PRE>
+<H5>   <A HREF="./chapter4.html#END"><FONT SIZE="+1">END</FONT> of this chapter</A>  -- <A HREF="chapter5.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 5)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</H5><HR></PRE>
+
+
+<H2><A NAME="_wmh3_847374899">Chapter 4</H2>
+<H3>PULSE TRAIN GENERATORS ; RANDOM NUMBER GENERATORS</A></H3>
+<H4><A NAME="_wmh4_847374904">4.1. Buzz and Gbuzz</A></H4>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/buzz.html"><B>BUZZ</B> and <B>GBUZZ</B></A>
+in the Csound reference manual ]</P>
+
+<P><B>buzz</B> and <B>gbuzz</B> can be used in place of oscillators in situations where we wish to create
+audio signal waveforms with exactly harmonic partials.[1] In the case of <I>buzz,</I> these harmonics will be equal in amplitude, and the lowest frequency will
+be the fundamental.</P>
+<P><FONT SIZE="2">[1] Advanced users also may wish to investigate <I>gen11. </I>Functions created with <I>gen11</I> produce similar waveforms, and can be read by standard oscillators.</FONT></P>
+<P>The arguments to <I>buzz</I> are :</P>
+<DD>(1) <I>xamp</I> : amplitude 
+<DD>(2) <I>xcps</I> : frequency of the fundamental 
+<DD>(3) <I>knh</I> : number of harmonics present in the waveform 
+<DD>(4) <I>ifn</I> : function number (must point to a sine wave in the score) 
+<DD>(5)<I> [iphs]</I> :(optional starting phase value, as with &quot;oscil&quot; and &quot;oscili&quot;) 
+<P>Like oscillators, <I>buzz</I> requires an audio function table in the score. This function must be a
+sine wave, and a large table size is recommended. (The Csound manual suggests
+8192 points, although I generally have  found little audible difference when
+using smaller table sizes, such as 4096 or 2048.) Below
+is a sample orchestra and score, in which the number of harmonics increases
+from 3 to 50 (p5). To see the five waveforms while playing the soundfile,
+turn the oscilloscope on and turn up the intensity. (The oscilloscope may
+also be useful to you in &quot;looking at&quot; waveforms produced by your own instruments.)
+Be sure to turn the intensity knob down (counterclockwise) when you are
+done.</P>
+<PRE>
+<B>;  ########################################################</B>
+<B>;  soundfile ex4-1   :  buzz                Csound Tutorial</B>
+<B>;  #######################################################</B>
+<B>; Orchestra file used to create this soundfile example:</B>
+<B>-----------------------------------------------------------</B>
+<B>sr = 44100</B>
+<B>kr = 2205</B>
+<B>ksmps = 20</B>
+<B>nchnls = 1</B>
+
+<B>instr 1</B>
+<B>kamp expseg 1, .2, 8000, p3-.4, 5000, .2, 1</B>
+<B>ipitch = cpspch(p4)</B>
+<B>a1 buzz kamp, ipitch , p5, 1</B>
+<B>out a1</B>
+<B>endin</B>
+<B>-----------------------------------------------------------</B>
+
+
+<B>&lt; score11 file used to create soundfile example  &quot;ex4-1&quot; :</B>
+<B>*f1 0 8192 10 1.;   &lt; large sine wave table for buzz</B>
+
+<B>i1 0 0 5;</B>
+<B>p3 rh 4;</B>
+<B>p4 no a3;</B>
+<B>p5 nu 3/  10/  20/  35/  50;            &lt; number of harmonics</B>
+<B>end;</B>
+<B>-----------------------------------------------------------</B>
+</PRE>
+<P align=right
+<FONT SIZE=-1>
+<A target="_new" HREF="appendix.html#Chapter4"><I>Appendix Csound score file examples : Chapter 4</I></A></FONT SIZE></P>
+
+<P>When you hear the result, you will know why the unit generator is called <I>&quot;buzz.&quot;</I> You may also wonder, &quot;Why bother with this thing?&quot;. In fact, the output
+of <I>buzz</I> is usually filtered, or otherwise post-processed, to produce a timbre with
+greater musical interest than we hear in this didactic example.</P>
+<P>Like <I>buzz,</I> <B>gbuzz</B> produces an audio waveform consisting of (exactly) harmonic partials. However, <I>gbuzz</I> provides us with greater control over this set of harmonics. Whereas <I>buzz</I> will always produce harmonics of equal strength, beginning with the fundamental, <I>gbuzz</I> enables us to specify both the lowest harmonic number (which need not be
+the fundamental), and a &quot;brightness factor&quot; <I>(kr).</I> The arguments to <I>gbuzz</I> are :</P>
+<DD>1) <I>xamp</I> : total amplitude amplitude (as with <I>buzz)</I> 
+<DD>
+<DD>2) <I>xcps</I> : frequency of the fundamental (as with <I>buzz)</I> 
+<DD>
+<DD>3) <I>knh</I> : the number of harmonics present in the waveform (as with <I>buzz)</I> 
+<DD>
+<DD>4) <I>klh</I> : the lowest harmonic present (usually a positive integer) If this value
+is &quot;1,&quot; the lowest harmonic will be the fundamental. However, higher values
+(such as 2,3...10,11, etc.) are also possible, so that the fundamental and
+lower harmonics may be &quot;missing&quot; from the waveform. Generally, the perceived
+pitch will still be the fundamental &quot;xcps,&quot; (since this frequency is still
+the <U>period</U> of the waveform), but the timbre will change. 
+<DD>
+<DD>5) <I>kr</I> : &quot;brightness factor,&quot; a scalar for the relative strength of the harmonics: 
+<DD>
+<DD>If <I>kr</I> is set to &quot;<B>1</B>&quot;, the harmonics will be of equal strength, as in buzz; 
+<DD>
+<DD>If <I>kr</I> is <B>less than 1</B>, the higher harmonics are progressively attenuated, as though the signal
+had been sent through a low-pass filter. The lower the <I>kr</I> value, between &quot;1&quot; and &quot;0,&quot; the &quot;mellower&quot; the resulting timbre. 
+<DD>
+<DD>If <I>kr</I> is <B>greater than 1</B>, the highest harmonic will have the greatest amplitude (as though the signal
+had been sent through a high-pass filter), while each lower harmonic will
+have a progressively lower amplitude. The higher the <I>kr</I> value, the brighter and more nasal the resulting timbre. 
+<DD>
+<DD>6) <I>ifn</I> : function number (must point to a cosine wave function in the score).
+A <I>cosine</I> wave is a <I>sine</I> wave with a 90 degree phase shift The function must be created with<I> gen9,</I> and should look like this : 
+<CENTER><DD ALIGN="CENTER"><I>* f1 0 2048 9 1. 1. 90;</I> 
+</CENTER><DD><FONT SIZE="2">(This function is available as function number 49 in the Eastman Csound
+Library. We might increase the table size to 4096 or 8192, but in most cases
+this will make no audible difference.)</FONT> 
+<DD>
+<DD>7) <I>[iphs]</I> :(optional starting phase value) 
+<DD>
+<P>Here's a simple orchestra and score, in which all of the input arguments
+to <I>gbuzz</I> remain fixed throughout each note:</P>
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex4-2    :  gbuzz                  Csound Tutorial</B>
+<B>;  #############################################################</B>
+<B>sr = 44100</B>
+<B>kr = 2205</B>
+<B>ksmps = 20</B>
+<B>nchnls = 1</B>
+
+<B>instr 1</B>
+<B>kamp expseg 1, .2, 8000, p3-.4, 5000, .2, 1</B>
+<B>ipitch = cpspch(p4)</B>
+<B>a1 gbuzz kamp,  ipitch, p5, p6, p7, 1</B>
+<B>out a1</B>
+<B>endin</B>
+<B>---------------------------------------------------------</B>
+
+
+<B>&lt; score11 file used to create soundfile &quot;ex4-2&quot; :</B>
+<B>* f1 0 4096 9 1 1 90;          &lt; gbuzz audio function</B>
+
+<B>i1 0 0 5;</B>
+<B>p3 rh 4;</B>
+<B>p4 no a3;</B>
+<B>p5 16;                         &lt; knh ( # of harmonics)</B>
+<B>p6 1;                          &lt; klh lowest harmonic # (1 = fundamental)</B>
+<B>p7 nu 1./ 2./ .5/ 5./ .2;      &lt; kr (brightness)</B>
+<B>end;</B>
+<B>-----------------------------------------------------------</B>
+</PRE>
+<P>In determining the number of harmonics to use with <I>buzz</I> or <I>gbuzz, </I>one must consider the sampling rate, the fundamental frequency, and number
+of harmonics, and exercise care that the highest harmonics specified do
+not exceed the Nyquist frequency and alias. To relieve ourselves of these
+bookeeping duties, we might build a subroutine into our algorithm that provides
+the maximum number of harmonics below the Nyquist frequency, as in the next
+example. This example also includes a simple envelope to vary the <I>kr</I> argument to <I>gbuzz</I> (and thus the brightness of the timbre) within each note:</P>
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex4-3   :  gbuzz : variable kr  Csound Tutorial</B>
+<B>;  #############################################################</B>
+<B>Orchestra file used to create this soundfile:</B>
+<B>-----------------------------------------------------------</B>
+<B>1  sr = 44100</B>
+<B>2  kr = 2205</B>
+<B>3  ksmps = 20</B>
+<B>4  nchnls = 1</B>
+
+<B>5  instr 1</B>
+<B>6  kamp expseg  1, .2, 8000, p3-.4, 5000, .2, 1    ; amplitude envelope</B>
+<B>7  ipitch = cpspch(p4)</B>
+<B>8  kbright  expon  p6, p3, p7     ; envelope of gbuzz timbral brightness</B>
+<B>9  iharmonics = int((.5 * sr) / ipitch)</B>
+<B>10  ; &quot;iharmonics&quot; returns the maximum number of harmonics below Nyquist</B>
+<B>11    print  ipitch, iharmonics    ; print these values in the sterr output</B>
+<B>12  a1 gbuzz kamp,  ipitch,  iharmonics,  p5,  kbright,  1</B>
+<B>13  out a1</B>
+<B>14  endin</B>
+<B>-----------------------------------------------------------</B>
+
+
+<B>&lt; score11 file for ex4-3</B>
+<B>* f1 0 4096 9 1 1 90;          &lt; gbuzz audio function</B>
+
+<B>i1 0 0 8;</B>
+<B>p3 rh 2;</B>
+<B>p4 no c3*4/  d6*4;</B>
+<B>p5 1;                         &lt; lowest harmonic (1=fundamental)</B>
+<B>p6 nu .05/ .99/ .3/ 1.2/         &lt; kr1 ( brightness at beginning of note)</B>
+<B> .05/ .99/ .01/ 2.;</B>
+<B>p7 nu  .9/ .1/  1.3/ .5/         &lt; kr2 ( brightness at end of note)</B>
+<B>  .9/ .1/  2. / .1;</B>
+<B>end;</B>
+<B>-----------------------------------------------------------</B>
+</PRE>
+<P>Comments on <I>ex4-3 :</I> On line 9 we have created a variable called <I>iharmonics, </I>which returns the maximum number of harmonics below the Nyquist frequency
+for the pitch specified in <I>p4. </I>First, we divide the Nyquist frequency (.5*SR, or, here, 22050) by the fundamental
+frequency <I>(ipitch). </I>For the first four notes <I>(c3)</I> the fundamental is 130.8 herz. For the next four notes <I>(d6)</I> it is 1174.65 herz. The first step of this operation, then, gives the following
+values:</P>
+<PRE>
+<I><FONT SIZE="3">     formula        : .5*SR / ipitch    result</FONT></I>
+     notes 1-4 (c3) :  22050 /  130.8    168.577
+     notes 5-8 (d6) :  22050 / 1174.65   18.771
+</PRE>
+<P>The value converter 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Convert/value.html"><B>int</B></A>
+then returns only the <I>integer</I> portion of these values (168 and 18), and assigns this integer to the variable <I>iharmonics.</I>
+Since we may be curious as to how many harmonics will result for different
+notes, we include a call to unit generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/In+Out/print.html"><B>print</B></A>
+on line 11, to print out
+(within the <I>sterr</I> message) the values
+<I>ipitch</I> and <I>iharmonics</I> for each note.
+<P>Since the <I>c3</I> notes have many more harmonics than the <I>d6</I> notes, the changes in <I>kr</I> (and thus in timbre) are much more noticeable, even though we have exaggerated
+the difference between the first and second <I>kr</I> envelope values for the last two notes.</P>
+<P><I>kr</I> values greater than &quot;1.&quot; generally will produce buzzy, &quot;steely-edged&quot; or
+&quot;brittle-sounding&quot; timbres. In our orchestra, low pitched tones will include
+many harmonics. In fact, at high sampling rates (such as the customary
+44.1 k rate in our example orchestra file), the formula on line 9 probably
+will produce more harmonics than we want or need, including frequencies
+(between about 15 kHz and 22.05 kHz) that exceed our range of hearing. Therefore,
+we might wish to modify this <I>iharmonics</I> formula, perhaps limiting the number of harmonics to a maximum of 30, like
+this:</P>
+<DD><I>iharmonics = int((.5 * sr) / ipitch)</I> 
+<DD><I>iharmonics = (iharmonics &lt; 30 ? iharmonics : 30 )</I> 
+<P>Alternatively, we might band-limit the harmonics, so that no frequency exceeds
+8000 herz :</P>
+<DD><I>itest = (.5 * sr &lt; 8000 ? .5 * sr : 8000)</I> 
+<DD><I>iharmonics = int(itest/ipitch)</I> 
+<DD>
+<P>Perhaps you remain unimpressed with the timbral possibilities
+of <I>gbuzz. </I>Our final <I>gbuzz</I> example, <I>ex4-4,</I> is more fun. The fundamental frequency is very low. In fact, it is below
+the audible range for the first two notes. The lowest harmonic is not the
+fundamental, and glissandos have been included.</P>
+<P></P>
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex4-4 : gbuzz : sub-audio fundamental &amp; glissando</B>
+<B>;  #############################################################</B>
+<B>Orchestra file used to create this soundfile :</B>
+<B>sr = 44100</B>
+<B>kr = 4410</B>
+<B>ksmps = 10</B>
+<B>nchnls = 1</B>
+
+<B>instr 1</B>
+<B>amp expseg 1,.2*p3,8000,.7*p3,3000,.3*p3,1    ; amplitude envelope</B>
+
+<B>; glissando :</B>
+<B>   ipitch1 = (p4 &gt; 0 ? cpspch(p4) : abs(p4)) ; negative values = cps</B>
+<B>   ipitch2 = (p5 &gt; 0 ? cpspch(p5) : abs(p5)) ; negative values = cps</B>
+<B>kgliss expseg ipitch1 ,.2*p3, ipitch1, .6*p3, ipitch2, .2*p3, ipitch2</B>
+
+<B>krenv expseg p8, .5*p3, p9, .5*p3,  p8 ; gbuzz kr brightness envelope</B>
+
+<B>a1 gbuzz amp,  kgliss,  p7,  p6,  krenv,  1</B>
+<B>a1 tone   a1,  1500            ; filter out spurious high frequncies</B>
+<B>out a1</B>
+<B>endin</B>
+<B>-----------------------------------------------------------</B>
+
+
+<B>&lt;score11 file used to create soundfile  &quot;ex4-4&quot; :</B>
+<B>* f1 0 8192 9 1 1 90;      &lt; gbuzz audio function</B>
+
+<B>i1 0 0 3;</B>
+<B>p3 5.;</B>
+<B>du 304.5;</B>
+<B>p4 nu  -16/ -8.5/ -53;     &lt; 1st fundmental</B>
+<B>p5 nu  -14.5/ -9/ -49;     &lt; 2nd fundmental</B>
+
+<B>p6 nu  3/ 42/ 13;          &lt; lowest harmonic (1=fundamental)</B>
+<B>p7 nu  50/ 10/ 40;         &lt; number of harmonics</B>
+
+<B>p8 nu  .5/ .8/ .3;         &lt; kr1 (brightness multiplier) 1 (start &amp; end)</B>
+<B>p9 nu  .9/ 1.4/ .9;        &lt; kr2 (brightness multiplier) 1 (middle)</B>
+<B>end;</B>
+<B>-----------------------------------------------------------</B>
+</PRE>
+<P>Comments on <I>ex4-41</I> : The <I>init</I> variables <I>ipitch1</I> and <I>ipitch2</I> allow us to use &quot;notes&quot; for our <I>score11</I> pitch input, but also, if <I>p4</I> and/or <I>p5</I> are negative, to use <I>cps</I> values. In this score, we are using <I>cps</I> values for both pitch levels of the glissando (negative <I>p4</I> and <I>p5</I> values, which are converted to positive by the value converter <B>abs</B>). By using subaudio or very low fundamental frequencies, here with the
+lower harmonics missing from the waveform, and by changing amplitude ratios
+for the harmonics (the <I>krenv</I> envelope), we can create various kinds of birdcall, motor-like, and other
+&quot;humming&quot; and &quot;throbbing&quot; types of timbres.</P>
+<P>The signals produced in this example are acoustically complex. To assure
+maximum signal resolution, we have (1) used a high control rate (4410) ;
+(2) run the amplitude envelope generator at the audio rate; and (3) used
+a very large table (of 8192 numbers) for the gbuzz function. Still, some
+unwanted high frequency noise artifacts result. We have included a low-pass
+filter <I>(tone, </I>covered in Chapter 5), to reduce this unwanted debris, but a trace survives
+in the second &quot;note.&quot;</P>
+<H4><A NAME="_wmh4_847374910">4.2. Pseudo-random Number Generators</A></H4>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/rand.html"><B>RAND, RANDH</B> and <B>RANDI</B></A>
+in the Csound reference manual ]</P>
+
+<P>Natural sounds change in three ways :</P>
+<DD>1) gradual increases or decreases between different levels 
+<DD>
+<DD>2) periodic (regularly recurring) changes 
+<DD>
+<DD>3) random variations 
+<P><I>Gradual, non-repeating</I> changes can be created synthetically by means of <I>envelope generators, </I>or by oscillators that read a function once per note. <I>Periodic</I> changes are produced by <I>oscillators</I> that read a function many times. The <I>rand</I> family of pseudo-random number generators enable us to create <I>aperiodic</I> variations in amplitude, pitch, timbre, and other parameters. (Pseudo-random
+number generators actually create exactly the same series of numbers every
+time a job is run, but these numbers to not follow a perceptible pattern.)</P>
+<P><B>rand</B> is simply a white-noise generator. Its only argument is <I>amplitude,</I> which can vary at any rate. (An optional reseed argument is provided so
+that one could replace the default<I> seed, </I>or starting, value of .5 with any other between 0 and 1., but this would
+make no audible difference. The output of <I>rand, </I>then, is a stream of aperiodic numbers lying somewhere between +/- its current
+amplitude input value.</P>
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex4-5    :  White noise        Csound Tutorial</B>
+<B>;  #############################################################</B>
+<B>Orchetsra file used to create this soundfile :</B>
+<B>-----------------------------------------------------------</B>
+<B>sr = 22050</B>
+<B>kr = 2205</B>
+<B>ksmps = 10</B>
+<B>nchnls = 1</B>
+
+<B>instr 1</B>
+<B>kenv  envlpx  p5, p6, p3, p7, 60, p8, .01 , p9  ; amplitude envelope</B>
+<B>; amplitude tremolo :</B>
+<B>  ktremrate  line  p10, p3 , p11   ; tremolo rate envelope</B>
+<B>  ktremolo  oscil  p12 , ktremrate, 1  ; amplitude modulation signal</B>
+<B>    ; add non-modulated &amp; modulated amplitude signals</B>
+<B>kamp = ( (1. - p12) * kenv)  +  (ktremolo  * kenv)</B>
+<B>anoise  rand  kamp</B>
+<B>out anoise</B>
+<B>endin</B>
+<B>-----------------------------------------------------------</B>
+
+
+<B>&lt; Score11 file used to create  soundfile &quot;ex4-5&quot; :</B>
+<B>* f1  0 1024 10 1.;       &lt; sine wave, used for amplitude tremolo</B>
+<B>* f60 0 65 5 .01 64 1.;   &lt; exponential rise</B>
+
+<B>i1 0 0 2;</B>
+<B>p3 4;</B>
+<B>du .95;</B>
+<B>p4 0;        &lt; dummy p-field, (not used )</B>
+<B>&lt; amplitude envelope :</B>
+<B>p5 15000;</B>
+<B>p6 nu 1.5 / .05; &lt; attack time</B>
+<B>p7 nu .5 / 1.5;  &lt; decay time</B>
+<B>p8 nu .3 / .05;  &lt; atss</B>
+<B>p9  nu 0 / .9;   &lt; xmod</B>
+<B>&lt; tremolo :</B>
+<B>p10  nu 1. / 11. ;  &lt; beginning tremolo rate</B>
+<B>p11  nu 6. / 4.;    &lt; end tremolo rate</B>
+<B>p12  nu .2 / .5 ;  &lt; tremolo %</B>
+<B>end;</B>
+<B>-----------------------------------------------------------</B>
+</PRE>
+<H4><A NAME="_wmh4_847374915">4.2.1. randh and randi</A></H4>
+<P><B>randh</B> and <B>randi</B> are similar in basic operation to<I> rand,</I> but with the following differences :</P>
+<DD>1) whereas <I>rand</I> produces a new number at the <I>k-rate </I>or<I> a-rate</I> (or, less often, only once per note, at the <I>i-rate), randh</I> and <I>randi</I> allow (and require) us to specify a particular rate, in herz, at which
+new numbers will be generated. This rate can vary during a tone from near
+0 to any value up to <I>kr-1. </I>(If <I>randh</I> or <I>randi</I> are running at the control rate, and the <I>k-rate</I> has been set to 2205, any value up to 2204 is legal.) 
+<DD>
+<DD>2) <B>randh</B> will hold each value until the next number is generated 
+<DD>
+<DD>3) <B>randi</B> will interpolate, along a linear curve, between each successive pairs of
+values generated. <BR>
+<BR>
+Examples: 
+<PRE><I>     k1 randh 5, 10</I> </PRE>
+Result: A new integer value lying between +5 and -5 will be created 10 times
+per second. Each value will be &quot;held&quot; (repeated at the k-rate) for 1/10
+second 
+<PRE><I>     a1 randi .2, .25</I>  </PRE>
+Result: A breakpoint value between +.2 and -.2 will be generated once every
+4 seconds (.25 herz). On every sample pass, a new number will be output
+which lies along a line connecting successive breakpoint values. 
+<P><I>randi</I> is particularly useful in the creation of band-limited noise, illustrated
+in <I>ex4-6</I>:
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex4-6 : band-limited noise or frequency flutter</B>
+<B>;  #############################################################</B>
+<B>sr = 44100</B>
+<B>kr = 2205</B>
+<B>ksmps = 20</B>
+<B>nchnls = 1</B>
+
+<B>instr 2</B>
+<B>ipitch = ( p4 &lt; 15 ? cpspch(p4) : p4)   ; p4 can be in cps or pch</B>
+<B>inoisewidth = (p9 &lt; 15  ?  p9 * ipitch : p9)</B>
+<B>inoiserate = (p10 = 0  ?  kr-1 : p10)     ; for maximum rate, use 0 in p10</B>
+
+<B>kenv  envlpx p5, p6, p3, p7, 60, p8,.01  ; amplitude envelope</B>
+<B>knoise randi  inoisewidth, inoiserate    ; for p10 any value up to kr-1 is OK</B>
+<B>audio  oscili  kenv , ipitch + knoise, 100</B>
+<B>out audio</B>
+<B>endin</B>
+<B>-----------------------------------------------------------</B>
+
+
+<B>&lt; Score11 file for &quot;ex4-6&quot; : Band limited noise</B>
+<B>&lt; Score for ex4-6 : Band limited noise</B>
+<B>* f60 0 65 5 .01 64 1.;                &lt; exponential rise. up</B>
+<B>* f100 0 256 10 1.;                     &lt; SINE WAVE</B>
+<B>&lt; 1st note : 1.5 octave noise;   2nd note : 80 hz. noise</B>
+<B>&lt; 3rd note : 4 % frequency &quot;jitter&quot;</B>
+<B>i2 0 0 3;</B>
+<B>p3 2;</B>
+<B>du .99;</B>
+<B>p4 no a4;    &lt; no pitch</B>
+<B>p5 15000;</B>
+<B>p6 .2;        &lt; attack time</B>
+<B>p7 .3;        &lt; decay time</B>
+<B>p8 .5;        &lt; atss</B>
+<B>p9  nu 1.2 /  80/  .04;  &lt; noise bandwidth ; if &lt; 15,then = multiplier * p4</B>
+<B>p10 nu 0/  800/  13;    &lt; rate of random frequency change</B>
+<B>end;</B>
+<B>-----------------------------------------------------------</B>
+
+</PRE>
+<P>Here, <I>knoise</I> is a band-limited stream of numbers between +/- the value the variable
+we have named <I>inoisewidth. </I>For the three notes in the score, the <I>inoisewidth</I> values are 660, 80 and 17.6 herz. Within the audio oscillator, this control
+signal is added to a base frequency of 440, herz. The resulting noise bands
+for the three &quot;notes&quot; have the following properties :</P>
+<PRE>
+<I>              Center    Highest    Lowest    Noise     Noise</I>
+<I>              Frequency Frequency  Frequency Bandwidth Rate</I>
+   1st note:   440       1100       -200      1100      2204
+   2nd note:   440        520        360       160       800
+   3rd note:   440        457.6      423.4      34.2      13
+</PRE>
+<P><FONT SIZE="2">Note that because the random number generator outputs both positive and
+negative numbers within the range of its amplitude argument, we are actually
+specifying <U>half-bandwidth</U>, rather than the <U>full</U> noise bandwidth, in <I>p9.</I> This bothers some people. If it annoys you, the amplitude argument to <I>randi</I> could easily be changed to</FONT></P>
+<CENTER><DD ALIGN="CENTER"><I>knoise randi .5 * inoisewidth, inoiserate</I> 
+</CENTER><P><FONT SIZE="2">so that <I>p9</I> in our score will indicate the full noise bandwidth.</FONT></P>
+<PRE>
+<B>  ########################</B>
+<B>  soundfile ex4-7 : randh</B>
+<B>  #######################</B>
+</PRE>
+<P>Soundfile example<I> ex4-7</I> is identical to <I>ex4-6</I> in all respects, except that in the orchestra file, <I>randi</I> has been replaced by <B>randh</B><I>.</I> The audible difference is most apparent on the third note, where we now
+hear stepped pitch deviations.</P>
+<P><I>randi</I> is frequently used to add small random deviations to various control signals,
+as in the following skeletal orchestra file:</P>
+<PRE>
+<I>    1  (orchestra header values)</I>
+<I>    2  instr 1 </I>
+<I>     ;AMPLITUDE :</I>
+<I>    3  kenv  envlpx --,--,--,--,--,--,-- ; amplitude envelope</I>
+<I>    4 <B> </B></I><B>krandamp randi  .1*k1, 9</B><I>          ; +/-10 % random amp. deviation</I>
+<I>    5  kamp =  kenv + </I><B>krandamp</B><I>           ; final amplitude control signal</I>
+<I>    ; PITCH :</I>
+<I>    6  ipitch = cpspch(p4)               ; center pitch</I>
+<I>    7  </I><B>krandpitch randi .01*i1, 7.</B><I>       ; +/-1 % random pitch deviation</I>
+<I>    8  kpitch = ipitch + </I><B>krandpitch</B><I>      ; final pitch control signal</I>
+<I>    ; F M INDEX :</I>
+<I>    9  kindex  expseg  --,--,--,--,--,   ; fm index envelope</I>
+<I>   10  </I><B>krandindex  randi .2*k4,5.5 </B><I>      ; +/-20 % random deviation</I>
+<I>   11  kindex =  kindex + </I><B>krandindex</B><I>     ; final index control signal</I>
+<I>   12  a1 foscili kamp, kpitch, 1, 2.005, kindex, 100 ;audio signal</I>
+<I>    ; SPATIAL PLACEMENT :</I>
+<I>   13  </I><B>krandspace randi  .24,  4.</B><I>        ; random spatial movement</I>
+<I>   14  kspace = </I><B>krandspace</B><I> + .25</I>
+<I>   15  outs1 sqrt(kspace) * a1         ; left channel</I>
+<I>   16  outs2 sqrt(1-kspace) * a1     ; right channel</I>
+<I>   17  endin</I>
+</PRE>
+<P>In this example, <I>randi</I> control signals are created to introduce irregularities in amplitude, pitch,
+F.M. index, and spatial placement :</P>
+<DD>Amplitude : The envelope created by <I>envlpx</I> (line 3) will be varied randomly by +/- 10 %, 9 times per second (lines
+4,5) 
+<DD>
+<DD>Pitch : The base pitch (line 6) will deviate by +/- one percent, 7 times
+per second (lines 7,8). If the center pitch is 200 herz it will waver randomly
+between 202 and 198 herz. 
+<DD>
+<DD>FM index : The FM index envelope (line 9) will include irregular ripples
+of +/- 20 % occurring at a rate of 5.5 herz. 
+<DD>
+<DD>Spatial placement : The signal will move erratically, 4 times per second,
+between the left speaker and &quot;center&quot; placement. Values for the control
+signal <I>kspace</I> will vary between .01 and .49. 
+<DD>
+<P>Were we to substitute <I>randh</I> for <I>randi</I> anywhere in the preceding example, the resulting <B>stepped</B> (rather than gradual) changes in level would be audibly more obvious. In
+natural sounds, random fluctuations are usually gradual rather than abrupt,
+but there are some musical gestures or sounds in which discontinuities can
+be used to good effect.</P>
+<H4><A NAME="_wmh4_847374921">4.2.2. Introducing Attack Chiffs</A></H4>
+<P>In all of the examples so far the arguments to the random number generators
+have been constants. It is often useful, however, to vary the amplitude
+and/or rate argument values by means of envelope, oscillator, or even other
+random signals.</P>
+<P>The pitch of many acoustic sounds varies widely, and aperiodically, at the
+very onset of a tone, before gradually settling in to a quasi-periodic pattern.
+Many additional noise-like frequencies (associated with the scrape of the
+bow, the slap of the tongue against a reed, and so on) also are present
+during the <I>prefix</I> (attack) of the tone, but die away quickly. During the &quot;steady-state&quot; and
+decay, the frequency often includes much smaller random fluctuations.</P>
+<P>To simulate the attack noise of acoustic sounds, we can create a <I>randi</I> control signal that begins with high input values for both amplitude (range)
+and rate, then reduce these values so that they level off at a much lower
+plateau by the end of the attack. A beginning frequency deviation of 100
+% (+/- 50 %) is not uncommon for pitches around middle C or above. To produce
+a similar result for lower frequencies, even greater initial random deviation
+is necessary. (A 50 herz tone, varied randomly by +/- 50 %, will produce
+only a 50 herz band of noise, whereas a 440 herz tone will produce a 440
+herz band of noise.)</P>
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex4-8  : Frequency Modulation instrument with attack noise</B>
+<B>;  #############################################################</B>
+<B>Orchestra file used to create this soundfile:</B>
+<B>-----------------------------------------------------------</B>
+
+<B>sr = 44100</B>
+<B>kr = 2205</B>
+<B>ksmps = 20</B>
+<B>nchnls = 1</B>
+
+<B> ; p9 = attack hardness; p10 = fm c:m ratio ; p11 = fm index</B>
+
+<B> instr 3</B>
+<B> ipitch = (p4&lt;15? cpspch(p4) : p4)   ; p4 can be in cps or pch</B>
+<B> iscale = octcps(ipitch)</B>
+<B> iscale = (18-iscale)*.1      ; scalar : c4 = 1., c5 = .9, c3 = 1.1, etc.</B>
+<B> iscale = .5*iscale*p9</B>
+<B> kamp envlpx p5, p6, p3, p7, 60, p8, .01</B>
+
+<B> ; Pitch skew</B>
+<B> k1 expseg iscale, p9*p6, .005,p3-p6, .005  ; envelope for % pitch skew</B>
+<B> k2 expseg kr - 1, p9*p6, p9*30, p3-p6, 20 ; envelope for pitch skew rate</B>
+<B> knoise  randi k1*ipitch, k2              ; pitch skew</B>
+
+<B> ; f.m. index envelope</B>
+<B> kindex  expseg p9*p11, p9*p6, p11, p3-(p9*p6),.6*p11</B>
+<B> asound foscili kamp, knoise + ipitch, 1, p10, kindex, 100</B>
+<B> out asound</B>
+<B> endin</B>
+<B>-----------------------------------------------------------</B>
+
+
+<B>&lt; Score for ex4-8 : FM instrument with attack noise</B>
+<B>* f60 0 65 5 .01 64 1.;     &lt;expo. up</B>
+<B>* f100 0 256 10 1.;         &lt; SINE WAVE</B>
+
+<B>i3 0 0 3;</B>
+<B>p3 2;</B>
+<B>du .99;</B>
+<B>p4 no a4;</B>
+<B> &lt; amplitude envelope :</B>
+<B>p5 15000;</B>
+<B>p6 nu .07/ .25/ .06;       &lt; attack time</B>
+<B>p7 .3;                     &lt; decay time</B>
+<B>p8 nu .65/ .85/ .25;       &lt; atss</B>
+<B> &lt; attack hardness &amp; f.m. values :</B>
+<B>p9 nu 1./.6/1.7;           &lt; attack hardness, 1. = ord., &gt; 1 = harder</B>
+<B>p10 1.006;                 &lt; c:m ratio</B>
+<B>p11 nu 1.9/ 1./ 2.6;       &lt; f.m.  index</B>
+<B>end;</B>
+<B>-----------------------------------------------------------</B>
+</PRE>
+<P>Similar <I>attack hardness</I> subroutines have been built into many of the Eastman Csound Library instruments,
+so that we can apply accents and other types of phrasing articulations
+to a series of melodic notes or chords.
+In this manner, a single score p-field can modify the amplitude, pitch and
+timbral arguments passed to audio signal generators.</P>
+
+<H4><A NAME="_wmh4_847374927">4.2.3. Combining Periodic and Aperiodic Control Signals</A></H4>
+
+<P>Combining oscillator and <I>randi</I> or <I>randh</I> signals within a single subroutine can provide us with the means to create
+a control signal that lies anywhere along a continuum from total periodicity
+to total randomness. The cost is about six p-fields. The example below is
+one possible realization of such an all-purpose periodic/random control
+signal generator. This module could be used for the generation of tremolo,
+vibrato, filter bandwidth or panning signals, or for many other types of
+signal processing operations that might occur to you :</P>
+<PRE>
+<B>ALL-PURPOSE PERIODIC/RANDOM CONTROL SIGNAL GENERATOR :</B>
+
+<B>; p fields : (beginning arbitrarily with p6)</B>
+<B>; p6 = 1st value         p7 = 2nd value</B>
+<B>; p8 = rate of change between p6 &amp; p7</B>
+<B>; p9 = function table number for change between p6 &amp; p7 values</B>
+<B>; p10 =  random deviation  %     p11 = random deviation  rate</B>
+
+<B>(optional p8 flags might be inserted here -- see see discussion below)</B>
+<B>kperiodic oscil p7-p6,  p8,  p9     ; this output is the DIFFERENCE between p6 &amp; p7</B>
+<B>kperiodic  = kperiodic  + p6        ; add this DIFFERENCE to p6</B>
+<B>krandom  randi p10 * kperiodic, p11 ; random deviation ( +/-  % variance in k1)</B>
+<B>ksignal  = kperiodic  + krandom     ; add random deviation to periodic variation</B>
+
+<B>-----------------------------------------------------------</B>
+
+
+<B>Score p-fields for this module :</B>
+
+<B>p6                      &lt; value 1</B>
+<B>p7                      &lt; value 2</B>
+<B>p8                      &lt; rate of change between p1 &amp; p2 (with optional flags)</B>
+<B>p9                      &lt; function for change between p6 &amp; p7</B>
+<B>p10                     &lt; random deviation %</B>
+<B>p11                     &lt; random deviation  rate</B>
+</PRE>
+<P>With low values for <I>p10,</I> the resulting control signal will be mostly periodic, with small deviations.
+With high values for <I>p10,</I> the signal will be mostly random, with a smaller periodic component. When
+using high <I>p10</I> values, however, we would frequently need to choose our <I>p6</I> and <I>p7</I> values carefully, so that the total signal level produced by adding the
+periodic and random components would not exceed &quot;<B>1</B>.&quot; or &quot;<B>0</B>&quot; at any point. This would be necessary, for example, if the signal were
+controlling spatial placement.</P>
+<P>Additional flag values for <I>p8</I> could be included within this module to enable us to specify rates at which
+is the oscillator function is read in alternative formats to herz. The sub-routine
+below, for example, includes :</P>
+<DD>1) a &quot;0&quot; flag, in which the function is read once per note 
+<DD>
+<DD>2) a &quot;&gt;100&quot; flag, enabling us to specify the NUMBER of times the function
+will be read per note 
+<DD>
+<DD>3) a negative-number flag, enabling us to specify the PERIOD (duration)
+during which the function is read. The value converter &quot;abs&quot; returns the
+&quot;absolute&quot; (posi- tive) value of any positive or negative number. 
+<DD>
+<PRE>
+<B>; --  optional flags for p8 rate of change --</B>
+<B>p8 = (p8 = 0 ? 1/p3 : p8)       ; if p8 is 0, the function is read once</B>
+<B>                                ; per note</B>
+<B>p8 = (p8&gt;100 ? (p8-100)/p3: p8) ; if p8 is &gt; 100, the function will be</B>
+<B>                                ; read p8-100 times per note ( if p8 is</B>
+<B>                                ; is 102.5, the function will be read 2.5</B>
+<B>                                ; times per note)</B>
+<B>p8 = (p8 &lt; 0? 1/abs(p8) : p8 )  ; if p8 is negative, it will indicate</B>
+<B>                                ; the PERIOD of oscillation ( if p8 = -2.5,</B>
+<B>                                ; the function will be read once every</B>
+<B>                                ; 2.5 seconds</B>
+</PRE>
+
+<H4><A NAME="MORERAND">4.2.4. Additional pseudo-rando number generators</A></H4>
+<P>In addition to the basic <I>rand, randh</I> and <I>randi</I> opcodes Csound
+also provides eleven
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/xnoise.html"><B>x-class noise generators"</B></A>, most of which
+produce particular weighted distributions of pseudo-random number streams.
+Two additional "global" pseudo-random number opcodes, <B>rnd</B> and <B>birnd</B>,
+can be useful in introducing random components within <I>init</I> and
+<I>control</I> signals. In the following example, <I>rnd</I> is used to random
+vary the output amplitude of a series of monophonic input soundfiles, and
+also to vary the stereo output location:
+<PRE><I>
+   instr 1
+   asample  diskin  p4, p5, p6
+   iamp = </I><B>rnd(.49) + .5 </B><I>; vary output amplitude multiplier between .5 and .99
+   asample = asample * iamp
+   ispace = rnd (1.)  ; create random left-right stereo locations between 0 and 1.
+   outs  sqrt(ispace) * asample, sqrt(1. - ispace) * asample
+   endin
+</I></PRE>
+
+
+<HR>
+<H5>Assignment </H5>
+<P>Try out <I>buzz</I> and <I>gbuzz,</I> and the random number generators <I>rand, randh </I>and<I> randi.</I> Try adding attack chiffs, and random deviation in amplitude, pitch, panning  and
+other variables, within one or more of your existing algorithms.</P>
+<P>Random number generators, which are not available (or not available in sufficient
+quantity) on most hardware synthesizers, provide an extremely useful means
+of introducing added &quot;life&quot; and &quot;interest&quot; to sounds. The pitch, amplitude
+and timbre of most acoustic sounds include random components, typically
+quite large during attacks, generally much smaller during the &quot;steady state&quot;
+and decay of tones. Vibrato (especially) and tremolo tend to be much more
+&quot;interesting&quot and &quot;lifelike&quot; if the modulation rate and depth include a small random component.</P>
+
+<A NAME="END"></A>
+<HR><CENTER><FONTSIZE="-2">Eastman Csound Tutorial: End of <I>Chapter 4</I></FONT></CENTER><BR>
+<PRE>
+<H5>   <A HREF="./chapter4.html#"><FONT SIZE="+1">TOP</FONT> of this chapter</A>  -- <A HREF="chapter5.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 5)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</BODY>
+</HTML>

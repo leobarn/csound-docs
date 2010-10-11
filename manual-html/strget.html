@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>strget</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="streson.html" title="streson" />
+    <link rel="next" href="strindex.html" title="strindex" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">strget</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="streson.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="strindex.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="strget">
+      <a id="strget"></a>
+      <div class="titlepage"></div>
+      <a id="Indexstrget" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">strget</span>
+        </h2>
+        <p>strget — 
+      Set string variable to value from strset table or string p-field
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3610090"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>strget</em></span> sets a string variable at initialization time to the value stored in <a class="link" href="strset.html" title="strset"><em class="citetitle">strset</em></a> table at the specified index, or a string p-field from the score. If there is no string defined for the index, the variable is set to an empty string.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3611415"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">Sdst <span class="command"><strong>strget</strong></span> indx</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3611433"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>indx</em></span> -- strset index, or score p-field
+    </p>
+        <p>
+      <span class="emphasis"><em>Sdst</em></span> -- destination string variable
+    </p>
+      </div>
+      <div class="refsect1" title="See also">
+        <a id="id3611455"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="strset.html" title="strset"><em class="citetitle">strset</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3611472"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>2005</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="streson.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="strindex.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">streson </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> strindex</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

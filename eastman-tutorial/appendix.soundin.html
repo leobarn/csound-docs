@@ -1,0 +1,80 @@
+<HTML>
+<HEAD>
+  <TITLE>APPENDIX.SOUNDIN</TITLE>
+<meta name="description" value="Eastman Csound Tutorial Appendix by Allan Schindler">
+<meta name="resource-type" value="document">
+<meta name="distribution" value="global">
+</HEAD>
+<BODY>
+<H4><CENTER>APPENDIX 3</H4>
+<H3><CENTER>Notes on SOUNDFILE INPUTS in the orc/sco examples</CENTER></H3>
+<P>The following <I>orc/sco</I> examples within this tutorial
+<PRE><I>   ex2-5 
+   ex3-2   ex3-6
+   ex5-1   ex5-2  ex5-3  ex5-3-2  ex5-6  ex5-7  ex5-8
+   ex6-1   ex6-2  ex6-3  ex6-4-1  ex6-4-2  ex6-4-3</I></PRE>
+require soundfile inputs.
+On the ECMC systems, all of the input soundfiles used in this tutorial currently
+are mono 44.1k 16 bit integer AIFF soundfiles from the <I>sflib</I> ("soundfile
+library") directories.
+Non-ECMC users will need to substitute suitable soundfiles on their own system
+to make these tutorial examples work.
+
+<H5>(1)   SOUNDIN/DISKIN examples</H5>
+<P>The following <I>orc/sco</I> examples
+<PRE><I>   ex2-5 
+   ex3-2 
+   ex5-1   ex5-2  ex5-3  ex5-3-2  ex5-6  ex5-7  ex5-8
+   ex6-3</I></PRE>
+employ Csound unit generator <I>soundin</I> or <I>diskin</I> and require either
+<UL>
+<LI> one or more input soundfiles
+<BR> or else, as on the ECMC systems,
+<LI> soft link files that point to soundfiles.
+</UL>
+These link files (or else source soundfiles)
+<UL>
+<LI> must be named <I>soundin.#</I>, where <B>#</B> is an integer; and
+<LI> must be located either in the user's <I>$SFDIR</I> ("current working
+soundfile") directory, or else in the user's <I>$SSDIR</I> ("sound sample")
+directory.
+</UL>
+On the ECMC systems, the following collection of <I>soundin.</I><B>#</B> link files,
+pointing to digitized environmental, vocal and percussive sound sources,
+is used for the examples above:<BR>
+<BR>
+<PRE>
+<I>soundin.1  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/env/wind.low</I><FONT SIZE="3">  (low pitched blowing wind; duration 10.68 sec.)</FONT>
+<I>soundin.2  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/env/caridle</I><FONT SIZE="3">   (a car idling; duration 15.0 sec.)</FONT>
+<I>soundin.3  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/env/riverlock</I><FONT SIZE="3"> (gushing water; duration 14.0 sec.)</FONT>
+<I>soundin.4  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/voice/sop1.b3</I><FONT SIZE="3"> (a soprano tone; duration 6.36 sec.)</FONT>
+
+<I>soundin.5  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/tam</I><FONT SIZE="3">     (a tam tam; duration  27.96 sec.)</FONT>
+<I>soundin.6  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/plate1</I><FONT SIZE="3">   (a metal plate; duration 14.97 sec.)</FONT>
+<I>soundin.7  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/gong.ef3</I><FONT SIZE="3"> (a large gong; duration 8.47 sec.)</FONT>
+<I>soundin.8  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/cym1</I><FONT SIZE="3"> (cymbal struck with snare stick; dur. 12.4 sec.)</FONT>
+
+<I>soundin.9  </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/tb1</I><FONT SIZE="3">    (a temple block; duration .157 sec.)</FONT>
+<I>soundin.10 </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/tb2</I><FONT SIZE="3">    (a higher pitched temple block; duration .2 sec.)</FONT>
+<I>soundin.11 </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/wb</I><FONT SIZE="3">      (a woodblock; duration .2 sec.)</FONT>
+<I>soundin.12 </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/crt.fs6</I><FONT SIZE="3"> (a crotale; duration 5.47 sec.)</FONT>
+
+<I>soundin.13 </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/bongo1.roll</I><FONT SIZE="3">  (a bongo roll; duration 1.175 sec.)</FONT>
+<I>soundin.14 </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/sleighbells</I><FONT SIZE="3">  (shaken sleighbells; duration 1.43 sec.)</FONT>
+<I>soundin.15 </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/maracaroll</I><FONT SIZE="3">  (a maraca roll; duration 3.32 sec.)</FONT>
+<I>soundin.16 </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/x/voicetest</I><FONT SIZE="3">    (a speech fragment; duration 7.26 sec.)</FONT>
+<I>soundin.17 </I><FONT SIZE="2"> points to soundfile   </FONT><I>/sflib/perc/sdrum1.broll</I><FONT SIZE="3"> (snare drum roll with wire brushes; duration 1.633)</FONT>
+
+</PRE>
+ECMC users can create all of these <I>soundin.#</I> link files with the
+command <I>mktutsflinks</I>, and can remove all of these links by
+typing <I>rmtutsflinks</I>.
+<H5>(2)  Additional input soundfile orc/sco examples</H5>
+<P>Three additional <I>orc/sco</I> examples in this tutorial
+<PRE><I>   ex3-6</I> (employing <I>tablei</I> and <I>phasor</I>), and
+   <I>ex6-1</I> and <I>ex6-2</I> (employing <I>loscil</I>)</PRE>
+also require soundfile inputs. However, these three examples use <I>gen 1</I>
+to read the input soundfiles into RAM, and thus do not require that these soundfiles
+be identified by a <I>soundin.#</I> link file (or soundfile) name.
+</BODY>
+</HTML>

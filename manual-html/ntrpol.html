@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ntrpol</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="nstrnum.html" title="nstrnum" />
+    <link rel="next" href="octave.html" title="octave" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ntrpol</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="nstrnum.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="octave.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="ntrpol">
+      <a id="ntrpol"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNtrpol" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ntrpol</span>
+        </h2>
+        <p>ntrpol — 
+      Calculates the weighted mean value of two input signals.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3427249"></a>
+        <h2>Description</h2>
+        <p>
+      Calculates the weighted mean value (i.e. linear interpolation) of two input signals
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3427261"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>ntrpol</strong></span> asig1, asig2, kpoint [, imin] [, imax]</pre>
+        <pre class="synopsis">ires <span class="command"><strong>ntrpol</strong></span> isig1, isig2, ipoint [, imin] [, imax]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>ntrpol</strong></span> ksig1, ksig2, kpoint [, imin] [, imax]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3427304"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imin</em></span> -- minimum xpoint value (optional, default 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>imax</em></span> -- maximum xpoint value (optional, default 1)
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3427326"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xsig1</em></span>, <span class="emphasis"><em>xsig2</em></span> -- input signals
+    </p>
+        <p>
+      <span class="emphasis"><em>xpoint</em></span> -- interpolation point between the two values
+    </p>
+        <p>
+      <span class="emphasis"><em>ntrpol</em></span> opcode outputs the linear interpolation between two input values. <span class="emphasis"><em>xpoint</em></span> is the distance of evaluation point from the first value. With the default values of <span class="emphasis"><em>imin</em></span> and <span class="emphasis"><em>imax</em></span>, (0 and 1) a zero value indicates no distance from the first value and the maximum distance from the second one. With a 0.5 value, <span class="emphasis"><em>ntrpol</em></span> will output the mean value of the two inputs, indicating the exact half point between <span class="emphasis"><em>xsig1</em></span> and <span class="emphasis"><em>xsig2</em></span>. A 1 value indicates the maximum distance from the first value and no distance from the second one. The range of <span class="emphasis"><em>xpoint</em></span> can be also defined with <span class="emphasis"><em>imin</em></span> and <span class="emphasis"><em>imax</em></span> to make its management easier.
+    </p>
+        <p>
+      These opcodes are useful for crossfading two signals.
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3427405"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>October 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.49</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="nstrnum.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="octave.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">nstrnum </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> octave</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

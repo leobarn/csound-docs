@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wgbow</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="weibull.html" title="weibull" />
+    <link rel="next" href="wgbowedbar.html" title="wgbowedbar" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wgbow</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="weibull.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wgbowedbar.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="wgbow">
+      <a id="wgbow"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWgbow" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wgbow</span>
+        </h2>
+        <p>wgbow — 
+      Creates a tone similar to a bowed string.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3717097"></a>
+        <h2>Description</h2>
+        <p>
+      Audio output is a tone similar to a bowed string, using a physical model developed from Perry Cook, but re-coded for Csound.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3717113"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>wgbow</strong></span> kamp, kfreq, kpres, krat, kvibf, kvamp, ifn [, iminfreq]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3718034"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table of shape of vibrato, usually a sine table, created by a function
+    </p>
+        <p>
+      <span class="emphasis"><em>iminfreq</em></span> (optional) -- lowest frequency at which the instrument will play. If it is omitted it is taken to be the same as the initial <span class="emphasis"><em>kfreq</em></span>. If <span class="emphasis"><em>iminfreq</em></span> is negative, initialization will be skipped.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3718068"></a>
+        <h2>Performance</h2>
+        <p>
+      A note is played on a string-like instrument, with the arguments as below.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude of note.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- frequency of note played.
+    </p>
+        <p>
+      <span class="emphasis"><em>kpres</em></span> -- a parameter controlling the pressure of the bow on the string. Values should be about 3. The useful range is approximately 1 to 5.
+    </p>
+        <p>
+      <span class="emphasis"><em>krat</em></span> -- the position of the bow along the string. Usual playing is about 0.127236. The suggested range is 0.025 to 0.23.
+    </p>
+        <p>
+      <span class="emphasis"><em>kvibf</em></span> -- frequency of vibrato in Hertz. Suggested range is 0 to 12
+    </p>
+        <p>
+      <span class="emphasis"><em>kvamp</em></span> -- amplitude of the vibrato
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3718137"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the wgbow opcode. It uses the file <a class="ulink" href="examples/wgbow.csd" target="_top"><em class="citetitle">wgbow.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="id3718154"></a>
+          <p class="title">
+            <b>Example 599. Example of the wgbow opcode.</b>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o wgbow.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+
+<span class="comment">; Initialize the global variables.</span>
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">kr</span> <span class="op">=</span> 4410
+<span class="ohdr">ksmps</span> <span class="op">=</span> 10
+<span class="ohdr">nchnls</span> <span class="op">=</span> 1
+
+<span class="comment">; Instrument #1.</span>
+<span class="oblock">instr</span> 1
+  kamp <span class="op">=</span> 31129.60
+  kfreq <span class="op">=</span> 440
+  kpres <span class="op">=</span> 3.0
+  krat <span class="op">=</span> 0.127236
+  kvibf <span class="op">=</span> 6.12723
+  ifn <span class="op">=</span> 1
+
+  <span class="comment">; Create an amplitude envelope for the vibrato.</span>
+  kv <span class="opc">linseg</span> 0, 0.5, 0, 1, 1, p3<span class="op">-</span>0.5, 1
+  kvamp <span class="op">=</span> kv <span class="op">*</span> 0.01
+
+  a1 <span class="opc">wgbow</span> kamp, kfreq, kpres, krat, kvibf, kvamp, ifn
+  <span class="opc">out</span> a1
+<span class="oblock">endin</span>
+
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+
+<span class="comment">; Table #1, a sine wave.</span>
+<span class="stamnt">f</span> 1 0 128 10 1
+
+<span class="comment">; Play Instrument #1 for two seconds.</span>
+<span class="stamnt">i</span> 1 0 2
+<span class="stamnt">e</span>
+
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3718192"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="weibull.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wgbowedbar.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">weibull </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wgbowedbar</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

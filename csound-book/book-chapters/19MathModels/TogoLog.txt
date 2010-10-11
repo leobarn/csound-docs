@@ -1,0 +1,37 @@
+------------------------------  Web Buddy: to go trace log------------------------------Page Title   : Math ModelsPage URL     : http://reality.sgi.com/hpm_cfdevsun/mathmodl/Start time   : -1305182254Finish time  : -1305182130Elapsed time : 2 minutes 4 secondsDisk space   : 42 KB Persistence  : 3Levels       : Base page + 1 level deepSummary: - Links resolved : 1 of 1 - Graphics resolved : 13 of 13----------------------------------------
+ 41118  - 0 - Begin Session Update: time = -1305182254 - 
+ 41118  - 0 - Begin Main Loop - 
+ 41118  - 31043836 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/
+ 43945  - 31043836 -  - Resolve Complete
+ 43946  - 0 - Parsing file - http://reality.sgi.com/hpm_cfdevsun/mathmodl/
+ 43947  - 0 - Fetch Graphics - 
+ 43948  - 31180568 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm1.gif
+ 43959  - 31043432 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm2.gif
+ 43960  - 31179836 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm3.gif
+ 43960  - 31179924 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm4.gif
+ 44502  - 31180568 -  - Resolve Complete
+ 44503  - 31179860 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm5.gif
+ 44796  - 31043432 -  - Resolve Complete
+ 44797  - 31180412 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm6.gif
+ 45041  - 31179860 -  - Resolve Complete
+ 45041  - 31180444 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm7.gif
+ 45237  - 31180412 -  - Resolve Complete
+ 45237  - 31043856 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm8.gif
+ 45555  - 31180444 -  - Resolve Complete
+ 45556  - 31180532 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm9.gif
+ 46033  - 31043856 -  - Resolve Complete
+ 46035  - 31043940 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm10.gif
+ 46036  - 31180532 -  - Resolve Complete
+ 46036  - 31180492 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm11.gif
+ 46710  - 31179924 -  - Resolve Complete
+ 46710  - 31179888 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm12.gif
+ 46853  - 31180492 -  - Resolve Complete
+ 46854  - 31180536 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/mathmodl/mathm13.gif
+ 47310  - 31179836 -  - Resolve Complete
+ 47451  - 31180536 -  - Resolve Complete
+ 47701  - 31043940 -  - Resolve Complete
+ 48585  - 31179888 -  - Resolve Complete
+ 48585  - 0 - Begin Main Loop - 
+ 48585  - 0 - Begin Main Loop - 
+ 48585  - 0 - Update links - 
+ 48624  - 0 - Session Update Complete: time = -1305182130 - 

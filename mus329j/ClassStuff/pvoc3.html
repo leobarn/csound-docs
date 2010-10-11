@@ -1,0 +1,115 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Example PVInterp Instrument</TITLE>
+<META NAME="Template" CONTENT="C:\Program Files\Microsoft Office\Office\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<PRE>&#9;sr&#9;=&#9;44100
+&#9;kr&#9;=&#9;4410
+&#9;ksmps&#9;=&#9;10
+&#9;nchnls&#9;=&#9;1
+
+;=======================================================
+; Example Instrument for Phase Vocoder Interpolation
+; Similar to pvoc2.orc, but uses pvbufread and pvinterp
+; Allows independent crossfading of amp and freq data
+; RP
+;=======================================================
+
+&#9;instr&#9;3
+idur&#9;=&#9;p3
+ipvfn1&#9;=&#9;p4
+ilen1&#9;=&#9;p5
+ipvfn2&#9;=&#9;p6
+ilen2&#9;=&#9;p7
+iamp1&#9;=&#9;p8
+iamp2&#9;=&#9;p9
+ifrq1&#9;=&#9;p10
+ifrq2&#9;=&#9;p11
+;fixed amplitude and frequency prescaling data
+iascl1&#9;=&#9;(p12 == 0 ? 1 : p12)&#9;;defaults to no amp scaling
+iascl2&#9;=&#9;(p13 == 0 ? 1 : p13)
+ifscl1&#9;=&#9;p14
+ifscl2&#9;=&#9;p15
+ifmod&#9;=&#9;p16&#9;&#9;&#9;;max pitch shift in semitones
+ifmfn&#9;=&#9;(p17 == 0 ? 1 : p17)&#9;;default to valid function #
+
+; Independent timptrs for pvbufread and pvcross
+ktime1  line    0, idur, ilen1
+ktime2  line    0, idur, ilen2
+; Allows a crossfade between the amp data in two analysis files
+kampi&#9;line&#9;iamp1, idur, iamp2    
+; Allows a crossfade between the freq data in two analysis files
+kfrqi&#9;line&#9;ifrq1, idur, ifrq2
+; Frequency modification control function
+kfctrl&#9;oscil1i&#9;0,ifmod,p3,ifmfn
+; Frequency mod arguments from semitones to a pitch shift factor
+kfmod&#9;=&#9;exp(kfctrl/12*log(2))
+ifs1&#9;=&#9;exp(ifscl1/12*log(2))
+ifs2&#9;=&#9;exp(ifscl2/12*log(2))
+;
+&#9;pvbufread       ktime1, ipvfn1
+apv    &#9;pvinterp&#9;ktime2, kfmod, ipvfn2, ifs1, ifs2, iascl1, iascl2, kfrqi, kampi&#9;
+apv&#9;linen&#9;apv,.1,p3,.2&#9;;overall envelope
+&#9;out&#9;apv
+&#9;endin&#9;</PRE>
+<P><HR></P>
+<PRE>f01&#9;0&#9;513&#9;7&#9;0&#9;513&#9;1
+f02&#9;0&#9;513&#9;7&#9;1&#9;513&#9;0
+f03&#9;0&#9;513&#9;1&#9;"pvoctest.fun"&#9;0&#9;4&#9;0
+;
+;Interpolate between pvoc.904 (thewind) and pvoc.906 (wavest44)
+;Both use frame size 1024 and overlap 8.
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;frq1&#9;frq2
+i3&#9;0&#9;8&#9;904&#9;1.67&#9;906&#9;16.81&#9;0&#9;1&#9;0&#9;1
+;&#9;ampscl1&#9;ampscl2&#9;frqscl1&#9;frqscl2&#9;ifmod&#9;ifmfn
+&#9;0&#9;0&#9;0&#9;0&#9;0&#9;0
+f0&#9;9
+a0&#9;0&#9;9
+s
+;Eroica -&gt; Fire (xfade both amp and freq data)
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;frq1&#9;frq2
+i3&#9;0&#9;12.585&#9;905&#9;5.804&#9;907&#9;12.585&#9;1&#9;0&#9;1&#9;0
+;&#9;ampscl1&#9;ampscl2&#9;frqscl1&#9;frqscl2&#9;ifmod&#9;ifmfn
+&#9;0&#9;0&#9;0&#9;0&#9;0&#9;0
+;Eroica -&gt; Fire (xfade amp, but use freq data only from Eroica)
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;frq1&#9;frq2
+i3&#9;14&#9;12.585&#9;905&#9;5.804&#9;907&#9;12.585&#9;1&#9;0&#9;1&#9;1
+;&#9;ampscl1&#9;ampscl2&#9;frqscl1&#9;frqscl2&#9;ifmod&#9;ifmfn
+&#9;0&#9;0&#9;0&#9;0&#9;0&#9;0
+f0&#9;28
+s
+;Cello -&gt; PlkPnoLp (pvoc.910 &amp; pvoc.911)
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;frq1&#9;frq2
+i3&#9;0&#9;6&#9;910&#9;1.5&#9;911&#9;6&#9;1&#9;0&#9;1&#9;0
+;&#9;ampscl1&#9;ampscl2&#9;frqscl1&#9;frqscl2&#9;ifmod&#9;ifmfn
+&#9;0&#9;0&#9;0&#9;0&#9;0&#9;0
+;PlkPnoLp -&gt; Cello 
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;frq1&#9;frq2
+i3&#9;7&#9;6&#9;910&#9;1.5&#9;911&#9;6&#9;0&#9;1&#9;0&#9;1
+;&#9;ampscl1&#9;ampscl2&#9;frqscl1&#9;frqscl2&#9;ifmod&#9;ifmfn
+&#9;0&#9;0&#9;0&#9;0&#9;0&#9;0
+;Correct the pitch of the plucked piano note (ca .333 semitones sharp).
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;frq1&#9;frq2
+i3&#9;14&#9;6&#9;910&#9;1.5&#9;911&#9;6&#9;0&#9;1&#9;0&#9;1
+;&#9;ampscl1&#9;ampscl2&#9;frqscl1&#9;frqscl2&#9;ifmod&#9;ifmfn
+&#9;0&#9;0&#9;0&#9;-.333&#9;0&#9;0
+f0&#9;21
+e</PRE>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="32%" VALIGN="TOP">
+<P><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvoc3.orc">Download pvoc3.orc</A></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<P ALIGN="CENTER"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvfiles3.zip">Download pvfiles3.zip </A></TD>
+<TD WIDTH="31%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvoc3.sco">Download pvoc3.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

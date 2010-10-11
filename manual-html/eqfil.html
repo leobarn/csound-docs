@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>eqfil</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ephasor.html" title="ephasor" />
+    <link rel="next" href="event.html" title="event" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">eqfil</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ephasor.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="event.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="eqfil">
+      <a id="eqfil"></a>
+      <div class="titlepage"></div>
+      <a id="Indexeqfil" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">eqfil</span>
+        </h2>
+        <p>eqfil — 
+      Equalizer filter
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3227578"></a>
+        <h2>Description</h2>
+        <p>
+      The opcode eqfil is a 2nd order tunable equalisation filter based on Regalia and Mitra
+      design ("Tunable Digital Frequency Response Equalization Filters", IEEE Trans.
+      on Ac., Sp. and Sig Proc., 35 (1), 1987). It provides a peak/notch filter for
+      building parametric/graphic equalisers.
+    </p>
+        <p>
+      The amplitude response for this filter will be flat (=1) for kgain=1. With kgain is bigger than 1, there
+      will be a peak at the centre frequency, whose width is given by the kbw parameter, but 
+      outside this band, the response will tend towards 1. Conversely, if kgain is smaller than 1, a notch will
+      be created around the CF.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3228212"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>eqfil</strong></span> ain, kcf, kbw, kgain[, istor]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3228231"></a>
+        <h2>Initialization</h2>
+        <p>
+        <span class="emphasis"><em>istor</em></span> --initial disposition of internal data space. Since 
+        filtering incorporates a feedback loop of previous output, 
+        the initial status of the storage space used is significant. 
+        A zero value will clear the space; a non-zero value will allow 
+        previous information to remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3228255"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- filtered output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- input signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcf</em></span> -- filter centre frequency
+    </p>
+        <p>
+      <span class="emphasis"><em>kbw</em></span> -- peak/notch bandwidth (Hz). 
+    </p>
+        <p>
+      <span class="emphasis"><em>kgain</em></span> -- peak/notch gain. 
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3228300"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="id3228308"></a>
+          <p class="title">
+            <b>Example 141. Example</b>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+
+kfe         <span class="opc">expseg</span> 10, p3*0.9, 180, p3*0.1, 175
+kenv        <span class="opc">linen</span>  1000, 0.05, p3, 0.05
+asig        <span class="opc">buzz</span>   kenv, kfe, sr/(2*kfe), 1
+afil        <span class="opc">eqfil</span>  asig, 1500, 400,  0.1
+
+            <span class="opc">out</span> afil
+        </pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3228357"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>April 2007</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ephasor.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="event.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ephasor </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> event</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

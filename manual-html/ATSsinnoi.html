@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ATSsinnoi</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ATSpartialtap.html" title="ATSpartialtap" />
+    <link rel="next" href="aunirand.html" title="aunirand" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ATSsinnoi</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ATSpartialtap.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="aunirand.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="ATSsinnoi">
+      <a id="ATSsinnoi"></a>
+      <div class="titlepage"></div>
+      <a id="IndexATSsinnoi" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ATSsinnoi</span>
+        </h2>
+        <p>ATSsinnoi —  uses the data from an ATS analysis file to perform resynthesis.
+        </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3148597"></a>
+        <h2>Description</h2>
+        <p>
+            <span class="emphasis"><em>ATSsinnoi</em></span> reads data from an ATS data file and uses the information to synthesize sines and noise together.
+        </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3148612"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar <span class="command"><strong>ATSsinnoi</strong></span> ktimepnt, ksinlev, knzlev, kfmod, iatsfile, ipartials \
+          [, ipartialoffset, ipartialincr]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3149421"></a>
+        <h2>Initialization</h2>
+        <p>
+        <span class="emphasis"><em>iatsfile</em></span> – the ATS number (n in ats.n) or the name in quotes of the analysis file made using <a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top"><em class="citetitle">ATS</em></a>.
+        </p>
+        <p><span class="emphasis"><em>ipartials</em></span> – number of partials that will be used in the resynthesis (the noise has a maximum of 25 bands)
+        </p>
+        <p><span class="emphasis"><em>ipartialoffset</em></span> (optional) – is the first partial used (defaults to 0).
+        </p>
+        <p><span class="emphasis"><em>ipartialincr</em></span> (optional) – sets an increment by which these synthesis opcodes counts up from <span class="emphasis"><em>ipartialoffset</em></span> for ibins components in the re-synthesis (defaults to 1).
+        </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3149476"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>ktimepnt</em></span> – The time pointer in seconds used to index the ATS file. Used for <span class="emphasis"><em>ATSsinnoi</em></span> exactly the same as for <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>.</p>
+        <p>
+        <span class="emphasis"><em>ksinlev</em></span> - controls the level of the sines in the <span class="emphasis"><em>ATSsinnoi</em></span> ugen. A value of 1 gives full volume sinewaves.
+        </p>
+        <p><span class="emphasis"><em>knzlev</em></span> - controls the level of the noise components in the <span class="emphasis"><em>ATSsinnoi</em></span> ugen. A value of 1 gives full volume noise.
+        </p>
+        <p>
+        <span class="emphasis"><em>kfmod</em></span> – an input for performing pitch transposition or frequency modulation on all of the synthesized partials, if no fm or pitch change is desired then use a 1 for this value.
+        </p>
+        <p><span class="emphasis"><em>ATSsinnoi</em></span> reads data from an ATS data file and uses the information to synthesize sines and noise together. The noise energy for each band is distributed equally among each partial that falls in that band. Each partial is then synthesized, along with that partial's noise component. Each noise component is then modulated by the corresponding partial to be put in the correct place in the frequency spectrum. The level of the noise and the partials are individually controllable. See the <a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top"><em class="citetitle">ATS</em></a> webpage for more info about the sinnoi synthesis. An ATS analysis differs from a pvanal in that ATS tracks the partials and computes the noise energy of the sound being analyzed. For more info about ATS analysis read Juan Pampin's description on the the <a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top"><em class="citetitle">ATS</em></a> web-page.
+        </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3149572"></a>
+        <h2>Examples</h2>
+        <pre class="programlisting">
+  ktime   <span class="opc">line</span>       0, p3, 2.5
+  asig    <span class="opc">ATSsinnoi</span>  ktime, 1, 1, 1, "clarinet.ats", 42</pre>
+        <p>Here we synthesize both the noise and the sinewaves (all 42 partials) contained in "clarinet.ats" together. The relative volumes of the noise and the partials are unaltered (each set to 1).
+        </p>
+        <pre class="programlisting">
+  ktime   <span class="opc">line</span>       0, p3, 2.5
+  knzfade <span class="opc">expon</span>      0.001, p3, 2.5
+  asig    <span class="opc">ATSsinnoi</span>  ktime, 1, knzfade, 1, "clarinet.ats", 42</pre>
+        <p>This example here is like example 5 except that we use an envelope to control <span class="emphasis"><em>knzlev</em></span> (the noise level). The result of this will be a clarinet sound that has its noise component fade in over the duration of the note.
+        </p>
+      </div>
+      <div class="refsect1" title="See also">
+        <a id="id3149644"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="ATSread.html" title="ATSread"><em class="citetitle">ATSread</em></a>, 
+            <a class="link" href="ATSreadnz.html" title="ATSreadnz"><em class="citetitle">ATSreadnz</em></a>, 
+            <a class="link" href="ATSinfo.html" title="ATSinfo"><em class="citetitle">ATSinfo</em></a>, 
+            <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>, 
+            <a class="link" href="ATScross.html" title="ATScross"><em class="citetitle">ATScross</em></a>, 
+            <a class="link" href="ATSinterpread.html" title="ATSinterpread"><em class="citetitle">ATSinterpread</em></a>, 
+            <a class="link" href="ATSpartialtap.html" title="ATSpartialtap"><em class="citetitle">ATSpartialtap</em></a>, 
+            <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>, 
+            <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a></p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3149726"></a>
+        <h2>Credits</h2>
+        <p>
+            </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Alex Norman</td>
+          </tr>
+          <tr>
+            <td>Seattle,Washington</td>
+          </tr>
+          <tr>
+            <td>2004</td>
+          </tr>
+        </table>
+        <p>
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ATSpartialtap.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="aunirand.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ATSpartialtap </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> aunirand</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

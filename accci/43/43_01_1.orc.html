@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>43_01_1.orc.html</title>
+<meta name="FORMATTER" content="Microsoft FrontPage 2.0">
+</head>
+
+<body stylesrc="../admin/adporc.html"
+background="../admin/AccciDefaultBackground.gif"
+bgcolor="#FFFFFF">
+
+<pre>; ************************************************************************
+; ACCCI:        43_01_1.ORC
+; synthesis:    (g)buzz(43)
+;               basic instrument(01)
+;               LINEN envelope(1)
+; coded:        jpg 10/93
+; note:
+; shows how buzz reacts to different frequencies...
+; very low range... buzzy indeed
+; stems from the fact that all amps are 1 ...
+
+; some octaves buzz with linen
+
+sr = 44100
+kr  =  441
+ksmps= 100
+nchnls = 1
+
+instr 1; *****************************************************************
+idur  = p3
+iamp  = p4
+ifqc  = p5
+inh   = int (sr/2/ifqc)
+
+   aenv    linen   iamp, .2, idur, .2
+   asrc    buzz    aenv,ifqc,inh,1
+           out     asrc
+
+endin
+
+</pre>
+</body>
+</html>

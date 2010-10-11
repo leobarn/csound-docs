@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>multitap</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mrtmsg.html" title="mrtmsg" />
+    <link rel="next" href="mute.html" title="mute" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">multitap</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mrtmsg.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="mute.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="multitap">
+      <a id="multitap"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMultitap" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">multitap</span>
+        </h2>
+        <p>multitap — 
+      Multitap delay line implementation.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3417931"></a>
+        <h2>Description</h2>
+        <p>
+      Multitap delay line implementation.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3417942"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>multitap</strong></span> asig [, itime1] [, igain1] [, itime2] [, igain2] [...]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3417969"></a>
+        <h2>Initialization</h2>
+        <p>
+      The arguments <span class="emphasis"><em>itime</em></span> and <span class="emphasis"><em>igain</em></span> set the position and gain of each tap.
+    </p>
+        <p>
+      The delay line is fed by <span class="emphasis"><em>asig</em></span>.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3417995"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  a1      <span class="opc">oscil</span>      1000, 100, 1
+  a2      <span class="opc">multitap</span>   a1, 1.2, .5, 1.4, .2
+          <span class="opc">out</span>        a2</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      This results in two delays, one with length of 1.2 and gain of .5, and one with length of 1.4 and gain of .2.
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3418957"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1996</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mrtmsg.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="mute.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mrtmsg </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> mute</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

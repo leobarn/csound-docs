@@ -1,0 +1,192 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:p="urn:schemas-microsoft-com:office:powerpoint"
+xmlns:oa="urn:schemas-microsoft-com:office:activation"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=PowerPoint.Slide>
+<meta name=Generator content="Microsoft PowerPoint 11">
+<link id=Main-File rel=Main-File href="../The%20Csound%20Utilities.htm">
+<link rel=Preview href=preview.wmf>
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+p\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+v\:textbox {display:none;}
+</style>
+<![endif]-->
+<title>Two-step Processing in Csound</title>
+<meta name=Description content="11/19/2006: “Direct” versus “Fast” Convolution">
+<link rel=Stylesheet href="master08_stylesheet.css">
+<!--[if gte IE 5]>
+<object id=MSOANIM classid="CLSID:A4639D2F-774E-11D3-A490-00C04F6843FB"></object>
+<object id=MSOTIME classid="CLSID:A4639D29-774E-11D3-A490-00C04F6843FB"></object>
+<![endif]-->
+<![if !ppt]>
+<style media=print>
+<!--.sld
+	{left:0px !important;
+	width:6.0in !important;
+	height:4.5in !important;
+	font-size:107% !important;}
+-->
+</style>
+<style>
+<!--
+oa\:* { BEHAVIOR: url(#MSOANIM#ANIM) url(#MSOTIME#TIME) }
+oa\:par,oa\:seq,oa\:iterate { BEHAVIOR:url(#MSOTIME) }
+oa\:video,oa\:audio {BEHAVIOR:url(#MSOTIME) url(#MSOTIME#MEDIA) }
+-->
+</style>
+<script src=script.js></script><script><!--
+if( !IsNts() ) Redirect( "PPTSld" );
+//--></script><script><!--
+g_animItemsToHide=new Array("_x0000_s48131_307_406","_x0000_s48131_167_307","_x0000_s48131_127_167","_x0000_s48131_0_127");
+
+//--></script><!--[if vml]><script>g_vml = 1;
+</script><![endif]--><![endif]><o:shapelayout v:ext="edit">
+ <o:idmap v:ext="edit" data="47"/>
+</o:shapelayout>
+</head>
+
+<body lang=EN-US style='margin:0px;background-color:black'
+onclick="DocumentOnClick()" onresize="_RSW()" onload="LoadSld()"
+onkeypress="_KPH()" oa:clockstart="onstart">
+
+<div id=SlideObj class=sld style='position:absolute;top:0px;left:0px;
+width:534px;height:400px;font-size:16px;background-color:white;clip:rect(0%, 101%, 101%, 0%);
+visibility:hidden'><p:slide coordsize="720,540"
+ colors="#ffffff,#003366,#003366,#006666,#99cc99,#33cccc,#666699,#cc99ff"
+ masterhref="master08.xml">
+ <p:shaperange href="master08.xml#_x0000_s1025"/><![if !ppt]><p:shaperange
+  href="master08.xml#_x0000_s1046"/><![if !vml]><img border=0
+ v:shapes="_x0000_s1046,_x0000_s1027,_x0000_s1028,_x0000_s1029"
+ src="master08_image001.gif" style='position:absolute;top:0%;left:0%;
+ width:64.41%;height:100.5%'><![endif]><p:shaperange
+  href="master08.xml#_x0000_s1037"/><p:shaperange
+  href="master08.xml#_x0000_s1038"/><p:shaperange
+  href="master08.xml#_x0000_s1045"/><![if !vml]><img border=0
+ v:shapes="_x0000_s1045,_x0000_s1036,_x0000_s1044" src="master08_image002.gif"
+ style='position:absolute;top:29.0%;left:2.43%;width:81.08%;height:5.0%'><![endif]><![endif]><p:shaperange
+  href="master08.xml#_x0000_m1031"/><v:shape id="_x0000_s48130" type="#_x0000_m1031"
+  style='position:absolute;left:1in;top:60pt;width:630pt;height:90pt'
+  o:userdrawn="f">
+  <v:fill o:detectmouseclick="f"/>
+  <v:stroke o:forcedash="f"/>
+  <o:lock v:ext="edit" text="f"/>
+  <p:placeholder type="title"/></v:shape>
+ <div v:shape="_x0000_s48130" class=T style='position:absolute;top:19.75%;
+ left:11.04%;width:100.93%;height:7.75%'>“Direct” <b><i>versus</i></b> “Fast”
+ Convolution</div>
+ <p:shaperange href="master08.xml#_x0000_m1032"/><v:shape id="_x0000_s48131"
+  type="#_x0000_m1032" style='position:absolute;left:1in;top:186pt;width:630pt;
+  height:294pt' o:userdrawn="f">
+  <v:fill o:detectmouseclick="f"/>
+  <v:stroke o:forcedash="f"/>
+  <o:lock v:ext="edit" text="f"/>
+  <p:placeholder type="body" position="1"/><p:animation number="2" delay="0"
+   type="text" level="1" effect="cut" direction="noBlack"/></v:shape>
+ <div v:shape="_x0000_s48131" class=B>
+ <div id="_x0000_s48131_0_127" style='position:absolute;top:35.5%;left:11.04%;
+ width:100.74%;height:15.75%;white-space:nowrap'><span style='position:absolute;
+ top:0%;left:3.71%;width:81.22%;height:33.33%'><span style='font-size:86%'><span
+ class=BB style='position:absolute;left:-4.57%;top:.3em'>l</span></span><span
+ style='font-size:86%'>Direct convolution is extremely expensive, </span></span><span
+ style='position:absolute;top:33.33%;left:3.71%;width:96.28%;height:33.33%'><span
+ style='font-size:86%'>computationally: on the order of N</span><span
+ style='font-size:57%;position:relative;top:-.75em;mso-text-raise:50%'>2 </span><span
+ style='font-size:86%'>multiplications (N is </span></span><span
+ style='position:absolute;top:66.66%;left:3.71%;width:81.22%;height:33.33%'><span
+ style='font-size:86%'>length of longest signal)&#13;</span></span></div>
+ <div id="_x0000_s48131_127_167" style='position:absolute;top:52.49%;
+ left:11.04%;width:85.58%;height:5.25%;white-space:nowrap'><span
+ style='position:absolute;top:0%;left:4.37%;width:95.62%;height:100.0%'><span
+ style='font-size:86%'><span class=BB style='position:absolute;left:-4.57%;
+ top:.3em'>l</span></span><span style='font-size:86%'>Use Csound </span><span
+ style='font-size:86%'><i>dconv</i></span><span style='font-size:86%'> opcode
+ for this (Moss)&#13;</span></span></div>
+ <div id="_x0000_s48131_167_307" style='position:absolute;top:58.74%;
+ left:11.04%;width:92.69%;height:15.75%;white-space:nowrap'><span
+ style='position:absolute;top:0%;left:4.04%;width:95.95%;height:33.33%'><span
+ style='font-size:86%'><span class=BB style='position:absolute;left:-4.21%;
+ top:.3em'>l</span></span><span style='font-size:86%'>“Fast” convolution takes
+ advantage of the fact that </span></span><span style='position:absolute;
+ top:34.92%;left:4.04%;width:88.48%;height:33.33%'><span style='font-size:86%'>convolution
+ in the time domain is equivalent to </span></span><span style='position:absolute;
+ top:68.25%;left:4.04%;width:88.28%;height:33.33%'><span style='font-size:86%'>multiplication
+ in the frequency domain.&#13;</span></span></div>
+ <div id="_x0000_s48131_307_406" style='position:absolute;top:75.75%;
+ left:11.04%;width:101.49%;height:10.5%;white-space:nowrap'><span
+ style='position:absolute;top:0%;left:3.69%;width:96.3%;height:50.0%'><span
+ style='font-size:86%'><span class=BB style='position:absolute;left:-3.83%;
+ top:.3em'>l</span></span><span style='font-size:86%'>FFTs are performed on
+ both input signals, then spectra </span></span><span style='position:absolute;
+ top:52.38%;left:3.69%;width:80.62%;height:50.0%'><span style='font-size:86%'>are
+ multiplied, then IFT applied to result.</span><span style='font-size:57%;
+ position:relative;top:-.75em;mso-text-raise:50%;mso-special-format:lastCR;
+ display:none'>&#13;</span></span></div>
+ </div>
+</p:slide></div>
+
+<p:animation number="1599560645"/><oa:par id="TimeNode0" dur="indefinite"
+ restart="never" p:nodeType="timingRoot">
+ <oa:seq id="TimeNode1" dur="indefinite" prev="document.onpptprev"
+  next="document.onpptnext" concurrent="enabled" nextAction="seek"
+  p:nodeType="mainSeq">
+  <oa:par id="TimeNode2" begin="indefinite" fill="hold">
+   <oa:par id="TimeNode3" begin="0.0" fill="hold">
+    <oa:par id="TimeNode4" o:presetID="ppt_1" o:presetClass="entrance"
+     o:presetSubType="0x0" begin="0.0" fill="hold" o:groupID="0"
+     p:nodeType="clickEffect">
+     <oa:set id="TimeNode5" begin="0.0" dur="0.001" fill="hold"
+      targetElement="_x0000_s48131_0_127" attributeName="style.visibility"
+      to="visible"/>
+    </oa:par>
+   </oa:par>
+  </oa:par>
+  <oa:par id="TimeNode6" begin="indefinite" fill="hold">
+   <oa:par id="TimeNode7" begin="0.0" fill="hold">
+    <oa:par id="TimeNode8" o:presetID="ppt_1" o:presetClass="entrance"
+     o:presetSubType="0x0" begin="0.0" fill="hold" o:groupID="0"
+     p:nodeType="clickEffect">
+     <oa:set id="TimeNode9" begin="0.0" dur="0.001" fill="hold"
+      targetElement="_x0000_s48131_127_167" attributeName="style.visibility"
+      to="visible"/>
+    </oa:par>
+   </oa:par>
+  </oa:par>
+  <oa:par id="TimeNode10" begin="indefinite" fill="hold">
+   <oa:par id="TimeNode11" begin="0.0" fill="hold">
+    <oa:par id="TimeNode12" o:presetID="ppt_1" o:presetClass="entrance"
+     o:presetSubType="0x0" begin="0.0" fill="hold" o:groupID="0"
+     p:nodeType="clickEffect">
+     <oa:set id="TimeNode13" begin="0.0" dur="0.001" fill="hold"
+      targetElement="_x0000_s48131_167_307" attributeName="style.visibility"
+      to="visible"/>
+    </oa:par>
+   </oa:par>
+  </oa:par>
+  <oa:par id="TimeNode14" begin="indefinite" fill="hold">
+   <oa:par id="TimeNode15" begin="0.0" fill="hold">
+    <oa:par id="TimeNode16" o:presetID="ppt_1" o:presetClass="entrance"
+     o:presetSubType="0x0" begin="0.0" fill="hold" o:groupID="0"
+     p:nodeType="clickEffect">
+     <oa:set id="TimeNode17" begin="0.0" dur="0.001" fill="hold"
+      targetElement="_x0000_s48131_307_406" attributeName="style.visibility"
+      to="visible"/>
+    </oa:par>
+   </oa:par>
+  </oa:par>
+ </oa:seq>
+</oa:par>
+<![if ppt]>
+<oa:buildParagraph targetElement="_x0000_s48131" groupID="0" build="byParagraph"
+ buildLevel="1" reverse="false" buildAdvance="onclick" userSetAnimBgd="false"/>
+<![endif]>
+</body>
+
+</html>

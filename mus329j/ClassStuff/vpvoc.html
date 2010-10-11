@@ -1,0 +1,143 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./vpvoc_files/filelist.xml">
+<link rel=Edit-Time-Data href="./vpvoc_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Example vpvoc instrument with tablexseg</title>
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+pre
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Courier New";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+<meta name=Template content="C:\Program Files\Microsoft Office\Office\html.dot">
+</head>
+
+<body bgcolor=silver lang=EN-US link=blue vlink=purple style='tab-interval:
+.5in'>
+
+<div class=Section1>
+  <pre>	sr	=	44100<br>	kr	=	4410<br>	ksmps	=	10<br>	nchnls	=	1</pre>
+
+  <pre>;======================================================================;<br>;Instrument 1 demonstrates the use of vpvoc with tablexseg. It is based <br>;on the example provided in the Csound manual, with a few extra bells <br>;and whistles. It uses oscil1i to read the control function for the time <br>;pointer. Specify amount of pitch shift in p7 as a value in semitones.<br>;<br>;Instrument 2 demonstrates pvread used for individual bin resynthesis.<br>;<br>;Note that with all csound phase vocoder opcodes, you need to use the<br>;same version of csound to do the analysis that you will use to do the<br>;resynthesis, because the analysis file format has changed.<br>;<br>;RP<br>;======================================================================;
+	instr	1
+idur	=	p3 
+ipvfn	=	p4	;the pvanal output file pvoc.nnn
+ilength	=	p5	;length of original sound file
+itpfn	=	p6	;time pointer control function
+ipshft	=	p7	;n semitones of pitch shift
+; functions for tablexseg:<br>ifn1	=	(p8 == 0 ? 3 : p8)<br>idur1	=	p9<br>igain1	=	p10<br>ifn2	=	(p11 == 0 ? ifn1 : p11)	;default to same function<br>idur2	=	p12<br>igain2	=	(p13 == 0 ? igain1 : p13)<br>ifn3	=	(p14 == 0 ? ifn2 : p14)<br>idur3	=	p15<br>igain3	=	(p16 == 0 ? igain2 : p16)<br>ifn4	=	(p17 == 0 ? ifn3 : p17)<br>igain4	=	(p18 == 0 ? igain3 : p18)<br>ifmod	=	exp(ipshft/12*log(2))	;convert to a freq multiplier<br>ktimpnt	oscil1i	0,ilength,idur,itpfn<br>	tablexseg	ifn1, idur1, ifn2, idur2, ifn3, idur3, ifn4<br>aout    vpvoc           ktimpnt,ifmod,ipvfn<br>;apply dynamic gain control<br>kgain	linseg	igain1,idur1,igain2,idur2,igain3,idur3,igain4<br>kgain	=	ampdb(kgain)		;convert to amp factor<br>agate	linen	kgain,.001,p3,.1	;basic envelope<br>	out	aout*agate<br>	endin</pre>
+  <pre>
+
+	instr	2	;an instrument that synthesizes just one analysis bin
+idur	=	p3 
+ipvfn	=	p4	;the pvanal output file pvoc.nnn
+ilength	=	p5	;length of original sound file
+itpfn	=	p6	;time pointer control function
+ibinno	=	p7
+igain	=	(p8 == 0 ? 1 : p8)
+isine	=	100
+ktimpnt	oscil1i	0,ilength,idur,itpfn
+kfreq,kamp	pvread	ktimpnt,ipvfn,ibinno
+aout	oscili	kamp,kfreq,isine
+	out	aout*igain
+	endin</pre>
+  <div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+<pre>;Example score for vpvoc instrument<br>;Note: pvoc.309 is an analysis file of crashcym.wav, analyzed with -n1024 and -w8<br>;Exponential function with peak at about 5.5KHz<br>f1	0	512	5	.001	128	1	384	.001<br>;Exponential function with notch at about 5.5KHz<br>f2	0	512	5	1	128	.001	384	1<br>;Flat frequency response (all 1's straight across)<br>f3	0	512	7	1	512	1<br>;Ramp for linear timepoint movement<br>f4	0	513	7	0	513	1<br>;Forward and backward timepoint<br>f5	0	513	7	0	256	1	257	0<br>;High Pass with cutoff at approximately 2K<br>f6	0	512	17	0	0	47	1	512	1<br>;Low Pass with cutoff at approximately 500Hz<br>f7	0	512	17	0	1	12	0	512	0<br>;Band Pass with cf at 1KHz and a 200Hz bw (no HP and infinite rolloff)<br>f8	0	512	17	0	0	21	1	26	0	512	0<br>;Notch with cf at 2KHz and a 1KHz bw (no HP and infinite rolloff)<br>f9	0	512	17	0	1	36	0	58	1	512	1<br>;Band Pass with cf at 200Hz and a 50Hz bw (Q of 4)<br>f10	0	512	17	0	0	4	1	7	0	512	0<br>;Band Pass with cf at 4000Hz and a 1KHz bw (Q of 4)<br>f11	0	512	17	0	0	82	1	106	0	512	0<br>;Forward to half way, then reverse<br>f16	0	512	-7	0	257	.5	256	0	<br>;Pass a band of frequencies around 500 Hz<br>f18	0	512	17	0	0	15	1	32	0		<br>;move from notched to flat to peak<br>;Pass a band of frequencies around 1000 Hz<br>f19	0	512	17	0	0	31	1	64	0			<br>;Pass a single bin at about 500 Hz<br>f20	0	512	17	0	0	15	1	16	0	<br>;Pass bins 16-19 only<br>f21	0	512	17	0	0	15	1	19	0<br>;custom time point function<br>f22	0	513	-7	0	171	.59	171	.1	171	.59<br>;bins 1, 2, 4, 8, 16, and 32 only<br>f23	0	512	2<br>	1	1	0	1	0	0	0	1<br>	0	0	0	0	0	0	0	1<br>	0	0	0	0	0	0	0	0<br>	0	0	0	0	0	0	0	1<br>;sine wave<br>f100	0	8192	10	1<br>;Unfiltered<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	0	3	309	1.5	5	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	3	1	4	0	0	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0	<br>;Remove a band ca 1000Hz wide, centered around 2KHz<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	4	3	309	1.5	5	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	9	1	4	0	0	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0<br>;Pass a band ca 200Hz wide, centered around 1KHz<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	8	3	309	1.5	5	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	8	1	22	0	0	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0<br>;High Pass<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	12	3	309	1.5	5	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	6	1	5	0	0	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0<br>;Low Pass<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	16	3	309	1.5	5	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	7	1	12	0	0	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0<br>f0	20<br>s<br>;move from flat to notched to peak to flat<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	0	3	309	1.5	5	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	3	1	4	2	1	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	1	1	0	3	0<br>;move from flat to peak to notched to flat<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	4	3	309	1.5	5	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	3	.5	5	1	1	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	2	1.5	0	3	0<br>;slow down and move from start of sound to middle and back, from notched to flat to peak<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	8	6	309	3	16	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2<br>	2	3	10	3	3	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	1	0	0	0	0<br>;same, from peak to flat to notched<br>i01	15	6	309	3	16	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2<br>	1	3	10	3	3	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	2	0	0	0	0<br>f0	22<br>s<br>;exchange bands at 500 and 4000<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	0	3	309	1.5	5	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	8	3	18	11	0	12<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0<br>;Repeat down 2 octaves<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	4	3	309	1.5	5	-24<br>;	fn1	dur1	igain1	fn2	dur2	igain2	<br>	8	3	19	11	0	12<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0<br>f0	8<br>s<br>;Crossfade between bins 16-31 and 32-63<br>i01	0	6	309	3	16	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2<br>	18	6	14	19	0	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	18	0	0	0	0<br>f0	7<br>s<br>;Play sound at original speed and pitch...<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	0	3	309	3	4	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2<br>	3	3	4	3	0	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0<br>;...combined with stretched bins 2, 4, 8, and 16<br>i01	0	6	309	3	16	1	<br>;	fn1	dur1	igain1	fn2	dur2	igain2<br>	23	6	10	23	0	0<br>;	fn3	dur3	igain3	fn4	igain4<br>	0	0	0	0	0<br>f0	7<br>s<br>;Use vpvoc to crossfade from original sound to bins 16-19 only.<br>;nn	st	dur	.nnn	length	tpfn	ipshift	<br>i01	0	6	309	3	22	0<br>;	fn1	dur1	igain1	fn2	dur2	igain2<br>	3	3	4	21	4	6<br>;	fn3	dur3	igain3	fn4	igain4<br>	21	0	0	3	0<br>f0	7<br>s<br>;synthesize bins 16-19 only using pvread and oscil (instr 2)<br>;	st	dur	.nnn	length	tpfn	binno	gain<br>i02	0	6	309	3	16	16	10<br>i02	.	.	.	.	.	17<br>i02	.	.	.	.	.	18<br>i02	.	.	.	.	.	19<br>e<br>
+</pre>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+
+<table border=0 cellspacing=0 cellpadding=0 width=638 style='width:478.5pt;
+ mso-cellspacing:0in;mso-padding-alt:5.25pt 5.25pt 5.25pt 5.25pt'>
+ <tr>
+  <td width="32%" valign=top style='width:32.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p><a href="../../../dwnld/classorc/vpvoc2.orc">Download
+  vpvoc2.orc</a></p>
+  </td>
+  <td width="37%" valign=top style='width:37.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p align=center style='text-align:center'><a
+  href="../../../dwnld/arc/crashcym.zip">Download
+  crashcym.zip</a></p>
+  </td>
+  <td width="31%" valign=top style='width:31.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p align=right style='text-align:right'><a
+  href="../../../dwnld/classsco/vpvoc2.sco">Download
+  vpvoc2.sco</a></p>
+  </td>
+ </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

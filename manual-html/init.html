@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>init</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="inh.html" title="inh" />
+    <link rel="next" href="initc14.html" title="initc14" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">init</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="inh.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="initc14.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="init">
+      <a id="init"></a>
+      <div class="titlepage"></div>
+      <a id="IndexInit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">init</span>
+        </h2>
+        <p>init — 
+       Puts the value of the i-time expression into a k- or a-rate variable.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3340595"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>init</strong></span> iarg</pre>
+        <pre class="synopsis">ires <span class="command"><strong>init</strong></span> iarg</pre>
+        <pre class="synopsis">kres <span class="command"><strong>init</strong></span> iarg</pre>
+        <pre class="synopsis">ares, ...  <span class="command"><strong>init</strong></span> iarg, ...</pre>
+        <pre class="synopsis">ires, ... <span class="command"><strong>init</strong></span> iarg, ...</pre>
+        <pre class="synopsis">kres, ...<span class="command"><strong>init</strong></span> iarg, ...</pre>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3341531"></a>
+        <h2>Description</h2>
+        <p> 
+      Put the value of the i-time expression into a k- or a-rate variable.
+    </p>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3341542"></a>
+        <h2>Initialization</h2>
+        <p>
+      Puts the value of the i-time expression
+      <span class="emphasis"><em>iarg</em></span> into a k- or a-rate variable, i.e.,
+      initialize the result. Note that <span class="strong"><strong>init</strong></span> provides the only case of an
+      init-time statement being permitted to write into a perf-time
+      (k- or a-rate) result cell; the statement has no effect at
+      perf-time.
+    </p>
+        <p>
+      Since version 5.13 it is possible to initialise upto 24
+      variables of the same class in one statement.  If there are more
+      output variables than input expressions then the last one is
+      repeated.  It is an error to have more inputs than outputs.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3341575"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="assign.html" title="="><em class="citetitle">=</em></a>,
+      <a class="link" href="divz.html" title="divz"><em class="citetitle">divz</em></a>,
+      <a class="link" href="tival.html" title="tival"><em class="citetitle">tival</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3341609"></a>
+        <h2>Credits</h2>
+        <p>
+      Init first appeared in the original Csound, but the extension to
+      multiple values is by
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, and Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>February 2010</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.13</p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="inh.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="initc14.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">inh </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> initc14</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

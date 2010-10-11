@@ -1,0 +1,324 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./filters_files/filelist.xml">
+<link rel=Edit-Time-Data href="./filters_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Csound Filter Units</title>
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{margin-right:0in;
+	mso-margin-top-alt:auto;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+pre
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Courier New";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+<meta name=Template content="E:\MSOFFICE\OFFICE\html.dot">
+</head>
+
+<body bgcolor=silver lang=EN-US link=blue vlink=purple style='tab-interval:
+.5in'>
+
+<div class=Section1><pre>;-------------------------------------;</pre><pre>; Simple Tests of Csound Filter Units ;</pre><pre>;-------------------------------------;</pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre>sr<span
+style='mso-tab-count:1'>      </span>=<span style='mso-tab-count:1'>       </span> 44100</pre><pre>kr<span
+style='mso-tab-count:1'>      </span>=<span style='mso-tab-count:1'>       </span> 4410</pre><pre>ksmps<span
+style='mso-tab-count:1'>   </span>=<span style='mso-tab-count:1'>       </span> 10</pre><pre>nchnls<span
+style='mso-tab-count:1'>  </span>=<span style='mso-tab-count:1'>       </span> 1</pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style='mso-tab-count:1'>   </span> 1<span
+style='mso-tab-count:2'>             </span>;1st-order IIR Low Pass Filter<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style='mso-tab-count:1'> </span> &quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout<span
+style='mso-tab-count:1'>    </span>tone<span style='mso-tab-count:1'>    </span> ain,p4,0<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style='mso-tab-count:1'>     </span> aout<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style='mso-tab-count:1'>   </span> 2<span
+style='mso-tab-count:2'>             </span>;1st-order IIR High Pass Filter<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style='mso-tab-count:1'> </span> &quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout<span
+style='mso-tab-count:1'>    </span>atone<span style='mso-tab-count:1'>   </span> ain,p4,0<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style='mso-tab-count:1'>     </span> aout<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style='mso-tab-count:1'>   </span> 3<span
+style='mso-tab-count:2'>             </span>;2nd-order IIR Low Pass Filter<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style='mso-tab-count:1'> </span> &quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout<span
+style='mso-tab-count:1'>    </span>butterlp ain,p4<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style='mso-tab-count:1'>     </span> aout<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style="mso-spacerun: yes">    </span>4<span
+style='mso-tab-count:2'>             </span>;2nd-order IIR High Pass Filter<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style="mso-spacerun: yes">  </span>&quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout<span
+style='mso-tab-count:1'>    </span>butterhp ain,p4<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style="mso-spacerun: yes">      </span>aout<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style="mso-spacerun: yes">    </span>5<span
+style='mso-tab-count:2'>             </span>;2nd-order IIR Band Pass Filter<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style="mso-spacerun: yes">  </span>&quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout<span
+style='mso-tab-count:1'>    </span>butterbp ain,p4,p5<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style="mso-spacerun: yes">      </span>aout<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style="mso-spacerun: yes">    </span>6<span
+style='mso-tab-count:2'>             </span>;2nd-order IIR Band Reject Filter<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style="mso-spacerun: yes">  </span>&quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout<span
+style='mso-tab-count:1'>    </span>butterbr ain,p4,p5<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style='mso-tab-count:1'>     </span> aout<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style='mso-tab-count:1'>   </span> 7<span
+style='mso-tab-count:2'>             </span>;2nd-order IIR Band Pass Filter with optional scaling<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style='mso-tab-count:1'> </span> &quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout<span
+style='mso-tab-count:1'>    </span>reson<span style='mso-tab-count:1'>   </span> ain,p4,p5,1<span
+style='mso-tab-count:1'>   </span>;scale for pitch<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style='mso-tab-count:1'>     </span> aout<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style='mso-tab-count:1'>   </span> 8<span
+style='mso-tab-count:2'>             </span>;Cascade 2 resons to sharpen slope, use balance<o:p></o:p></pre><pre>icf<span
+style='mso-tab-count:1'>     </span>=<span style='mso-tab-count:1'>       </span>p4<o:p></o:p></pre><pre>ibw<span
+style='mso-tab-count:1'>     </span>=<span style='mso-tab-count:1'>       </span>icf/p5<span
+style='mso-tab-count:2'>         </span>;calculate bw from Q<o:p></o:p></pre><pre>iscl<span
+style='mso-tab-count:1'>    </span>=<span style='mso-tab-count:1'>       </span>p6<span
+style='mso-tab-count:2'>             </span>;1 for pitch, 2 for noise<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>   </span>=<span style='mso-tab-count:1'>       </span>(p7 = 0 ? 1 : p7)<span
+style='mso-tab-count:2'>              </span>;optional final gain factor<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style='mso-tab-count:1'> </span> &quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout1<span
+style='mso-tab-count:1'>   </span>reson<span style='mso-tab-count:1'>   </span> ain,icf,ibw,iscl<o:p></o:p></pre><pre>aout2<span
+style='mso-tab-count:1'>   </span>reson<span style='mso-tab-count:1'>   </span> aout1,icf,ibw,iscl<o:p></o:p></pre><pre>asig<span
+style='mso-tab-count:1'>    </span>balance<span style='mso-tab-count:1'> </span> aout2,ain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style='mso-tab-count:1'>     </span> asig*igain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>instr<span style='mso-tab-count:1'>   </span> 9<span
+style='mso-tab-count:2'>             </span>;Compare 2 butterbps to 2 resons<o:p></o:p></pre><pre>icf<span
+style='mso-tab-count:1'>     </span>=<span style='mso-tab-count:1'>       </span>p4<o:p></o:p></pre><pre>ibw<span
+style='mso-tab-count:1'>     </span>=<span style='mso-tab-count:1'>       </span>icf/p5<span
+style='mso-tab-count:2'>         </span>;calculate bw from Q<o:p></o:p></pre><pre>iscl<span
+style='mso-tab-count:1'>    </span>=<span style='mso-tab-count:1'>       </span>p6<span
+style='mso-tab-count:2'>             </span>;1 for pitch, 2 for noise<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>   </span>=<span style='mso-tab-count:1'>       </span>(p7 = 0 ? 1 : p7)<span
+style='mso-tab-count:2'>              </span>;optional final gain factor<o:p></o:p></pre><pre>ain<span
+style='mso-tab-count:1'>     </span>soundin<span style='mso-tab-count:1'> </span> &quot;thewind.wav&quot;<o:p></o:p></pre><pre>aout1<span
+style='mso-tab-count:1'>   </span>butterbp ain,icf,ibw<o:p></o:p></pre><pre>aout2<span
+style='mso-tab-count:1'>   </span>butterbp aout1,icf,ibw<o:p></o:p></pre><pre>asig<span
+style='mso-tab-count:1'>    </span>balance<span style='mso-tab-count:1'> </span> aout2,ain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>out<span style='mso-tab-count:1'>     </span> asig*igain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>        </span>endin<span style='mso-tab-count:1'>   </span></pre>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+<pre>;Test score for Csound filter units<o:p></o:p></pre><pre>;instr1 = tone filter (simple lowpass)<o:p></o:p></pre><pre>;nn<span
+style='mso-tab-count:1'>     </span>st<span style='mso-tab-count:1'>      </span>dur<span
+style='mso-tab-count:1'>     </span>khp<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>     </span>0<span style='mso-tab-count:1'>       </span>2<span
+style='mso-tab-count:1'>       </span>8000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>4000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>2000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>1000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>500<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>250<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>125<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>      </span>15<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;instr3 = butterworth lowpass filter<o:p></o:p></pre><pre>;nn<span
+style='mso-tab-count:1'>     </span>st<span style='mso-tab-count:1'>      </span>dur<span
+style='mso-tab-count:1'>     </span>kcf<o:p></o:p></pre><pre>i03<span
+style='mso-tab-count:1'>     </span>0<span style='mso-tab-count:1'>       </span>2<span
+style='mso-tab-count:1'>       </span>8000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>4000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>2000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>1000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>500<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>250<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>125<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>      </span>15<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;instr7 = reson used as lowpass filters. We set the cf to 0 and adjust the bw.<o:p></o:p></pre><pre>; Note that the half power point (cutoff frequency) will by .707 * kbw<o:p></o:p></pre><pre>;nn<span
+style='mso-tab-count:1'>     </span>st<span style='mso-tab-count:1'>      </span>dur<span
+style='mso-tab-count:1'>     </span>kcf<span style='mso-tab-count:1'>     </span>kbw<o:p></o:p></pre><pre>i07<span
+style='mso-tab-count:1'>     </span>0<span style='mso-tab-count:1'>       </span>2<span
+style='mso-tab-count:1'>       </span>0<span style='mso-tab-count:1'>       </span>8000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>4000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>2000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>1000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>500<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>250<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>125<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>      </span>15<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;instr2 = atone filter<o:p></o:p></pre><pre>;nn<span
+style='mso-tab-count:1'>     </span>st<span style='mso-tab-count:1'>      </span>dur<span
+style='mso-tab-count:1'>     </span>khp<o:p></o:p></pre><pre>i02<span
+style='mso-tab-count:1'>     </span>0<span style='mso-tab-count:1'>       </span>2<span
+style='mso-tab-count:1'>       </span>250<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>500<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>1000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>2000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>4000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>8000<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>      </span>13<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;instr4 = butterworth hipass filter<o:p></o:p></pre><pre>;nn<span
+style='mso-tab-count:1'>     </span>st<span style='mso-tab-count:1'>      </span>dur<span
+style='mso-tab-count:1'>     </span>kcf<o:p></o:p></pre><pre>i04<span
+style='mso-tab-count:1'>     </span>0<span style='mso-tab-count:1'>       </span>2<span
+style='mso-tab-count:1'>       </span>250<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>500<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>1000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>2000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>4000<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>8000<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>      </span>13<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;instr8 = two cascaded resons used as a sharp bandpass filter. <o:p></o:p></pre><pre>;nn<span
+style='mso-tab-count:1'>     </span>st<span style='mso-tab-count:1'>      </span>dur<span
+style='mso-tab-count:1'>     </span>kcf<span style='mso-tab-count:1'>     </span>Q<span
+style='mso-tab-count:1'>       </span>iscl<span style='mso-tab-count:1'>    </span>igain<o:p></o:p></pre><pre>i08<span
+style='mso-tab-count:1'>     </span>0<span style='mso-tab-count:1'>       </span>2<span
+style='mso-tab-count:1'>       </span>100<span style='mso-tab-count:1'>     </span>10<span
+style='mso-tab-count:1'>      </span>1<span style='mso-tab-count:1'>       </span>0<span
+style='mso-tab-count:1'>       </span><o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>200<span style='mso-tab-count:1'>     </span><o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>400<span style='mso-tab-count:1'>     </span><o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>600<span style='mso-tab-count:1'>     </span><o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>800<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>.9<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>1600<span style='mso-tab-count:1'>    </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>.7<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>      </span>13<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;instr9 = two cascaded butterbps used as a sharp bandpass filter. <o:p></o:p></pre><pre>;nn<span
+style='mso-tab-count:1'>     </span>st<span style='mso-tab-count:1'>      </span>dur<span
+style='mso-tab-count:1'>     </span>kcf<span style='mso-tab-count:1'>     </span>Q<span
+style='mso-tab-count:1'>       </span>iscl<span style='mso-tab-count:1'>    </span>igain<o:p></o:p></pre><pre>i09<span
+style='mso-tab-count:1'>     </span>0<span style='mso-tab-count:1'>       </span>2<span
+style='mso-tab-count:1'>       </span>100<span style='mso-tab-count:1'>     </span>10<span
+style='mso-tab-count:1'>      </span>1<span style='mso-tab-count:1'>       </span>0<span
+style='mso-tab-count:1'>       </span><o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>200<span style='mso-tab-count:1'>     </span><o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>400<span style='mso-tab-count:1'>     </span><o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>600<span style='mso-tab-count:1'>     </span><o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>800<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>.9<o:p></o:p></pre><pre>i.<span
+style='mso-tab-count:1'>      </span>+<span style='mso-tab-count:1'>       </span>.<span
+style='mso-tab-count:1'>       </span>1600<span style='mso-tab-count:1'>    </span>.<span
+style='mso-tab-count:1'>       </span>.<span style='mso-tab-count:1'>       </span>.6<o:p></o:p></pre><pre>e<span
+style='mso-tab-count:1'>       </span></pre>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+
+<table border=0 cellspacing=0 cellpadding=0 width=624 style='width:6.5in;
+ mso-cellspacing:0in;mso-padding-alt:5.25pt 5.25pt 5.25pt 5.25pt'>
+ <tr>
+  <td width="35%" valign=top style='width:35.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p><a
+  href="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/filters.orc">Download
+  filters.orc</a></p>
+  </td>
+  <td width="34%" valign=top style='width:34.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p align=center style='text-align:center'><a
+  href="fttp:/indigo.music.utexas.edu/pub/Csound/ClassExamples/thewind.zip">Download
+  thewind.zip</a></p>
+  </td>
+  <td width="32%" valign=top style='width:32.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p align=right style='text-align:right'><a
+  href="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/filters.sco">Download
+  filters.sco</a></p>
+  </td>
+ </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>TclCsound</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOverview.html" title="Part I. Overview" />
+    <link rel="prev" href="CommandCsoundVST.html" title="CsoundVST" />
+    <link rel="next" href="cswish.html" title="Cswish: the windowing shell" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">TclCsound</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandCsoundVST.html">Prev</a> </td>
+          <th width="60%" align="center">Part I. Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cswish.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" title="TclCsound">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="tclcsound"></a>TclCsound</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+TclCsound was introduced to provide a simple scripting interface to Csound.
+Tcl is a simple language that is easy to extend and provide nice facilities such as easy file 
+access and TCP networking. With its Tk component, it can also handle a graphic and event interface. 
+TclCsound provides three ‘points of contact' with Tcl: </p>
+      <p>1. a csound-aware tcl interpreter (cstclsh) </p>
+      <p>2. a csound-aware windowing shell (cswish) </p>
+      <p>3. a csound commands module for Tcl/Tk (tclcsound dynamic lib) </p>
+      <div class="section" title="The Tcl interpreter: cstclsh">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="tclcsh"></a>The Tcl interpreter: cstclsh </h2>
+            </div>
+          </div>
+        </div>
+        <p>With cstclsh, it is possible to have interactive control over a csound performance.
+ The command starts an interactive shell, which holds an instance of Csound. 
+ A number of commands can then be used to control it. For instance, the following 
+ command can compile csound code and load it in memory ready for performance: </p>
+        <pre class="programlisting">csCompile -odac <span class="emphasis"><em>orchestra</em></span> <span class="emphasis"><em>score</em></span> -m0 </pre>
+        <p>Once this is done, performance can be started in two ways: using csPlay or csPerform . The command </p>
+        <pre class="programlisting">csPlay </pre>
+        <p>will start the Csound performance in a separate thread and return to the cstclsh prompt. 
+A number of commands can then be used to control Csound. For instance, </p>
+        <pre class="programlisting">csPause </pre>
+        <p>will pause performance; and </p>
+        <pre class="programlisting">csRewind </pre>
+        <p>will rewind to the beginning of the note-list. The csNote, csTable and 
+csEvent commands can be used to add Csound score events to the performance, on-the-fly. 
+The csPerform command, as opposed to csPlay , will not launch a separate thread, but will run Csound in 
+the same thread, returning only when the performance is finished. A variety of other commands exist, 
+providing full control of Csound. </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandCsoundVST.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cswish.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">CsoundVST </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Cswish: the windowing shell </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

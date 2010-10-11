@@ -1,0 +1,834 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+  <style>
+	<!--
+		P.sdfootnote { margin-left: 0.2in; text-indent: -0.2in; margin-bottom: 0in; font-size: 10pt }
+		A.sdfootnoteanc { font-size: 57% }
+	-->
+	</style>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+  <meta name="GENERATOR" content="OpenOffice.org 2.0  (Linux)">
+  <meta name="CREATED" content="20051208;19291300">
+  <meta name="CHANGED" content="20070503;15014000">
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+  <meta name="GENERATOR" content="OpenOffice.org 2.0  (Linux)">
+  <meta name="CREATED" content="20051208;19291300">
+  <meta name="CHANGED" content="20070503;15014000">
+</head>
+<body>
+<div id="wrap">
+<div id="navigation"> CSOUND JOURNAL: <a href="../index.html">Home</a>
+|&nbsp;<a href="index.html">Issue 6</a> </div>
+<div id="header">
+<h2>Using Python Inside Csound</h2>
+<h3>An introduction to the Python
+opcodes</h3>
+Andr&eacute;s Cabrera<br>
+andres AT geminiflux.com
+</div>
+<div id="content">
+<h2>Introduction</h2>
+<p>Csound has the ability of executing Python scripts from within the
+orchestra text using a group of opcodes called the Python opcodes.
+These opcodes are a valuable but relatively unexplored extension to
+the Csound language, which can not only simplify data handling for
+parameter control or note generation, but also open the door for any
+type of interfacing, communication and extensions available in the
+Python language.</p>
+<h2>I. Requirements </h2>
+<h3>Python</h3>
+<p>To use the Python opcodes, you first need to obtain Python, which
+is a separate install from Csound on Windows and Linux. You can
+obtain the latest version from <a href="http://www.python.org/">www.python.org</a>,
+but you need to check which version of Python your version of Csound
+has been compiled against. Recent versions of Csound require Python
+2.4.</p>
+<p>You can check if you already have Python by opening a DOS prompt
+or Terminal and typing "python". If Python is installed on your
+system, you should get something like:</p>
+<pre>Python 2.4.4 (#2, Oct 20 2006, 00:23:25)<br>Type "help", "copyright", "credits" or "license" for more information.<br><br>&gt;&gt;&gt;<br></pre>
+<p>This is the Python "interactive shell". This just means that you
+can type Python code directly there, and have it execute immediately.
+Try something like:</p>
+<pre>&gt;&gt;&gt;a=4<br></pre>
+<p>When you press the Enter, apparently nothing happens, but you have
+assigned the value of 4 to the variable "a". Now type:</p>
+<pre>&gt;&gt;&gt;print a<br></pre>
+<p>You will see the shell prints a "4".</p>
+<p>While an instance of a Python interpreter (like the interactive
+shell, or inside a Csound execution) is running, it remembers all the
+variables and functions that have been declared. To declare a
+function (a set of instructions grouped under a single name), you
+must use this syntax:</p>
+<pre>def average(a,b):<br>    ave = (a + b)/2<br>    return ave<br></pre>
+<p>Notice that you use the keyword <i>def</i> to define a function,
+and
+that you specify the function's arguments between parenthesis. You
+must use ":" to define the start of the function. You use the
+keyword <i>return</i> to specify variables returned by the function.
+Also notice that indentation (the spaces between the start of the
+line and the start of text) in Python is very important. In the case
+of functions, indentation tells Python which instructions are part of
+the function, and when the function ends. So you must be very careful
+about indentation when writing Python code. To define this function
+in the interpreter, just type each line one by one. Notice that when
+you type the first line, the prompt changes to "..." instead of
+"&gt;&gt;&gt;", indicating that you are defining the function.
+You can continue typing the other lines. When you're finished writing
+your function, press enter again to tell the shell you're done with
+the function. The prompt returns to normal, and your function has
+been defined. You can now use your function like this:</p>
+<pre>&gt;&gt;&gt;print average(100, 200)<br></pre>
+<p>This will naturally print the value "150".</p>
+<h3>Learning Python</h3>
+<p>The net is full of Python tutorials and examples, but two popular
+resources to get started are the "official Python tutorial" at
+<a href="http://docs.python.org/tut/tut.html">http://docs.python.org/tut/tut.html</a>
+and the "Dive into Python" book at <a
+ href="http://www.diveintopython.org/">www.diveintopython.org</a>.
+If you already know Csound, all the Python code used here should be
+easy to read.</p>
+<h3>Why Python?</h3>
+<p>Though learning Python means having to grasp a new syntax and a
+new way to express algorithms, it is generally accepted that Python
+is one of the easiest programming languages to learn. Python is an
+interpreted language, which means it executes the code line by line
+as it receives it, without the need of building (compiling) a binary
+to run, like in C or Java. Python is also a weakly typed language,
+which means you don't need to declare variable types (you don't need
+to specify whether you want a string, an array or an integer, Python
+deduces it from what you fill it with), and more importantly, many
+variable type conversions and operations are greatly simplified<a
+ class="sdfootnoteanc" name="sdfootnote1anc" href="#sdfootnote1sym"><sup>1</sup></a>.
+It also has very easy-to-use arrays and lists, which can be nested
+and controlled easily. The big bonus of learning Python is that apart
+from enabling more complex data structures, and that all the features
+from the Python language will be available from a Csound orchestra or
+.csd file, you learn a very powerful but simple language that can
+help you in many computer chores.</p>
+<h2>II. The Python Opcodes </h2>
+<h3>pyinit and pyruni</h3>
+<p>To use the Python opcodes inside Csound, you must first start the
+Python interpreter. This is done using the <i>pyinit</i> opcode. The
+<span style=""><i>pyinit</i><span style="font-style: normal;">
+opcode must be put in the header before any other Python opcode is
+used, otherwise, since the interpreter is not running, all Python
+opcodes will return an error. You can run any Python code by placing
+it within quotes as argument to the opcode </span><i>pyruni</i><span
+ style="font-style: normal;">.
+This opcode executes the Python code at init time. If it is put in
+the header, it will be run once, at the start of Csound compilation,
+before any score events. The example below, shows a simple </span><i>csd</i><span
+ style="font-style: normal;">
+file which prints the text "44100" to the terminal. Note that a
+dummy instrument must be declared to satisfy the Csound parser.</span></span></p>
+<p style="font-style: normal;"><br>
+<br>
+</p>
+<pre><font color="#660000"><b>&lt;CsoundSynthesizer&gt;</b></font>
+<font color="#660000"><b>&lt;CsInstruments&gt;</b></font>
+<font color="#000000"><b>sr</b>=</font><font color="#0000ff">44100</font>
+<font color="#000000"><b>ksmps</b>=</font><font color="#0000ff">128</font>
+<font color="#000000"><b>nchnls</b>=</font><font color="#0000ff">2</font>
+
+<font color="#00ff00"><i>;Start python interpreter</i></font>
+<b>pyinit</b>
+
+<b>pyruni</b><font color="#000000"> </font><font color="#dd0000">"print 44100"</font>
+
+<b><font color="#000000">instr </font></b><font color="#0000ff">1</font>
+<font color="#000000"><b>endin</b></font>
+
+<font color="#660000"><b>&lt;/CsInstruments&gt;</b></font>
+<font color="#660000"><b>&lt;CsScore&gt;</b></font>
+<font color="#660000"><b>&lt;/CsScore&gt;</b></font>
+<font color="#660000"><b>&lt;/CsoundSynthesizer&gt;</b></font></pre>
+<p>When using quoted text, you can't have any line breaks, as that will
+confuse the Csound parser. Csound provides the {{ and }} delimiters
+to specify multi-line strings, which can be used to create multi-line
+Python scripts. You can use these delimiters any place you use quotes
+-e.g. the <i>system</i> opcode-, and they will allow line breaks.
+These delimiters also allow you to use quotes inside them.</p>
+<p>The Python interpreter maintains its state for the length of the
+Csound run. This means that any variables declared will be available
+on all calls to the Python interpreter. In other words, they are
+global. The code below shows variables "a" and "b" being
+modified by Python opcodes, and that they are available in all
+instruments. Also, you must convert the number (a+b) to a string to
+concatenate it with another string using the function <i>str()</i>.</p>
+<pre><font color="#660000"><b>&lt;CsoundSynthesizer&gt;</b></font>
+<font color="#660000"><b>&lt;CsInstruments&gt;</b></font>
+
+<font color="#000000"><b>sr</b>=</font><font color="#0000ff">44100</font>
+<font color="#000000"><b>ksmps</b>=</font><font color="#0000ff">128</font>
+<font color="#000000"><b>nchnls</b>=</font><font color="#0000ff">2</font>
+
+<b>pyinit</b><font color="#000000"> </font><i><font color="#00ff00">;Start python interpreter</font></i>
+
+<b>pyruni</b><font color="#000000"> {{</font>
+a = 2
+b = 3
+print "a + b = " + str(a+b)
+<font color="#000000">}} </font><i><font color="#00ff00">;Execute a python script on the header</font></i>
+
+<b><font color="#000000">instr </font></b><font color="#0000ff">1</font>
+<b>pyruni</b><font color="#000000"> {{</font>a = 6<br>b = 5<br>print "a + b = " + str(a+b)<font
+ color="#000000">}} </font>
+<font color="#000000"><b>endin</b></font>
+
+
+<b><font color="#000000">instr </font></b><font color="#0000ff">2</font>
+<b>pyruni</b><font color="#000000"> {{</font>print "a + b = " + str(a+b)<font
+ color="#000000">}}</font>
+<font color="#000000"><b>endin</b></font>
+
+
+<font color="#660000"><b>&lt;/CsInstruments&gt;</b></font>
+
+<font color="#660000"><b>&lt;CsScore&gt;</b></font>
+
+<font color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">0</font><font
+ color="#000000"> </font><font color="#0000ff">1</font>
+<font color="#000000"><b>i</b> </font><font color="#0000ff">2</font><font
+ color="#000000"> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">0</font>
+
+<font color="#660000"><b>&lt;/CsScore&gt;</b></font>
+<font color="#660000"><b>&lt;/CsoundSynthesizer&gt;</b></font></pre>
+<p>The previous program will print among the rest of the Csound output
+or on the calling shell (if using a frontend<a class="sdfootnoteanc"
+ name="sdfootnote2anc" href="#sdfootnote2sym"><sup>2</sup></a>)
+the following lines:</p>
+<pre>a + b = 5<br>a + b = 11<br>a + b = 11<br></pre>
+<p>The first of these was executed in the header, the second was
+printed
+by instrument 1 and the second by instrument 2.</p>
+<h3>pyrun</h3>
+<p>Python scripts can also be executed at k-rate using <i>pyrun</i><span
+ style="font-style: normal;">.
+When </span><i>pyrun</i><span style="font-style: normal;"> is used,
+the script will be executed again on every k-pass for the instrument,
+which means it will be executed </span><i>kr</i><span
+ style="font-style: normal;">
+times per second. The example below shows a simple example of </span><i>pyrun</i><span
+ style="font-style: normal;">.</span></p>
+<pre><font color="#660000"><b>&lt;CsoundSynthesizer&gt;</b></font>
+<font color="#660000"><b>&lt;CsInstruments&gt;</b></font>
+
+<font color="#000000"><b>sr</b>=</font><font color="#0000ff">44100</font>
+<b>kr</b><span style="">=<font color="#0000ff">100</font></span>
+
+<font color="#000000"><b>nchnls</b>=</font><font color="#0000ff">2</font>
+
+<b>pyinit</b>
+
+<b>pyruni</b><font color="#000000"> </font><font color="#dd0000">"a = 0"</font>
+
+<b><font color="#000000">instr </font></b><font color="#0000ff">1</font>
+<font color="#000000">    </font><b>pyrun</b><font color="#000000"> </font><font
+ color="#dd0000">"a = a + 1"</font><font color="#000000"> </font>
+
+<font color="#000000"><b>endin</b></font>
+
+
+<b><font color="#000000">instr </font></b><font color="#0000ff">2</font>
+<font color="#000000">    </font><b>pyruni</b><font color="#000000"> {{</font>print "a = " + str(a)<font
+ color="#000000">}}</font>
+
+<font color="#000000"><b>endin</b></font>
+
+
+<font color="#660000"><b>&lt;/CsInstruments&gt;</b></font>
+<font color="#660000"><b>&lt;CsScore&gt;</b></font>
+
+<font color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">0</font><font
+ color="#000000"> </font><font color="#0000ff">1</font><font
+ color="#000000">  </font><i><font color="#808080">;Adds to a for 1 second</font></i>
+
+<font color="#000000"><b>i</b> </font><font color="#0000ff">2</font><font
+ color="#000000"> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">0</font><font
+ color="#000000">  </font><i><font color="#808080">;Prints a</font></i>
+<font color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">2</font><font
+ color="#000000"> </font><font color="#0000ff">1</font><font
+ color="#000000">  </font><i><font color="#808080">;Adds to a for another second</font></i>
+
+<font color="#000000"><b>i</b> </font><font color="#0000ff">2</font><font
+ color="#000000"> </font><font color="#0000ff">3</font><font
+ color="#000000"> </font><font color="#0000ff">0</font><font
+ color="#000000">  </font><i><font color="#808080">;Prints a</font></i>
+
+<font color="#660000"><b>&lt;/CsScore&gt;</b></font>
+<font color="#660000"><b>&lt;/CsoundSynthesizer&gt;</b></font></pre>
+<p>This csd file produces the following output from Python:</p>
+<pre>a = 100<br>a = 200<br></pre>
+<p>This shows that the Python script in instrument 1 was executed 100
+times per second. Which is what is expected since kr = 100.<span
+ style="font-style: normal;">
+If </span><i>kr</i><span style="font-style: normal;"> is not defined,
+remember that </span><i>kr = sr/ksmps</i><span
+ style="font-style: normal;">.</span></p>
+<h3>pyexec</h3>
+<p>Csound allows you to run Python script files that exist outside
+your <i>csd</i> file. This is done using <i>pyexec</i><span
+ style="font-style: normal;">.
+The </span><i>pyexec</i><span style="font-style: normal;"> opcode will
+run the script indicated, like this:</span></p>
+<pre>pyexec "c:/python/myscript.py"<br></pre>
+<p>In this case, the script "myscript.py" will be executed at
+k-rate. You can give full or relative path names.</p>
+<p>You can create Python scripts using any ordinary (non-rich-text)
+text editor like notepad.</p>
+<p>There are other versions of the <i>pyexec</i> opcode, which run at
+initialization only (<i>pyexeci</i>) and others that include an
+additional trigger argument (<i>pyexect</i>).</p>
+<h3>pyeval and friends</h3>
+<p>The opcode <i>pyeval</i> and its relatives, allow you to pass to
+Csound the value of a Python variable. You specify the name of the
+variable in quotes, and Csound will assign the Python variable's
+value to the opcode's output variable. You can replace instrument 2
+from the previous example with (notice I've used <i>pyevali</i><span
+ style="font-style: normal;">
+which works at initialization only</span>):</p>
+<pre><b><font color="#000000">instr </font></b><font color="#0000ff">2</font>
+ival <b>pyevali</b> <font
+ color="#dd0000">"a"</font>
+
+<b>prints</b><font color="#000000"> </font><font color="#dd0000">"a = %i\\n"</font><font
+ color="#000000">, ival</font>
+<font color="#000000"><b>endin</b></font>
+</pre>
+<p>It should be this easy, but this is where a small pitfall comes
+in...
+Maybe you already tried and got:</p>
+<pre>INIT ERROR in instr 2: pyevali: expression must evaluate in a float<br></pre>
+<p>What happens is that Python has delivered an integer to Csound,
+which
+expects a floating-point number. In other words, Csound always works
+with numbers which are not integer (to represent a 1, Csound actually
+uses 1.0). This is equivalent mathematically, but in computer memory
+these two numbers are stored in a different way. So what you need to
+do is tell Python to deliver a floating-point number (also called a
+float) to Csound. What you need to do is "fool" Python into
+thinking you will be using decimals, even if you won't, so that the
+automatic type detection in Python, declares a value as a float
+instead of an integer. You can do this by changing the line in the
+header to:</p>
+<pre><b>pyruni</b><font color="#000000"> </font><font color="#dd0000">"a = 0.0"</font>
+
+</pre>
+<p>This will make the variable "a" be declared as a float within
+Python, and it will then be a valid variable to pass to Csound.</p>
+<h3>pyassign and friends</h3>
+<p>Likewise, you can also assign values to Python variables directly,
+using <i>pyassign</i><span style="font-style: normal;">. You could
+change the statement:</span></p>
+<pre><b>pyruni</b><font color="#000000"> </font><font color="#dd0000">"a = 0.0"</font>
+</pre>
+<p style="font-style: normal;">to:</p>
+<pre><b>pyassigni</b> <font color="#dd0000">"a"</font>, 0<br><br></pre>
+<p>Doing this also prevents problems with integer/floats types, because
+"a" is declared as a float by Csound, since all numbers are
+floats for Csound.</p>
+<p>As before, <i>pyassign</i> comes in different versions, for k-rate
+and i-rate, and there are also versions with a trigger argument
+(<span style=""><i>pyassignt</i><span style="font-style: normal;">).</span></span></p>
+<h3>pycall</h3>
+<p>Apart from reading and setting variables directly with an opcode,
+you can also call Python functions from Csound and have the function
+return values directly to Csound. This is the purpose of the <i>pycall</i>
+opcodes. With these opcodes you specify the function to call and the
+function arguments as arguments to the opcode. You can have the
+function return values (up to 8 return values are allowed) directly
+to Csound i- or k-rate variables. You must choose the appropriate
+opcode depending on the number of return values from the function,
+and the Csound rate (i- or k-rate) at which you want to run the
+Python function. Just add a number from 1 to 8 after to <i>pycall</i>,
+to select the number of outputs for the opcode. If you just want to
+execute a function without return value simply use <i>pycall</i>. For
+example, the function "average" defined above, can be called
+directly from Csound using:</p>
+<pre>kave   <b>pycall1</b> "average", ka, kb<br></pre>
+<p>The output variable <i>kave</i><span style="font-style: normal;">,
+will calculate the average of the variable </span><i>ka</i><span
+ style="font-style: normal;">
+and </span><i>kb</i><span style="font-style: normal;"> at k-rate.</span></p>
+<p style="font-style: normal;">As you may have noticed, the Python
+opcodes run at k-rate, but also have i-rate versions if an "i" is
+added to the opcode name. This is also true for <i>pycall</i>. You
+can use <i>pycall1i</i>, <i>pycall2i</i>, etc. if you want the
+function to be evaluated at instrument initialization, or in the
+header. The following csd shows a simple usage of the <i>pycall</i>
+opcodes:</p>
+<pre><font color="#660000"><b>&lt;CsoundSynthesizer&gt;</b></font>
+<font color="#660000"><b>&lt;CsInstruments&gt;</b></font>
+
+<font color="#000000"><b>sr</b>=</font><font color="#0000ff">44100</font>
+<font color="#000000"><b>kr</b>=</font><font color="#0000ff">100</font>
+<font color="#000000"><b>nchnls</b>=</font><font color="#0000ff">2</font>
+
+<b>pyinit</b>
+
+<b>pyruni</b><font color="#000000"> {{</font>
+def average(a,b):
+    ave = (a + b)/2
+    return ave
+<font color="#000000">}} </font><i><font color="#808080">;Define function "average"</font></i>
+
+<b><font color="#000000">instr </font></b><font color="#0000ff">1</font>
+
+<font color="#000000">iave   </font><b>pycall1i</b><font color="#000000"> </font><font
+ color="#dd0000">"average"</font><font color="#000000">, </font><b><font
+ color="#0000cc">p4</font></b><font color="#000000">, </font><b><font
+ color="#0000cc">p5</font></b>
+<b>prints</b><font color="#000000"> </font><font color="#dd0000">"a = %i</font><font
+ color="#ff00ff">\\</font><font color="#dd0000">n"</font><font
+ color="#000000">, iave</font>
+<font color="#000000"><b>endin</b></font>
+
+
+<font color="#660000"><b>&lt;/CsInstruments&gt;</b></font>
+<font color="#660000"><b>&lt;CsScore&gt;</b></font>
+
+<font color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">0</font><font
+ color="#000000"> </font><font color="#0000ff">1</font><font
+ color="#000000">  </font><font color="#0000ff">100</font><font
+ color="#000000">  </font><font color="#0000ff">200</font>
+
+<font color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">1</font><font
+ color="#000000">  </font><font color="#0000ff">1000</font><font
+ color="#000000"> </font><font color="#0000ff">2000</font>
+
+<font color="#660000"><b>&lt;/CsScore&gt;</b></font>
+<font color="#660000"><b>&lt;/CsoundSynthesizer&gt;</b></font>
+
+</pre>
+<p>This csd will print the following output:</p>
+<pre>a = 150<br>B  0.000 ..  1.000 T  1.000 TT  1.000 M:      0        0  <br>a = 1500<br>B  1.000 ..  2.000 T  2.000 TT  2.000 M:      0        0</pre>
+<h3>Local instrument scope</h3>
+<p>Sometime you want Python variables to be global, and sometimes you
+may want Python variables to be local to the instrument instance.
+This is possible using the local Python opcodes. These opcodes are
+the same as the ones shown above, but have the prefix <i>pyl</i>
+instead of <i>py</i>. There are opcodes like <i>pylruni</i>,
+<i>pylcall1t</i><span style="font-style: normal;"> and </span><i>pylassigni</i><span
+ style="font-style: normal;">,
+which will behave just like their global counterparts, but they will
+affect local Python variables only. It is important to have in mind
+that this locality applies to instrument instances, not instrument
+numbers.<br>
+You can think of local python calls as behaving like i-rate (or init)
+variables within instruments, and non-local versions behaving like
+global variables. Each instrument instance or note holds a unique and
+independent value for each i-rate variable, while global variables
+affect all instruments, as can be seen here:<br>
+</span></p>
+<pre><span style="font-weight: bold; color: rgb(102, 0, 0);">&lt;CsoundSynthesizer&gt;</span><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;CsInstruments&gt;</span><br><br><span
+ style="color: rgb(102, 0, 102);">gkprint</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">init</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">0</span><br><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">instr </span><span
+ style="color: rgb(0, 0, 255);">1</span><br><span
+ style="color: rgb(0, 102, 0);">ivalue</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">init</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="font-weight: bold; color: rgb(0, 0, 204);">p4</span><br><span
+ style="color: rgb(0, 102, 102);">ktrig</span><span
+ style="color: rgb(0, 0, 0);"> changed </span><span
+ style="color: rgb(102, 0, 102);">gkprint</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">if</span><span
+ style="color: rgb(0, 0, 0);"> (</span><span
+ style="color: rgb(0, 102, 102);">ktrig</span><span
+ style="color: rgb(0, 0, 0);"> == </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);">) </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">then</span><br><span
+ style="color: rgb(0, 0, 0);">  </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">printk</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(128, 0, 128);">0.5</span><span
+ style="color: rgb(0, 0, 0);">, </span><span
+ style="color: rgb(0, 102, 0);">ivalue</span><br><span
+ style="color: rgb(0, 0, 0);">endif</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">endin</span><br><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">instr </span><span
+ style="color: rgb(0, 0, 255);">2</span><br><span
+ style="color: rgb(102, 0, 102);">gkprint</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">init</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">endin</span><br><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;/CsInstruments&gt;</span><br><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;CsScore&gt;</span><br><span
+ style="font-style: italic; color: rgb(128, 128, 128);">;          p4</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">0</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">5</span><span
+ style="color: rgb(0, 0, 0);">   </span><span
+ style="color: rgb(0, 0, 255);">100</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">5</span><span
+ style="color: rgb(0, 0, 0);">   </span><span
+ style="color: rgb(0, 0, 255);">200</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">2</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">5</span><span
+ style="color: rgb(0, 0, 0);">   </span><span
+ style="color: rgb(0, 0, 255);">300</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">3</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">5</span><span
+ style="color: rgb(0, 0, 0);">   </span><span
+ style="color: rgb(0, 0, 255);">400</span><br><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">2</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">3</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;/CsScore&gt;</span><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;/CsoundSynthesizer&gt;</span> <br></pre>
+<p style="margin-bottom: 0in;">This Csound File will print the
+following, showing that all <span style="font-style: italic;">ivalue</span>
+variables hold a different value at the same time for each individual
+note:</p>
+<pre>&nbsp;i&nbsp;&nbsp; 1 time&nbsp;&nbsp;&nbsp;&nbsp; 3.00023:&nbsp;&nbsp; 100.00000</pre>
+<pre>&nbsp;i&nbsp;&nbsp; 1 time&nbsp;&nbsp;&nbsp;&nbsp; 3.00023:&nbsp;&nbsp; 200.00000</pre>
+<pre>&nbsp;i&nbsp;&nbsp; 1 time&nbsp;&nbsp;&nbsp;&nbsp; 3.00023:&nbsp;&nbsp; 300.00000</pre>
+<pre>&nbsp;i&nbsp;&nbsp; 1 time&nbsp;&nbsp;&nbsp;&nbsp; 3.00023:&nbsp;&nbsp; 400.00000<br></pre>
+<p style="margin-bottom: 0in;">In the same way, the local versions of
+the python opcodes store information which is local to a particular
+note. This can be seen in this example which does the same as above,
+but storing the values in local python variables.</p>
+<pre><span style="font-weight: bold; color: rgb(102, 0, 0);">&lt;CsoundSynthesizer&gt;</span><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;CsInstruments&gt;</span><br><br><span
+ style="color: rgb(0, 0, 0);">pyinit</span><br><br><span
+ style="color: rgb(102, 0, 102);">gkprint</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">init</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">0</span><br><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">instr </span><span
+ style="color: rgb(0, 0, 255);">1</span><br><span
+ style="font-style: italic; color: rgb(128, 128, 128);">;assign 4th p-field to local python variable "value"</span><br><span
+ style="color: rgb(0, 0, 0);">pylassigni </span><span
+ style="color: rgb(221, 0, 0);">"value"</span><span
+ style="color: rgb(0, 0, 0);">, </span><span
+ style="font-weight: bold; color: rgb(0, 0, 204);">p4</span><br><span
+ style="color: rgb(0, 102, 102);">ktrig</span><span
+ style="color: rgb(0, 0, 0);"> changed </span><span
+ style="color: rgb(102, 0, 102);">gkprint</span><br><br><span
+ style="font-style: italic; color: rgb(128, 128, 128);">; If gkprint has changed (i.e. instr 2 was triggered)</span><br><span
+ style="font-style: italic; color: rgb(128, 128, 128);">; print the value of the local python variable "value"</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">if</span><span
+ style="color: rgb(0, 0, 0);"> (</span><span
+ style="color: rgb(0, 102, 102);">ktrig</span><span
+ style="color: rgb(0, 0, 0);"> == </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);">) </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">then</span><br><span
+ style="color: rgb(0, 0, 0);">  </span><span
+ style="color: rgb(0, 102, 102);">kvalue</span><span
+ style="color: rgb(0, 0, 0);"> pyleval </span><span
+ style="color: rgb(221, 0, 0);">"value"</span><br><span
+ style="color: rgb(0, 0, 0);">  </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">printk</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(128, 0, 128);">0.5</span><span
+ style="color: rgb(0, 0, 0);">, </span><span
+ style="color: rgb(0, 102, 102);">kvalue</span><br><span
+ style="color: rgb(0, 0, 0);">endif</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">endin</span><br><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">instr </span><span
+ style="color: rgb(0, 0, 255);">2</span><br><span
+ style="color: rgb(102, 0, 102);">gkprint</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">init</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">endin</span><br><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;/CsInstruments&gt;</span><br><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;CsScore&gt;</span><br><span
+ style="font-style: italic; color: rgb(128, 128, 128);">;          p4</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">0</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">5</span><span
+ style="color: rgb(0, 0, 0);">   </span><span
+ style="color: rgb(0, 0, 255);">100</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">5</span><span
+ style="color: rgb(0, 0, 0);">   </span><span
+ style="color: rgb(0, 0, 255);">200</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">2</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">5</span><span
+ style="color: rgb(0, 0, 0);">   </span><span
+ style="color: rgb(0, 0, 255);">300</span><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">3</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">5</span><span
+ style="color: rgb(0, 0, 0);">   </span><span
+ style="color: rgb(0, 0, 255);">400</span><br><br><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">i</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">2</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">3</span><span
+ style="color: rgb(0, 0, 0);"> </span><span
+ style="color: rgb(0, 0, 255);">1</span><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;/CsScore&gt;</span><br><span
+ style="font-weight: bold; color: rgb(102, 0, 0);">&lt;/CsoundSynthesizer&gt;<br></span></pre>
+<p>This file will print the same values as the previous one. Notice
+that the 4th p-field for each instance or note is stored in a local
+python variable called "value". Even though all instances of the
+instrument use the same name for the variable, since we are using <span
+ style="font-style: italic;">pylassign</span> and <span
+ style="font-style: italic;">pyleval,</span> they are local to the
+note. <br>
+</p>
+<h3>Triggered versions of python opcodes</h3>
+All of the python opcodes have a "triggered" version, which will only
+execute when its trigger value is different to 0. The names of these
+opcodes have a "t" added at the end of them (e.g. <span
+ style="font-style: italic;">pycallt</span> or <span
+ style="font-style: italic;">pylassignt</span>), and all have an
+additional parameter called <span style="font-style: italic;">ktrig</span>
+for triggering purposes. See the example in the next chapter for usage.<br>
+<p style="margin-bottom: 0in;"></p>
+<h2 style="margin-top: 0in; margin-bottom: 0.2in;">III.
+Simple Markov chains using the Python opcodes</h2>
+<p>Python opcodes can simplify the creation of complex data
+structures for algorithmic composition. Below you'll find a simple
+example of
+using the Python opcodes to generate Markov chains for a pentatonic
+scale. Markov chains require in practice building matrices, which
+start becoming unwieldy in Csound, especially for more than two
+dimensions. In Python multi-dimensional matrices can be handled as
+nested lists very easily. Another advange is that the size of matrices
+(or arrays) need not be known in advance, since it is not necessary in
+python to declare the sizes of arrays.</p>
+
+<p>The file has explanations intermixed with the code (just be sure to
+take them out if you copy/paste into an editor). You can get this and
+the other examples from this article in the file <a
+ href="journalpython.zip">journalpython.zip</a>.<br>
+</p>
+<pre><font color="#660000"><b>&lt;CsoundSynthesizer&gt;</b></font>
+<font color="#660000"><b>&lt;CsInstruments&gt;</b></font>
+
+<font color="#000000"><b>sr</b>=</font><font color="#0000ff">44100</font>
+<font color="#000000"><b>ksmps</b>=</font><font color="#0000ff">128</font>
+
+<font color="#000000"><b>nchnls</b>=</font><font color="#0000ff">2</font>
+
+<font color="#000000"><b>pyinit</b></font>
+<font color="#808080"><i></i></font><br></pre>
+The python code below, run at initialization, creates a matrix for the
+markov chain definition. Notice that the matrix is created as a vector
+of vectors. Each vector contains the normalized probability for each of
+the five notes. It also defines the function for generating a new note
+from a present note called "get_new_note". It uses the random()
+function from the <span style="font-style: italic;">random</span>
+module to generate random number values. This shows that you can use
+any python module within Csound, including graphics modules like
+wxPython, sqlite3 for database mangement or even dom or sax for XML
+parsing.<br>
+<pre><font color="#000000"><b>pyruni</b> {{</font>c = [0.1, 0.2, 0.05, 0.4, 0.25]<br>d = [0.4, 0.1, 0.1, 0.2, 0.2]<br>e = [0.2, 0.35, 0.05, 0.4, 0]<br>g = [0.7, 0.1, 0.2, 0, 0]<br>a = [0.1, 0.2, 0.05, 0.4, 0.25]<br><br>markov = [c, d, e, g, a]<br><br>import random<br><br>random.seed()<br><br>def get_new_note(previous_note):<br>    number = random.random()<br>    accum = 0<br>    i = 0<br>    while accum &lt; number:<br>        accum = accum + markov[int(previous_note)] [int(i)]<br>        i = i + 1 <br>    return i - 1.0<br><br><font
+ color="#000000">}}<br><br></font></pre>
+Instrument 1 is in charge of executing the python function
+"get_new_note" and of spawing instrument 2 (which generates the sound)
+at a constant rate determined by p-field 4. You can generate several
+simultaneous notes for instrument 1, to create polyphony, and give each
+instance a different frequency for note generation, and a different
+octave using p-field 5.<br>
+<pre>&nbsp;<b><font color="#000000">instr </font></b><font
+ color="#0000ff">1 </font><i><font color="#808080">;Markov chain reader and note spawner</font></i>
+<font color="#808080"><i>;p4 = frequency of note generation</i></font>
+<font color="#808080"><i>;p5 = octave</i></font>
+
+ioct<font
+ color="#000000"> <b>init</b> </font><b><font color="#0000cc">p5</font></b>
+klastnote<b><span
+ style="font-style: normal;"><font color="#000000"> init </font><font
+ color="#0000ff">0 </font></span></b><span style=""><i><font
+ color="#808080">;Used to remember last note played (start at first note of scale)</font></i></span>
+ktrig<font
+ color="#000000"> <b>metro</b> </font><b><font color="#0000cc">p4</font></b><font
+ color="#000000"> </font><i><font color="#808080">;generate a trigger with frequency p4</font></i>
+
+knewnote <b>pycall1t</b> ktrig,<font
+ color="#000000"> </font><font color="#dd0000">"get_new_note"</font><font
+ color="#000000">, k</font>lastnote <i><font color="#808080">;get new note from chain</font></i>
+<b>schedkwhen</b> ktrig, 0, 10, 2, 0, 0.2, knewnote, ioct <i><font
+ color="#808080">;launch note on instrument 2</font></i>
+klastnote = knewnote <i><font
+ color="#808080">;New note is now the old note</font></i>
+
+<font color="#000000"><b>endin<br></b></font></pre>
+Instrument 2 is spawned from instrument 1 using the opcode <span
+ style="font-style: italic;">schedkwhen</span>. It produces a simple
+sine wave, but it's not hard to use more complex or interesting sounds.
+When spawned, the instrument is given 2 p-fields, which tell it which
+note to produce and on which octave (in pitch class format, but
+separating octave from note). You could produce articulation or other
+control data from python as well and pass it to the instrument through
+additional p-fields.<br>
+<pre><font color="#000000"><b><br></b></font>&nbsp;<b><font
+ color="#000000">instr </font></b><font color="#0000ff">2 </font><i><font
+ color="#808080">;A simple sine wave instrument</font></i>
+<font color="#808080"><i>;p4 = note to be played</i></font>
+<font color="#808080"><i>;p5 = octave</i></font>
+ioct<font
+ color="#000000"> <b>init</b> </font><b><font color="#0000cc">p5</font></b>
+
+ipclass<font
+ color="#000000"> <b>table</b> </font><b><font color="#0000cc">p4</font></b><font
+ color="#000000">, </font><font color="#0000ff">2</font>
+ipclass = ioct + (ipclass<font
+ color="#000000"> / </font><font color="#0000ff">100</font><font
+ color="#000000">) </font><i><font color="#808080">; Pitch class of the note</font></i>
+ifreq<font
+ color="#000000"> = <b>cpspch</b>(</font>ipclass<font color="#000000">) </font><i><font
+ color="#808080">;Note frequency in Hertz</font></i>
+
+aenv<font
+ color="#000000"> <b>linen</b> </font><font color="#0000ff">6000</font><font
+ color="#000000">, </font><font color="#800080">0.05</font><font
+ color="#000000">, </font><b><font color="#0000cc">p3</font></b><font
+ color="#000000">, </font><font color="#800080">0.1</font><font
+ color="#000000"> </font><i><font color="#808080">;Amplitude envelope</font></i>
+aout<font
+ color="#000000"> <b>oscil</b>  </font>aenv, ifreq , 1<font
+ color="#000000"> </font><i><font color="#808080">;Simple oscillator</font></i>
+
+<font color="#000000"><b>outs</b> </font>aout, aout<br></pre>
+<pre><font color="#000000"><b>endin</b></font>
+
+<font color="#660000"><b>&lt;/CsInstruments&gt;</b></font>
+<font color="#660000"><b>&lt;CsScore&gt;<br></b></font></pre>
+The score defines a simple sine wave in table 1, to be used as waveform
+for the sound and defines the pitch classes of the scale to be used in
+table 2. Changing these values will change the scale generated by the
+orchestra.<br>
+Notice that new layers of polyphony (on different octaves and at
+different rates) are added every 5 seconds.<br>
+<pre><font color="#000000"><b>f</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">0</font><font
+ color="#000000"> </font><font color="#0000ff">2048</font><font
+ color="#000000"> </font><font color="#0000ff">10</font><font
+ color="#000000"> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><i><font color="#808080">;sine wave</font></i>
+
+<font color="#000000"><b>f</b> </font><font color="#0000ff">2</font><font
+ color="#000000"> </font><font color="#0000ff">0</font><font
+ color="#000000"> </font><font color="#0000ff">8</font><font
+ color="#000000">  -</font><font color="#0000ff">2</font><font
+ color="#000000">  </font><font color="#0000ff">0</font><font
+ color="#000000">  </font><font color="#0000ff">2</font><font
+ color="#000000">  </font><font color="#0000ff">4</font><font
+ color="#000000">  </font><font color="#0000ff">7</font><font
+ color="#000000"> </font><font color="#0000ff">9</font><font
+ color="#000000">  </font><i><font color="#808080">;Pitch classes for pentatonic scale</font></i>
+
+<font color="#808080"><i>;        frequency of       Octave of</i></font>
+<font color="#808080"><i>;        note generation    melody</i></font>
+<font color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">0</font><font
+ color="#000000"> </font><font color="#0000ff">30</font><font
+ color="#000000">      </font><font color="#0000ff">3               7<br></font><font
+ color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">5</font><font
+ color="#000000"> </font><font color="#0000ff">25</font><font
+ color="#000000">      </font><font color="#0000ff">6               9</font>
+
+<font color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">10</font><font
+ color="#000000"> </font><font color="#0000ff">20</font><font
+ color="#000000">     </font><font color="#0000ff">9               10</font>
+<font color="#000000"><b>i</b> </font><font color="#0000ff">1</font><font
+ color="#000000"> </font><font color="#0000ff">15</font><font
+ color="#000000"> </font><font color="#0000ff">15</font><font
+ color="#000000">     </font><font color="#0000ff">1               8</font><font
+ color="#660000"><b><br>&lt;/CsScore&gt;</b></font>
+<font color="#660000"><b>&lt;/CsoundSynthesizer&gt;</b></font></pre>
+
+<h2>
+Examples</h2>
+
+<p><a href="journalpython.zip">Download all examples</a></p>
+
+<h2>
+References</h2>
+<p><a href="http://www.python.org/">www.python.org</a></p>
+<p><a href="http://www.diveintopython.org/">www.diveintopython.org</a></p>
+<p><a href="http://www.csounds.com/manual/html/py.html">The Python
+opcodes page in the Csound Manual</a></p>
+<p><a href="http://docs.python.org/lib/module-random.html">Documentation
+for the Python random module</a></p>
+<div id="sdfootnote1">
+<p class="sdfootnote"><a class="sdfootnotesym" name="sdfootnote1sym"
+ href="#sdfootnote1anc">1</a>The fact that Python is interpreted and
+weakly typed is one of the reasons it is not an extremely efficient
+language like C or C++, which is why it finds greater use for scripting
+and prototyping.</p>
+</div>
+<div id="sdfootnote2">
+<p class="sdfootnote"><a class="sdfootnotesym" name="sdfootnote2sym"
+ href="#sdfootnote2anc">2</a>It's important to be aware that frontends
+only show the output of Csound in their console window or display. If
+using a frontend, run it from a DOS prompt or Terminal to see Python's
+output there.</p>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Csound Midterm Review Sheet</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#ccffff">
+
+<H2 ALIGN="CENTER">Midterm Review</H2>
+<H2 ALIGN="CENTER">(You can bring this sheet to the the exam.)</H2>
+<P><HR></P>
+<H4 ALIGN="CENTER">Orchestra Opcodes Covered To Date (10/13/06)</H4>
+<PRE>
+Delimiters:
+
+&#9;instr&#9;i, j, ...
+&#9;endin
+
+Assignment Statements:
+
+ir&#9;=&#9;iarg
+kr&#9;=&#9;karg
+ar&#9;=&#9;xarg
+kr&#9;init&#9;iarg
+ar&#9;init&#9;iarg
+
+Envelope Generators:
+
+kr&#9;line&#9;ia, idur1, ib
+ar&#9;line&#9;ia, idur1, ib
+kr&#9;expon&#9;ia, idur1, ib 
+ar&#9;expon&#9;ia, idur1, ib 
+kr&#9;linseg&#9;ia, idur1, ib[, idur2, ic[...]] 
+ar&#9;linseg&#9;ia, idur1, ib[, idur2, icI...]]
+kr&#9;expseg&#9;ia, idur1, ib[, idur2, ic[...]]
+ar&#9;expseg&#9;ia, idur1, ib[, idur2, ic[...]]
+kr&#9;linen&#9;kamp, irise, idur, idec
+ar&#9;linen&#9;xamp, irise, idur, idec
+kr&#9;envlpx&#9;kamp, irise, idur, idec, ifn, iatss, iatdec[,ixmod]
+ar&#9;envlpx&#9;xamp, irise, idur, idec, ifn, iatss, iatdec[,ixmod]
+
+Signal Generators:
+
+kr&#9;oscil&#9;kamp, kcps, ifn[, iphs]
+kr&#9;oscili&#9;kamp, kcps, ifn[, iphs]
+ar&#9;oscil&#9;xamp, xcps, ifn[, iphs]
+ar&#9;oscili&#9;xamp, xcps, ifn[, iphs]
+ar&#9;foscil&#9;xamp, kcps, kcar, kmod, kndx, ifn[, iphs]
+ar&#9;foscili&#9;xamp, kcps, kcar, kmod, kndx, ifn[, iphs]
+ar&#9;buzz&#9;xamp, xcps, knh, ifn[, iphs]
+ar&#9;gbuzz&#9;xamp, xcps, knh, klh, kr, ifn[, iphs]
+kr&#9;rand&#9;xamp[, iseed]
+kr&#9;randh&#9;kamp, kcps[, iseed]
+kr&#9;randi&#9;kamp, kcps[, iseed]
+ar&#9;rand&#9;xamp[, iseed]
+ar&#9;randh&#9;xamp, xcps[, iseed]
+ar&#9;randi&#9;xamp, xcps[, iseed]
+kr&#9;phasor&#9;kcps[, iphs] 
+ar&#9;phasor&#9;xcps[, iphs]
+&nbsp;
+Table Lookup Units:
+
+ir&#9;table&#9;&#9;indx, ifn[, ixmode][, ixoff][, iwrap]
+ir&#9;tablei&#9;&#9;indx, ifn[, ixmode][, ixoff][, iwrap]
+kr&#9;table&#9;&#9;kndx, ifn[, ixmode][, ixoff][, iwrap]
+kr&#9;tablei&#9;&#9;kndx, ifn[, ixmode][, ixoff][, iwrap]
+ar&#9;table&#9;&#9;andx, ifn[, ixmode][, ixoff][, iwrap]
+ar&#9;tablei&#9;&#9;andx, ifn[, ixmode][, ixoff][, iwrap]
+kr&#9;oscil1&#9;&#9;idel, kamp, idur, ifn
+kr&#9;oscil1i&#9;&#9;idel, kamp, idur, ifn
+ 
+Filters:
+
+ar&#9;tone&#9;&#9;asig, khp[, istor]
+ar&#9;atone&#9;&#9;asig, khp[, istor]
+ar&#9;reson&#9;&#9;asig, kcf, kbw[, iscl, istor]
+ar&#9;areson&#9;&#9;asig, kcf, kbw[, iscl, istor]
+ar&#9;butterhp&#9;asig, kfreq [,iskip]
+ar&#9;butterlp&#9;asig, kfreq [,iskip]
+ar&#9;butterbp&#9;asig, kfreq, kband [,iskip]
+ar&#9;butterbr&#9;asig, kfreq, kband [,iskip]
+ar&#9;pareq&#9;asig, kc, kv, kq, [,imode]
+
+Level control units:
+
+kr&#9;rms&#9;&#9;asig[, ihp, istor]
+nr&#9;gain&#9;&#9;asig, krms[, ihp, istor]
+ar&#9;balance&#9;&#9;asig, acomp[, ihp, istor]
+
+Soundfile Input and Output:
+
+a1&#9;&#9;soundin&#9;&#9;ifilcod[, iskptim][, iformat]
+a1, a2&#9;&#9;soundin&#9;&#9;ifilcod[, iskptim][, iformat]
+ar1[,ar2]&#9;loscil&#9;&#9;xamp, kcps, ifn[, ibas][,imod1,ibeg1,iend1] \
+&#9;&#9;&#9;&#9;[, imod2,ibeg2,iend2]
+&#9;out&#9;asig
+&#9;outs&#9;asig1, asig2
+
+Debugging Opcodes:
+
+&#9;print&#9;iarg[, iarg,...]
+&#9;display&#9;xsig, iprd[, iwtflg]
+
+Program Control Opcodes:
+
+&#9;igoto&#9;label 
+&#9;kgoto&#9;label 
+&#9;goto&#9;label 
+&#9;if&#9;ia R ib igoto label 
+&#9;if&#9;ka R kb kgoto label 
+&#9;if&#9;ia R ib goto label 
+&#9;timout&#9;istrt, idur, label
+
+Csound Functions Utilized:
+
+&#9;int(x)&#9;&#9;(init- or control-rate args only)
+&#9;frac(x)&#9;&#9;(init- or control-rate args only)
+&#9;dbamp(x)&#9;(init- or control-rate args only)
+&#9;i(x)&#9;&#9;(control-rate args only)
+&#9;abs(x)&#9;&#9;(no rate restriction)
+&#9;ampdb(x)&#9;(no rate restriction)
+&#9;octpch(pch)&#9;(init- or control-rate args only) 
+&#9;pchoct(oct)&#9;(init- or control-rate args only) 
+&#9;cpspch(pch)&#9;(init- or control-rate args only) 
+&#9;octcps(cps)&#9;(init- or control-rate args only) 
+&#9;cpsoct(oct)&#9;(no rate restriction)</PRE>
+<P><HR></P>
+<H4 ALIGN="CENTER">Score Topics Covered</H4>
+<PRE>
+
+Opcodes: i, e, f, s, and e
+
+Special Operators: . + &lt; &gt; np pp
+
+The Carry Feature
+
+Gen Subroutines: 1, 2, 3, 4,  5, 7, 9, 10, 11, 13, 14, 19
+
+F0 statements</PRE>
+<P><HR></P>
+NOTE: The exam will focus on the Csound language, but you are also responsible for basic concepts covered in the lectures and in the assigned readings. See <A HREF="index.html">Reading Assignments</A>.
+</BODY>
+</HTML>

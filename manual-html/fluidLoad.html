@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fluidLoad</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fluidEngine.html" title="fluidEngine" />
+    <link rel="next" href="fluidNote.html" title="fluidNote" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fluidLoad</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fluidEngine.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fluidNote.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="fluidLoad">
+      <a id="fluidLoad"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFluidLoad" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fluidLoad</span>
+        </h2>
+        <p>fluidLoad — 
+       Loads a SoundFont into a fluidEngine, optionally listing SoundFont contents.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3285215"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">isfnum <span class="command"><strong>fluidLoad</strong></span> soundfont, ienginenum[, ilistpresets]</pre>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3286088"></a>
+        <h2>Description</h2>
+        <p>Loads a SoundFont into an instance of a fluidEngine, optionally
+    listing banks and presets for SoundFont.
+    </p>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3286102"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>isfnum </em></span> -- number assigned to just-loaded
+    soundfont.</p>
+        <p><span class="emphasis"><em>soundfont </em></span> -- string specifying a SoundFont
+    filename. Note that any number of SoundFonts may be loaded (obviously,
+    by different invocations of fluidLoad).</p>
+        <p><span class="emphasis"><em>ienginenum </em></span> -- engine number assigned from
+      fluidEngine</p>
+        <p><span class="emphasis"><em>ilistpresets </em></span> -- optional, if specified, lists all
+      Fluidsynth programs for the just-loaded SoundFont. A Fluidsynth program is a
+      combination of SoundFont ID, bank number, and preset number that is assigned to
+      a MIDI channel.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3286144"></a>
+        <h2>Performance</h2>
+        <p>Invoke fluidLoad in the orchestra header, any number of
+    times. The same SoundFont may be invoked to assign programs to MIDI
+    channels any number of times; the SoundFont is only loaded the first
+    time.</p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3286158"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fluidsynth opcodes. It uses the file <a class="ulink" href="examples/fluid.orc" target="_top"><em class="citetitle">fluid.orc</em></a>.
+    </p>
+        <pre class="programlisting">
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">ksmps</span> <span class="op">=</span> 100
+<span class="ohdr">nchnls</span> <span class="op">=</span> 2
+
+giengine  <span class="opc">fluidEngine</span>
+isfnum    <span class="opc">fluidLoad</span> "07AcousticGuitar.sf2", giengine, 1
+          <span class="opc">fluidProgramSelect</span> giengine, 1, isfnum, 0, 0
+
+<span class="oblock">instr</span> 1
+          <span class="opc">mididefault</span>     60, p3
+          <span class="opc">midinoteonkey</span>   p4, p5
+
+  ikey    <span class="opc">init</span>            p4
+  ivel    <span class="opc">init</span>            p5
+
+          <span class="opc">fluidNote</span>       giengine, 1, ikey, ivel
+<span class="oblock">endin</span>
+
+<span class="oblock">instr</span> 99
+  imvol   <span class="opc">init</span>            70000
+  asigl, asigr <span class="opc">fluidOut</span>   giengine
+          <span class="opc">outs</span>            asigl <span class="op">*</span> imvol, asigr <span class="op">*</span> imvol
+<span class="oblock">endin</span></pre>
+        <p>
+      See <a class="link" href="fluidEngine.html" title="fluidEngine"><em class="citetitle">fluidEngine</em></a> for more examples.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3286196"></a>
+        <h2>See Also</h2>
+        <p><a class="link" href="fluidEngine.html" title="fluidEngine"><em class="citetitle">fluidEngine</em></a>, <a class="link" href="fluidNote.html" title="fluidNote"><em class="citetitle">fluidNote</em></a></p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3286219"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot
+  com), Steven Yi. Thanks to Peter Hanappe for Fluidsynth.
+    </p>
+        <p>New in Csound5.00</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fluidEngine.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fluidNote.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fluidEngine </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fluidNote</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

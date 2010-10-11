@@ -1,0 +1,36 @@
+// Type your program here, or click the GUI tab to autogenerate it!
+
+OSC.port = 50000
+OSC.ip = "localhost"
+OSC.broadcast = false
+if Wiimote.A Then
+   var.wiimote.a = 1
+   else
+   var.wiimote.a = 0
+   endif
+
+if Wiimote.B Then
+   var.wiimote.b = 1
+   else
+   var.wiimote.b = 0
+   endif
+
+if Wiimote.Minus Then
+   var.wiimote.minus = 1
+   else
+   var.wiimote.minus = 0
+   endif
+
+osc.wii.a = var.wiimote.a
+osc.wii.b = var.wiimote.b
+osc.wii.minus = var.wiimote.minus
+var.wii.x = Wiimote.RelAccX
+var.wii.y = Wiimote.RelAccY
+var.wii.z = Wiimote.RelAccZ
+osc.wii.x = Wiimote.RelAccX
+osc.wii.y = Wiimote.RelAccY
+osc.wii.z = Wiimote.RelAccZ
+osc.wii.roll = Wiimote.Roll
+
+
+

@@ -1,0 +1,80 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>sco.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* sco.c */
+/* make scorefile */
+
+#include &lt;math.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs, prototypes */
+
+<A NAME="make_sco">void make_sco(void)</A>
+{
+&#9;int numevs, q, nl;
+&#9;float adjtime;
+&#9;EVENT **sev, **fev;
+
+&#9;nl=instr_4(
+&#9;&#9;instr_2(
+&#9;&#9;&#9;instr_1(
+&#9;&#9;&#9;&#9;wh("Display events as they are computed (y/[n])","ny")-1
+&#9;&#9;&#9;)
+&#9;&#9;)
+&#9;);
+&#9;sco=lcat(sco, rsco);
+&#9;lsort(sco);
+&#9;printf("\n; Score sorted in order of time of initiation.");
+
+&#9;printf("\n; Entering f-statements..");
+&#9;printf(".");
+&#9;f=lcreat(5);
+&#9;fev=&amp;f-&gt;e[1];
+&#9;(*fev++)=defev("f 1 0 16385 10 1");
+&#9;(*fev)=defev("f 2 0 2049 7 0 2049 1");
+&#9;(*fev++)-&gt;p[5]=ABS_MINAMPF;
+&#9;(*fev)=defev("f 3 0 2049 5 0 2049 1");
+&#9;(*fev++)-&gt;p[5]=ABS_MINAMPF;
+&#9;(*fev++)=defev("f 4 0 16384 10 1");
+&#9;(*fev++)=defev("f 5 0 16384 10 1 .8 .5 .5 .15");
+
+&#9;numevs=lcount(sco);
+&#9;sev=&amp;sco-&gt;e[numevs];
+&#9;printf("; (approx. duration: %.2f)\n", (*sev)-&gt;p[II_STA]+(*sev)-&gt;p[II_DUR]);
+}
+
+<A NAME="talmid">int talmid(int *tally)</A>
+{
+&#9;int d, mid=(int)(PA_NPC/2)-1;
+&#9;float stally[PA_NPC], st;
+&#9;double u;
+&#9;
+&#9;for(d=0; d&lt;PA_NPC; d++) stally[d]=tally[d]+((float)d/10);
+&#9;qsort(stally, PA_NPC, sizeof(float), comp);
+&#9;st=10*modf((double)stally[mid], &amp;u);
+&#9;return st;
+}
+
+<A NAME="talmin">int talmin(int *tally)</A>
+{
+&#9;int d, mpc=0;
+&#9;
+&#9;for(d=0; d&lt;PA_NPC; d++) mpc=(tally[d]&lt;tally[mpc] ? d : mpc);
+&#9;return mpc;
+}
+
+<A NAME="talmax">int talmax(int *tally)</A>
+{
+&#9;int d, mpc=0;
+&#9;
+&#9;for(d=0; d&lt;PA_NPC; d++) mpc=(tally[d]&gt;tally[mpc] ? d : mpc);
+&#9;return mpc;
+}
+
+<A NAME="comp">int comp(const void *i, const void *j)</A>
+{
+&#9;return *(int *)i - *(int *)j;
+}</PRE></BODY>
+</HTML>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN52</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN51.html" title="GEN51" />
+    <link rel="next" href="UtilityTop.html" title="The Utility Programs" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN52</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN51.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="UtilityTop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="GEN52">
+      <a id="GEN52"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN52" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN52</span>
+        </h2>
+        <p>GEN52 — 
+      Creates an interleaved multichannel table from the specified
+	 source tables, in the format expected by the <span class="emphasis"><em>ftconv</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id4080431"></a>
+        <h2>Description</h2>
+        <p>
+    GEN52 creates an interleaved multichannel table from the specified
+	source tables, in the format expected by the <a class="link" href="ftconv.html" title="ftconv"><em class="citetitle">ftconv</em></a> opcode.
+	It can also be used to extract a channel from a multichannel table
+	and store it in a normal mono table, copy tables with skipping some
+	samples, adding delay, or store in reverse order, etc.
+    </p>
+        <p>
+      Three parameters must be given for each channel to be processed. <span class="emphasis"><em>fsrc</em></span> declares the source f-table number. The parameter <span class="emphasis"><em>offset</em></span> specifies an offset for the source file. If different to 0, the source file is not read from the beginning, but the  <span class="emphasis"><em>offset</em></span> number of values are skipped. The <span class="emphasis"><em>offset</em></span> is used to determine the channel number to be read from interleaved f-tables, e.g. for channel 2, <span class="emphasis"><em>offset</em></span> must be 1. It can also be used to set a read offset on the source table. This parameter gives absolute values, so if a skip of 20 sample frames for a 2 channel f-table is desired, <span class="emphasis"><em>offset</em></span> must be set to 40. The <span class="emphasis"><em>srcchnls</em></span> parameter is used to declare the number of channels in the source f-table. This parameter sets the skip size when reading the source f-table.
+    </p>
+        <p>
+      When more than one channel (<span class="emphasis"><em>nchannels</em></span> &gt; 1) is given, source f-tables are interleaved in the newly created table.
+    </p>
+        <p>
+      If the source f-table is finished before the destination f-table is full, the remaining values are set to 0.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id4081207"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 52 nchannels fsrc1 offset1 srcchnls1 [fsrc2 offset2 srcchnls2 ... fsrcN offsetN srcchnlsN]</pre>
+      </div>
+      <div class="refsect1" title="Example">
+        <a id="id4081226"></a>
+        <h2>Example</h2>
+        <pre class="programlisting">
+<span class="comment">; source tables</span>
+<span class="stamnt">f</span> 1 0 16384 10 1
+<span class="stamnt">f</span> 2 0 16384 10 0 1
+<span class="comment">; create 2 channel interleaved table</span>
+<span class="stamnt">f</span> 3 0 32768 -52 2 1 0 1 2 0 1
+<span class="comment">; extract first channel from table 3</span>
+<span class="stamnt">f</span> 4 0 16384 -52 1 3 0 2
+<span class="comment">; extract second channel from table 3</span>
+<span class="stamnt">f</span> 5 0 16384 -52 1 3 1 2</pre>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id4081293"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN51.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="UtilityTop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN51 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> The Utility Programs</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>diskin</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="diskgrain.html" title="diskgrain" />
+    <link rel="next" href="diskin2.html" title="diskin2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">diskin</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="diskgrain.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="diskin2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="diskin">
+      <a id="diskin"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDiskin" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">diskin</span>
+        </h2>
+        <p>diskin — 
+      Deprecated. Reads audio data from an external device or stream and can alter its pitch.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3212359"></a>
+        <h2>Description</h2>
+        <p>
+      Deprecated. Reads audio data from an external device or stream and can alter its pitch.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3212099"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1 [, ar2 [, ar3 [, ... ar24]]] <span class="command"><strong>diskin</strong></span> ifilcod, kpitch [, iskiptim] \
+      [, iwraparound] [, iformat] [, iskipinit]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3212119"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span> -- integer or character-string denoting the source soundfile name. An integer denotes the file soundin.filcod ; a character-string (in double quotes, spaces permitted) gives the filename itself, optionally a full pathname. If not a full path, the named file is sought first in the current directory, then in that given by the environment variable SSDIR (if defined) then by SFDIR. See also <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskptim</em></span> (optional) -- time in seconds of input sound to be skipped. The default value is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>iformat</em></span> (optional) -- specifies the audio data file format:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" type="disc">
+            <li class="listitem">
+              <p>1 = 8-bit signed char (high-order 8 bits of a 16-bit integer)</p>
+            </li>
+            <li class="listitem">
+              <p>2 = 8-bit A-law bytes</p>
+            </li>
+            <li class="listitem">
+              <p>3 = 8-bit U-law bytes</p>
+            </li>
+            <li class="listitem">
+              <p>4 = 16-bit short integers</p>
+            </li>
+            <li class="listitem">
+              <p>5 = 32-bit long integers</p>
+            </li>
+            <li class="listitem">
+              <p>6 = 32-bit floats</p>
+            </li>
+            <li class="listitem">
+              <p>7 = 8-bit unsigned int (not available in Csound versions older than 5.00)</p>
+            </li>
+            <li class="listitem">
+              <p>8 = 24-bit int (not available in Csound versions older than 5.00)</p>
+            </li>
+            <li class="listitem">
+              <p>9 = 64-bit doubles (not available in Csound versions older than 5.00)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>iwraparound</em></span> -- 1 = on, 0 = off (wraps around to end of file either direction)
+    </p>
+        <p>
+     <span class="emphasis"><em>iskipinit</em></span> switches off all initialisation if
+     non zero (default =0).  This was introduced in 4_23f13 and
+     csound5.
+    </p>
+        <p>
+      If <span class="emphasis"><em>iformat</em></span> = 0 it is taken from the soundfile header, and if no header from the Csound <a class="link" href="CommandFlags.html#FlagsMinusLowerO"><em class="citetitle">-o</em></a> command-line flag. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3213113"></a>
+        <h2>Performance</h2>
+        <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p><span class="emphasis"><em>diskin</em></span> is deprecated since it can crash easily under certain circumstances. Use <a class="link" href="diskin2.html" title="diskin2"><em class="citetitle">diskin2</em></a> instead.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- can be any real number. A negative number signifies backwards playback. The given number is a pitch ratio, where:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" type="disc">
+            <li class="listitem">
+              <p><span class="emphasis"><em>1</em></span> = normal pitch</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>2</em></span> = 1 octave higher</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>3</em></span> = 12th higher, etc.</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>.5</em></span> = 1 octave lower</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>.25</em></span> = 2 octaves lower, etc.</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-1</em></span> = normal pitch backwards</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-2</em></span> = 1 octave higher backwards, etc.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>diskin</em></span> is identical to <a class="link" href="soundin.html" title="soundin"><em class="citetitle">soundin</em></a> except that it can alter the pitch of the sound that is being read.
+    </p>
+        <div class="caution" title="Note to Windows users" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Caution: Note to Windows users">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Caution]" src="images/caution.png" />
+              </td>
+              <th align="left">Note to Windows users</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Windows users typically use back-slashes, <span class="quote">“<span class="quote">\</span>”</span>, when specifying the paths of their files. As an example, a Windows user might use the path <span class="quote">“<span class="quote">c:\music\samples\loop001.wav</span>”</span>. This is problematic because back-slashes are normally used to specify special characters.
+      </p>
+                <p>
+        To correctly specify this path in Csound, one may alternately:
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" type="disc">
+                    <li class="listitem">
+                      <p><span class="emphasis"><em>Use forward slashes</em></span>: c:/music/samples/loop001.wav</p>
+                    </li>
+                    <li class="listitem">
+                      <p><span class="emphasis"><em>Use back-slash special characters, <span class="quote">“<span class="quote">\\</span>”</span></em></span>: c:\\music\\samples\\loop001.wav</p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3213260"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the diskin opcode. It uses the file <a class="ulink" href="examples/diskin.csd" target="_top"><em class="citetitle">diskin.csd</em></a>, <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="id3213283"></a>
+          <p class="title">
+            <b>Example 129. Example of the diskin opcode.</b>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; -o diskin.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+
+<span class="comment">; Initialize the global variables.</span>
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">ksmps</span> <span class="op">=</span> 10
+<span class="ohdr">nchnls</span> <span class="op">=</span> 1
+
+<span class="comment">; Instrument #1 - play an audio file.</span>
+<span class="oblock">instr</span> 1
+  <span class="comment">; Play the audio file</span>
+  asig <span class="opc">diskin</span> "beats.wav", 1
+  <span class="opc">out</span> asig
+<span class="oblock">endin</span>
+
+<span class="comment">; Instrument #2 - play an audio file backwards.</span>
+<span class="oblock">instr</span> 2
+  <span class="comment">; Play the audio file backwards.</span>
+  asig <span class="opc">diskin</span> "beats.wav", <span class="op">-</span>1
+  <span class="opc">out</span> asig
+<span class="oblock">endin</span>
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+
+<span class="comment">; Play Instrument #1, the audio file, for three seconds.</span>
+<span class="stamnt">i</span> 1 0 3
+<span class="stamnt">i</span> 2 3 3
+<span class="stamnt">e</span>
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3213321"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="in.html" title="in"><em class="citetitle">in</em></a>,
+      <a class="link" href="inh.html" title="inh"><em class="citetitle">inh</em></a>,
+      <a class="link" href="ino.html" title="ino"><em class="citetitle">ino</em></a>,
+      <a class="link" href="inq.html" title="inq"><em class="citetitle">inq</em></a>,
+      <a class="link" href="ins.html" title="ins"><em class="citetitle">ins</em></a>,
+      <a class="link" href="soundin.html" title="soundin"><em class="citetitle">soundin</em></a> and 
+      <a class="link" href="diskin2.html" title="diskin2"><em class="citetitle">diskin2</em></a>
+     </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3213383"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Authors: Barry L. Vercoe, Matt Ingalls/Mike Berry</td>
+          </tr>
+          <tr>
+            <td>MIT, Mills College</td>
+          </tr>
+          <tr>
+            <td>1993-1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 3.46</p>
+        <p>Example written by Kevin Conder.</p>
+        <p>Warning to Windows users added by Kevin Conder, April 2002</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="diskgrain.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="diskin2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">diskgrain </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> diskin2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

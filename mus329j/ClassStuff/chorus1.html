@@ -1,0 +1,78 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft FrontPage 4.0">
+<TITLE>Simple Chorus Instrument</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>sr	=	44100	 	 
+kr	=	4410	 	 
+ksmps	=	10	 	 
+nchnls	=	2	 	 
+
+;===================================================;
+;Simple chorus instrument based on heterodyning.    ;
+;With 2 sine waves slightly detuned, the resultant  ;
+;frequency will be the average of the 2 sine wave   ;
+;frequencies and the beat frequency will be equal   ;
+;to the difference between their frequencies:       ;
+;sin(a) + sin(b) = 2 * sin((a+b)/2) * cos ((a-b)/2) ;
+;Note: we hear two beats for each cos cycle - one   ;
+;for the positive peak and one for the negative.    ;
+;RP                                                 ;
+;===================================================;
+ 	 	 	 	 
+ 	instr	1	 	 
+;---------------------------------------;initialization block: 				
+ipan	=	p9	 	 
+ilfac	=	sqrt(p9) 	 	 
+irfac	=	sqrt(1-p9)	 	 
+idetune	=	p10			;detune factor in CPS	
+;---------------------------------------;performance block:				
+kgate	linen	p4,p6,p3,p7	 	 
+asig1	oscili	kgate,cpspch(p5),p8		;in tune oscil	 
+asig2	oscili	kgate,cpspch(p5)+idetune,p8	;out of tune oscil	
+asig	=	asig1+asig2		;sum will beat at idetune CPS	
+ 	outs	asig*ilfac,asig*irfac	;stereo placement and out	
+ 	endin</pre>
+<HR>
+
+<pre>;Test score for simple chorus instrument
+;Oscil wave functions:
+;Simple sine
+f1	0	8192	10	1
+;Richer waveform									
+f2	0	8192	10	1	.5	0	.1	 	 
+;Test with pure sine wave
+;no	st	dur	amp	pch	rise	dec	fn	pan	detune
+i01	0	3	20000	8.00	.1	.5	1	.5	5
+i01	+	.	.	.	.	.	.	.	3
+i01	.	.	.	.	.	.	.	.	1
+i01	.	.	.	.	.	.	.	.	.5
+f0	14
+s
+;Repeat with richer waveform (note: beating between all component partials)
+;no	st	dur	amp	pch	rise	dec	fn	pan	detune
+i01	0	3	20000	8.00	.1	.5	2	.5	5
+i01	+	.	.	.	.	.	.	.	3
+i01	.	.	.	.	.	.	.	.	1
+i01	.	.	.	.	.	.	.	.	.5
+f0	14
+e</pre>
+<HR>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="229" VALIGN="TOP">
+<P><a HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/chorus1.orc">Download
+chorus1.orc</a></TD>
+  <TD WIDTH="193" VALIGN="TOP">
+  </TD>
+<TD WIDTH="168" VALIGN="TOP">
+<p ALIGN="RIGHT"><a HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/chorus1.sco">Download
+chorus1.sco</a></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

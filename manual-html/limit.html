@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>limit</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lfo.html" title="lfo" />
+    <link rel="next" href="line.html" title="line" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">limit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lfo.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="line.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="limit">
+      <a id="limit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLimit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">limit</span>
+        </h2>
+        <p>limit — 
+      Sets the lower and upper limits of the value it processes.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3360777"></a>
+        <h2>Description</h2>
+        <p>
+      Sets the lower and upper limits of the value it processes.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3360788"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>limit</strong></span> asig, klow, khigh</pre>
+        <pre class="synopsis">ires <span class="command"><strong>limit</strong></span> isig, ilow, ihigh</pre>
+        <pre class="synopsis">kres <span class="command"><strong>limit</strong></span> ksig, klow, khigh</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3361017"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>isig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>ilow</em></span> -- low threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>ihigh</em></span> -- high threshold
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3361045"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xsig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>klow</em></span> -- low threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>khigh</em></span> -- high threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>limit</em></span> sets the lower and upper limits on the <span class="emphasis"><em>xsig</em></span> value it processes. If <span class="emphasis"><em>xhigh</em></span> is lower than <span class="emphasis"><em>xlow</em></span>, then the output will be the average of  the two - it will not be affected by <span class="emphasis"><em>xsig</em></span>.
+    </p>
+        <p>
+      This opcode is useful in several situations, such as table indexing or for clipping and modeling a-rate, i-rate or k-rate signals.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3361659"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="mirror.html" title="mirror"><em class="citetitle">mirror</em></a>,
+      <a class="link" href="wrap.html" title="wrap"><em class="citetitle">wrap</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3361685"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.46</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lfo.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="line.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lfo </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> line</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

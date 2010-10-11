@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>printf</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="print.html" title="print" />
+    <link rel="next" href="printk.html" title="printk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">printf</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="print.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="printk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="printf">
+      <a id="printf"></a>
+      <div class="titlepage"></div>
+      <a id="Indexprintf_i" class="indexterm"></a>
+      <a id="Indexprintf" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">printf</span>
+        </h2>
+        <p>printf — 
+      printf-style formatted output
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3490170"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="command"><strong>printf</strong></span> and <span class="command"><strong>printf_i</strong></span> write
+    formatted output, similarly to the C function
+    printf(). <span class="command"><strong>printf_i</strong></span> runs at i-time only, while
+    <span class="command"><strong>printf</strong></span> runs both at initialization and
+    performance time. 
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3490401"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>printf_i</strong></span> Sfmt, itrig, [iarg1[, iarg2[, ... ]]]</pre>
+        <pre class="synopsis"><span class="command"><strong>printf</strong></span> Sfmt, ktrig, [xarg1[, xarg2[, ... ]]]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3490430"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sfmt</em></span> -- format string, has the same format
+    as in printf() and other similar C functions, except length
+    modifiers (l, ll, h, etc.) are not supported. The following
+    conversion specifiers are allowed: 
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" type="disc">
+            <li class="listitem">
+              <p>d, i, o, u, x, X, e, E, f, F, g, G, c, s</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>iarg1, iarg2, ...</em></span> -- input arguments
+      (max. 30) for format.  Integer formats like %d round the input
+      values to the nearest integer. 
+    </p>
+        <p>
+      <span class="emphasis"><em>itrig</em></span> -- if greater than zero the opcode
+    performs the printing; otherwise it is an null operation.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3491112"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> -- if greater than zero and different
+    from the value on the previous control cycle the opcode
+    performs the requested printing.  Initially this previous value is
+    taken as zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>xarg1, xarg2, ...</em></span> -- input arguments
+    (max. 30) for format.  Integer formats like %d round the input
+    values to the nearest integer. Note that only k-rate and i-rate arguments are valid (no a-rate printing)
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3491144"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="print.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="printk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">print </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> printk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

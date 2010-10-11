@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>getcfg</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="gbuzz.html" title="gbuzz" />
+    <link rel="next" href="gogobel.html" title="gogobel" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">getcfg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="gbuzz.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="gogobel.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="getcfg">
+      <a id="getcfg"></a>
+      <div class="titlepage"></div>
+      <a id="Indexgetcfg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">getcfg</span>
+        </h2>
+        <p>getcfg — 
+      Return Csound settings.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3316059"></a>
+        <h2>Description</h2>
+        <p>
+      Return various configuration settings in Svalue as a string at init time.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3316983"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">Svalue <span class="command"><strong>getcfg</strong></span> iopt</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3317000"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iopt</em></span>
+      -- The parameter to be returned, can be one of:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" type="disc">
+            <li class="listitem">
+              <p>1: the maximum length of string variables in characters; this is at least the value of the -+max_str_len command line option - 1</p>
+            </li>
+            <li class="listitem">
+              <p>2: the input sound file name (-i), or empty if there is no input file</p>
+            </li>
+            <li class="listitem">
+              <p>3: the output sound file name (-o), or empty if there is no output file</p>
+            </li>
+            <li class="listitem">
+              <p>4: return "1" if real time audio input or output is being used, and "0" otherwise</p>
+            </li>
+            <li class="listitem">
+              <p>5: return "1" if running in beat mode (-t command line option), and "0" otherwise</p>
+            </li>
+            <li class="listitem">
+              <p>6: the host operating system name</p>
+            </li>
+            <li class="listitem">
+              <p>7: return "1" if a callback function for the chnrecv and chnsend opcodes has been set, and "0" otherwise (which means these opcodes do nothing)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3317074"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.02</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="gbuzz.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="gogobel.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">gbuzz </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> gogobel</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

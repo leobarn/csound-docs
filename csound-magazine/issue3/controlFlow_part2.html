@@ -1,0 +1,615 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<title>Csound Journal</title>
+<link href="csoundJournal.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+
+.example {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #CCCCCC;
+}
+
+  
+</style>
+</head>
+<body>
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL: <a href=
+"../index.html">Home</a> | <a href="index.html">Summer
+2006</a></div>
+
+<center>
+<div id="header">
+<h2>Control Flow - Part II</h2>
+
+Steven Yi<br>
+ Email: stevenyi AT gmail.com</div>
+</center>
+
+<div id="content">
+<h2>Introduction</h2>
+
+<p>In Part I of this article we discussed the basics of control
+flow: gotos, labels, conditional branching, and looping. In Part
+II, we'll discuss two other methods of control flow: subroutines
+and recursion. By adding these two methods of control flow to our
+methods of working, we'll be able to encapsulate code into easily
+reusable chunks as well as be able to express the possibility of
+having code branch out to a copy of itself, which will allow a
+certain Csound technique which is not possible any other way
+(instantiating and using a variable number of opcodes).</p>
+
+<h2>III. Subroutines: User-Defined Opcodes</h2>
+
+<p>So far, we have taken looks at a few ways to control the flow
+within one body of code. However, it is often useful to package
+up code into its own named resource and to call that code from
+within the main body of code, diverting away temporarily from the
+main code body to another body of code, then returning back to
+the main code body. To do this, we make <i>subroutines</i>, a
+named body of code that we can call to from any other body of
+code and that will return back to the main body of code. With a
+subroutine we can identify its meaning with a clear and useful
+name (i.e. this code inverts an ftable, so we'll call the
+subroutine <code>ftableInvert</code>), and also easily reuse the
+code amongst different instruments and different projects. In
+Csound, we are able to use subroutines by using the User-Defined
+Opcode system.</p>
+
+<p>Let's take a look at the last code example from Part I:</p>
+
+<div class="example">
+<pre>
+itable = 1
+itablesize = ftlen(itable)
+i_index = 0
+
+loopStart:
+
+
+ival tablei i_index, itable
+ival = ival * -1
+tableiw ival, i_index, itable
+
+loop_lt i_index, 1, itablesize, loopStart
+</pre>
+</div>
+
+<p>This code has been set up to be very easily reusable. If you
+wanted to take this code and use with another ftable, all you
+would have to do is make a copy and change what ftable you were
+working on by reassigning itable to another number (on the first
+line). Beyond that one variable, all of the rest of the code is
+setup to work without change.</p>
+
+<p>By simply copying and pasting it would be easy to reuse this
+code, and if it was something that was very specific to a
+particular instrument design and you knew that you weren't going
+to use this code often, you might simply go that route of copying
+and pasting. However, there are some drawback to just copying and
+pasting:</p>
+
+<ul>
+<li>If you're using two copies of this code in the same
+instrument, you would have to rename the loopStart label for each
+time this bit of code is reused in the same instrument, as you
+can't have two of the same label in the same instrument</li>
+
+<li>If you were going to paste this code into a different
+instrument, you would have to carefully check that all of the
+variable names you have used in this code do not clash with other
+variables you have already used in the instrument</li>
+
+<li>If you have a lot of code you like to reuse, it can be
+tedious to copy and paste so much code</li>
+</ul>
+
+<p>However, if we take this code and encapsulate it into a
+subroutine--in the case of Csound, we would use the User-Defined
+Opcode system--we could give this set of code an easily
+identified name and pass information into the subroutine as well
+as get information out of the subroutine. Then, anytime we wanted
+to use this code, we would only have to call it like any other
+opcode in Csound.</p>
+
+<p>Creating a UDO(User-Defined Opcode), we also wouldn't have to
+worry about the problems of renaming labels or clashing variable
+names, as that information stays local to the UDO code.
+Consequently, the UDO does not know about information in the
+calling instrument or UDO, so you have to pass in information as
+well as return information from the UDO. We <i>could</i> use
+global variables which all code can see, but that's generally a
+bad practice for this kind of coding so is not encouraged. We'll
+look at the passing-in and returning values more later.</p>
+
+<p>User-Defined Opcodes, like normal opcodes that come with
+Csound, have a name as well as out arguments and in arguments.
+When calling the opcode, out arguments come first (if there are
+any), then the name of the opcode to be called, and then finally
+the in arguments. To define a User-Defined Opcode, we define it
+like this:</p>
+
+<div class="example">
+<pre>
+        <span style="font-weight: bold;">opcode</span> <span
+style="font-style: italic;">opname</span>, <span style=
+"font-style: italic;">outargtypes</span>, <span style=
+"font-style: italic;">inargtypes</span>
+<span style="font-style: italic;">inargs</span> <span style=
+"font-weight: bold;"> xin</span>
+
+        <i>...code...</i>
+
+        <span style="font-weight: bold;">xout</span> <span style=
+"font-style: italic;">outarg</span>
+        <span style="font-weight: bold;">endop</span>
+</pre>
+</div>
+
+<p>The first line starts with "opcode" which tells Csound we're
+defining a User-Defined Opcode. After that is the name ofthe
+opcode we're making. Since we have code that inverts an ftable,
+we'll name our opcode "ftableInvert". Following that comes a
+definition of types of input arguments as a series of letters to
+define what kind of arguments ftable invert will return as
+output, as well as another definition of input argument types.
+(The argument types we are allowed to use are defined in the
+manual <a href=
+"http://csounds.com/manual/html/opcode.html">here</a>.)</p>
+
+<p>Getting back to our code, we know that we want to be able to
+reuse this code with any ftable, simply by telling what ftable
+number this code is supposed to use. The code runs on the ftable
+itself so after its is finished, there is nothing in the code
+that will be required to be returned. Knowing this, we know that
+for the UDO definition, we need to set it so it takes in one
+irate variable (the ftable number), and returns nothing.</p>
+
+<p>Here's what our code would look like as a UDO:</p>
+
+<div class="example">
+<pre>
+        opcode ftableInvert 0, i
+itable  xin
+
+
+itablesize  = ftlen(itable)
+i_index     = 0
+
+
+loopStart:
+
+
+ival    tablei i_index, itable
+ival    = ival * -1
+        tableiw ival, i_index, itable 
+
+loop_lt i_index, 1, itablesize, loopStart
+
+    endop
+</pre>
+</div>
+
+<p>In the opcode declaration on the first line, the code
+translates to "create an opcode named <code>ftableInvert</code>
+with 0 out arguments and 1 in argument of type i". The second
+line with xin collects the input values and assigns them to
+variables within the UDO; we have only one input argument of type
+i and we assign it to the variable itable. The code that follows
+that does the inversion of the ftable should be familiar from
+Part I of this article. We complete the opcode definition with
+"endop", thus creating our own opcode using Csound code.</p>
+
+<p>To call this UDO, we do so in the same way we call any other
+opcode in Csound. Because Csound (and most programming languages)
+interpret as they read code line by line, we have to make sure
+that we define the UDO before we use it in our instruments.</p>
+
+<p>In the example below, all of this would be in either the ORC
+file or within the &lt;CsInstruments&gt; tags in a CSD file.</p>
+
+<div class="example">
+<pre>
+/* BEGIN USER-DEFINED OPCODES */
+    opcode ftableInvert 0, i
+itable  xin
+
+itablesize = ftlen(itable)
+i_index = 0
+
+loopStart:
+
+ival    tablei i_index, itable
+ival = ival * -1
+tableiw ival, i_index, itable 
+
+loop_lt i_index, 1, itablesize, loopStart
+
+    endop
+
+/* BEGIN ORCHESTRA */
+    instr 1
+
+itable1 = p4
+itable2 = p5
+
+ftableInvert itable1
+ftableInvert itable2
+
+    endin
+</pre>
+</div>
+
+<p>We have started off by defining the <code>ftableInvert</code>
+UDO, then later on in instr 1, we use that opcode we made just
+like we call any other opcode in Csound.</p>
+
+<p><span style="font-weight: bold;">Notes</span></p>
+
+<ul>
+<li>Be careful when naming your opcodes! If you create a UDO that
+has the same name of one that comes with Csound, the UDO will
+become the one that gets used whenever Csound searches for that
+opcode. If two UDO's are named the same, Csound will use the UDO
+definition it read in last. This can be a source of problems if
+you are using UDO's and decide to use someone else's instrument
+that may also be using their own UDO's but have the same names as
+yours. You can try making your UDO's unique by prepending your
+name or a project name, i.e. "yi_env1", "nameOfPiece_filter",
+etc.</li>
+
+<li>UDO's can call other UDO's as long as the UDO they are
+calling have already been read in by Csound. (UDO's can even call
+themselves, which will be demonstrated in the next section.)</li>
+</ul>
+
+<p>UDO's are a powerful way to create your own opcodes and make
+it easy to reuse code you commonly use. You can also find many
+UDO's to study and use at the Csound UDO Repository <a href=
+"http://www.csounds.com/udo">here</a> on <a href=
+"http://www.csounds.com">Csounds.com</a>.</p>
+
+<p>Now that we've seen how to make subroutines out of Csound code
+using User-Defined Opcodes, let's take a look at a programming
+technique using UDO's that call themselves, and how that can be
+useful to you in your own work.</p>
+
+<h2>IV. Recursion</h2>
+
+<p>In Part I of this article we saw how to use iteration (loops)
+to handle doing a task a variable number of times, but there is
+another technique to achieve the same effect: recursion.
+Recursion in programming refers to when a function or subroutine
+calls itself. Most things which can be expressed using iteration
+can also be done using a recursive function and vice versa.
+Recursion is often noted for its <i>elegance</i> in expressing an
+algorithm, but also noted for performance inefficiencies. While
+most things that require a variable number of operations can be
+expressed by either iteration or recursion, there usually are
+cases where one would work better than another. Before we get
+into discussing the merits of either way of coding, let's take a
+look at how to use recursion.</p>
+
+<p>The example CSD below has an instrument that uses Additive
+Synthesis to create a sound. The primary sound generation comes
+from the yi_add_table UDO that reads a set of partial numbers and
+strengths from an ftable and uses an oscil3 with a sine ftable to
+generate the signal. You might be asking why aren't we using a
+simple gen10 ftable with a single oscil3: the instrument applies
+different powers of a 0-1 scaled envelope to each partial
+individually, so the application of amplitude must happen on a
+per-partial basis.</p>
+
+<p>The code below makes lower partials stronger during lower
+volumes and have higher partials come in quickly as the amplitude
+rises. NOTE: the implementation isn't great and modifications
+could be made to introduce a scaling factor so that how strong
+the higher partials synthesize could be dependent on amplitude
+(quieter notes are darker while louder notes are brighter) but
+that is beyond the scope of this article).</p>
+
+<p>The example is as follows:</p>
+
+<div class="example">
+<pre>
+/* Generates a signal from an ftable using additive synthesis */
+
+&lt;CsoundSynthesizer&gt;
+
+&lt;CsInstruments&gt;
+sr=44100
+ksmps=1
+nchnls=2
+
+/* Table that define harmonic number and strength of that harmonic */
+gitab1 ftgen 1, 0, 16, -2,   1, 1, 2, .8, 3, .6, 4, .4, 5, .2, \
+                                0,0,0,0,0,0
+gitab2 ftgen 2, 0, 16, -2,   1, 1, 2, .9, 3, .8, 4, .7, 5, .6, \
+                                6, .5, 7, .4, 8, .3
+gitab2 ftgen 3, 0, 16, -2,   1, 1, 2, .5, 3, .25, 4, .125, \ 
+                                5, .0625, 6, .03125, 0,0,0,0
+
+gi_sine ftgen 0, 0, 65537, 10, 1
+
+    <span style=
+"font-weight: bold;">opcode yi_add_table,a,ikko</span>
+
+itable, kenv, kpch, i_index xin
+
+itablesize = ftlen(itable)
+
+ifreq tablei i_index, itable
+iamp tablei i_index + 1, itable
+
+kfreq = kpch * ifreq
+
+if (iamp &gt; 0) then
+  asig oscil3 iamp, kfreq, gi_sine
+else
+    asig = 0
+endif
+
+kcount = 0
+kenv_local = kenv
+
+loopStart:
+
+kenv_local = kenv_local * kenv
+
+loop_lt kcount, 2, i_index + 2, loopStart
+
+asig = asig * kenv_local
+
+aout = asig
+
+if (i_index &lt; itablesize - 2) then
+   <span style=
+"color: rgb(255, 0, 0); font-weight: bold;">anextsig yi_add_table itable, kenv, kpch, i_index + 2</span>
+    aout = aout + anextsig
+endif
+
+if (i_index == 0) then
+   aout balance aout, asig
+endif
+
+    xout aout
+
+   <span style="font-weight: bold;">endop</span>
+
+
+   instr 1 ;Example Instrument
+ipch = cpspch(p4)
+iamp = ampdb(p5)
+itab = p6
+
+kenv   linseg 0, p3 * .5, 1, p3 * .5, 0
+
+aout    yi_add_table itab, kenv, ipch
+
+aout = aout * iamp
+
+outs aout, aout
+  endin
+
+   endin
+
+
+&lt;/CsInstruments&gt;
+
+&lt;CsScore&gt;
+
+i1    0.0 8.5625  8.00    80  1  
+i1  11.421875   8.5625  8.03    80  1  
+i1  30.5625 9.78125 7.01    80  1  
+i1  8.140625    9.78125 7.01    80  2  
+i1  23.5    9.703125    7.03    80  2  
+i1  1.078125    9.703125    7.03    80  3  
+i1  17.84375    9.703125    8.00    80  3  
+i2  0   40.34375   
+e
+
+&lt;/CsScore&gt;
+
+&lt;/CsoundSynthesizer&gt;
+
+</pre>
+</div>
+
+<p>I have hilighted above in red the recursive call: you can see
+that the yi_add_table opcode calls itself! If you haven't seen
+code like this you might be thinking to yourself, "Okay, so I
+call this UDO and starts at the beginning of the UDO and when it
+gets to the call to itself, it starts at the beginning of the UDO
+again and when it gets to the call to itself it... Wait! Isn't
+this going to go on infinitely?". Well, if the code doesn't have
+any way to stop it from calling itself, then yes, it would be an
+infinite loop. However, in the example above, if you look at the
+if statement that surrounds the call to itself, you'll see that
+it is checking if the i_index that's being passed in to the UDO
+is less than the size of the ftable. That's the check that will
+eventually terminate the UDO calls to itself and start returning
+back to where it was called from.</p>
+
+<p>In the example, the yi_add_table opcode is set to take in an
+ftable number, a k-rate envelope signal, a k-rate frequency
+signal, and an optional i_index parameter that defaults to 0. In
+the calling instrument (instr 1) we see how that UDO is called
+without an i_index. So if we follow along the code, the first
+time the UDO is called i_index defaults to 0, then in the UDO
+when it calls itself, it does so but adding 2 to the current
+i_index. If you keep thinking through this, the i_index will keep
+increasing each time the UDO calls itself until the test
+comparing i_index and itablesize will fail and the recursive call
+to the UDO starts to unwind back to the original UDO call.</p>
+
+<p><span style="font-weight: bold;">Other Notable Code</span></p>
+
+<p>There is also two other interesting sections of code. The
+first is a a loop:</p>
+
+<div class="example">
+<pre>
+loopStart:
+
+kenv_local = kenv_local * kenv
+
+loop_lt kcount, 2, i_index + 2, loopStart
+</pre>
+</div>
+
+<p>The loop allows us to multiply kenv by itself n number of
+times where n is what number of the partial we're currently
+synthesizing. This is what gives the envelope its slope for every
+partial. While we certainly could have redone this code to also
+use recursion, I wanted to do this within the body of the UDO and
+not have a separate UDO for this part of the code. There is also
+another reason to not use recursion here, namely that of memory
+and function call overhead, but that will explained later in the
+article. It's enough to know that on the whole, using loops is
+more efficient than recursion and recursion should only be used
+in special circumstances.</p>
+
+<p>The second section of code I wanted to highlight is:</p>
+
+<div class="example">
+<pre>
+if (i_index == 0) then
+    aout balance aout, asig
+endif
+</pre>
+</div>
+
+<p>This section of code allows us balance out the overall signal
+with the signal strength of the first partial. By checking what
+i_index we're currently on, this code will not run unless we're
+in the initial call of the UDO. If we follow through the code,
+what happens is that instrument 1 initially calls the
+yi_add_table UDO and is expecting a signal to be generated. Each
+call to the UDO will return a signal to that which called it,
+whether it is a UDO or an instrument. When the UDO calls itself,
+it collects the generated signal of the UDO it called and mixes
+it with the signal the current UDO itself generates. Since I only
+wanted to call balance when all the signals are collected up, the
+code is set up to check where we are in the UDO calls: in this
+case, if i_index is equal to 0, we know we are in the UDO that is
+synthesizing the original partial, therefore, call the balance
+opcode.</p>
+
+<p><span style="font-weight: bold;">When to Use
+Recursion</span></p>
+
+<p>Recursion is often considered elegant in programming and it is
+also particularly effective when working with tree data
+structures, though that doesn't happen too often in Csound and
+likely won't be a concern for most users. However, recursion
+comes with a price of more memory and function call overhead than
+iteration (the explanation of this is beyond the scope of this
+article, but many texts on this can be found on the Internet). In
+general, iteration is faster and requires less memory than
+recursion, therefore it is recommended to solve problems using
+iteration first and only then use recursion when necessary in
+Csound.</p>
+
+<p>If iteration is faster and more efficient to use than
+recursion, why use recursion at all? Beyond the general elegance
+of expressing an algorithm using recursion, there is a very
+specific reason in Csound to use it that has to do with opcodes
+and how Csound is implemented under the hood.</p>
+
+<p>If we try to write the above additive synth code in a loop
+like so:</p>
+
+<div class="example">
+<pre>
+kcount = 0
+aout = 0
+
+loopStart:
+
+kenv_local = kenv_local * kenv
+
+kfreq   tablei kcount, itable
+kamp    tablei kcount + 1, itable
+
+kfreq   = kpch * kfreq
+
+<span style=
+"color: rgb(255, 0, 0);">asig   oscil3 kamp, kfreq, gi_sine</span>
+aout    = aout + asig
+
+loop_lt kcount, 2, itablesize, loopStart
+</pre>
+</div>
+
+<p>At first it seems like this code should work: clear the aout
+variable in the beginning of this performance pass, then in a
+loop synthesize using oscil3 and add that signal to the aout,
+then after the loop is done output the collected output. However,
+this will not work: We will get sound out, but it certainly won't
+be what we expected!</p>
+
+<p>The reasons for why this does not work are a bit technical to
+explain so I will do so in the following section. For the purpose
+of this article though, I think it is enough to know that to call
+a variable number of opcodes, one <span style=
+"font-style: italic;">must</span> do it using a UDO that
+recursively calls itself if the opcodes. The only exception to
+this is if the opcode does not maintain any state (i.e. a UDO
+that just returns a value only depending on what is being passed
+in), but on the whole, the above rule will apply.</p>
+
+<p><span style="font-weight: bold;">Technical
+Explanation</span></p>
+
+<p>The line of code in red above--the call to oscil3 within the
+loop--at first glance may seem like it might work. The problem I
+think is that sometimes when we call opcodes it feels like we are
+calling a function, when really it is more like a call to a
+method of an object. When Csound compiles the above code excerpt,
+the opcode line in red is really only created once within the
+loop block. Most opcodes like oscil3 involve stateful data as
+properties, in this case the current phase in reading the ftable,
+and the opcodes are made with the assumption that they will only
+get called once per performance pass.</p>
+
+<p>If we call an opcode multiple times in a performance pass,
+even with different parameters, it's internal information will be
+updated that many multiple number of times. Under normal
+conditions Csound will run and assemble a buffers worth of audio
+data, output it, then grab more on the next performance pass.
+Now, lets say the above loop is supposed to run eight times
+before exiting, by calling the opcode eight times and collecting
+the data, it's as if we are generating ahead eight buffers worth
+of audio data and mixing it together, but also throwing in
+different parameters on each call to the opcode. It won't yield
+the affect of having eight different oscillators.</p>
+
+<p>Csound opcodes are made up of a data struct and functions
+which process using that struct passed in. This is how most
+object systems are done in C. So in compiling the orc code with
+the loop above, Csound will only allocate one struct for that
+line of code. Now, as that struct is really acting as an object,
+calling it eight times is as if calling a method on an object
+eight times, and since the object's method has side-effects in
+updating the objects state, we can see that having opcodes that
+have stateful information in a loop is not safe to use.</p>
+
+<h2>Conclusion</h2>
+
+<p>We've looked at a number of ways to controlling the flow of
+operation in Csound instrument code. By knowing these tools, we
+will be able to write instrument code that can handle more
+complicated needs of the user, as well as more easily write
+reusable code. I hope you've enjoyed these articles introducing
+the techniques of branching, looping, subroutines, and recursion,
+and that they serve you well in helping to express your musical
+ideas.</p>
+</div>
+</div>
+</body>
+</html>
+
+

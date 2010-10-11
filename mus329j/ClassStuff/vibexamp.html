@@ -1,0 +1,307 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE> </TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=589>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>instr</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>1</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>;simple vibrato example</FONT></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>iamp</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>=</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>p4</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>icps</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>=</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>cpspch(p5)</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>imodamp</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>=</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>p6</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>;vib width (very small!)</FONT></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>imodhz</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>=</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>p7</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>;vibrato rate</FONT></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>imodfn</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>=</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>p8</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>;use a sine wave</FONT></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>ioscfn</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>=</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>p9</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>klfo</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>oscili</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>imodamp,imodhz,imodfn</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>;vibrato lfo</FONT></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>kvib</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>=</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>klfo + 1</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>;vary around 1</FONT></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>kcps</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>=</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>icps * kvib</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>;modulate the freq</FONT></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>kenv</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>linen</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>iamp,.2,p3,.5</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>asig</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>oscili</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>kenv,kcps,ioscfn</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>out</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>asig</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>endin</FONT></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="37%" VALIGN="TOP">&nbsp;</TD>
+</TR>
+</TABLE>
+
+<P ALIGN="CENTER"><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=516>
+<TR><TD VALIGN="TOP" COLSPAN=9>
+<P><FONT FACE="Courier New" SIZE=2>;sample score for vibrato example</FONT></TD>
+</TR>
+<TR><TD VALIGN="TOP" COLSPAN=9>
+<FONT FACE="Courier New" SIZE=2><P>;a sine wave</FONT></TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>f01</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>0</FONT></TD>
+<TD WIDTH="8%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>512</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>10</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>1</FONT></TD>
+<TD WIDTH="14%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+</TR>
+<TR><TD VALIGN="TOP" COLSPAN=9>
+<FONT FACE="Courier New" SIZE=2><P>;the oscil func</FONT></TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>f02</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>0</FONT></TD>
+<TD WIDTH="8%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>512</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>10</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>1</FONT></TD>
+<TD WIDTH="14%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>0</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.1</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>;nn</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>st</FONT></TD>
+<TD WIDTH="8%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>dur</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>amp</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>pch</FONT></TD>
+<TD WIDTH="14%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>modamp</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>modhz</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>modfn</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>oscfn</FONT></TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>i01</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>0</FONT></TD>
+<TD WIDTH="8%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>3</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>20000</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>8.00</FONT></TD>
+<TD WIDTH="14%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.01</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>6</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>1</FONT></TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>2</FONT></TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>i01</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>+</FONT></TD>
+<TD WIDTH="8%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>8.02</FONT></TD>
+<TD WIDTH="14%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.04</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>i01</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.</FONT></TD>
+<TD WIDTH="8%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>8.04</FONT></TD>
+<TD WIDTH="14%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.083</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>i01</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.</FONT></TD>
+<TD WIDTH="8%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.</FONT></TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>8.05</FONT></TD>
+<TD WIDTH="14%" VALIGN="TOP">
+<FONT FACE="Courier New" SIZE=2><P>.1</FONT></TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="TOP">
+<P>e</TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="8%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="9%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="14%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="12%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="13%" VALIGN="TOP">
+<P>&nbsp;</TD>
+</TR>
+</TABLE>
+
+<P ALIGN="CENTER"><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=624>
+<TR><TD WIDTH="50%" VALIGN="TOP">
+<P><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/vibexamp.orc">Download vibexamp.orc</A></TD>
+<TD WIDTH="50%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/vibexamp.sco">Download vibexamp.sco</A></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

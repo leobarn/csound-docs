@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  
+
+
+  
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+
+
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL: <a href="../index.html">Home</a> | <a href="index.html">Winter 2006</a> </div>
+
+
+<div id="header">
+<h2>TclCsound</h2>
+
+    
+<h3>a Csound Frontend and Tcl/Tk Wrapper</h3>
+Victor Lazzarni<br>
+Victor.Lazzarini AT nuim.ie</div>
+<div id="content">
+<h2>Introduction</h2>
+<p>The Csound music programming system (Vercoe 2004) is currently the most complete of the text-based audio processing systems in terms of its unit generator collection. Csound hails from a long tradition in Computer Music. Together with cmusic (Moore 1990), it was one of the first modern C-language-based portable sound compilers (Pope 1993), when it was released in 1986. Due to its source-code availability, first from an MIT ftp server and then from the DREAM site at Bath, it was adopted by composers and developers world-wide. These brave peopled developed into a formidable tool for sound synthesis, processing and computer music composition. Its latest version, Csound 5 (ffitch, 2005) has close to one thousand opcodes, ranging from the basic table lookup oscillator to spectral signal demixing unit generators. </p>
+<p>Many important changes have been introduced in Csound5, which involved a complete redesign of the software. This resulted not only in a better software, from an engineering perspective, but in the support for many new possible ways of using and interacting with Csound. </p>
+<p>An important development has been the availability of a complete C API (the so-called ‘Host API', which was, in fact, already partially present in earlier versions). The API can be used to instantiate and control csound from a calling process, opening a whole new set of possibilities for using Csound. </p>
+<h2><br>
+I. 
+
+
+ The Csound 5 API</h2>
+<p>The Csound 5 Host API allows the embedding of the audio processing system under other ‘host' software. Effectively, Csound is now a library, libcsound, that can provide audio services, such as synthesis and processing, for any application. This allows for complete control over the functioning of the audio engine, including transport control, loading of plugins, inter-application sofware bus, multithreading, etc.. A ‘classic' csound command-line program can now be written based only on a few API calls: </p>
+<pre>#include &lt;csound.h&gt; </pre>
+<pre>int main(int argc, char **argv) { </pre>
+<pre>int result;
+CSOUND *cs; /* the csound instance */
+
+
+/* initialise the library */
+csoundInitialize(&amp;argc, &amp;argv, 0); </pre>
+<pre>/* create the csound instance */
+cs = csoundCreate(NULL); </pre>
+<pre>/* compile csound code */
+result = csoundCompile(cs, argc, argv); </pre>
+<pre>/* this is the processing loop */
+if(result) while(csoundPerformKsmps(cs)==0); </pre>
+<pre>/* destroy the instance */
+csoundDestroy(cs); </pre>
+<pre>return 0;
+} </pre>
+<p>The Csound API can be used in many applications; the development of frontends is the most obvious of these. A good example of its application is found on the csoundapi~ Class, which provides a multi-instantiable interface to Csound 5 for Pure Data. The Csound API is the basis for TclCsound (Lazzarini 2005), a Tcl/Tk extension, discussed in the next section. </p>
+<h2><br>
+  II. TclCsound </h2>
+<p>The classic interface to csound gives you access to the program via a command-line such as </p>
+<pre>csound -odac hommage.csd </pre>
+<p>This is a simple yet effective way of making sound. However, it does not give you neither flexibility nor interacion. With the advent of the API, a lot more is possible. At this stage, TclCsound was introduced to provide a simple scripting interface to Csound. Tcl is a simple language that is easy to extend and provide nice facilities such as easy file access and TCP networking. With its Tk component, it can also handle a graphic and event interface. TclCsound provides three ‘points of contact' with Tcl: </p>
+<p>1. a csound-aware tcl interpreter (cstclsh) </p>
+<p>2. a csound-aware windowing shell (cswish) </p>
+<p>3. a csound commands module for Tcl/Tk (tclcsound dynamic lib) </p>
+<h3>The Tcl interpreter: cstclsh </h3>
+<p>With cstclsh, it is possible to have interactive control over a csound performance. The command starts an interactive shell, which holds an instance of Csound. A number of commands can then be used to control it. For instance, the following command can compile csound code and load it in memory ready for performance: </p>
+<pre>csCompile -odac hommage.csd -m0 </pre>
+<p>Once this is done, performance can be started in two ways: using csPlay or csPerform . The command </p>
+<pre>csPlay </pre>
+<p>will start the Csound performance in a separate thread and return to the cstclsh prompt. A number of commands can then be used to control Csound. For instance, </p>
+<pre>csPause </pre>
+<p>will pause performance; and </p>
+<pre>csRewind </pre>
+<p>will rewind to the beginning of the note-list. The csNote, csTable and csEvent commands can be used to add Csound score events to the performance, on-the-fly. The csPerform command, as opposed to csPlay , will not launch a separate thread, but will run Csound in the same thread, returning only when the performance is finished. A variety of other commands exist, providing full control of Csound. </p>
+<h3>Cswish: the windowing shell </h3>
+<p>With Cswish, Tk widgets and commands can be used to provide graphical interface and event handling. As with cstclsh, running the cswish command also opens an interactive shell. For instance, the following commands can be used to create a transport control panel for Csound: </p>
+<pre>frame .fr
+button .fr.play -text play -command csPlay
+button .fr.pause -text pause -command csPause
+button .fr.rew -text rew -command csRewind
+pack .fr .fr.play .fr.pause .fr.rew </pre>
+<p>Similarly, it is possible to bind keys to commands so that the computer keyboard can be used to play Csound. </p>
+<p>Particularly useful are the control channel commands that TclCsound provides. For instance, named IO channels can be registered with TclCsound and these can be used with the invalue, outvalue opcodes. In addition, the Csound API also provides a complete software bus for audio, control and string channels. It is possible in TclCsound to access control and string bus channels (the audio bus is not implemented, as Tcl is not able to handle such data). With these TclCsound commands, Tk widgets can be easily connected to synthesis parameters. </p>
+<h3>A Csound server </h3>
+<p>In Tcl, setting up TCP network connections is very simple. With a few lines of code a csound server can be built. This can accept connections from the local machine or from remote clients. Not only Tcl/Tk clients can send commands to it, but TCP connections can be made from other sofware, such as, for instance, Pure Data (PD). A Tcl script that can be run under the standard tclsh interpreter is shown below. It uses the Tclcsound module, a dynamic library that adds the Csound API commands to Tcl. </p>
+<pre># load tclcsound.so
+#(OSX: tclcsound.dylib, Windows: tclcsound.dll)
+load tclcsound.so Tclcsound
+set forever 0
+
+
+# This arranges for commands to be evaluated
+proc ChanEval { chan client } {
+if { [catch { set rtn [eval [gets $chan]]} err] } {
+puts &quot;Error: $err&quot;
+} else {
+puts $client $rtn
+flush $client
+}
+} </pre>
+<pre># this arranges for connections to be made </pre>
+<pre>proc NewChan { chan host port } {
+puts &quot;Csound server: connected to $host on port $port ($chan)&quot;
+fileevent $chan readable [list ChanEval $chan $host]
+} </pre>
+<pre># this sets up a server to listen for
+# connections </pre>
+<pre>set server [socket -server NewChan 40001]
+set sinfo [fconfigure $server -sockname]
+puts &quot;Csound server: ready for connections on port [lindex $sinfo 2]&quot;
+vwait forever </pre>
+<p>With the server running, it is then possible to set up clients to control the Csound server. Such clients can be run from standard Tcl/Tk interpreters, as they do not evaluate the Csound commands themselves. Here is an example of client connections to a Csound server, using Tcl: </p>
+<pre># connect to server
+set sock [socket localhost 40001]
+
+
+# compile Csound code
+puts $sock &quot;csCompile -odac hommage.csd&quot;
+flush $sock </pre>
+<pre># start performance
+puts $sock &quot;csPlay&quot;
+flush $sock </pre>
+<pre># stop performance
+puts $sock &quot;csStop&quot;
+flush $sock </pre>
+<p>As mentioned before, it is possible to set up clients using other software systems, such as PD. Such clients need only to connect to the server (using a netsend object) and send messages to it. The first item of each message is taken to be a command. Further items can optionally be added to it as arguments to that command. </p>
+<h3>A Scripting Environment </h3>
+<p>With TclCsound, it is possible to transform the popular text editor e-macs into a Csound scripting/performing environment. When in Tcl mode, the editor allows for Tcl expressions to be evaluated by selection and use of a simple escape sequence (Ctrl-C Ctrl-X). This facility allows the integrated editing and performance of Csound and Tcl/Tk code. </p>
+<p>In Tcl it is possible to write score and orchestra files that can be saved, compiled and run by the same script, under the e-macs environment. The following example shows a Tcl script that builds a csound instrument and then proceeds to run a csound performance. It creates 10 slightly detuned parallel oscillators, generating sounds similar to those found in Risset's <em> Inharmonique </em>. </p>
+<pre>load tclcsound.so Tclcsound </pre>
+<pre># set up some intermediary files </pre>
+<pre>set orcfile &quot;tcl.orc&quot;
+set scofile &quot;tcl.sco&quot;
+set orc [open $orcfile w]
+set sco [open $scofile w] </pre>
+<pre># This Tcl procedure builds an instrument
+proc MakeIns { no code } {
+global orc sco
+puts $orc &quot;instr $no&quot;
+puts $orc $code
+puts $orc &quot;endin&quot;
+} </pre>
+<pre># Here is the instrument code
+append ins &quot;asum init 0 \n&quot;
+append ins &quot;ifreq = p5 \n&quot;
+append ins &quot;iamp = p4 \n&quot; </pre>
+<pre>for { set i 0 } { $i &lt; 10 } { incr i } {
+append ins &quot;a$i oscili iamp,
+ifreq+ifreq*[expr $i * 0.002], 1\n&quot;
+} </pre>
+<pre>for { set i 0 } {$i &lt; 10 } { incr i } {
+if { $i } {
+append ins &quot; + a$i&quot;
+} else {
+append ins &quot;asum = a$i &quot;
+}
+} </pre>
+<pre>append ins &quot;\nk1 linen 1, 0.01, p3, 0.1 \n&quot;
+append ins &quot;out asum*k1&quot; </pre>
+<pre># build the instrument and a dummy score </pre>
+<pre>MakeIns 1 $ins
+puts $sco &quot;f0 10&quot;
+close $orc
+close $sco </pre>
+<pre># compile
+csCompile $orcfile $scofile -odac -d -m0 </pre>
+<pre># set a wavetable
+csTable 1 0 16384 10 1 .5 .25 .2 .17 .15 .12 .1 </pre>
+<pre># send in a sequence of events and perform it
+for {set i 0} { $i &lt; 60 } { incr i } {
+csNote 1 [expr $i * 0.1] .5 \
+[expr ($i * 10) + 500] [expr 100 + $i * 10]
+}
+csPerform </pre>
+<pre># it is possible to run it interactively as
+# well
+csNote 1 0 10 1000 200
+csPlay </pre>
+<p>The use of such facilities as provided by e-macs can emulate an environment not unlike the one found under the so-called ‘modern synthesis systems', such as SuperCollider (SC). In fact, it is possible to run Csound in a client-server set-up, which is one of the features of SC3. A major advantage is that Csound provides about three or four times the number of unit generators found in that language (as well as providing a lower-level approach to signal processing, in fact these are but a few advantages of Csound). </p>
+<h3> TclCsound as a language wrapper </h3>
+<p>It is possible to use TclCsound at a slightly lower level, as many of the C API functions have been wrapped as Tcl commands. For instance it is possible to create a ‘classic' Csound command-line frontend completely written in Tcl. The following script demonstrates this: </p>
+<pre>#!/usr/local/bin/cstclsh </pre>
+<pre>set result 1
+csCompileList $argv
+while { $result != 0 } {
+set result csPerformKsmps
+} </pre>
+<p>This script is effectively equivalent to the C program shown in section 2. If saved to, say, a file called csound.tcl, and made executable, it is possible to run it as in </p>
+<pre>csound.tcl –odac hommage.csd </pre>
+<h2><br>
+  References </h2>
+<p>John ffitch. On the design of Csound 5. <em>Proceedings of the 2005 Linux Audio Conference, </em>ZKM, Karlsruhe, Germany. </p>
+<p>Victor Lazzarini. The TclCsound frontend and language Wrapper. <em>Sounds Electric 2005 </em>. NUI, Maynooth, Ireland. </p>
+<p>F Richard Moore. 1990. <em>Elements of Computer Music, </em> Englewood Cliffs, NJ: Prentice-Hall, 1990. </p>
+<p>Stephen T Pope. 1993. Machine Tongues XV: Three Packages for Software Sound Synthesis. <em>Computer Music Journal 17 (2). </em></p>
+<p>Barry Vercoe et Al. 2005. <em>The Csound Reference Manual </em><a href="http://www.csounds.com/manual/html/index.htm">http://www.csounds.com/manual/html/index.html</a></p>
+<p>&nbsp;</p>
+<pre>&nbsp;</pre>
+</div>
+
+
+</div>
+
+
+</body>
+</html>

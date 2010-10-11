@@ -1,0 +1,489 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+<HEAD>
+<TITLE>Csound Journal</TITLE>
+<link href="csoundJournal.css" rel="stylesheet" type="text/css">
+
+
+</HEAD>
+
+<body>
+<div id="wrap">
+<div id="navigation"> CSOUND JOURNAL: <a href="../index.html">Home</a>
+|&nbsp;<a href="index.html">Issue 9</a> </div>
+
+<div id="header">
+
+
+<H2>Using Emacs and Csound-x as a Csound IDE: Part I</H2>
+Pedro Kr&ouml;ger<BR>
+pedro.kroger AT gmail.com
+</DIV>
+
+<div id="content">
+
+<H2>
+Introduction
+</H2>
+
+<P>
+One of the great things about Csound is that the format of the
+orchestra and score files are pure text. The composer can use any
+editor he or she pleases, without being tied to a specific platform.
+There are a few text editors specialized in working with Csound such
+as the Csound Editor 
+<a href="#ref1">[1]</a>. In this paper we will see
+how to use Emacs as a Csound development environment.</P>
+
+<P>
+Emacs is a very powerful all-purpose editor. With it one can edit and
+manage files, read news, mail, and RSS feeds, and even play Tetris. An
+introduction to Emacs is out of the scope of this paper, but there is
+plenty of documentation available on-line and also with Emacs itself. The
+best place to start is the "Guided Tour of Emacs"
+<a href="#ref2">[2]</a>. The Emacs Tutorial is available inside
+Emacs, under the Help menu. The "GNU Emacs Manual" can be read on-line
+<a href="#ref3">[3]</a> or inside Emacs under the Help
+menu. Finally, the Emacs Wiki is a nice place to find things related
+to Emacs 
+<a href="#ref4">[4]</a>.</P>
+
+<P>
+Csound-x is an Emacs library (a mode, in Emacs parlance) that allows
+one to compose music for Csound without leaving Emacs. With it one can
+run Csound (real time or not), play files, format orchestras and
+scores, edit and visualize functions, calculate and edit columns in
+scores in the same way as in spreadsheets, access documentation for an
+opcode with a keystroke, and so on.</P>
+
+
+<H2>
+I. Installing and Configuring Csound-x
+</H2>
+
+<P>
+Csound-x does not come with Emacs, so we need to download and install
+it. The latest version of Csound-x can be found at the address listed below
+<a href="#ref5">[5]</a>. We must download and unzip it to
+a local folder and tell Emacs where to find Csound-x. Emacs stores the
+configuration for each user in the file <TT>.emacs</TT> in the home
+directory. Put the following lines in your <TT>.emacs</TT>, adjusting
+the path where Csound-x was unzipped:</P>
+
+
+<PRE>
+(add-to-list 'load-path "~/stef-elisp")
+(require 'stef-elisp)
+</PRE>
+
+<P>
+To access the Csound documentation from Emacs, we will need to
+download the <i>Csound Manual</i> in HTML format and unzip it. In this paper
+I have downloaded it from the address listed below 
+<a href="#ref6">[6]</a> and
+unzipped it in <code>~/csound/html</code>.</P>
+
+<P>
+Next, we want to customize Csound-x. We can customize it by editing
+<TT>.emacs</TT> directly or use the emacs custom interface. To use
+the custom interface type <TT>M-x customize-group RET csound-x
+  RET</TT>. Figure&nbsp;1 shows the items available for
+customization. The option &ldquo;Csound X Applications Paths'' defines the
+value for Csound environment variables such as SADIR and INCDIR.</P>
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 1.</strong>The Emacs Custom Interface
+</CAPTION>
+<TR><TD><DIV >  
+
+<img src="images/kroger-paper/custom.jpg" width="618" height="397" alt="" border="0">
+
+
+  </DIV></TD></TR>
+</TABLE>
+
+<P>
+If we click in &ldquo;Csound X Applications Paths'' we should see a window
+similar to the one in Figure 2. Edit the values
+to mach your environment and when ready save the options by typing
+<TT>C-x C-c</TT>. Custom will insert automatically the appropriate code
+in <TT>.emacs</TT> for you. Besides the common Csound environment
+variables, we can define a program to play and open wavfiles and can also define the
+directory where we unzipped the HTML files for the <i>Csound Manual</i>.</P>
+
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 2.</strong>Customizing Environment Variables
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/custom-paths.jpg" width="639" height="690" alt="" border="0">
+</TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+The most basic feature we can expect in an editor to write code is
+syntax highlighting. Csound-x comes with a configuration that is too
+colorful to my taste (Figure 3). It is easy
+to change the color scheme by typing <TT>M-x customize-face RET
+  csound-x RET</TT>. Emacs will show a list of faces that we can change
+(Figure 4).</P>
+
+
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 3. </strong>Default Syntax Highlighting
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/toot13.jpg" width="635" height="564" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+
+<P>&nbsp;</P>
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 4.</strong>Changing the Default Colors
+</CAPTION>
+<TR><TD> 
+<img src="images/kroger-paper/custom-faces.jpg" width="531" height="490" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+<P>
+Figure 5, below, shows an orchestra with my
+customized syntax highlighting colors.</P>
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 5.</strong>Customized Syntax Highlighting
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/toot13-ok.jpg" width="567" height="618" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+
+<H2>
+II. Using Csound-x</H2>
+
+<P>
+One of the nicest things about Csound-x is that we can open just an
+orchestra an ask to compile it either to DAC or to a file. Csound-x
+will try to read the score. To compile from an orchestra we
+select the menu <TT>ORC</TT>, then <TT>Compile orchestra (to DAC)</TT>
+(Figure 6). To compile from a score the process
+is the same, except we select the <TT>SCO</TT> menu then
+<TT>Compile score (to DAC)</TT>.</P>
+
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 6.</strong>Compile to DAC
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/compile-to-dac.jpg" width="541" height="723" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+<P>
+When we compile an orchestra with Csound-x, Csound runs as a
+sub-process inside Emacs (Figure 7). In the end
+the Csound compilation output is just text we can copy and paste
+inside Emacs as needed.</P>
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 7.</strong> The Compilation Output
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/compilation.jpg" width="577" height="709" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+
+<P>
+Csound-x opens the compilation output in another window by default (a
+frame, in Emacs parlance). If you prefer to have it open in the same
+window, put the following line in your <TT>.emacs</TT>:</P>
+
+<PRE>(add-to-list 'same-window-buffer-names "*Csound Log*")</PRE>
+
+<P>
+Besides syntax highlighting, Csound-x has nice features to help
+with editing Csound orchestra and scores. We can reformat indentation of the whole
+orchestra by selecting <TT>Indent Orchestra</TT> in the <TT>ORC</TT>
+menu. This helps to keep instruments formatted consistently. From the
+<TT>ORC</TT> menu we can open the associated score, and vice-versa
+from the <TT>SCO</TT> menu.</P>
+
+<P>
+To find the documentation for an opcode, we put the cursor before or
+after the opcode and select the menu <TT>CSD</TT> <TT>-&gt;</TT>
+<TT>Documentation</TT> <TT>-&gt;</TT> <TT>Document Opcode</TT>. This will
+open the corresponding page from the <i>Csound Manual</i> in your default web browser.
+Csound-x will open a new browser window each time we ask for the
+documentation of an opcode. If you use Firefox, you may want to put
+the following code in your <TT>.emacs</TT> to open the pages in new
+tabs:</P>
+
+
+<PRE>
+(defun firefox-new-tab (url &amp;optional new-window)
+  "Open URL in a new tab in Firefox."
+  (interactive (browse-url-interactive-arg "URL: "))
+  (unless (string= ""  (shell-command-to-string (concat "firefox -remote 'openURL("
+							url
+							",new-tab)'")))
+    (message "Starting Firefox...")
+    (start-process (concat "firefox " url) nil "firefox" url)
+    (message "Starting Firefox...done")))
+
+(setq browse-url-browser-function 'firefox-new-tab)
+</PRE>
+
+<P>
+Another option for those who like to stay inside Emacs is to use the
+w3m 
+<a href="#ref7">[7]</a> web browser inside Emacs all the time, instead of
+Firefox.</P>
+
+<P>
+A few useful functions like compiling or playing an orchestra do not
+have key bindings defined by default. You can define key bindings for
+these functions by putting the following code in your <TT>.emacs</TT>:</P>
+
+
+<PRE>
+(add-hook 'csound-orc-mode-hook
+          (lambda ()
+            (csdoc-refresh-html)
+            (define-key csound-orc-mode-map (kbd "C-c C-a") 'csound-new-instr)
+            (define-key csound-orc-mode-map (kbd "C-c C-c") 'cscsd-play-orchestra)
+            (define-key csound-orc-mode-map (kbd "C-c C-w") 'cscsd-play)
+            (define-key csound-orc-mode-map (kbd "C-c C-d") 'csdoc-html-document-opcode)
+            (define-key csound-orc-mode-map (kbd "C-c C-f") 'cscsd-compile-orchestra)))
+
+(add-hook 'csound-sco-mode-hook
+          (lambda ()
+            (define-key csound-sco-mode-map (kbd "C-c C-c") 'cscsd-play-score)
+            (define-key csound-orc-mode-map (kbd "C-c C-w") 'cscsd-play)
+            (define-key csound-sco-mode-map (kbd "C-c C-f") 'cscsd-compile-score)))
+</PRE>
+
+<P>
+Now we can compile an orchestra or score to DAC with <TT>C-c C-c</TT>,
+compile an orchestra or score to a file with <TT>C-c C-f</TT>, open a
+soundfile with a sound editor with <TT>C-c C-w</TT>, and view the
+documentation of an opcode with <TT>C-c C-d</TT>. Another useful
+key binding is <TT>C-c C-a</TT> to create a new instrument block. The
+function to make a new instrument block was defined with
+<TT>define-skeleton</TT>. This defines a simple template where the
+character &ldquo;_'' indicates where the cursor should stay after the
+template has been inserted into the text.</P>
+
+
+<PRE>
+(define-skeleton csound-new-instr
+  "Insert a new csound instrument" nil
+  &gt; "instr " \_ "" \n
+  &gt; "" \n
+  &gt; "endin")
+</PRE>
+
+<P>
+Csound-x can insert templates for opcodes based on information from
+the <i>Csound Manual</i>. The menu option <TT>ORC</TT> <TT>-&gt;</TT> <TT>Documentation</TT> <TT>-&gt;</TT> <TT>Insert
+  Opcode Template</TT> will ask for an opcode and will insert the usage
+example from the <i>Csound Manual</i>. For example, for the <TT>oscil</TT> Opcode
+Csound-x will insert the following code at the cursor point:</P>
+
+
+<PRE>
+ares oscil xamp, xcps, ifn [, iphs]
+kres oscil kamp, kcps, ifn [, iphs]
+</PRE>
+
+<P>
+Csound-x also can fetch the opcode examples from the <i>Csound Manual</i>, with
+<TT>ORC</TT> <TT>-&gt;</TT> <TT>Documentation</TT> <TT>-&gt;</TT> <TT>Fetch Opcode Example</TT>. It is
+a very convenient way to test the examples from the <i>Csound Manual</i>.</P>
+
+<P>
+Another way of inserting templates is using the &ldquo;code repository''
+feature. This uses chunks of code stored in the Csound Editor
+<a href="#ref1">[1]</a> file format. To use this feature the
+<TT>cscsd-csr-files</TT> variable has to be set to a list of files
+that will be used. For example, in my <TT>.emacs</TT> I have:</P>
+
+
+<PRE>
+(setq cscsd-csr-files '("~/csound/docs/csedit.csr" "~/csound/docs/somecode.csr"))
+</PRE>
+
+<P>
+By accessing the <TT>Code Repository</TT> menu we can insert and create
+many different types of templates (Figure 8).</P>
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 8. </strong>Code Repository
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/templates.jpg" width="643" height="544" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+<P>
+Most features discussed so far can be seen in Figure
+9, below. It shows a Csound orchestra and score,
+the output of the compilation and the <i>Csound Manual</i> page for the
+<TT>foscil</TT> Opcode in the w3m browser, all in the same Emacs
+window.</P>
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 9.</strong>Features of Csound-x
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/csound-ide1.jpg" width="635" height="476" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+
+<P>
+Csound-x has a superb support for CSD files. We can combine an
+orchestra and score in a single CSD file with the menu option
+<TT>ORC</TT> <TT>-&gt;</TT> <TT>Wrap in CSD</TT>. A problem in working with long CSD files with
+lots of instrument blocks is to quickly locate items. With the emacs
+speedbar we can navigate trough large files easily. Figure
+10 shows the speedbar for a CSD file with 11
+instruments. To go to the location where the instrument is defined all we
+have to do is to click on the instrument number on the speedbar (on
+the left side). The menu <TT>CSD</TT> <TT>-&gt;</TT> <TT>Display Speedbar</TT> shows the
+speedbar in another window.</P>
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 10. </strong>Speedbar
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/speedbar.jpg" width="507" height="465" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+<P>
+Another neat feature of Csound-x is the possibility to display and
+edit f-tables inside Emacs (<TT>SCO</TT> <TT>-&gt;</TT> <TT>Display f-table</TT>). We just have
+to choose the table number and Emacs shows the table in a special
+buffer (Figure 11). To edit the table we click
+in the <TT>[edit]</TT> "button", change the input data of the table
+and Emacs changes the table to reflect the new values (Figure
+12).</P>
+
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 11.</strong> Original f-table
+</CAPTION>
+<TR><TD><img src="images/kroger-paper/ftable1.jpg" width="535" height="267" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+<P>&nbsp;</P>
+
+<TABLE align="center">
+<CAPTION ALIGN="BOTTOM">
+<strong>Figure 12.</strong>Changed f-table
+</CAPTION>
+<TR><TD>
+<img src="images/kroger-paper/ftable2.jpg" width="533" height="267" alt="" border="0">
+</TD></TR>
+</TABLE>
+
+
+
+<H2>
+III. Conclusion
+</H2>
+
+<P>
+In this paper we saw the basic features of Csound-x. They are enough
+features to provide a functional and productive development environment for
+Csound. In the next paper we will see more advanced features like
+working with score matrices, customizing Emacs to browse and compile
+files from a collection of Csound instruments, and embed Emacs Lisp in
+Csound instruments.
+</P>
+
+
+
+
+<h2>References</h2>
+   
+
+   <p>
+ <a name="ref1">[1]</a>
+ Flavio Tordini. Csound Editor. 
+<tt><a href="http://flavio.tordini.org/csound-editor">http://flavio.tordini.org/csound-editor</a></tt>.
+</p>
+
+
+<p>
+ <a name="ref2">[2]</a>
+ FreeSoftware    Foundation.          A    Guided    Tour    of    Emacs.             
+<tt><a href="http://www.gnu.org/software/emacs/tour/">http://www.gnu.org/software/emacs/tour/</a></tt>.
+</p>
+
+
+   <p>
+ <a name="ref3">[3]</a>
+ Richard     Stallman.             
+<i>GNU    Emacs    Manual</i>,     2008.                 
+<tt><a href="http://www.gnu.org/software/emacs/manual/emacs.html">http://www.gnu.org/software/emacs/manual/emacs.html</a></tt>.
+</p>
+
+<p>
+ <a name="ref4">[4]</a>
+ The Emacs Wiki. 
+<tt><a href="http://www.emacswiki.org/cgi-bin/wiki">http://www.emacswiki.org/cgi-bin/wiki</a></tt>.
+</p>   
+
+   <p>
+ <a name="ref5">[5]</a>
+ St&eacute;phane      Rollandin.                Csound-x      for      emacs.                     
+<tt><a href="http://www.zogotounga.net/comp/csoundx.html">http://www.zogotounga.net/comp/csoundx.html</a></tt>.
+</p>
+
+
+   <p>
+ <a name="ref6">[6]</a>
+ Barry    Vercoe.         
+<i>The   Canonical   Csound   Reference   Manual</i>.
+<tt><a href="http://downloads.sourceforge.net/csound/Csound5.08_manual_html.zip">http://downloads.sourceforge.net/csound/Csound5.08_manual_html.zip</a></tt>.
+</p>
+
+ <p>
+ <a name="ref7">[7]</a>
+ emacs-w3m. 
+<tt><a href="http://www.emacswiki.org/cgi-bin/wiki/emacs-w3m">http://www.emacswiki.org/cgi-bin/wiki/emacs-w3m</a></tt>.
+</p>
+   
+</div>
+</div>
+
+</body>
+</html>

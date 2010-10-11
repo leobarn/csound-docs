@@ -1,0 +1,596 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+      
+  
+  
+  
+  
+  
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+
+
+
+
+
+<div id="wrap">
+<div id="navigation"> CSOUND JOURNAL: <a href="../index.html">Home</a>
+|&nbsp;<a href="index.html">Issue 8</a> </div>
+
+
+
+
+
+
+<div id="header">
+<h2>Realtime Csound in Windows: A Personal Journey</h2>
+
+<div style="text-align: center;">
+
+   Art Hunkins<br>
+
+
+
+abhunkin AT uncg DOT edu<br>
+
+
+
+www.arthunkins.com
+</div>
+
+</div>
+
+
+
+
+
+<div id="content">
+
+<p>Author's note: The experiences detailed here are best illustrated by
+three recent compositions of mine, all to be found at
+www.arthunkins.com. These works represent the current state of "my
+personal journey." Text file documentation, complete performance
+materials and .mp3's are all downloadable from my home page. Please
+consult them as examples of points discussed below. The works all
+originally date from 2006 and are for realtime Csound5 (they've been
+updated throughout 2007). Capsule descriptions follow.</p>
+
+
+
+
+<p>"Et Iterum Venturus Est": five versions, for two controllers and
+buttons through 16 controllers, as well as ASCII keyboard and keypad.
+(The former version can be performed on a 2-axis/2-button joystick.)
+Documentation: www.arthunkins.com/Iterum.txt.</p>
+
+
+
+
+<p>"Beata Visione": 14 versions, for 8 buttons through 21 controllers,
+as well as ASCII keyboard and keypad. Documentation:
+www.arthunkins.com/Vision.txt. Both of the above pieces are in my
+typically slow, minimal, meditative style.</p>
+
+
+
+
+<p>"What's in a Name?": five versions, for 16 buttons/keys/pads
+(optional slider), as well as ASCII keyboard and keypad. Documentation:
+www.arthunkins.com/Name.txt. This piece consists entirely of triggering
+samples.</p>
+
+
+
+
+<p>ASCII keyboard versions are also performable on various gamepads and joysticks, as well as the Nintendo Wiimote.</p>
+
+
+
+
+<p>Articles referenced below are found at www.arthunkins.com/articles.html.</p>
+
+
+
+
+<hr>
+
+<p>My interest in realtime performance with Csound dates back to my
+earliest involvement in electronic and computer music. As a long-time
+performer and composer in traditional media, I value live performance,
+"experiencing music being made." Beneath it all, I love the constant
+re-creation, the interpretative subtleties contributed by a live
+performer.</p>
+
+
+
+
+<p>Electronics otherwise seem "dead" to me - too "canned." Early on, in
+my "fixed" electronic and computer works, I addressed this issue by
+programming in random elements. This way, every time the pieces were
+generated, they could be unique and different. (Random elements
+continue to be significant in my later, realtime works - particularly
+on the micro level.)</p>
+
+
+
+
+<p>Nonetheless, I felt a need for the spontaneity and interpretative
+freshness of actual performance. Immediately I was drawn to MIDI as the
+performance control mechanism. Since my music is largely slow,
+sustained and minimal, with relatively static pitch, my interest was
+not primarily in the keyboard, but rather with buttons and
+sliders/rotary pots. (I view the keyboard as a collection of
+not-terribly-well-laid-out buttons.)</p>
+
+
+
+
+<p>In one piece, "What's in a Name?", which uses 16 buttons as the only
+controllers, I offered the performer a choice of two key mappings: one
+for keyboard, one for button matrices of 4x4 or 8x2 (the latter for
+drum machines). I find the button matrices much more performer
+friendly. Keyboards are difficult to divide into 4's, 8's and 16's.
+I've frequently found myself agonizing over intuitive and memorable key
+assignments. Often I've completely ignored those "confusing black
+keys." My conclusion is that, except for playing actual pitches, the
+MIDI keyboard isn't a very user-friendly device at all.</p>
+
+
+
+
+<p>As I was interested in others performing my work, I created multiple
+versions of pieces, playable on a wide range of MIDI controllers that
+performers might have available. Over a period of several years, I
+acquired a collection of at least 67 MIDI control surfaces, keyboards
+and drum machines - with an eye to making sure, where possible, that
+all could perform at least one version of my pieces.</p>
+
+
+
+
+<p>I'm also "cheap." Most of my acquisitions were made on eBay, at
+prices under $100US per unit. (A few of the controllers I purchased
+were only partly in working condition. &nbsp;They functioned just
+enough for me to be sure my pieces were performable on them.) The
+variants I created of my pieces were for as few as two sliders/pots
+plus two buttons, to as many as 21 sliders/pots. The "minimal" version
+of "Et Iterum Venturus Est" was performable on a simple X/Y joystick
+with two buttons via Hubi's MIDI Joystick Utility (MDJSTK11.zip) and
+MIDIYoke. (The former utility is available from:
+members.nextra.at/hubwin/midi.html, the latter from: www.midiox.com.
+Both are freeware.)</p>
+
+
+
+
+<p>Most of the keyboards I acquired were of the minimal 25-key variety;
+still I did not find them very practical. I needed a laptop-based,
+portable rig, with a compact, lightweight controller. I was looking for
+the following properties: 1) very small footprint; 2) USB (to avoid the
+need for an additional power supply); 3) 16 or more long-throw (100mm)
+sliders in a single row, with level markers at least every 25% of
+slider travel; 4) 16 corresponding buttons (underneath or above the
+sliders), preferably with LEDs to indicate on/off status.</p>
+
+
+
+ 
+<p>My ideal control surface, I've concluded, does not (yet?) exist.
+However, my current favorites are: Doepfer Pocket Fader (compact, with
+16 sliders, but lacking buttons/LEDs and with MIDI connector), and both
+Peavey 1600(x) and Kenton Control Freak Studio Edition (16 sliders with
+buttons but no LEDs; bulky and with MIDI connector). It's interesting
+to me that the Peavey, one of the earliest control surfaces, remains
+one of the most useful (though it lacks the Control Freak's level
+markers). It can often be picked up on eBay for $50US or so. All three
+units sport the 100mm long-throw faders that are so important to me.
+When no buttons are required, I perform on the Pocket Fader.</p>
+
+
+
+
+<p>Many control surfaces/keyboards include a set of 8 sliders or knobs,
+sometimes both. Often there is an additional master or overall volume
+slider, especially as a supplement to a slider "bank." Usually the CC
+(continuous controller) numbers of these collections are consecutive
+(at least in some preset); so in my orchestras the performer need only
+specify the number of the *first* controller. (There is no
+standardization as to where "banks" begin.) Only groups of eight are
+usually consecutive. &nbsp;Groups of 16 may or may not be. The same is
+true for the ninth or extra slider; its number must be supplied by the
+performer.</p>
+
+
+
+
+<p>As controller numbers for pots and sliders vary among control
+surfaces, so do default notes assigned to buttons. (The MIDI notes
+conveniently available on keyboards, especially keyboards with
+different ranges, also vary.) Orchestra code must allow the performer
+to easily modify defaults and thus accommodate a variety of surfaces.
+Frankly, I don't feel that a performer should be asked to program a
+controller to fit my composition. (The most I *might* ask is for the
+performer to select a given preset - though I don't do this as presets
+are unique to a particular controller model.) This burden is only
+likely to scare off the potential performer. (Some control surfaces are
+not programmable in any case, or are only minimally so.)</p>
+
+
+
+
+<p>Controllers usually operate on channel 1, though not always (the
+drum machine norm is channel 10). So the performer should be able to
+set a preferred channel (1-16; default = 1). A few "digital mixers" use
+CC7 on channels 1-8; I've allowed for this possibility by offering the
+performer a pseudo-option of "channel 0".</p>
+
+
+
+
+<p>A few control surfaces, particularly older ones such as the Peavey
+1600, simply do not offer banks of 8 sliders/pots consecutively
+numbered. My solution to this problem is to use the excellent, free
+MIDIOx utility (along with MIDIYoke) to map a given preset to groups of
+consecutive controllers. (URL: www.midiox.com.) The only alternative to
+this is to program your own preset either on the controller itself
+(necessary on the Peavey), or with a manufacturer-supplied (or third
+party) PC editor. (Performers should avoid such tasks, unless they
+relish "tech stuff.")</p>
+
+
+
+
+<p>MIDIOx is especially valuable in the case of certain intractable
+control surfaces - those that don't output standard CC messages. Most
+of these cases require dedicated MIDIOx VBscripts (in conjunction with
+MIDIYoke) to translate their messages. The Peavey StudioMix, designed
+as a proprietary controller for Cakewalk, is a prime example: its
+sliders issue NRPN (Non-Registered Parameters) exclusively. The Mackie
+Control Universal is another: its faders output pitch bend information.
+(I'm convinced that these non-standard implementations are an effort to
+keep these controllers from being emulated by other pieces of
+hardware/software.) However, the most frequent issue today is the
+endless encoder. Many recent control surfaces incorporate these (the
+StudioMix has some as well) - and understandably so, as these surfaces
+were designed to interface with computer DAWs.</p>
+
+
+
+
+<p>I've dealt with the idiosyncracies of StudioMix in two articles: "The
+Peavey StudioMix as Standard MIDI Controller for Csound" and
+"Converting StudioMix Endless Rotary Encoder Data for Use in Csound".
+These are companion articles; between them, you can observe one way of
+massaging MIDI data into the format needed - all via MIDIOx. (MIDIOx
+has many uses, including determining what kind of data an unfamiliar
+controller is outputting.)</p>
+
+
+
+ 
+<p>Several unexpected problems arise with button/key/drumpad
+controllers: 1) with respect to furnishing accurate velocity
+information, only keyboards and the E-mu LaunchPad do a reasonably good
+job. (As a result, I often prefer to assign buttons/pads random
+velocities rather than depend on how hard I hit them.) 2) Whereas
+*keys* usually respond press/on release/off, *buttons* function in
+several ways, normally press/on press/off. For long-held events, it's
+unreasonable to hold anything down; it's best to press a button/key on,
+then off with another press. (In this situation, an LED can be a
+helpful indicator of button status.) Careful programming is necessary
+in order to take into account the various button modes. My method is to
+ignore note off, and alternate triggers on and off by changing the
+value of a flag on each button/key press. (This insures that LEDs, if
+present, are on when the "note" is on, assuming both start in the same
+state.)</p>
+
+
+
+
+<p>Sliders to me are far more useful than pots. I can see and compare
+*slider* settings more quickly, and move several simultaneously if I
+wish. Sliders can also be positioned more precisely and returned to
+zero more easily. The older I get, the more important such practical
+issues become. My eyesight is not improving and my hands are not
+getting steadier. For the same reason I no longer make GUI interfaces
+with on-screen performance sliders, as I did in earlier works for
+CsoundAV. (I had gone so far in works like "Cloud of Unknowing" to
+create on-screen quad panners, alongside X/Y joysticks and Kaoss pads,
+to deal with space in 4-channel versions.) I'm working with space now
+in a completely different way - randomly and automatically (see further
+below).</p>
+
+
+
+
+<p>I also found that a performance interface (GUI) was highly
+desirable, especially to preset performance parameters and to
+conveniently start and stop Csound. If potential performers are to find
+my works approachable, such an interface is well-nigh crucial. (I
+cannot expect everyone to be as "into" Csound as I am.)</p>
+
+
+
+
+<p>With Csound4, this was a problem. There were no cross-platform
+GUI's, and FLTK worked dependably only in CsoundAV (a Windows-only
+version of Csound). CsoundAV had the additional advantage of running
+faster and handling more voices than did the Canonical Csound. As much
+as I would have liked my work to be performable on all platforms, I
+went with CsoundAV. (Since all my pieces had FLTK GUI's, they were
+limited to Windows anyway.)</p>
+
+
+
+
+<p>In earlier compositions, I made versions that were performed
+completely on-screen, with a mouse. This was possible because only one
+action at a time (click or drag) was required. (There was sufficient
+time between actions.) Clicking buttons was no problem, but dragging
+sliders became increasingly difficult (with age). So I've abandoned
+on-screen performance with sliders, and use them only for performer
+presets. (What I'm trying to emphasize is that not all performers are
+under the age of 60, and that composers should take this fact into
+consideration.)</p>
+
+
+
+
+<p>With the advent of Csound5, there was a renewed effort towards
+cross-platform compatibility. Platform-independent GUI's were developed
+(notably Csound5GUI) that allowed for both editing and realtime
+rendering. FLTK was now incorporated into the Canonical Csound, making
+cross-platform realtime *performance* GUI's feasible. Furthermore, by
+this time, computers had become faster and more efficient. CsoundAV now
+had less of a performance advantage, and, in addition, was being only
+minimally maintained.</p>
+
+
+
+
+<p>One nagging problem remained: FLTK did not yet work *dependably* on
+all platforms, and there seemed ongoing issues with its library
+generally. I liked the Canonical Csound5 except for its lack of a
+workable cross-platform performance GUI. *Both* GUI and multi-platform
+operability were important to me.</p>
+
+
+
+
+<p>I found myself wishing for a new integrated composing environment -
+one specifically for the Canonical Csound5. Enter Rory Walsh's Lettuce
+(http://www.ear.ie/Lettuce.htm). Not only does Lettuce integrate the
+new Csound API, it allows the composer to create basic performance GUIs
+*without* FLTK, and to create standalone executables that do not need a
+frontend or a command line to run them. While Lettuce GUI tools are
+basic, they are quite flexible, and thus do everything I need them to
+do. The prime limitation is that Lettuce is Windows only, as are the
+standalone executables it creates.</p>
+
+
+
+
+<p>My solution? From this point on, I create (with Lettuce): 1)
+standalone executables of my works with GUIs that run only in Windows;
+2) command-line versions without GUIs that run on all platforms. (One
+of Rory's long-term goals is to get standalone executables to run on
+*all* platforms. This would be wonderful, and will make me very happy -
+though I'm not holding my breath.)</p>
+
+
+ 
+<p>Among the outstanding, performance-oriented features of Lettuce GUIs
+is their customizable menu bar. From it, you start and stop Csound,
+optionally view the output window, view *and modify* CsOptions, and see
+drop-down instructions. The latter two options are particularly
+important to me: to have capsule performance directions and setup
+reminders is extremely helpful. In addition, whereas most
+performer-chosen variables must be selected after Csound is started,
+several must be specified in advance - namely, SR (sample rate) and
+NCHNLS (number of audio channels). (In both "Et Iterum Venturus Est"
+and "Beata Visione", NCHNLS is user selectable; orchestras are
+ambisonic and allow equally for 2, 4, or 8 channel realization.)
+Without access to the Csound file itself, and lacking a command line,
+modifying these values would normally pose a problem. However, both
+variables *can* be placed in CsOptions, where they are displayable in
+the GUI,&nbsp; and defaults may be modified by the performer. Very nice!</p>
+
+
+
+
+<p>In *command-line* (cross-platform) versions of my pieces, SR and
+NCHNLS, along with other performance parameters, are placed toward the
+head of the orchestra as *macros*, and may be modified by the performer
+there, using any text editor. (In Lettuce executables, these other
+variables populate the performance GUI.) Included are such items as:
+MIDI channel, fixed amplitudes, frequencies and frequency ratios, glide
+durations/speeds, random value ranges, reverb amplitudes, initial CC
+numbers (for banks of pots/sliders), and MIDI note numbers (for
+performer-selected keys or buttons). Most of these variables are unique
+to the composition; many are version-specific.</p>
+
+
+
+
+<p>With Csound 5.02.1, an extraordinarily important change took place:
+the sensekey opcode became fully operational! Sensekey opened up a new
+world to me. Hitherto, the only way a performer could communicate with
+Csound was through MIDI. Sensekey accepted *ASCII* input. Now you had a
+very large and convenient set of non-velocity sensitive buttons to work
+with, otherwise comparable to a MIDI keyboard. (Since I wasn't working
+much with "notes", and velocity sensitivity wasn't generally dependable
+using button controllers, these limitations were of little importance
+to me.)</p>
+
+
+
+
+<p>I immediately made ASCII keyboard versions of my pieces, and found
+they worked quite well - as long as CCs were not essential. (Preset,
+triggered glides had substituted for CCs in more minimal versions of my
+works already.) ASCII keys had unique identifiers; some were even
+numbered; and they were fairly nicely laid out in matrices of sorts.
+One prime advantage is that a potential performer wouldn't
+need&nbsp;MIDI equipment, an interface or power supply, and he/she
+would already be familiar with the controller. The controller was
+standard too! No more dealing with channels, controller/note numbers,
+and no more MIDIOx or MIDIYoke!</p>
+
+
+
+
+<p>It wasn't long until I had another thought: wouldn't it be nice to
+use a *more compact* ASCII-type controller, one that allows the
+performer to move away from the computer (perhaps into a more
+comfortable chair)? In other words, why not try an external (wireless?)
+keypad? Unfortunately, this idea required additional versions of my
+pieces, as only limited characters were available on the pad.</p>
+
+
+
+
+<p>The external numeric keypad brought with it its share of problems.
+1) It is somewhat nonstandard, having either 18 or 19 keys, not always
+with the same characters. 2) The Num Lock key has to be set correctly
+(on). 3) The 19th key is sometimes "00" and sometimes "000"; both of
+these are multiple ASCII characters which must be distinguished from
+"0". 4) Num Lock can't effectively be used as a shift key to double the
+number of characters because the shifted/unshifted pairings aren't the
+same on all pads, and at least 7 keys don't have an alternate function.</p>
+
+
+
+
+<p>I solved these troublesome issues by including a user preset that
+selects either 18 or 19 key pad, by specifying that Num Lock be on, not
+using shift functions, and working out fancy code to deal with the
+multiple zeros. Since the keypad matrix and assignments are not very
+intuitive, my considerable efforts led to mixed results. In sum, the
+keyboard versions are considerably more approachable than those for
+keypad.</p>
+
+
+
+
+<p>However, I was not about to stop there. Upward and onward to other
+controllers, as long as they dealt in ASCII. It occurred to me that
+gamepads and even, to an extent, joystick controllers communicated via
+ASCII. Of course, now I'm dealing with wildly differing formats and
+capabilities. I gathered together 6-7 different gamepads and joysticks
+to experiment with, and eventually discovered that the situation was
+not nearly as chaotic as I first feared.</p>
+
+
+
+
+<p>It turns out that in Windows XP, HID-compliant USB gamepads (which
+may mean *all* USB gamepads), do not require drivers. The pads are
+arranged in a fairly standard 9/10 button configuration too.
+Furthermore, all legacy Microsoft gamepads and joysticks (including
+SideWinders) are also handled automatically by XP. Finally, the ASCII
+key assignments/conversions for all these units can be made by a simple
+Windows utility, JoyToKey (free download from
+www.oneswitch.org.uk/2/I/JoyToKey/JoyToKey.htm).</p>
+
+
+
+
+<p>The gamepads and joysticks thankfully do not require additional
+variants of my compositions; all use the ASCII keyboard versions. The
+only additional element required is a simple configuration file used by
+JoyToKey to do the conversions. Since one of the pad/stick buttons can
+act as a shift key, you essentially have twice the number of
+characters/keys available as you might think. For further information
+on this "gamepad/joystick project", see my article, "Gamepads and
+Joysticks as Csound Controllers via Sensekey."</p>
+
+
+
+
+<p>There is one further development in my "sensekey saga". It all
+started when Rick Boulanger and Mark Jamerson started acting excited
+about the Nintendo Wiimote. (Mark's excellent tutorial on the Wiimote
+and Csound, largely focusing on OSC protocol, can be found at
+www.csounds.com/journal/issue7/wiimoteCsound.html.) The Wiimote too was
+within my "price range" (&lt; $35 on eBay), so I bought one. It is
+wireless (Bluetooth), widely available and (so far) not produced in an
+endless variety of configurations!</p>
+
+
+
+
+<p>Installing Bluetooth drivers (I tried 3 or 4) was a nightmare for me
+on Windows ME, and I never did get it going. A desktop upgrade to
+Windows XP was required (Bluetooth worked fine on my XP laptop). The
+BlueSoleil v2.3 driver (www.bluesoleil.com) worked well, though it is
+limited to Windows 2000 and Windows XP. (Earlier OS's apparently lacked
+adequate support for Bluetooth.) Data transfer in BlueSoleil's
+shareware version is restricted to 5MB, but I've not found that a
+limitation in my work.</p>
+
+
+
+
+<p>Not only does Bluetooth need to be installed (along with a receiver,
+if your computer lacks one), but so does the data conversion program,
+GlovePIE (a free download from carl.kenner.googlepages.com/glovepie)
+and MIDIYoke. GlovePIE uses simple scripts, with a .pie extension. I
+include a custom script with each piece. ASCII keyboard versions are
+performed, as the Wiimote's button presses are simply converted to
+ASCII keystrokes.</p>
+
+
+
+
+<p>I made the decision not to use any of the Wiimote's sources of
+motion and position data, as MIDI CC numbers, for example. These features are
+certainly most attractive and unique, so why not take advantage of
+them? In my case, there were several reasons: 1) these data could not
+be as steady, precise and controlled as I needed; 2) GlovePIE would
+need to convert them either to MIDI or OSC (both of which it is quite
+capable of doing), instead of ASCII. Converting to MIDI would mean
+adding MIDIYoke to the input chain; converting to OSC would require
+recoding my orchestras to create yet more versions. (To make use of
+Wiimote's gestural and positioning capability, you *must* convert
+either to MIDI or OSC.) Finally, GlovePIE *ASCII* conversion scripts
+are simple enough (much like JoyToKey's gamepad/joystick config files)
+so that performers can modify key assignments themselves.</p>
+
+
+  
+<p>Both Bluetooth and GlovePIE represent major added components to the
+installation and performance setups for Csound. Given the myriad of
+possible technical mishaps during realtime preparation and performance,
+the rationale for using the Wiimote would have to be fairly compelling
+before I personally would risk its use.</p>
+
+
+
+
+<p>That's the state of affairs of my realtime Csound journey as of the end of 2007. What wonders lie ahead in 2008?</p>
+
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+</body>
+</html>

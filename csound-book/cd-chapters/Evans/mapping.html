@@ -1,0 +1,200 @@
+<html>
+
+	<head>
+		<title>Hearing the Mandelbrot Set (fractal music with Csound)</title>
+	</head>
+
+	<body bgcolor="#ffffff">
+		<table width="600" border="0" cellspacing="0" cellpadding="0">
+			<td width="175" align="RIGHT"><img src="space.gif" vspace="49"><br>
+				<font size="2"><b>contents</b></td>
+			<td width="20"><img src="space.gif"></td>
+			<td width="405" align="LEFT"><font size="5">Hearing the Mandelbrot Set<br>
+				(fractal music with Csound) <font size="2"><br>
+				<img src="space.gif" vspace="6"><br>
+				<a href="bio.html">Brian Evans</a><br>
+				<a href="http://www.lightspace.com">lightspace Studios</a><br>
+				<a href="mailto:brian@lightspace.com">brian@lightspace.com</a><br>
+				<img src="space.gif" vspace="8"><font size="3"></td>
+		</table>
+		<table width="600" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="195" valign="TOP">
+					<table width="175" border="0" align="LEFT" cellspacing="0" cellpadding="0">
+						<tr align="RIGHT">
+							<td><a href="intro.html">Introduction</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="algo.html">The Basic Algorithm</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="calcscore.html">Calculating a Score</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><font size="2">(sonic line vs image plane)<img src="space.gif" hspace="5"><font size="3"></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><font size="4"><b>Simple Mapping with Csound</b><font size="3"></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="range.html">Pitch Range and Event Length</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="thoughts.html">Final Thoughts</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="refs.html">References</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><img src="space.gif" vspace="5"></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="sources.html">Code/Sound Examples</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="calcscript.html">Create a Score!</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><img src="space.gif" vspace="5"></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="images.html">Misc. Images</a></td>
+						</tr>
+					</table>
+				</td>
+				<td width="405">
+					<table width="405" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td width="405" align="LEFT" valign="TOP">To illustrate a basic sonic map of the Mandelbrot set the following input parameters were chosen.
+								<blockquote>
+									<pre>
+
+
+xMid = .3515
+yPoint = .42073
+WindowSize = .001
+MaxIteration = 255
+xResolution = 100
+</pre>
+								</blockquote>
+								These parameters define a line of 100 points that mark the upper sixth of image seen in <a href="images/figure2.html">Figure 2</a>. To generate a single line of values instead of a plane, some changes were made in the basic program. The single <code>yPoint</code> value on the <i>y</i>-axis is held constant (and so also is the <code>LamdaImag</code> variable). The <code>return</code> statement is changed to a <code>print</code> statement that returns a Csound I-statement for each point calculated on the line.
+								<p>In order to use the <code>xCounter</code> as a time counter for sound events the <code>n</code>-value for each previous <i>x</i>-point is stored in the variable <code>PreviousN</code>. Now <code>n</code>-counts can be tested so that a new I-statement is created only when a different value is returned from the process. In other words a new sound event occurs only when there is a change in the number returned from the process. A basic time increment is defined such that each pass through the <code>xCounter</code> loop adds that increment to the clock that marks the start times for each event in the mapping. The variable <code>xResolution</code> determines how many time samples (or events) will be calculated in the mapping (there are 100 events calculated in first example). The total length from zero to the start time of the last event will be <code>TimeIncrement * xResolution</code>.
+								<p>Each number returned from the process will now be mapped into a pitch instead of a color. The variable <code>PitchCount</code> determines how many different pitches will be available. For example a four octave C major scale, 7 notes per octave times 4, equals 28 different pitches. (The pitch range will be specified in the Csound score file.) The basic program for creating a sonic map of the Mandelbrot set is then as follows:
+								<blockquote>
+									<pre>
+
+
+
+define xMid = .3515
+define yPoint = .42073
+define WindowSize = .001
+define MaxIteration = 255
+
+define TimeIncrement = .2
+define PitchCount = 28
+define xResolution = 100
+
+xStart = xMid-.5*WindowSize
+
+xIncrement = WindowSize/xResolution
+PreviousN = 1000
+StartTime = 0.0
+LamdaImag = yPoint
+
+for (xCounter=0; xCounter &lt; xResolution; ++xCounter){
+    LamdaReal=xStart + xIncrement*xCounter
+    x = 0.0
+    y = 0.0
+
+    for (n=0; n &lt; MaxInteration; ++n){
+        xNew = x^2 - y^2 + LamdaReal
+        yNew = 2*x*y + LamdaImag
+        x=xNew
+        y=yNex
+
+        if ((x^2+y^2) &gt;= 4) break;
+    }
+    if (n==PreviousN) {
+      StartTime += TimeIncrement
+    } else {
+      printf(&quot;i1 %7.2f 12.0 75 %d\n&quot;, StartTime, n%PitchCount)
+        PreviousN = n
+    }
+}
+</pre>
+								</blockquote>
+								For the examples in this report a simple Csound instrument is used, based on the <code>pluck</code> instrument. The orchestra is shown as follows:
+								<blockquote>
+									<pre>
+
+
+; mandel.orc
+sr = 44100
+kr = 441
+ksmps = 100
+nchnls = 1
+
+instr 1
+   ipitchtable = 1  ; pitch table in score      
+   ipitchndx = p5   ; p5=pitch index from table
+   iamp = ampdb(p4)
+    
+   ipch table  ipitchndx, ipitchtable
+   kenv expseg  1.0, 1.0, 1.0, 11.5, .0001
+   asig pluck iamp*kenv,cpspch(ipch),cpspch(ipch),0,1
+
+    out asig
+endin
+</pre>
+								</blockquote>
+								An I-statement in the Csound score file for this orchestra has the format
+								<blockquote>
+									<pre>
+
+
+;p1      p2          p3              p4                   p5
+i1   starttime   duration   amplitude(in decibels)   pitchindex
+</pre>
+								</blockquote>
+								A pitch table that defines the pitch domain for the sonic map is setup at the beginning of the score using GEN 2. The values generated from the Mandelbrot set program function as index values into this table. The PitchCount variable in the program is equal to the number of elements in the table. The score for the illustrated program is seen here.
+								<blockquote>
+									<pre>
+
+
+; mandel.sco
+
+; f1 is a pitch table defining a four octave C major 
+; scale C2-B5.
+f1 0 32 -2 6.00 6.02 6.04 6.05 6.07 6.09 6.11
+           7.00 7.02 7.04 7.05 7.07 7.09 7.11
+           8.00 8.02 8.04 8.05 8.07 8.09 8.11
+           9.00 9.02 9.04 9.05 9.07 9.09 9.11
+
+; ins start   dur  ampdb(p4)  pitchndx(p5)
+  i1    0.0  12.0   75             3
+  i1    1.6  12.0   75             4
+  i1    3.4  12.0   75             5
+  i1    4.2  12.0   75             6
+  i1    4.4  12.0   75             7
+  i1    4.6  12.0   75             9
+  i1    4.8  12.0   75            10
+  i1    5.0  12.0   75             5
+         .     .     .             .
+         .     .     .             .
+         .     .     .             .
+  i1   18.6  12.0   75            11
+  i1   19.2  12.0   75            10
+  i1   19.8  12.0   75             9
+e
+</pre>
+								</blockquote>
+								One hundred I-statements were generated from the Mandelbrot set program (<a href="sources/example1.sco">example 1</a>).</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<br>
+	</body>
+
+</html>

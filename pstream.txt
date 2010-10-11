@@ -1,0 +1,462 @@
+New Csound Tools for Real-time Spectral Processing.
+Richard Dobson, August 2001
+
+pvsinfo,pvsanal,pvsynth,pvsadsyn,pvsfread,pvscross,pvsmaska,pvsftw,pvsftr
+
+
+Introduction.
+
+
+With these opcodes, two new core facilities are added to Csound. They
+offer improved audio quality, and fast performance, enabling
+high-quality analysis and resynthesis (together with transformations)
+to be applied in real-time to live signals. The original Csound phase
+vocoder remains unaltered; the new opcodes use an entirely separate
+set of functions based on "pvoc.c" in the CARL distribution, written
+by Mark Dolson. The Csound dnoise and srconv utilities (also by
+Dolson, from CARL) also use this pvoc engine.  CARL pvoc is also the
+basis for the phase vocoder included in the Composers Desktop
+Project.. A few small but important modifications have been made to
+the original CARL code to support real-time streaming.
+
+Primary facilities.
+
+(1) support for the new PVOC-EX analysis file format. This is a fully
+portable (cross-platform) open file format, supporting three analysis
+formats, and multi-channel signals. Currently only the standard
+amplitude+frequency format has been implemented in the opcodes, but
+the file format itself supports amplitude+phase and complex
+(real-imaginary) formats. In addition to the new opcodes, the original
+Csound pvoc opcodes have been extended (and thereby with enhanced
+audio quality in some cases) to read PVOC-EX files as well as the
+original (non-portable) format. Full details of the structure of a
+PVOC-EX file are available via the website:
+
+http://www.bath.ac.uk/~masjpf/NCD/researchdev/pvocex/pvocex.html
+
+This site also gives details of the freely available console programs
+pvocex and pvocex2 which can be used to create PVOC-EX files in all
+supported formats.
+
+(2) a new frequency-domain signal type, fully streamable, with 'f' as
+the leading character.  In this document it is conveniently referred
+to as an 'fsig'. Primary support for fsigs is provided by the opcodes
+pvsanal and pvsynth, which perform conventional phase vocoder
+overlap-add analysis and resynthesis, independently of the orchestra
+control-rate. The only requirement is that the control-rate kr be
+higher than or equal to the analysis rate, which can be expressed by
+the requirement that ksmps <= overlap, where overlap is the distance
+in samples between analysis frames, as specified for pvsanal. As
+overlap is typically at least 128, and more usually 256, this is not
+an onerous restriction in practice. The opcode pvsinfo can be used at
+init time to acquire the properties of an fsig.
+
+The fsig enables the nominal separation between the analysis and
+resynthesis stages of the phase vocoder to be exposed to the Csound
+programmer, so that not only can alternatives be employed for either
+or both of these stages (not only oscillator-bank resynthesis, but
+also the generation of synthetic fsig streams), but opcodes, operating
+on the fsig stream, can themselves become more elemental. Thus the
+fsig enables the creation of a true streaming plugin framework for
+frequency domain signals. With the old pvoc opcodes, each opcode is
+required to act as a resynthesiser, so that facilities such as pitch
+scaling are duplicated in each opcode; and in many cases the opcodes
+are parameter-rich. The separation of analysis and synthesis stages by
+means of the fsig encourages the development of a wide range of simple
+building-block opcodes implementing one or two functions, with which
+more elaborate processes can be constructed.
+
+This is very much a preliminary and experimental release, and it is
+possible that the precise definition of the opcodes may change, in
+response to user feedback. Also, clearly, many new possibilities for
+opcodes are opened up; these factors may also have a retrospective
+influence on the opcodes presented here.
+
+Note that some opcode parameters currently have restricted or missing
+implementation. This is at least in part in order to keep the opcodes
+simple at this stage, and also because they highlight important design
+issues on which no decision has yet been made, and on which opinions
+from users are sought.
+
+One important point about the new signal type is that because the
+analysis rate is typically much lower than kr, new analysis frames are
+not available on each k-cycle. Internally, the opcodes track ksmps,
+and also maintain a frame counter, so that frames are read and written
+at the correct times; this process is generally transparent to the
+user. However, it means that k-rate signals only act on an fsig at the
+analysis rate, not at each k-cycle.  The opocde pvsftw returns a
+k-rate flag that is set when new fsig data is valid.
+
+Because of the nature of the overlap-add system, the use of these
+opcodes incurs a small but significant delay, or latency, determined
+by the window size (max(ifftsize,iwinsize)). This is typically around
+23msecs. In this first release, the delay is slightly in excess of the
+theoretical minimum, and it is hoped that it can be reduced, as the
+opcodes are further optimized for real-time streaming.
+
+
+
+The opcodes.
+
+
+fsig   pvsanal  ain,ifftsize,ioverlap,iwinsize,iwintype[,iformat,iinit]
+
+Generate an fsig from a mono audio source ain, using phase vocoder
+overlap-add analysis.
+
+	ifftsize: the FFT size in samples. Need not be a power of two
+(though these are especially efficient), but must be even. Odd numbers
+are rounded up internally. ifftsize determines the number of analysis
+bins in fsig, as ifftsize/2 + 1. For example, where ifftsize = 1024,
+fsig will contain 513 analysis bins, ordered linearly from the
+fundamental to Nyquist.  The fundamental of analysis (which in
+principle gives the lowest resolvable frequency) is determined as
+sr/ifftsize. Thus, for the example just given and assuming sr = 44100,
+the fundamental of analysis is 43.07Hz. In practice, due to the
+phase-preserving nature of the phase vocoder, the frequency of any bin
+can deviate bilaterally, so that DC components are recorded. Given a
+strongly pitched signal, frequencies in adjacent bins can bunch very
+closely together, around partials in the source, and the lowest bins
+may even have negative frequencies.
+
+As a rule, the only reason to use a non power-of-two value for
+ifftsize would be to match the known fundamental frequency of a
+strongly pitched source. Values with many small factors can be almost
+as efficient as power-of-two sizes; for example: 384, for a source
+pitched at around low A=110Hz.
+
+	ioverlap: the distance in samples ('hop size') between
+overlapping analysis frames. As a rule, this needs to be at least
+ifftsize/4, e.g. 256 for the example above. ioverlap determines the
+underlying analysis rate, as sr/ioverlap. ioverlap does not require to
+be a simple factor of ifftsize; for example a value of 160 would be
+legal. The choice of ioverlap may be dictated by the degree of pitch
+modification applied to the fsig, if any.  As a rule of thumb, the
+more extreme the pitch shift, the higher the analysis rate needs to
+be, and hence the smaller the value for ioverlap. A higher analysis
+rate can also be advantageous with broadband transient sounds, such as
+drums (where a small analysis window gives less smearing, but more
+frequency-related errors).
+
+Note that is is possible, and reasonable, to have distinct fsigs in an
+orchestra (even in the same instrument), running at different analysis
+rates. Interactions between such fsigs is currently unsupported, and
+the fsig assignment opcode does not allow copying between fsigs with
+different properties, even if the only difference is in
+ioverlap. However, this is not a closed issue, as it is possible in
+theory to achieve crude rate conversion (especially with regard to
+in-memory analysis files) in ways analogous to time-domain techniques.
+
+	iwinsize: the size in samples of the analysis window filter
+(as set by iwintype). This must be at least ifftsize, and can usefully
+be larger.  Though other proportions are permitted, it is recommended
+that iwinsize always be an integral multiple of ifftsize, e.g. 2048
+for the example above.  Internally, the analysis window (Hamming, von
+Hann) is multiplied by a sinc function, so that amplitudes are zero at
+the boundaries between frames. The larger analysis window size has
+been found to be especially important for oscillator bank resynthesis
+(e.g. using pvsadsyn), as it has the effect of increasing the
+frequency resolution of the analysis, and hence the accuracy of the
+resynthesis. As noted above, iwinsize determines the overall latency
+of the analysis/resynthesis system. In many cases, and especially in
+the absence of pitch modifications, it will be found that setting
+iwinsize=ifftsize works very well, and offers the lowest latency.
+
+	iwintype:    the shape of the analysis window. Currently only
+two choices are implemented:
+			0 = Hamming window
+			1 = von Hann window.
+
+Both are also supported by the PVOC-EX file format.  The window type
+is stored as an internal attribute of the fsig, together with the
+other parameters (see pvsinfo). Other types may be implemented later
+on (e.g. the Kaiser window, also supported by PVOC-EX), though an
+obvious alternative is to enable windows to be defined via a function
+table. The main issue here is the constraint of f-tables to
+power-of-two sizes, so this method does not offer a complete solution.
+Most users will find the Hamming window meets all normal needs, and
+can be regarded as the default choice.
+
+	iformat:  the analysis format. Currently only one format is 
+implemented by this opcode:
+	0	=  amplitude + frequency
+	This is the classic phase vocoder format; easy to process, and
+a natural format for oscillator-bank resynthesis. It would be very
+easy (tempting, one might say) to treat an fsig frame not purely as a
+phase vocoder frame but as a generic additive synthesis frame. It is
+indeed possible to use an fsig this way, but it is important to bear
+in mind that the two are not, strictly speaking, directly equivalent. 
+
+	Other important formats (supported by PVOC-EX) are:
+	1      = amplitude + phase
+	2      = complex (real + imaginary)
+
+	iformat is provided in case it proves useful later to add
+support for these other formats. Formats 0 and 1 are very closely
+related (as the phase is 'wrapped' in both cases - it is a trivial
+matter to convert from one to the other), but the complex format might
+warrant a second explicit signal type (a 'csig') specifically for
+convolution-based processes, and other processes where the full
+complement of arithmetic operators may be useful.
+	
+	iinit: skip reinitialzation. This is not currently implemented
+for any of these opcodes, and it remains to be seen if it is even
+practical.
+
+Example:
+	ain	in			       ; live source
+	fin	pvsanal  ain,1024,256,2048,0   ; analyse, using Hamming
+	fout	pvsmaska fin,1,0.75	       ; apply eq from f-table
+	aout	pvsynth	 fout		       ; and resynthesize
+
+
+ar	pvsynth 	fsrc
+ar	pvsadsyn	fsrc,inoscs,kfmod[,ibinoffset,ibinincr,iinit]
+
+Resynthesise fsrc using either FFT overlap-add (pvsynth) or fast 
+oscillator-bank (pvsadsyn).
+
+pvsadsyn is experimental, and implements the oscillator bank using a
+fast direct calculation method, rather than a lookup table. This takes
+advantage of the fact, empirically arrived at, that for the analysis
+rates generally used, (and presuming analysis using pvsanal, where
+frequencies in a bin change only slightly between frames) it is not
+necessary to interpolate frequencies between frames, only
+amplitudes. Accurate resynthesis is often contingent on the use of
+pvsanal with iwinsize = ifftsize*2. This opcode is the most likely to
+change, or be much extended, according to feedback and advice from
+users. It is likely that a full interpolating table-based method will
+be added, via a further optional iarg. The parameter list to pvsadsyn
+mimics that for pvadd, but excludes spectral extraction.
+
+	inoscs: the number of analysis bins to synthesise. Cannot be
+larger than the size of fsrc (see pvsinfo, below), e.g. as created by
+pvsanal.  Processing time is directly proportional to inoscs.
+
+	kfmod:	     scale all frequencies by factor kfmod. 1.0 = no change, 
+                     2 =  up one octave.
+
+	ibinoffset:  the first (lowest) bin to resynthesise, counting from
+                     0 (default = 0). 
+
+	ibinincr:    starting from bin ibinoffset, resnthesise bins 
+                     ibinincr apart.
+
+
+Example:
+; resynth the first 100 odd-numbered bins, with pitch scaling envelope.
+kpch	linseg	    1,p3/3,1,p3/3,1.5,p3/3,1
+aout	pvsadsyn    fsrc, 100,kpch,1,2	
+
+
+ioverlap,inumbins,iwinsize,iformat 	pvsinfo 	fsrc
+
+Get format information about an fsig, whether created by an opcode
+such as pvsanal, or obtained from a PVOCEX file by pvsfread. This
+information is available at init time, and can be used to set
+parameters for other pvs~ opcodes, and in particular for creating
+function tables (e.g. for pvsftw), or setting the number of
+oscillators for pvsadsyn.
+
+	ioverlap:   the stream overlap size.  
+	inumbins:   the number of analysis bins (amplitude+frequency)
+                    in fsrc.  The underlying FFT size is calculated as
+                    (inumbins-1) * 2.  
+	iwinsize:   the analysis window size. May be larger than the
+                    FFT size. 
+	iformat:    the analysis frame format. If fsrc is created by an 
+                    opcode, iformat will always be 0, signifying
+                    amplitude+frequency. If fsrc is defined from a
+	            PVOC-EX file, iformat may also have the value 1 or
+	            2 (amplitude+phase, complex).  
+
+Example:
+
+fin		    pvsfread	"test.pvx"   ; import pvocex file
+iovl,inb,iws,ifmt   pvsinfo	fin          ; get inumbins info
+ifn		    ftgen  	0,0,inb,10,1 ; and create f-table
+
+
+
+fsig	pvsfread	ktimpt,ifn[,ichan]
+
+Create an fsig stream by reading a selected channel from a PVOC-EX
+analysis file loaded into memory, with frame interpolation. Only
+format 0 files (amplitude+frequency) are currently supported. The
+operation of this opcode mirrors that of pvoc, but outputs an fsig
+instead of a resynthesized signal.
+
+	ktimpt: Time pointer into analysis file, in seconds. See the
+description of the same parameter of pvoc for usage.
+
+	ifn:	name of the analysis file. This must have the .pvx 
+file extension.
+
+	A multi-channel PVOC-EX file can be generated using the
+extended pvanal utility (see below).
+
+	ichan: the channel to read (counting from 0). Default is 0.
+
+Note that analysis files can be very large, especially if
+multi-channel.  Reading such files into memory will very likely incur
+breaks in the audio during real-time performance. As the file is read
+only once, and is then available to all other interested opcodes, it
+can be expedient to arrange for a dedicated instrument to preload all
+such analysis files at startup.
+
+
+Example:
+
+	idur	filelen   "test.pvx" ; find duration of (stereo) analysis file
+	kpos	line      0,p3,idur  ; to ensure we process whole file
+	fsigr	pvsfread  kpos,"test.pvx",1 ; create fsig from R channel
+
+(NB: as this example shows, the filelen opcode has been extended to
+accept both old and new analysis file formats).
+
+
+	fsig	pvscross	fsrc,fdest,kamp1,kamp2
+
+Perform cross-synthesis between two source fsigs.
+
+The operation of this opcode is identical to that of pvcross (q.v.),
+except in using fsigs rather than analysis files, and the absence of
+spectral envelope preservation. The amplitudes from fsrc are applied
+to fdest, using scale factors kamp1 and kamp2 respectively. kamp1 and
+kamp2 must not exceed the range 0 to 1.
+
+With this opcode, cross-synthesis can be performed on real-time audio
+input, by using pvsanal to generate fsrc and fdest. These must have
+the same format.
+
+Example:
+
+        kcross  linseg	   0,p3/3,0,p3/3,1,p3/3,1 ; progressive cross-synthesis
+        fcross  pvscross   fsig1,fsig2,1-kcross,kcross
+        across  pvsynth	   fcross
+
+
+	fsig	pvsmaska	fsrc,ifn,kdepth
+
+Modify amplitudes of fsrc using function table, with dynamic scaling.
+
+	ifn : the f-table to use. Given fsrc has N analysis bins,
+table ifn must be of size N or larger. The table need not be
+normalized, but values should lie within the range 0 to 1. It can be
+supplied from the score in the usual way, or from within the orchestra
+by using pvsinfo (see below) to find the size of fsrc, (returned by
+pvsinfo in inbins), which can then be passed to ftgen to create the
+f-table.
+
+	kdepth : controls the degree of modification applied to fsrc,
+using simple linear scaling. 0 leaves amplitudes unchanged, 1 applies
+the full profile of ifn.
+
+Note that power-of-two FFT sizes are particularly convenient when
+using table-based processing, as the number of analysis bins (inbins)
+is then a power-of-two plus one, for which an exactly matching f-table
+can be created.  In this case it is important that the f-table be
+created with a size of inbins, rather than as a power of two, as the
+latter will copy the first table value to the guard point, which is
+inappropriate for this opcode.
+
+
+Example (using score-supplied f-table, assuming fsig  fftsize = 1024):
+	; score f-table using cubic spline to define shaped peaks 
+	f1 0 513 8 0 2 1 3 0 4 1 6 0 10 1 12 0 16 1 32 0 1 0 427 0
+
+	asig	buzz	 20000,199,50,3        ; pulsewave source
+	fsig	pvsanal  asig,1024,256,1024,0  ; create fsig
+	kmod	linseg   0,p3/2,1,p3/2,0       ; simple control sig	
+	fsig	pvsmaska fsig,2,kmod           ; apply weird eq to fsig
+	aout	pvsynth  fsig                  ; resynthesize,
+                dispfft  aout,0.1,1024         ; and view the effect
+
+This also illustrates that the usual Csound behaviour applies to
+fsigs; the same name can be used for both input and output.
+
+
+
+	kflag	pvsftw 	fsrc,ifna [,ifnf]
+		pvsftr 		fsrc,ifna [,ifnf]
+
+Copy fsig amplitude and/or frequency data to (pvsftw) and from
+(pvsftr) function tables, for external processing.
+	
+	kflag:   has the value 1 when new data is available, 0 otherwise.
+	ifna :	 table at least inbins in size that stores amplitude data. 
+                 Ignored if ifna  = 0
+	ifnf :   table at least inbins in size that stores frequency data. 
+                 Ignored if ifnf  = 0
+
+These opcodes enable the contents of fsrc to be exchanged with
+function tables, for custom processing. Except when the frame overlap
+equals ksmps (which will generally not be the case), the frame data is
+not updated each control period, and the data in ifna, ifnf should
+only be processed when kflag is set to 1. To process only frequency
+data, set ifna to zero.
+
+As the functions tables are required only to store data from fsrc,
+there is no advantage in defining then in the score, and they should
+generally be created in the instrument, using ftgen.
+
+By exporting amplitude data, say, from one fsig and importing it into
+another, basic cross-synthesis (as in pvscross) can be performed, with
+the option to modify the data beforehand using the table manipulation
+opcodes.  Note that the format data in the source fsig is not written
+to the tables.  Used this way, these opcodes become potentially
+pathological, and can be relied upon to produce unexpected results. In
+such cases, resynthesis using pvsadsyn would almost certainly be
+required.
+
+
+Example:
+
+ifn	ftgen		0,0,inbins,10,1	; make ftable	
+kflag	pvsftw		fsrc,ifn              ; export  amps to table,
+kamp	init 		0		
+if	kflag==0 	kgoto contin	; only proc when frame is ready
+; kill lowest bins, for obvious effect
+	tablew		kamp,1,ifn
+	tablew		kamp,2,ifn
+	tablew		kamp,3,ifn
+	tablew		kamp,4,ifn	
+; read modified data back to fsig
+	pvsftr		fsrc,ifn  	
+contin:
+; and resynth
+aout	pvsynth		fsrc
+
+
+
+Pvanal extension to create a PVOC-EX file.
+
+The standard Csound utility program pvanal has been extended to enable
+a PVOC-EX format file to be created, using the existing interface. To
+create a PVOC-EX file, the file name must be given the required
+extension, ".pvx", e.g.  "test.pvx". The requirement for the FFT size
+to be a power of two is here relaxed, and any positive value is
+accepted; odd numbers are rounded up internally. However, power-of-two
+sizes are still to be preferred for all normal applications.
+
+The channel select flags are ignored, and all source channels will be
+analysed and written to the output file, up to a compiler-set limit of
+eight channels. The analysis window size (iwinsize) is set internally
+to double the FFT size.
+
+Use of PVOC-EX files with the old Csound pvoc opcodes.
+
+All the original pvoc opcodes can now read a PVOC-EX file, as well as
+the native non-portable file format. As the PVOC-EX file uses a
+double-size analysis window, users may find that this gives a useful
+improvement in quality, for some sounds and processes, despite the
+fact that the resynthesis does not use the same window size.
+
+Apart from the window size parameter, the main difference between the
+original .pv format and PVOC-EX is in the amplitude range of analysis
+frames.  While rescaling is applied, so that no significant difference
+in output level is experienced, whichever file format is used, some
+slight loss of amplitude can still arise, as the double window usage
+itself modifies frame amplitudes, of which the resynthesis code is
+unaware. Note that all the original pv~ opcodes expect a mono analysis
+file, and multi-channel PVOC-EX files will accordingly be rejected.

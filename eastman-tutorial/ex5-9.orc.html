@@ -1,0 +1,212 @@
+<html>
+<head>
+<title>ex5-9</title>
+</head/
+<pre>
+    ; csound header
+sr=44100
+kr=2205
+ksmps=20
+nchnls=1
+
+; ###########################################
+; orchestra file for examples ex5-9-0, ex5-9-1, ex5-9-2 and ex5-9-3
+; Eastman Csound Library algorithm marimba with added global reverberator
+; ##########################################
+
+ga1 init 0     ; initialize global variable
+
+
+; ### Eastman Orchestra Library Instrument  m_a_r_i_m_b_a ###
+; Function Needed: 100                                               
+; p fields:
+; p6 attack time (c. .01-.04)
+; p7 attack hardness(1. ord; range .75-1.5)                         
+; p8 brightness (1. ord; range: .25-1.5)
+; - - - - - - - -
+instr 30
+	; Set defaults:
+	p6 = (p6 = 0 ? .025 : p6) ; attack time
+	p7 = (p7 = 0 ? 1. : p7) ; attack hardness
+	p8 = (p8 = 0 ? 1. : p8) ; brightness
+	
+p4 = (p4>0?p4:(abs(p4))/100)  ; for microtones; -800.050 = quarter tone above c
+i1 = (p4<13.01? cpspch(p4):p4)
+        ;  --- Detuning  module (mostly for use with "chorus" ) ---
+  idetunepf = p9
+if idetunepf = 0 goto detunedone ;skip all this if detuning set to 0 in score
+       idtcount init 0  ; counter
+       idtmult =  (idetunepf > 0 ? 1.05946 : .94387) ;1/2 step freqency ratios
+  idetune init 1.  ; detuning multiplier for p4 pitch
+        icheck = abs(idetunepf)
+        icheck = int(icheck)
+
+   dumbloop:
+	      idtcount = idtcount + 1   ; increment counter
+	      idtmult = (icheck = 0 ? 1 : idtmult)
+	      idetune = idetune * idtmult 
+   if idtcount < icheck igoto dumbloop
+ ; microtonal detuning:
+	idtmult = abs(idetunepf)
+	idtmult = frac(idtmult)
+	idtmult = idtmult * .05496
+	idtmult = (idetunepf > 0 ? idtmult : - idtmult)
+	idetune = idetune + idtmult
+i1 = i1 * idetune 
+detunedone:   ; ---end of detuning module -------
+i2 = octcps(i1)
+i99=1       
+p5 = p5*i99
+p7 = p7*i99
+p8 = p8*i99
+i3 = (16.25-i2)*.12                     ; scalar; ef3 = .96,ef3=1.08,ef5=.84
+i4 = (i3+1)/2                           ;  scalar                          
+p6 = p6*i3
+i5 = ((12.15-i2)*.32*((p7+2)/3))+.12  ;duration & amplitude depend upon pitch
+p5 = p5*((p7+1)/2)*(i3<1.?1.:i4)        ; & hardness of attack
+i15 = p7*p8*i3          ; scalar based on pitch,attack hardness & brightness
+
+p8 = (i2<11?p8:p8 - (abs(i2-13)*.1))    ; protection against bomb outs
+a1 linseg 0,p6/p7,1,((2/(p7+1))*i4*.055)-p6,(3/(p7+2))*i4*.54,.1*i5,.27,.15*i5,i4*.15,.25*i5,i4*.1,(.5*i5)-.055,0,i5,0
+a2 linseg 1,p3-.025,1,.025,0
+a1 = a2*a1*p5
+timout (i5 < p3? i5 : p3),p3,test
+goto contin
+test:  k2 rms a1
+if k2 > 10 kgoto contin
+ turnoff
+
+; Random amplitude deviation
+contin: k1 expseg p7*.2,p6,p7*.09,i2-p6,.06
+k1 randi k1,39/p7
+a1 =a1 + (k1*a1)             ; Total amplitude
+
+;  ***  Attack Chiff ***
+k2 expseg p7*p8*i4,((p7+1)/2)*(.77*p6),.002,p3,.001
+k2 randi k2*.5,999           ; random frequency deviation
+
+k3 expseg p7*p8*i3*2.2,p7*.8*p6,.001,p3,.001; envelope for fm index
+; - - - - -
+;   Frequencies and Envelopes of the Individual Partials 
+if i2>7.75 igoto treble
+; Frequencies of the partials
+
+; 6 partials for low tones (a3 & below)
+i6 = 4.03
+i7 = 10.1
+i8 = 17.9
+i9 = 24.2*i1
+i10 = 33.5*i1
+i11= 42.9*i1
+if i2 <6.75 igoto skip
+i6 = i6-((i2-6.75)*.02)
+i7 = i7-((i2-6.75)*.2)
+i8 = i8-((i2-6.75)*1.)
+skip: i6 = i6*i1
+i7 = i7*i1
+i8 = i8*i1
+i12 = 1+(.8*(i2-6.75))
+i13 = 1+(.33*(i2-6.75))
+i14 = 1+(.6*i12)
+i15 = 7.85-i2
+
+i16 = .14
+i17 = .18
+i18 = .17
+i19 = .22
+i20 = .06
+i21 = .12
+i22 = .05
+i23 = .06
+i24 = .02
+igoto doit
+; - - - midrange : 4 partials for tones between bf3 and a5
+treble: if i2 > 9.75 igoto veryhi
+if i2>8.75 goto higher
+i6 = (4.01+(.03*(i2-7.75)))*i1          ; partial frequencies for a3-a4
+i7 = (10. - (.9*(i2-7.75)))*i1
+i8 = (16.9-(3.*(i2-7.75)))*i1
+i12 = 1+((i2-7.75)*.2)
+i13 = 1-((i2-7.75)*.12)
+igoto skip2
+higher: i6 = (4.04-(.74*(i2-8.75)))*i1  ; partial frequencies for a4-a5
+i7 = (9.1-(2.7*(i2-8.75)))*i1
+i8 = (13.9-(2.8*(i2-8.75)))*i1
+i12 = 1+((9.75-i2)*.2)
+i13 = .9
+skip2:
+i16 = .15
+i17 = .13
+i18 = .13
+i19 = .09
+i20 = .07
+i21 = .04
+igoto doit
+; - - - - 3 partials for highest tones (bf5 and above)
+veryhi:
+i6 = (3.3-((i2-9.75)*.3))*i1
+i6 = (i6<sr/2?i6:.75*(sr/2))      ; foldover protection
+i7 = (6.4-((i2-9.75)*.7))*i1
+i7 = (i7<sr/2?i7:.85*(sr/2))      ; foldover protection
+i12 = 1
+i13 = 1
+i16 = .14
+i17 = .14
+i18 = .11
+i19 = .09
+; - - -
+
+doit:                         
+a2 expseg p8*i16,i3*i17*i5,p8*.005
+a2 = i12*a2*a1
+a1 = a1-a2
+a2 oscili a2,i6+(k2*i6),100,.05                  ; partial 2
+
+a3 expseg p8*i18,i5*i3*i19,p8*.004
+a3 = i13*a3*a1
+a1 = a1-a3
+a3 oscili a3,i7+(k2*i7),100,.11                  ; partial 3
+a2 = a2+a3
+if i2>9.75 kgoto fos
+a3 expseg i15*i20,i5*i15*i21,p8*.004
+a3 = i14*a3*a1
+a1 = a1-a3
+a3 oscili a3,i8+(k2*i8),100,.15                  ; partial 4
+a2 = a2+a3
+if i2 > 7.75 kgoto fos
+a3 expseg i15*i22,i5*i15*i23,p8*.003
+a3 = i15*a3*a1
+a1 = a1-a3
+a3 oscili a3,i9+(k2*i9),100,.21                  ; partial 5
+a2 = a2+a3
+if i2 > 7.5 kgoto fos
+a4 expseg i15*i24,i5*i15*i24,p8*.003
+a4 = i15*a4*a1
+a1 = a1-a4
+a4 oscili a4,i10+(k2*i10),100,.24                ; partial 6
+a2 = a2+a4
+
+fos:  a1 foscili a1,i1+(k2*i1),1,((p7+i4)/2)*1.2,p7*p8*i3*k3,100
+a1 = a1+a2
+
+
+
+;Added users code
+ ; send output to global reverberator
+ga1 = ga1 + a1
+endin
+
+
+instr 99
+krevamount   line  p4, p3, p5   ; % signal to be reverberated
+adry = (1 - krevamount) * ga1  ; direct signal -- no reverberation
+
+irevtime = p6 ; reverberation time
+
+;awet  reverb2  krevamount * ga1 , irevtime, p7
+awet  nreverb  krevamount * ga1 , irevtime, p7
+out awet + adry  ; output reverberated plus direct signals
+ga1 = 0                ; clear global variable 
+endin
+</pre></html>
+

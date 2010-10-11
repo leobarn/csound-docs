@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Band Pass Filter Sweep Instruments</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>          sr        = 44100<br>          kr        = 4410<br>          ksmps     = 10.0<br>          nchnls    = 2</pre>
+<pre>	instr	1	;fix cf and sweep bw
+icps	=	cpspch(p5)
+ibwmin	=	p6
+ibwvar	=	p7
+iwavefn	=	p8
+ibwfn	=	p9
+kbw	oscil1i	0,ibwvar,p3,ibwfn
+asig1	oscili	p4,icps,iwavefn
+kbw	=	(kbw) + (ibwmin)
+afltsig	butterbp	asig1,icps,kbw
+afltsig	butterbp	afltsig,icps,kbw
+afltsig	butterbp	afltsig,icps,kbw
+abalsig	balance	afltsig,asig1
+afinal	linen	abalsig,.5,p3,.5
+	outs	afinal,afinal
+	endin</pre>
+<pre>	instr	2		;fix bw and sweep cf
+icps	=	cpspch(p5)
+icfmin	=	octpch(p6)	;p6 is initial cf in pch
+icfvar	=	p7		; p7 is max cf var in oct
+ibw	=	(p8 &gt; 0 ? icps/p8 : 0)	; p8 is Q of filter
+iwavefn	=	p9
+icffn	=	p10
+kcfoct	oscil1i	0,icfvar,p3,icffn
+asig1	oscili	p4,icps,iwavefn
+kcfoct	=	(kcfoct) + (icfmin)
+kcf	=	cpsoct(kcfoct)
+afltsig	butterbp	asig1,kcf,ibw
+afltsig	butterbp	afltsig,kcf,ibw
+afltsig	butterbp	afltsig,kcf,ibw
+abalsig	balance	afltsig,asig1
+afinal	linen	abalsig,.5,p3,.5
+	outs	afinal,afinal
+	endin</pre>
+<pre>	instr	3		;fix q and sweep cf
+icps	=	cpspch(p5)
+icfmin	=	octpch(p6)	;p6 is initial cf in pch
+icfvar	=	p7		;p7 is max cf var in oct
+iq	=	(p8 == 0 ? 1 : p8)	;p8 is Q of filter
+iwavefn	=	p9
+icffn	=	p10
+kcfoct	oscil1i	0,icfvar,p3,icffn
+asig1	oscili	p4,icps,iwavefn
+kcfoct	=	(kcfoct) + (icfmin)
+kcf	=	cpsoct(kcfoct)
+kbw	=	kcf/iq	;bw varies with cf
+afltsig	butterbp	asig1,kcf,kbw
+afltsig	butterbp	afltsig,kcf,kbw
+afltsig	butterbp	afltsig,kcf,kbw
+abalsig	balance	afltsig,asig1
+afinal	linen	abalsig,.5,p3,.5
+	outs	afinal,afinal
+	endin</pre>
+<P><HR>
+<pre>;generate a set of cosine partials
+ f01	0	8192	11	32
+ ;the bw control function (exponential)
+ f02	0	513	5	.01	256	1	257	.01
+ ;the cf control function (linear)
+ f03	0	513	7	0	256	1	257	0
+ ;nn	st	dur	amp	pch	bwmin	bwvar	oscfn	bwfn
+ i01	0	4	20000	8.00	0	2500	1	2
+ ;nn	st	dur	amp	pch	cf1	cfvar	Q	oscfn	cffn
+ i02	5	4	20000	8.00	7.00	4	2	1	3
+ ;nn	st	dur	amp	pch	cf1	cfvar	Q	oscfn	cffn
+ i03	10	4	20000	8.00	7.00	4	6	1	3
+ e
+ 
+</pre>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=624>
+<TR><TD WIDTH="35%" VALIGN="TOP">
+<P><A HREF="../../../dwnld/classorc/bpsweep.orc">Download bpsweep.orc</A></TD>
+<TD WIDTH="34%" VALIGN="TOP">&nbsp;</TD>
+<TD WIDTH="32%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="../../../dwnld/classsco/bpsweep.sco">Download bpsweep.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

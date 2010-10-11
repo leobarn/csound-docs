@@ -1,0 +1,94 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="GoLive CyberStudio 3">
+		<title></title>
+		<meta name="Author">
+	</head>
+
+	<body bgcolor="white">
+		<pre>
+
+
+
+; <font size="5"><b>LUX HOMINUM   Arthur B. Hunkins   1995</b></font>
+;   programmed in Csound
+;   version for use with output of <a href="SCORE11.HTM">Score11</a>-processed <a href="LUXS11.HTM">lux.s11</a>
+; In him was life; and that life was the light of men.
+;                                     John 1:4
+
+      sr = 44100 ; quality/clarity deteriorates below about 30000
+      kr = 4410 ; set to sr / 10
+      ksmps = 10
+      nchnls = 2
+
+      gitrans = 0 ; transpose range (1.0=octave): -.25 to +.58
+      giwave = 1 ; wave choices: 1=sine, 2=pseudo-triangle
+      givers = 1 ; version choices: 1, 2, 3 (diff mod indexes)
+      givers = (giwave == 1? givers: givers + 3)
+
+      instr 1, 16
+
+      kamp        linen  1, p4, p3, p5
+      kamp2       table  kamp * 511, 5
+      ifreq       = cpsoct(8.00 + gitrans)
+      ifreq       = (p1 == 1? ifreq: ifreq * 2)
+      iamult      = (p1 == 1? 6000: 4500)
+      kamp3       = kamp2 * iamult
+      kamp4       randi  kamp3 * .06, 22, -1
+      a1          oscil  kamp3 + kamp4, ifreq, 1, -1
+                  if p4 &gt; 0 goto skip
+      kpan        linseg .5, p3 - p5, .5, p5, .42
+                  goto over
+skip: kpan        linseg 0, p4, .5, p3 - (p4 + p5), .5, p5, .42
+                  if p5 &gt; 0 goto over
+                  ihold
+over: a2,a3,a4,a5 pan    a1, (p1 == 1? 1 - kpan: kpan), 1, 13, 1
+                  outs   a2, a3
+                  endin
+
+      instr 2, 15
+        
+      kamp        linen  1, p4, p3, p5
+      kamp2       table  kamp * 511, 5
+      ifreq       = cpsoct(8.00 + gitrans)
+      iamult      = (p1 == 2? 8500: 9000)
+      kamp3       = kamp2 * iamult
+      kamp4       randi  kamp3 * .07, 22, -1
+      a1          oscil  kamp3 + kamp4, ifreq, (p1 == 2? 3: 4), -1
+                  if p5 &gt; 0 goto skip
+      kpan        linseg 0, p4, .5, p3, .5
+                  ihold
+                  goto over
+skip: kpan        linseg .5, p3 - p5, .5, p5, .42
+over: a2,a3,a4,a5 pan    a1, (p1 == 2? kpan: 1 - kpan), 1, 13, 1
+                  outs   a2, a3
+                  endin
+
+      instr 3, 4
+
+      kamp        linen  1, p5, p3, p6
+      kamp2       table  kamp * 511, 5
+      icar        table  p4 * 2 - 2, givers + 6
+      iamult      table  p4 * 2 - 1, givers + 6
+      kamp3       = kamp2 * iamult
+      kamp4       randi  kamp3 * .04, 22, -1
+      imod        table  p4 - 1, 6
+      ifreq       = cpsoct(8.00 + gitrans)
+      ifreqc      = ifreq * icar
+      ifreqm      = ifreq * imod
+      kindex      randi  .15, 20, -1
+      a1          oscil  ifreqm * kamp * (4.85 + kindex), ifreqm, giwave, -1
+      a2          oscil  10000 * (kamp3 + kamp4), ifreqc + a1, 1, -1
+                  if p6 &gt; 0 goto skip
+      kpan        linseg .5, p5, 1, p3, 1
+                  ihold
+                  goto over
+skip: kpan        linseg 1, p3 - p6, 1, p6, .85
+over: a3,a4,a5,a6 pan    a2, (p1 == 3? 1 - kpan: kpan), 1, 13, 1
+                  outs   a3, a4
+                  endin</pre>
+	</body>
+
+</html>

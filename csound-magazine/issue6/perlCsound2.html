@@ -1,0 +1,734 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+<title>Csound Journal</title>
+<link href="PerlAndCsound.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+
+<div id="wrap">
+<div id="navigation"> CSOUND JOURNAL: <a href="../index.html">Home</a> |&nbsp;<a href="index.html">Issue 6</a> </div>
+
+
+<div id="header">
+<h2>Perl and Csound - Part II</h2>
+Jacob Joaquin<br>
+jacobjoaquin [at] gmail.com
+</div>
+
+<div id="content">
+
+
+
+
+
+
+<h2 id="IntroductionToPartII">Introduction to Part II</h2>
+<p>Welcome back.</p> 
+
+<p>In the <a href="http://www.csounds.com/journal/issue5/perlCsound.html">first part</a> of the article, I covered the basic building blocks of Perl and how they can be integrated into the Csound environment.  I talked about scalars, arrays, functions, subroutines, formatting numbers, conditional branching and more.</p>
+
+<p>In this second part, I'm focusing on two subjects:  macros and pattern matching.  I will demonstrate how to use both Csound macros and Perl scalars within the same environment, and also how to substitute macros with scalars.  Pattern Matching is considered Perl's greatest asset, and it can be used to modify and create new functional syntax with which composers can customize the Csound language to fit their personal needs.</p>
+
+<p>Finally, the article ends with examples of what can be done with Perl.  Though I do not cover these in depth, these scripts are great for deconstructing, studying, and modifying, and will give you the opportunity to get some hands-on experience with code that is designed for real-world applications.</p>
+
+<p>If you haven't done so already, I highly recommend you read <a href="http://www.csounds.com/journal/issue5/perlCsound.html">Part I</a> of this article.  Otherwise, you might find some of the information here out of context.  Be sure to download the code for <a href="http://www.csounds.com/journal/issue5/PerlCsoundArticle/PerlCsound.zip">Part I</a> and <a href="perlCsoundPart2/PerlCsound2.zip">Part II</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="MorePerl">I. More Perl</h2>
+
+<h3 id="ScalarsVsMacros">Scalars vs Macros</h3>
+
+<p>Perl scalars and Csound macros share something in common, the <code>$</code> symbol.  In Perl, the <code>$</code> is the character that designates a scalar, which can store a string, integer or float.  In Csound, the <code>$</code> denotes a macro.  This inconvenient intersection of the shared symbol requires the user to be cautious when implementing Csound macros within a Perl script.</p>
+
+<p>The easiest solution when writing Csound macros within a Perl script is to do away with the macros all together.  This creates two distinct advantages.  First, Perl will not accidently interpret macros as scalars under any circumstances.  Second, macros defined in the orchestra are not recognized in the score, and vice versa. This forces Csounders to duplicate macro code or to link to an external file with <code>#include</code> when the same definitions are to be shared between the orchestra and score.  Scalars do not share this limitation, and can be used universally.</p>
+
+<p>The following Csound code from <a href="perlCsoundPart2/macro.csd">macro.csd</a> demonstrates how macros are implemented.  Note that the definitions are implemented twice, once in the orchestra and once in the score.</p>
+
+
+
+
+<pre id="Figure1.0">&lt;CsoundSynthesizer&gt;
+&lt;CsInstruments&gt;
+sr     = 44100
+kr     = 4410
+ksmps  = 10
+nchnls = 1
+
+# define sine        #1#
+# define puretone    #16#
+# define fourfourty  #440#
+
+instr $puretone
+    a1 oscil 20000, $fourfourty, $sine
+
+    out a1
+endin
+
+&lt;/CsInstruments&gt;
+
+&lt;CsScore&gt;
+# define sine        #1#
+# define puretone    #16#
+# define fourfourty  #440#
+
+f$sine 0 8192 10 1
+
+i$puretone 0 8
+
+&lt;/CsScore&gt;
+&lt;/CsoundSynthesizer&gt;</pre>
+
+<div id="figure"><b>Figure 1.0</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="perlCsoundPart2/macro.csd">macro.csd</a> demonstrates Csound macros.</div>
+
+
+
+
+<p>The next block of code demonstrates the equivalent code in Perl.  The macro definition sections have been completely removed and replaced with a single scalar block of code near the top of the script.  The rest of the orchestra and score code has been left in tact, as <code>$sine</code>, <code>$puretone</code>, and <code>$fourfourty</code> seamlessly integrate with Perl's scalar system.</p>
+
+
+
+
+<pre id="Figure1.1">my $sine       = 1;
+my $puretone   = 16;
+my $fourfourty = 440;
+
+print CSD &lt;&lt; "END";
+&lt;CsoundSynthesizer&gt;
+&lt;CsInstruments&gt;
+sr     = 44100
+kr     = 4410
+ksmps  = 10
+nchnls = 1
+
+instr $puretone
+    a1 oscil 20000, $fourfourty, $sine
+    
+    out a1
+endin
+
+&lt;/CsInstruments&gt;
+
+&lt;CsScore&gt;
+f$sine 0 8192 10 1
+
+i$puretone 0 8
+
+&lt;/CsScore&gt;
+&lt;/CsoundSynthesizer&gt;
+
+END</pre>
+
+
+
+
+<div id="figure"><b>Figure 1.1</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="perlCsoundPart2/notmacro.pl.txt">notmacro.pl</a> demonstrates the equivalent code of <a href="perlCsoundPart2/macro.csd">macro.csd</a> using Perl.</div>
+
+
+
+
+<p>There will be times when making use of Csound macros is still preferable.  For these occasions, you should be aware of a few different methods for properly embedding macros into a Perl script.</p>
+
+<p>Perl interprets scalars differently when they're placed within single quotes than double quotes.  When printing a scalar within double quotes, the scalar is replaced by the data it holds.  However, when a scalar is printed with single quotes, it is treated as a string of characters, and printed as is.  The following code prints two lines of instrument code, both with <code>$sine</code> present.</p>
+
+
+
+
+<pre id="Figure1.2">my $sine = 1;
+print "a1 oscil 10000, 440, $sine" . "\n";
+print 'a2 oscil 10000, 444, $sine' . "\n";</pre>
+
+
+
+
+<div id="figure"><b>Figure 1.2</b>&nbsp;&nbsp;&nbsp;&nbsp;Perl interprets single and double quotes differently as demonstrated in <a href="perlCsoundPart2/quotes.pl.txt">quotes.pl</a>.</div>
+
+
+
+
+<p>Look how <code>$sine</code> was treated differently by the print function when used with double and single quotes.  With the double quotes, <code>$sine</code> was replaced with <code>1</code>.  With the single quotes, <code>$sine</code> is printed as <code>$sine</code>.</p>
+
+
+
+
+<pre id="Figure1.3">a1 oscil 10000, 440, 1
+a2 oscil 10000, 444, $sine</pre>
+
+
+
+
+<div id="figure"><b>Figure 1.3</b>&nbsp;&nbsp;&nbsp;&nbsp;The printed results from <a href="perlCsoundPart2/quotes.pl.txt">quotes.pl</a>.</div>
+
+
+
+
+<p>Mixing single and double quotes within a single script is usually not the optimal solution, especially when dealing with large chunks of code.  To avoid using single quotes while still ensuring that macros are treated as macros, the <code>$</code> symbol can be escaped with the use of the backslash character <code>\</code>.  The backslash tells the Perl interpreter to treat the <code>$</code> as plain text rather than a scalar.  This way, scalars and macros can coexist within the same pair of double quotes.  Scalars will continue to look like <code>$foo</code> while macros take the form of <code>\$bar</code>.</p>
+
+<p>The following Perl script integrates both scalar and macro functionality within the same block of instrument code.</p>
+
+
+
+
+<pre id="Figure1.4">my $freq = sprintf( "%.4f", rand() * 440 + 440 );
+
+print &lt;&lt; "END"
+# define sine #1#
+
+instr 1
+    a1 oscil 10000, $freq, \$sine
+
+    out a1
+endin
+END</pre>
+
+
+
+
+<div id="figure"><b>Figure 1.4</b>&nbsp;&nbsp;&nbsp;&nbsp;The script <a href="perlCsoundPart2/both.pl.txt">both.pl</a> integrates both a scalar and a macro within the same block of code.</a></div>
+
+
+
+
+<p>When the instrument code is interpreted by Perl, the <code>\$</code> portion of <code>\$sine</code> is replaced with <code>$</code>, while <code>$freq</code> is replaced with the value it stores.</p>
+
+
+
+
+<pre id="Figure1.5"># define sine #1#
+
+instr 1
+    a1 oscil 10000, 806.7922, $sine
+
+    out a1
+endin
+</pre>
+
+
+
+
+<div id="figure"><b>Figure 1.5</b>&nbsp;&nbsp;&nbsp;&nbsp;This is the output from <a 
+href="perlCsoundPart2/both.pl.txt">both.pl</a>.</a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3 id="PatternMatchingWithRegularExpressions">Pattern Matching with Regular Expressions</h3>
+
+<p>Perl comes equipped with one of the best pattern-matching engines available today. With this powerful tool, one can scan a chunk of data for a user-defined pattern or patterns.  A pattern is constructed with a regular expression, which is a string of codes that clearly describe the sought-after data.</p>
+
+<p>The scope of pattern matching with regular expressions go beyond anything I could possibly cover in a short Csound article.  The topic is so broad it has its own book: Mastering Regular Expressions[<a href="#References">1</a>].  I will introduce you to pattern matching, explain a little of what it does and how to use it.  However, the information I present is far from being a complete guide.  I recommend using this information in conjunction other tutorials[<a href="#References">2</a>] on the same subject.</p>
+
+<p>Regular expressions bring a whole new level of options to Csound.  With them, one can write tools that modify existing scores, translate a user's custom computer music syntax into Csound code and much more.</p>
+
+<p>The use of regular expressions can be broken down to two generalized functions:  Matching and Substitution.</p>
+
+<p>When using regular expressions to check for a pattern match, the expression will return true if a match is found, or false if a match is not found.  This allows us to have better control of our code as pattern matches can dictate the flow of a script when combined with conditional branching.  In figure 2.0, the conditional <code>if</code> is used in conjunction with a pattern match.  The code within the curly brackets is only executed when <code>( $bar =~ m/barada/ )</code> returns the value true[<a href="#References">3</a>].</p>
+
+
+
+
+<pre id="Figure2.0">my $bar = "klaatu barada nikto";
+
+if( $bar =~ m/barada/ )
+{
+    print '$bar contains the word "barada"' . "\n";
+}</pre>
+
+
+<div id="figure"><b>Figure 2.0</b>&nbsp;&nbsp;&nbsp;&nbsp;The regular expression in <a href="perlCsoundPart2/match.pl.txt">match.pl</a> returns true, executing the print function.</div>
+
+
+
+
+<p>Perl's pattern-matching abilities make altering data through substitution much simpler than in most other languages.  The following example searches for the explicit pattern <code>5.04</code> in the string <code>$foo</code> and replaces it with <code>5.05</code>.  The rest of the string is left intact.  The syntax of the substitution function is differentiated from the matching function with the letter <code>s</code>, positioned between <code>=~</code> and the first forward slash <code>/</code>.  Substitution requires two parameters.  This first parameter is a regular expression of the pattern being sought, while the second is the replacement string.</p> 
+
+
+
+
+<pre id="Figure2.1">my $foo = "Have you upgraded to Csound version 5.04, yet?\n";
+
+$foo =~ s/5\.04/5.05/;
+
+print $foo;</pre>
+
+<div id="figure"><b>Figure 2.1</b>&nbsp;&nbsp;&nbsp;&nbsp;The text <code>5.04</code> is substituted with <code>5.05</code> in <a href="perlCsoundPart2/substitution.pl.txt">substitution.pl</a>.</div>
+
+
+
+
+<p>Applying pattern matching and substitution to existing score files can speed up the process of making changes, especially in cases where there are dozens or hundreds of alterations to make.</p>
+
+<p>Imagine this scenario:  You have a long list of events, generated by a specific instrument, that make up a musical phrase that you wish to move to another point in time in the score.  You could manually make the changes by hand, erasing and retyping new start times for each individual score event.  Or you could hack a quick Perl script.  The script would not only help with the problem at hand, but could be used again if the same issue comes up in the future.</p>
+
+<p>To solve this problem, I wrote a subroutine called <code>timetravel( )</code>.  This subroutine takes three parameters:  a string of Csound score code, the instrument number of the events you wish to shift in time, and the amount of time to shift.  The subroutine then returns a new string containing the processed Csound score code.</p>
+
+
+
+
+<pre id="Figure2.2">$processed = timetravel( $score, 2, 16 );</pre>
+
+<div id="figure"><b>Figure 2.2</b>&nbsp;&nbsp;&nbsp;&nbsp;This call to subroutine <code>timetravel( )</code> returns a string of processed Csound score code.  See <a href="perlCsoundPart2/timetravel.pl.txt">timetravel.pl</a>.</div>
+
+
+
+
+<p>Let's take a look at what's under the hood of <code>timetravel( )</code>:</p>
+
+
+
+
+<pre id="Figure2.3">sub timetravel
+{
+    my $score       = shift;  # The score code to process
+    my $instr       = shift;  # The instrument to process
+    my $timeshift   = shift;  # The amount of time shift
+    my $line        = '';     # Holds the current line of code being processed
+    my $value       = 0;      # Stores the new start time
+    my $scoreReturn = '';     # Stores the processed score
+
+    foreach $line ( split( /\n/, $score ) )
+    {
+        # Shift the time for instances of the specified instrument
+        if( $line =~ /^i$instr\s+(\d+\.\d+|\d+)/ )
+        {
+            # Shift the time
+            $value =  $1 + $timeshift;
+            
+            # Substitute the old start time with the new start time
+            $line  =~ s/(^i\d+\s+)(\d+\.\d+|\d+)/$1$value/;
+        }
+        
+        # Append to $scoreReturn
+        $scoreReturn .= $line . "\n";    
+    }
+
+    return $scoreReturn;
+}
+</pre>
+
+<div id="figure"><b>Figure 2.3</b>&nbsp;&nbsp;&nbsp;&nbsp;The subroutine <code>timetravel( )</code> in <a href="perlCsoundPart2/timetravel.pl.txt">timetravel.pl</a>.</div>
+
+
+<p>For each line of Csound code present in <code>$score</code>, <code>timetravel( )</code> checks for a pattern match defined by the regular expression <code>/^i$instr\s+(\d+\.\d+|\d+)/</code>.  If a pattern match is found, the start time portion of the pattern match is substituted with the new time-shifted value.</p>
+
+<p>The following line of the perl script checks a single score event for the pattern match:</p>
+
+
+
+
+<pre id="Figure2.4">if( $line =~ /^i$instr\s+(\d+\.\d+|\d+)/ )</pre>
+
+<div id="figure"><b>Figure 2.4</b>&nbsp;&nbsp;&nbsp;&nbsp;The regular expression decides how the conditional <code>if</code> statement reacts in <code>timetravel(&nbsp;)</code>.  See <a href="perlCsoundPart2/timetravel.pl.txt">timetravel.pl</a>.</div>
+
+
+
+
+<p>At first glance, the preceding regular expressions looks as if one would require a degree from Starfleet[<a href="#References">4</a>] in order to decipher it. However, by breaking down the regular expression into individual parts, we can better understand its inner workings.</p>
+
+<p>The flow chart in figure 2.5 demonstrates how the regular expression was derived from a Csound instrument score event.</p>
+
+
+
+
+<p id="Figure2.5"><center><img src="perlCsoundPart2/regexprflow.gif" width=593px height=472px></center></p>
+
+<div id="figure"><b>Figure 2.5</b>&nbsp;&nbsp;&nbsp;&nbsp;Flow chart for deriving one of the regular expressions in <code>timetravel( )</code>.  See <a href="perlCsoundPart2/timetravel.pl.txt">timetravel.pl</a>.</div>
+
+
+
+<p>Stage 1. The first step to take is to identify a typical Csound instrument score event that the regular expression should match.</p>
+
+<p>Stage 2. Since <code>timetravel( )</code> works on <code>i</code> events and processes the start times, everything beyond p-field 2 can be ignored.</p>
+
+<p>Stage 3. At this point, write a pseudo-regular expression in general terms that describe each individual component of the narrowed score event.  Take into consideration potential variations that might occur.  For example, p-field 2 may either be a float or an integer, and the regular expression needs to recognize both.</p>
+
+<p>Stage 4. Translate the pseudo-regular expression into a valid regular expression.  The part of the match within the parenthesis, <code>(/d+\.\d+|\d+)</code>, is stored into the special scalar <code>$1</code>.</p>
+
+<p><code>^</code>&nbsp;&nbsp;&nbsp;&nbsp;In a regular expression, the <code>^</code> indicates that the pattern match must begin at the beginning of a string.  If any character exists before the <code>i</code>, including white space, the regular expression will not find a pattern match.</p>
+
+<p><code>i</code>&nbsp;&nbsp;&nbsp;&nbsp;The letter "i".</p>
+
+<p><code>$instr</code>&nbsp;&nbsp;&nbsp;&nbsp;The regular expression searches to match the data stored in <code>$instr</code>.</p>
+
+<p><code>\s</code>&nbsp;&nbsp;&nbsp;&nbsp;White space.  May include spaces or tabs.</p>
+
+<p><code>+</code>&nbsp;&nbsp;&nbsp;&nbsp;Greedy.  When the <code>+</code> symbol is used, Perl's pattern matching engine will make every match possible based on the criteria of the previous regular expression code.  For example, <code>\s+</code> will match all white space up to the next non-white space character.</p>
+
+<p><code>( )</code>&nbsp;&nbsp;&nbsp;&nbsp;Parenthesis are used to capture portions of the pattern and store them in scalars.</p>
+
+<p><code>\d</code>&nbsp;&nbsp;&nbsp;&nbsp;Match any digit 0 through 9.</p>
+
+<p><code>\.</code>&nbsp;&nbsp;&nbsp;&nbsp;The <code>.</code> in a regular expression means to match any type of character.  In order to treat a <code>.</code> as an actual period character, such as the decimal in a floating number, the <code>.</code> must be escaped with the backslash.</p>
+
+<p><code>|</code>&nbsp;&nbsp;&nbsp;&nbsp;This allows the pattern to match for more than one possibility.  For example, the start time of an instrument score event may be a float or an integer, and the <code>|</code> allows us to define an expression that will match either of them.</p>
+
+<p>The following figures 2.6 and 2.7 show a score before and after being processed:</p>
+
+
+
+
+<pre id="Figure2.6">my $score = &lt;&lt; "END";
+f1 0 8192 10 1
+t 0 120
+
+i1 0   1   10000 8.00
+i1 1   1   10000 7.09
+i1 2   0.5 10000 7.07
+i1 2.5 1.5 10000 7.04
+i1 3   1   10000 7.02
+
+i2 0   1   10000 8.00
+i2 1   1   10000 7.09
+i2 2   0.5 10000 7.07
+i2 2.5 1.5 10000 7.04
+i2 3   1   10000 7.02
+END
+
+
+# Process score
+print timetravel( $score, 2, 4 );</pre>
+
+<div id="figure"><b>Figure 2.6</b>&nbsp;&nbsp;&nbsp;&nbsp;The Perl script processes the string of Csound code with <code>timetravel( )</code>. See <a href="perlCsoundPart2/timetravel.pl.txt">timetravel.pl</a>.</div>
+
+
+
+
+<pre id="Figure2.7">f1 0 8192 10 1
+t 0 120
+
+i1 0   1   10000 8.00
+i1 1   1   10000 7.09
+i1 2   0.5 10000 7.07
+i1 2.5 1.5 10000 7.04
+i1 3   1   10000 7.02
+
+i2 4   1   10000 8.00
+i2 5   1   10000 7.09
+i2 6   0.5 10000 7.07
+i2 6.5 1.5 10000 7.04
+i2 7   1   10000 7.02</pre>
+
+<div id="figure"><b>Figure 2.7</b>&nbsp;&nbsp;&nbsp;&nbsp;The processed score after <code>timetravel( )</code>.  See <a href="perlCsoundPart2/timetravel.pl.txt">timetravel.pl</a>.</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="ScriptsForFurtherStudy">III. Scripts for further Study</h2>
+
+
+
+<h3 id="BandVocoderInstrumentGenerator">Band Vocoder Instrument Generator</h3>
+
+<p>Perl is usually equated with being a score generator when used with Csound, as it is very good at doing this. However, I thought it would be interesting to present an example of a script that dynamically creates an instrument based on a handful of parameters.</p>
+
+<p>The Band Vocoder[<a href="#References">5</a>] Instrument Generator contains a block of scalars near the top of the script where users can enter values that determine how the band vocoder (a.k.a. channel vocoder) is generated.  A user can specify the number of bands, the minimum and maximum frequencies of the carrier and modulator signals, whether the instrument will produce a mono or stereo audio stream, and, when applicable, a method for placing each band channel into a stereo field.  Once the instrument is generated, all a user has to do is provide a few lines of code for implementing the carrier and modulator audio streams.</p>
+
+
+
+
+<pre id="Figure3.0">my $instr        = 1;            # The instrument number
+my $nBands       = 10;           # Number of bands
+my $carMin       = 100;          # Minimum carrier frequency
+my $carMax       = 8000;         # Maximum carrier frequency
+my $modMin       = 200;          # Minimum modulator frequency
+my $modMax       = 16000;        # Maximum modulator frequency
+my $nChannels    = 1;            # 1 = mono, 2 = stereo
+my $stereoMethod = ALTERNATING;  # MONOCENTER, ALTERNATING or RANDOM</pre>
+
+
+<div id="figure"><b>Figure 3.0</b>&nbsp;&nbsp;&nbsp;&nbsp;The parameters for <a href="perlCsoundPart2/vocoder.pl.txt">vocoder.pl</a>.</div>
+
+
+
+
+
+
+
+
+<h3 id="DrumSequencer">Drum Sequencer</h3>
+
+<p>Getting lost within a list of instrument events is sometimes less desirable than being able to place events on a grid or lattice.  This is especially true when working with rhythms.  I'm a firm believer that the interface influences the compositional process.  This is why I've started writing a Perl subroutine that allows me to input drum patterns in a manner that is much more user-friendly.</p>
+
+<p>My subroutine <code>dseq( )</code> is a work in progress that allows a user to enter drum patterns into a horizontal grid, using a string of text.  The subroutine parses a pattern and converts them into valid Csound code.  The syntax I've chosen is influenced by my personal experiences with Triton's Fast Tracker II[<a href="#References">6</a>], Max V. Mathew's Radio Baton Conductor program[<a href="#References">7</a>], and graphical MIDI editors such as the one found in Ableton Live[<a href="#References">8</a>].</p>
+
+
+
+
+<pre id="Figure3.1">dseq( 1,  0, "f...  ....  f.f.  ...." );</pre>
+
+<div id="figure"><b>Figure 3.1</b>&nbsp;&nbsp;&nbsp;&nbsp;A <code>dseq( )</code> pattern.</div>
+
+
+
+<p>Translated into a more traditional system of notation, the previous rhythm looks like this:</p>
+
+
+
+
+<pre id="Figure3.2"><img src="perlCsoundPart2/rhythm.gif"></pre>
+
+
+<div id="figure"><b>Figure 3.2</b>&nbsp;&nbsp;&nbsp;&nbsp;The rhythm notation of the <code>dseq( )</code> pattern in figure 3.1.</div>
+
+
+
+
+<p>The <code>dseq( )</code> parser reads the pattern from left to right and recognizes four different types of data: event, rest, whitespace and rhythm directive.</p>
+
+<p>An event is written when the string pattern parser matches a digit or a character between <code>a</code> and <code>f</code>.  These characters span the range of hexadecimal numbers between 0x0 and 0xF.  The value of the hexadecimal number is translated into a decimal value between 0 and 1, placed into p-field 4 and is generally used to control dynamics of the event.</p>
+
+<p>A rest is denoted by a period.  A period does not trigger a note event, but it does act as a spacer between events.</p>
+
+<p>White space allows users to align the text of a pattern to make the rhythms easier to read.  They do not trigger any notes events, nor do they act as a rest.  White space is also required before and after a rhythm directive is used.</p>
+
+<p>A rhythm directive changes the rhythmic resolutions for the the proceeding events and rests.  The default resolution is a sixteenth note.  The <code>r</code> directive can be used at any point in a pattern, allowing any combination of resolutions.  The <code>r</code> directives come in three different flavors:  <code>r#</code>, </code>r# t</code> and <code>r#d#</code>.</p>
+
+
+<p><code>r#</code>&nbsp;&nbsp;&nbsp;&nbsp;The <code>#</code> is an integer that represents the division of a whole note.  An <code>r4</code> indicates a quarter note.</p>
+
+<p><code>r#t</code>&nbsp;&nbsp;&nbsp;&nbsp;The <code>t</code> indicates that the resolution will be a triplet.  An <code>r8t</code> indicates a resolution of an eighth note triplet.</p>
+
+<p><code>r#d#</code>&nbsp;&nbsp;&nbsp;&nbsp;This version allows for irregular rhythms.  The <code>d#</code> represents another division of the resolution.  An <code>r4d3</code> is a quarter note divided by three, which is the same as an eighth note triplet.  An <code>r4d7</code> divides a quarter note into seven equal rhythmic parts, known as a septuplet.</p>
+
+<p>The following figure lists examples of <code>r</code> directives and their translated resolutions.</p>
+
+
+
+<pre id="Figure3.3">r1   = whole note
+r2   = half note
+r4   = quarter note
+r8   = eigth note
+r6   = eight note triplet
+r8t  = eigth note triplet
+r4d3 = quarter note divided by three, the same as an eigth note triplet
+r4d7 = quarter note divided by 7, or eighth note septuplet.</pre>
+
+
+<div id="figure"><b>Figure 3.3</b>&nbsp;&nbsp;&nbsp;&nbsp;Rhythm directives and their translated resolutions.</div>
+
+
+
+
+The Perl script excerpt in figure 3.4 demonstrates multiple patterns using <code>dseq( )</code>.
+
+
+
+
+<pre id="Figure3.4"># Classic rock beat
+my $time = 0;
+$csd .= dseq( HIHAT, $time, "f.f.  f.f.  f.f.  f.f." );
+$csd .= dseq( SNARE, $time, "....  f...  ....  f..." );
+$csd .= dseq( KICK,  $time, "f...  ....  f.f.  ...." );
+
+
+# Classic rock beat with dynamics
+$time += 4;
+$csd .= dseq( HIHAT, $time, "c.6.  a.6.  c.6.  a.6." );
+$csd .= dseq( SNARE, $time, "....  8...  ....  8..a" );
+$csd .= dseq( KICK,  $time, "8...  ....  c.a.  ...." );
+
+    
+# Classic rock beat pattern rewritten with resolution directive "r_"
+$time += 4;
+$csd .= dseq( HIHAT, $time, "r8 c6a6     c6      a   6 " );
+$csd .= dseq( SNARE, $time, "r4 . 8      .   r16 8.  .a" );
+$csd .= dseq( KICK,  $time, "r4 8 .   r8 a8      .   . " );
+    
+
+# Triplet hi-hats using resolution triplet directive "r_t"
+$time += 4;
+$csd .= dseq( HIHAT, $time, "r8t f88   a88   f88   a88 " );
+$csd .= dseq( SNARE, $time, "    ....  c...  ....  c..." );
+$csd .= dseq( KICK,  $time, "    f...  ....  f...  ...." );
+
+
+# Triplet hi-hats rewritten using resolution divide directive "r_d_"
+$time += 4;
+$csd .= dseq( HIHAT, $time, "r4d3 f88   a88   f88   a88 " );
+$csd .= dseq( SNARE, $time, "     ....  c...  ....  c..." );
+$csd .= dseq( KICK,  $time, "     f...  ....  f...  ...." );
+
+
+# Demonstration using "r_d_" with irregular rhythms
+$time += 4;
+$csd .= dseq( HIHAT, $time, "r4d4 aaaa r4d5 aaaaa r4d6 aaaaaa r4d7 aaaaaaa" );
+$csd .= dseq( SNARE, $time, "     ....      f...       ....        f...   " );
+$csd .= dseq( KICK,  $time, "     f...      ....       f..f        ....   " );</pre>
+
+
+<div id="figure"><b>Figure 3.4</b>&nbsp;&nbsp;&nbsp;&nbsp;Multiple <code>dseq( )</code> drum patterns from from <a href="perlCsoundPart2/drumseq.pl.txt">drumseq.pl</a>.</div>
+
+
+
+
+
+
+
+
+<h2 id="AndBeyond">And Beyond...</h2>
+
+<p>This two part article is only meant to be a starting point for those wishing to expand their computer music vocabulary.  Though I've only scratched the surface, the knowledge presented here is a solid foundation to build on.  With a little bit of time and effort, you will soon be able to build your own tools, customized to your personal style and preferences.  In time, Perl will open new doors of compositional possibilities.</p>
+
+
+
+
+
+
+
+
+<h2 id="Acknowledgments">Acknowledgments</h2>
+
+<p>I want to thank the editors of the Csound Journal, Steven Yi and James Hearon, for presenting me this opportunity to give something back to the Csound community.  I would also like to thank my friend Justin Day, who introduced me to Perl back in 1999-2000.</p>
+
+<p>Best,<br>
+Jacob Joaquin</p>
+
+
+
+
+
+
+
+
+
+<h2 id="Files">Files</h2>
+<a href="http://www.csounds.com/journal/issue5/PerlCsoundArticle/PerlCsound.zip">PerlCsound.zip</a> - All the Perl scripts and unified Csound csd files for Part I.</a><br>
+
+<a href="perlCsoundPart2/PerlCsound2.zip">PerlCsound2.zip</a> - All the Perl scripts and unified Csound csd files for Part II.</a><br>
+
+
+<h2 id="Links">Links</h2>
+<a href="http://www.csounds.com/">Csounds.com</a> - ... almost everything Csound.<br>
+<a href="http://www.csounds.com/journal/">Csound Journal</a> - Inspiration in Ezine form.</a><br>
+<a href="http://www.perl.com/pub/a/2004/08/31/livecode.html">Hacking Perl in Nightclubs</a> - By Alex Mclean<br>
+<a href="http://www.adp-gmbh.ch/csound/granular/granul01.html">Granul 01</a> - Perl Granular Instrument Generator by Ren&eacute; Nyffenegger.<br>
+<a href="http://www.csounds.com/ezine/trees/index.html">Harmonic Trees</a> - Perl-Csound related compositions and theory by Jacob Joaquin.<br>
+<a href="http://perlmonks.org/">PerlMonks.org</a> - An Online Monastery of Perl Programmers and Perl Resources.<br>
+<a href="http://www.ayni.com/perldoc/index.html">Perldoc.com</a> - Perl Documentation Online<br>
+<a href="http://www.thumbuki.com/csound/blog/">The Csound Blog @ Thumbuki</a> - The Csound Blog is a collection of journals that are distributed within unified Csound csd files.<br>
+<a href="http://www.thumbuki.com/">Thumbuki.com</a> - The Cosmos in 20 Words or Less.<br>
+
+
+
+
+
+
+<h2 id="References">References</h2>
+
+[1] Friedl, Jeffrey E. F. 2002.  <i>Mastering Regular Expressions</i>. O'Reilly & Associates <a href="http://www.oreilly.com/catalog/regex2/">http://www.oreilly.com/catalog/regex2/</a><br>
+
+[2] Perlretut. Regular Expression Tutorial.  <a href="http://perldoc.perl.org/perlretut.html">http://perldoc.perl.org/perlretut.html</a><br>
+
+[3] Gort. 1951. Quote from <i>The Day the Earth Stood Still</i>.  Twentieth Century-Fox<br>
+
+[4] Starfleet. Wikipedia.org. <a href="http://en.wikipedia.org/wiki/Starfleet">http://en.wikipedia.org/wiki/Starfleet</a><br> 
+
+[5] Joaquin, Jacob T. 2007. <i>Robot Voices and Android Grooves</i>. The Csound Blog. <a href="http://www.thumbuki.com/csound/files/thumbuki20070206.csd">http://www.thumbuki.com/csound/files/thumbuki20070206.csd</a><br>
+
+[6] Fasttracker II. Wikipedia.org. <a href="http://en.wikipedia.org/wiki/Fast_Tracker">http://en.wikipedia.org/wiki/Fast_Tracker</a><br>
+
+[7] Mathews, Max V. Radio Baton Conductor Program. 2000. <a href="http://csounds.com/mathews/manuals/ConductorManual.pdf">http://csounds.com/mathews/manuals/ConductorManual.pdf</a><br>
+
+[8] Ableton Live. <a href="http://www.ableton.com/live">http://www.ableton.com/live</a><br>
+
+
+</div>
+</div>
+</body>
+</html>

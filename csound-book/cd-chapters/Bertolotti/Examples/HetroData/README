@@ -1,0 +1,47 @@
+
+
+>>> The original hetro files:
+
+        Trumpet_orig_ds5.het         2.344  sec
+        Trumpet_orig_f4.het          2.416  sec
+
+    have been time-stretched to the length of
+       
+        Violins_ds5.het         3.895  sec
+        Violins_f4.het          4.093  sec
+
+    using hetroMix, and the file mixer.stretch (read this later file)
+    with the command:
+
+    hetroMix -a 200 -w mixer.stretch Trumpet_original_f4.het Violins_f4.het
+
+    and the output file ``data_mix.het'' renamed accordingly.  Look at
+    ``data_mix.info'' to see the actual weights used in the mixing.
+
+
+
+>>> The trumpet an violin spectra were mixed with the command:
+
+    hetroMix -w mixer.mix Trumpet_f4.het Violins_f4.het
+
+
+
+
+
+>>> The base + supplementary files were created with the foloowing commands
+
+        hetroReduce -s 200 -o Trumpet_f4  Trumpet_f4.het
+        hetroReduce -s 200 -o Trumpet_ds5 Trumpet_ds5.het
+        hetroReduce -s 400 -o Violins_f4  Violins_f4.het
+        hetroReduce -s 400 -o Violins_ds5 Violins_ds5.het
+
+    I have saved two .eps files of the base spectrums.  Use hetroPlot to
+    visualize other data.
+
+
+
+
+  - Fabio.Bertolotti@dlr.de
+
+
+

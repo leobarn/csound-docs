@@ -1,0 +1,35 @@
+
+
+   Here we mix the even harmonics of the trumpet sound (file 1) with
+   the odd harmonics of the violin sound (2) via the command
+
+   hetroMix -w mixer.mix Trumpet_f4.het Violins_f4.het
+
+   and rename the output file ``data_mix.het'' as ``New_f4.het''
+
+
+             Partial   File 1    File 2
+          -----------------------------
+
+amplitude:  default      1         0  
+frequency:  default      1         0  
+
+amplitude:      1        0         1  
+frequency:      1        0         1  
+
+amplitude:      3        0         1  
+frequency:      3        0         1  
+
+amplitude:      5        0         1  
+frequency:      5        0         1  
+
+amplitude:      7        0         1  
+frequency:      7        0         1  
+
+amplitude:      9        0         1  
+frequency:      9        0         1  
+
+amplitude:     11        0         1  
+frequency:     11        0         1  
+
+

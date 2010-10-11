@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Cswish: the windowing shell</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="tclcsound.html" title="TclCsound" />
+    <link rel="prev" href="tclcsound.html" title="TclCsound" />
+    <link rel="next" href="csserver.html" title="A Csound server" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Cswish: the windowing shell </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tclcsound.html">Prev</a> </td>
+          <th width="60%" align="center">TclCsound</th>
+          <td width="20%" align="right"> <a accesskey="n" href="csserver.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section" title="Cswish: the windowing shell">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="cswish"></a>Cswish: the windowing shell </h2>
+          </div>
+        </div>
+      </div>
+      <p>With Cswish, Tk widgets and commands can be used to provide graphical 
+interface and event handling. As with cstclsh, running the cswish command also opens an 
+interactive shell. For instance, the following commands can be used to create a transport 
+control panel for Csound: </p>
+      <pre class="programlisting">frame .fr
+button .fr.play -text play -command csPlay
+button .fr.pause -text pause -command csPause
+button .fr.rew -text rew -command csRewind
+pack .fr .fr.play .fr.pause .fr.rew </pre>
+      <p>Similarly, it is possible to bind keys to commands so that the computer keyboard can be 
+used to play Csound. </p>
+      <p>Particularly useful are the control channel commands that TclCsound provides. 
+For instance, named IO channels can be registered with TclCsound and these can be used with the 
+invalue, outvalue opcodes. In addition, the Csound API also provides a complete software bus for audio, 
+control and string channels. It is possible in TclCsound to access control and string bus channels 
+(the audio bus is not implemented, as Tcl is not able to handle such data). 
+With these TclCsound commands, Tk widgets can be easily connected to synthesis parameters. </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tclcsound.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tclcsound.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="csserver.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">TclCsound </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> A Csound server </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

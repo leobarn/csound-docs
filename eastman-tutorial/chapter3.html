@@ -1,0 +1,1123 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML VERSION="2.0">
+<HEAD>
+<TITLE>chapter3.html</TITLE>
+</HEAD>
+<BODY>
+<A NAME="chapter3.html#"></A>
+<HR><CENTER><FONTSIZE="-1"><I>Eastman Csound Tutorial</I></FONT></CENTER>
+<PRE>
+<H5>   <A HREF="./chapter3.html#END"><FONT SIZE="+1">END</FONT> of this chapter</A>  -- <A HREF="chapter4.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 4)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</H5><HR></PRE>
+
+
+<H2><A NAME="_wmh3_847374711">Chapter3<BR>
+AMPLITUDE and FREQUENCY MODULATION ; PROGRAMMING CONTROLS</A></H2>
+<P>By now we have begun to patch together unit generators and other mathematical
+operations and utilities available within Csound to form more complex, and therefore
+(we hope) musically more interesting instrument algorithms. In an example
+within the last chapter, we used a control oscillator to create a tremolo,
+or sub-audio <B>amplitude modulation</B> signal. In the following pages, we will look first at somewhat more sophisticated
+amplitude modulation procedures, and then at <B>frequency modulation</B> procedures.
+Some of you likely already are familiar with these concepts, others not.
+If you have little prior experience with modulation procedures, or erroneously surmise
+that they might involve moving from G minor to B-flat major,
+you may
+find it helpful to consult the tutorial introductions within
+<I>Computer Music: Synthesis, Composition and Performance</I> by
+Charles Dodge and Thomas Jerse (on reserve at Sibley for <I>CMP 421-2</I>) or
+within in various other computer and electronic music texts, to supplement
+or clarify the material presented here.</P>
+<H4><A NAME="_wmh4_847374720">3.1. Amplitude Modulation</A></H4>
+<P>Below is a sample amplitude modulation instrument, and a score for it to
+play. The amplitude modulation here occurs here in the audio rather than
+the sub-audio frequency range. Thus, instead of producing amplitude beats
+(tremolo), it will alter the timbre produced by the audio oscillator, producing
+sum and difference tone sideband frequencies between the modulating and
+carrier oscillator waveforms. The frequency ratio between the modulating
+and carrier oscillators remains constant throughout a note (the pitches
+of both oscillators remain fixed). However, the depth (percentage) of the
+amplitude that is modulated is varied by means of a control oscillator,
+resulting in time varying timbral changes.</P>
+<DD><FONT SIZE="2">(The lines of Csound code have been numbered in this</FONT> <FONT SIZE="2">example so that we can refer quickly to particular</FONT> <FONT SIZE="2">features. Obviously, such line numbers would not be</FONT> <FONT SIZE="2">included in an actual Csound orchestra file.)</FONT> 
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex3-1  :    Orchestra file used to create this soundfile</B>
+<B>;  #############################################################</B>
+<B>1   ; Audio-Rate Amplitude Modulation Instrument :</B>
+<B>2   ;  p3 = duration   p4 = pitch   p5 = amplitude  p6 = Attack time  p7 = decay time</B>
+<B>3   ;   p8 = ratio of modulating freq. to p4</B>
+<B>4   ;   p9 = 1st  amplitude modulation %</B>
+<B>5   ;   p10 = 2nd  amplitude modulation %</B>
+<B>6   ;   p11 = Function number controlling change in a. m. %</B>
+<B>7   ;   p12 = Function number for modulating oscillator</B>
+
+<B>8   sr = 44100</B>
+<B>9   kr = 2205</B>
+<B>10  ksmps = 20</B>
+<B>11  nchnls = 1</B>
+
+<B>12  instr 1</B>
+<B>13  ipitch = cpspch(p4)</B>
+<B>14  kenv  linen  p5,  p6,  p3,  p7            ; amplitude envelope</B>
+<B>15  ; amplitude modulation :</B>
+<B>16      kmod oscili (p10 - p9),  1/p3,  p11  ; difference between 1st &amp; 2nd a. m. %</B>
+<B>17         kmod = (kmod + p9) * kenv           ; % of signal to be amp. modulated</B>
+<B>18         knomod = kenv - kmod                  ; % of signal NOT amp. modulated</B>
+<B>19      ampmod  oscili  kmod, ipitch * p8, p12   ; modulating oscillator</B>
+
+<B>20  audio  oscili  ampmod + knomod, ipitch , 1   ; carrier oscillator</B>
+<B>21      out audio</B>
+<B>22  endin</B>
+<B>-------------------------------------------------------</B>
+
+
+<B>Score for above instrument :</B>
+<B>-------------------------------------------------------</B>
+<B>&lt; score for ex3-1 : audio-rate amplitude modulation</B>
+<B> &lt; audio waveform functions :</B>
+<B>*f1 0 1024 10 1.;             &lt; sine wave</B>
+<B>*f2 0 1024 10 0 1. .3 0 .15;  &lt; more complex wave, harmonics 2,3,5</B>
+<B>&lt; control functions for change in amplitude modulation % {p12}</B>
+<B>*f10 0 65 7  0  64  1. ;         &lt; linear change between p9 &amp; p10</B>
+<B>*f11 0 65 5  .01  64  1.;        &lt; exponential pyramid change between p9 &amp; p10</B>
+<B>*f12 0 65 7  0  32  1.  32  0;   &lt; linear pyramid  {p9 to p10 to p9}</B>
+<B>*f13 0 65 5  .01  32  1.  32  .01;  &lt; exponential pyramid  {p9 to p10 to p9}</B>
+
+<B>i1 0 0 4;           &lt; 4 output notes</B>
+<B>p3 4;                    &lt; start  times</B>
+<B>du .95;</B>
+<B>p4 no c4;                &lt; pitch</B>
+<B>p5 10000;                &lt; amplitude</B>
+<B>p6 .2;                   &lt; attack time</B>
+<B>p7 .5;                   &lt; decay time</B>
+<B>p8 nu 1./ 1.4 / .255/ 3.3;    &lt; ratio of modulating frequency to p4</B>
+<B>p9 nu .05/ .05 ;            &lt; 1st % of a.m.</B>
+<B>p10 nu .95/ .95;            &lt; 2nd % of a.m.</B>
+<B>p11 nu 10/ 11 / 12/ 13 ;   &lt; function number for change in a.m. %</B>
+<B>p12 nu 1//  2 // ;         &lt; function number for modulating oscillator</B>
+<B>end;</B>
+<B>-------------------------------------------------------</B>
+</PRE>
+<P align=right
+<FONT SIZE=-1>
+<A target="_new" HREF="appendix.html#Chapter3"><I>Appendix Csound score file examples : Chapter 3</I></A></FONT SIZE></P>
+
+<P>This instrument algorithm has been lavishly commented, almost to the point
+of fussiness and loquacity. However, we well may appreciate this documentation
+later, and anyone else who looks at our orchestra file will be grateful
+for the assistance. As your instruments get more complicated, it becomes
+harder to follow your own logic. What seems obvious today may cause head-scratching
+in a few weeks.</P>
+<P><I>linen</I> (line 15) creates a simple attack-sustain-decay amplitude envelope for
+each note. On lines 16-18 we split this original amplitude signal into two
+paths. kmod is the percent of the amplitude signal that <U>will</U> be modulated; <I>knomod</I> is the percent that will not be modulated. The greater the depth of modulation,
+up to a maximum of <B>1.</B> (100 %), the greater the resulting strength of the sidebands, and thus
+the greater the timbral change.</P>
+<P>Let's look more carefully at how the depth of modulation is varied :</P>
+<PRE>
+15 ; amplitude modulation :
+16   kmod oscili (p10 - p9), 1/p3, p11    ; difference between 1st &amp; 2nd a. m. %
+17   kmod = (kmod + p9) * kenv          ; % of signal to be amp. modulated
+18   knomod = kenv - kmod                 ; % of signal NOT amp. modulated
+19   ampmod oscili kmod, ipitch * p8, p12 ; modulating oscillator
+</PRE>
+<P>The control oscillator <I>kmod</I> (line 16) computes the changing <U>difference</U> between the first and second modulation percentages. Changes in this value
+follow the shape of the function given in score p-field 11. The difference
+is then added to our initial (p9) percentage in line 17 and multiplied times
+the original amplitude signal. This gives us the total, time varying amplitude
+signal level that will be sent to the modulating oscillator. This amplitude
+is then subtracted from the original output of <I>linen</I> (line 18) to define the non-modulated amplitude signal, and the result
+is written to a RAM memory location we call <I>knomod.</I></P>
+<P>The modulating oscillator <I>(ampmod)</I> generates the modulating signal. It's three arguments are :</P>
+<DD>1) the amplitude to be modulated (signal <I>kmod)</I> 
+<DD>
+<DD>2) frequency : <I>p8</I> times the <I>(p4)</I> frequency of the carrier oscillator 
+<DD>
+<DD>3) function : the audio waveshape function specified in score p-field 12
+(a sine wave for the first two notes, a more complex waveform for the final
+two notes) 
+<P>The actual amplitude modulation occurs within the carrier (audio) oscillator on line 20.
+The output of the modulator<I> (ampmod)</I> is added to the non-modulated amplitude (<I>knomod</I>) within the amplitude argument to the carrier oscillator.</P>
+<P>Modulation techniques have been important resources in digital as well
+as analog sound synthesis.
+My friend James Dashow, for example, has composed works in which the timbre of
+almost every note results from amplitude modulation procedures.
+I suggest that you grab a copy of the orchestra and score files
+above, or of others in this chapter, and try adding some modifications or
+additions to these algorithms, or else create your own instrument
+algorithms and scores based upon the models provided here.
+In <I>ex3-1</I>, for example, you might replace the bare-boned <I>linen</I>
+envlope generator on line 14 with a more powerful amplitude envelope created with
+<I>envlpx</I> or <I>expseg</I>. (This may require
+adding some additional score p-fields.
+You might create some other audio waveforms in addition to, or in place of,
+<I>f1</I> and <I>f2</I> for the modulating oscillator, or change the carrier oscillator waveform
+from the current sine wave to something more complex. Or, the pitch of the
+modulating and/or carrier oscillators might be varied by a control signal.
+A stereo version of the instrument could be created with an added p-field
+for spatial localization between right and left channels :</P>
+<CENTER><DD ALIGN="CENTER"><I>outs sqrt(p13)*a1, sqrt(1-p13)*a1I</I></CENTER>
+<P>In soundfile example <I>ex3-2,</I> amplitude modulation, both at the sub-audio and audio rate, is applied
+to a soprano tone soundfile from the <I>/sflib/voice</I> directory.</P>
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex3-2  :  amplitude modulation of a soundfile</B>
+<B>;  #############################################################</B>
+<B>; Orchestra file used to create this soundfile</B>
+<B>-------------------------------------------------------</B>
+<B>sr= 44100</B>
+<B>kr = 4410</B>
+<B>ksmps = 10</B>
+<B>nchnls = 1</B>
+
+<B>   ;  score p-fields:</B>
+<B>   ;  p4 =  soundin.# number {source soundfile} , p5 = skip time</B>
+<B>   ;  amplitude modulation :</B>
+<B>   ;     p9 =  opening % of audio signal to be modulated</B>
+<B>   ;     p10 =  closing % of signal to be modulated</B>
+<B>   ;     p11 =  modulating frequency (can be sub-audio or audio rate)</B>
+
+<B>instr 1</B>
+<B>asig  soundin  p4, p5    ; read in a soundfile</B>
+<B>   ; add a fade-in/fade-out amplitude envelope &amp; multiplier</B>
+<B>  p7 = (p7 = 0 ? .0001 : p7)  ; protect against illegal 0 values</B>
+<B>  p8 = (p8 = 0 ? .0001 : p8)  ; protect against illegal 0 values</B>
+<B>kamp expseg  .01, p7 , p6 , p3 - (p7 + p8) , p6 , p8 , .01</B>
+<B>asig  =  asig * kamp</B>
+
+<B>  ; apply amplitude modulation to these samples</B>
+<B> kmod line   p9,  p3  , p10      ;  controls % of signal to be modulated</B>
+<B> knomod =  (1. - kmod )        ; non-modulated</B>
+<B> ampmod   oscili  kmod , p11 , 1   ; amplitude modulation oscillator</B>
+<B>asig =  (knomod * asig)  +  (ampmod * asig)</B>
+<B>out  asig</B>
+<B>endin</B>
+<B>-------------------------------------------------------</B>
+
+<B>Eastman Csound Tutorial</B>
+
+
+
+<B>; Score file used to create soundfile &quot;ex3-2&quot;</B>
+<B>*f1  0 2048 10 1 ;  &lt;  sine wave</B>
+<B>i1 0 0 7;   &lt; create 7 output &quot;notes&quot;</B>
+<B>p3 nu 6.5 * 3 /  3. * 4;            &lt;</B>
+<B>du nu 306.36 * 3/ 302.8 * 4;    &lt; output duration</B>
+<B>p4 4 ;         &lt; soundin.# number : soundin.4 points to /sflib/voice/sop1.b3 </B>
+<B>p5  nu 0 * 3/ 2. * 4;                      &lt; skip time into soundfiles</B>
+<B>&lt;  fade-in/fade-out envelope and amplitude scalar</B>
+<B>p6  .6;          &lt; multiplier for output amplitude</B>
+<B>p7 nu 0 * 3/ .1 * 4;             &lt; fade-in</B>
+<B>p8 nu 0 * 3 / .25 * 4;             &lt; fade-out</B>
+
+<B>&lt; amplitude modulation :</B>
+<B>p9 nu .4 / .6 / .95 *5 ;         &lt; opening % of signal to be modulated</B>
+<B>p10 nu 0 // / .95 * 4;    &lt; ending % of signal to be modulated</B>
+<B>p11 nu 6. / 15. /    &lt; frequency of amplitude modulator oscillator</B>
+<B>   123.47 / 164.8 / 246.9/  349.2 /  46.2;</B>
+<B>end;</B>
+<B>-------------------------------------------------------</B>
+</PRE>
+<P>Those of you familiar with the ECMC MIDI studio
+might note that the orchestra file algorithm used to create soundfile example <I>ex3-2</I>
+is similar, in many respects, to the hardware architecture of the old, old,
+old (but still useful) <I>360 frequency shifter</I> ("balanced modulator") in our MIDI studio.
+Both employ an &quot;internal&quot; sine wave oscillator to amplitude
+modulate an &quot;external&quot; audio signal. As is often the case, however, software
+synthesis presents us with some additional possibilities. For example, we
+could create alternative amplitude modulation Csound algorithms in which</P>
+<UL>
+<LI>a soundfile modulates a sine wave oscillator (a reverse of the procedure
+above), or in which the oscillator (whether used as the modulator or as
+the carrier) reads a more complex waveshape function rather than a sinusoidal
+table 
+<LI>one soundfile is used to amplitude modulate another soundfile (e.g. a flute
+tone amplitude modulates a soprano tone
+</UL>
+<H4><A NAME="_wmh4_847374726">3.2. Frequency (phase) Modulation</A></H4>
+<P><I>Frequency modulation</I> has been a widely used resource in both MIDI and direct synthesis digital
+synthesis systems.[1]
+<FONT SIZE="2">[1] In Yamaha <I>dx, tx, tz</I> and <I>sy</I> series synthesizers</FONT> of the 1980s and early 1990s,
+<FONT SIZE="2">for example, frequency modulation was the principal means of generating various types of timbres.</FONT> 
+
+<P>FM can be employed either to produce periodic pitch fluctuations (vibrato),
+or else a wide range of timbres. The classic article on uses of F.M. for
+timbral control is <I>&quot;The synthesis of Complex Audio Spectra by Means of Frequency Modulation&quot;</I> by John Chowning, who first explored these procedures in the 1970s.[2]
+<DD><FONT SIZE="2">[2] This article is reprinted in <I>Foundations of Computer Music,</I> edited by Roads and Strawn, which is on</FONT> <FONT SIZE="2">reserve at Sibley. If you have not previously worked</FONT> <FONT SIZE="2">with F.M. techniques, or are not clear on how the procedure works, we recommend
+that you read this article</FONT> <FONT SIZE="2">up to the section on<I> Implementation.</I> Simpler,</FONT> <FONT SIZE="2">tutorial-level introductions to <I>FM</I> are also included</FONT> <FONT SIZE="2">within several computer music texts.</FONT> 
+
+<P>To summarize F.M. briefly :</P>
+<P>One or more modulating oscillators are created, and the resulting control
+signal(s) then added to the <I>sampling increment</I> (S.I.) of a carrier (audio) oscillator. This added value to the S.I. causes
+the carrier oscillator to skip around, back and forth, within the table,
+rather than marching straight through the table from beginning to end for
+each pitch cycle. For this reason, digital F.M. is often called <I>phase modulation,</I> since positive and negative values from the modulating oscillator are added
+to the current <I>phase</I> (position) within the function table. The greater the amplitude of the
+modulating oscillator, the greater the forward and backward jumps within
+the function table, and the greater the resulting change in pitch or timbre.
+In &quot;classical F.M.,&quot; the waveshapes of both the modulating and carrier oscillaotrs
+are sinusoids.</P>
+<P>There are two distinct types of F.M. : sub-audio rate and audio rate. When
+the frequency of the modulating oscillator is in the sub-audio range (below
+about 16 herz), we can hear the individual variations in frequency.
+If the modulating oscillator is producing a smooth-shaped, symmetrical
+waveform, such as a sinusoid or
+triangle wave, a vibrato results. If the modulator is producing a square wave 
+(with abrupt alterations between two values), a trill results.
+
+<P>When the frequency of the modulator is
+in the audio range, however, the resulting variations in the carrier frequency
+are so rapid that we can no longer hear them individually. Rather, <B>sidebands</B> (sum and difference tones) are created, resulting in a more complex timbre.
+The timbral change is usually more drastic than with amplitude modulation.
+Whereas a sine wave amplitude modulating another sine wave will produce
+a single set of sidebands (the sum and difference frequencies of the carrier
+and modulator), a sine wave <B>frequency</B> modulating another sine wave will often produce <U>several</U> sets of sum and difference tones:</P>
+<DD><I>c+m, c-m</I> :(carrier frequency plus the modulating frequency ; carrier minus mod.
+frequency) 
+<DD><I>c+2m, c-2m</I> :(carrier freq. plus double the mod. freq. ; carrier minus two times the
+modulating frequency) 
+<DD><I>c+3m, c-3m</I> : (carrier freq. plus and minus three times the modulating freq.) 
+<DD><I>c+4m, c-4m</I> : (carrier freq. plus and minus four times the modulating freq.) 
+<DD>etc. 
+<P>The table below shows the first four upper and lower sideband frequencies
+that result when a modulating frequency of <B>200</B> herz is applied to
+carrier frequencies of 
+<PRE>
+        100 herz (a <I>c:m</I> ratio of 1:2)
+        101 herz (a <I>c:m</I> ratio of 1.001:2, or  1:1.980198)
+         74 herz (a <I>c:m</I> ratio of approximately 2.7)
+</PRE>
+<PRE>
+
+<CENTER><FONT SIZE="5">  ---------------------4th  order--------------------</FONT>
+</CENTER><CENTER><FONT SIZE="5">  |     -----------3rd  order------------------     |</FONT>
+</CENTER><CENTER><FONT SIZE="5">  |     |     ------2nd  order-----------     |     |</FONT>
+</CENTER><CENTER><FONT SIZE="5">  |     |     |     ----1st order--     |     |     |</FONT>
+</CENTER><CENTER><FONT SIZE="5">  |     |     |     |             |     |     |     |</FONT>
+</CENTER><CENTER><FONT SIZE="5">  |     |     |     |  (carrier)  |     |     |     |</FONT>
+</CENTER><CENTER><FONT SIZE="5">  c-4m  c-3m  c-2m  c-m     c     c+m  c+2m  c+3m  c+4m</FONT>
+</CENTER><CENTER><FONT SIZE="5">  ----  ----  ----  ----   ---    ---- ----  ----  ----</FONT>
+</CENTER><CENTER><FONT SIZE="5">  -700   -500  -300 -100   <B>100</B>    300  500   700   900</FONT>
+</CENTER><CENTER><FONT SIZE="5">  -699   -499  -299  -99  <B> 101</B>    301  501   701   901</FONT>
+</CENTER><CENTER><FONT SIZE="5">  -726   -526  -326 -126   <B> 74</B>    274  474   674   874</FONT>
+</CENTER><CENTER>
+</CENTER></PRE>
+
+<UL>
+<LI> In the first case (carrier = 100 herz), the upper and lower sideband frequency
+components will add destructively, producing partial cancellation. (Frequency
+components at 100 and -100 herz, or at 300 and -300 herz, are 180 degrees out
+of phase.)<BR>
+<LI> With a 101 herz carrier, the upper and lower sidebands will beat against
+each other, producing amplitude variations at a rate of 2 herz.<BR>
+<LI> With a 74 herz carrier, the upper and lower sidebands do not interact,
+but rather produce a complex, inharmonic spectrum that likely will not
+produce a well-defined pitch.
+</UL>
+<P>Now consider the following simple F.M. instrument and score :</P>
+<PRE>
+<B> #############################################################</B>
+<B> soundfile ex3-3   :  Simple F.M. instrument   Csound Tutorial</B>
+<B> #############################################################</B>
+<B>Orchestra file used to create this soundfile:</B>
+<B>--------------------------------------------------------------</B>
+<B>sr = 44100</B>
+<B>kr = 2205</B>
+<B>ksmps = 20</B>
+<B>nchnls = 1</B>
+
+<B>instr 1</B>
+<B>   kenv expseg  1 , p6 , p5 , p3 - (p6+p7), p5, p7, 1 ; amplitude envelope</B>
+<B>   ipitch = cpspch(p4)</B>
+<B>   amod  oscili   p9*ipitch,  p8,  100        ; modulating oscillator</B>
+<B>   acar  oscili  kenv,  ipitch + amod,  100   ; carrier oscillator</B>
+<B>   out acar</B>
+<B>endin</B>
+<B>--------------------------------------------------------------</B>
+<B>&lt; score11 input file used to create  soundfile &quot;ex.3-3&quot; :</B>
+<B>* f100 0 1024 10 1.;     &lt; sine wave</B>
+<B>i1 0 0 2;</B>
+<B>p3 4;</B>
+<B>p4 no a3;</B>
+<B>p5 8000;                &lt; amplitude</B>
+<B>p6 .2;                  &lt; attack time</B>
+<B>p7 .5;                  &lt; decay time</B>
+<B>p8 nu 5./  440.;        &lt; modulating frequency</B>
+<B>p9 nu .03/  3.;          &lt; depth of modulation (*p4 frequency)</B>
+<B>end;</B>
+<B>--------------------------------------------------------------</B>
+</PRE>
+<P>COMMENTS on ex3-3 :</P>
+<P><I>First note (sub-audio F.M.) :</I>
+<UL>
+<LI>Modulating oscillator (line 5) : <I>amod oscili p9*ipitch , p8, 100 ; modulating oscillator</I> 
+</UL>
+<P>The amplitude of the modulating oscillator is set to <I>p9*ipitch. (ipitch</I> is the base frequency of the carrier oscillator, or 220 herz for both notes
+in the score.) Since the modulating oscillator is reading a sine wave table
+(function 100), its amplitude values for the first note will vary between
++6.6 (.03 * 220) and -6.6 (-.03 * 220) at a rate of 5 herz<I> (p8).</I></P>
+<UL>
+<LI>Carrier Oscillator (line 6) : <I>acar oscili k1, ipitch + amod, 100 ; carrier oscillator</I> 
+</UL>
+<P>The output of the modulating oscillaotr is added to the base frequency value<I> (ipitch,</I> or 220 herz) of the carrier. The resulting pitch vibrato will vary sinusoidally
+between 226.6 and 213.4 herz, at a rate of 5 times per second.</P>
+<P><I>Second note (audio-rate F.M.) :</I></P>
+<UL>
+<LI>Modulating oscillator (line 5) : The amplitude of the modulator will move
+sinusoidally between +660 and -660 herz<I> (p9 * ipitch,</I> or 3. * 220), at a rate of 440 herz <I>(p8).</I> 
+<LI>Carrier oscillator (line 6) : Adding the output of the modulator to the
+i1 center frequency of 220 herz, we obtain a resulting modulated frequency
+that moves sinusoidaly between 880 (220 + 660) and -440 (220 - 660) herz
+at a rate of 440 times per second. Negative frequencies are &quot;heard&quot; just
+like &quot;positive&quot; frequencies, but include a 180 degree phase shift. Positive
+and negative sideband components at the same frequency (for example, +440
+and -440 cps) add &quot;destructively,&quot; reducing the amplitude of that frequency. 
+</UL>
+<P>The term <B>modulation index</B> is a measure of the depth, or degree, of frequency modulation, indicating
+how much &quot;distortion&quot; (or "non-linear waveshaping") is applied to the reading of the carrier function
+table. Technically, &quot;modulation index&quot; is defined as
+<CENTER><DD ALIGN="CENTER"><I>the ratio of the peak frequency deviation to the modulating frequency.</I> 
+</CENTER><P>In our example (the second note of ex3-3) this ratio, or index, is 1.5 :</P>
+<PRE>
+       Peak Deviation / Modulating Frequency = Index
+            660       /          440         =  1.5
+
+</PRE>
+<H4><A NAME="_wmh4_847374739">3.2.1. Unit generator foscili</A></H4>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/oscil.html"><B>FOSCIL and FOSCILI</B></A>
+in the Csound reference manual ]</P>
+
+<P>Because &quot;classical&quot; F.M. procedures have been so common, Csound provides
+a unit generator, named <B>foscili,</B> which combines the modulating and carrier oscillators within a single line
+of code. The arguments to <I>foscili</I> are :</P>
+<UL>
+<LI>(1) <I>xamp</I> : amplitude of the carrier 
+<LI>(2) <I>kcps</I> : the fundamental frequency 
+<LI>(3) <I>kcar</I> : frequency of the carrier oscillator, a multiplier for<I> kcps</I> ; usually &quot;1.&quot; 
+<LI>(4) <I>kmod</I> : frequency of the modulating oscillator also a multiplier for <I>kcps.</I> Thus, the consecutive arguments <I>kcar</I> and <I>kmod</I> specifiy the carrier-to-modulator frequency ratio. 
+<LI>(5) <I>kndx</I> : the modulation index 
+<LI>(6) <I>ifn</I> : function number for both oscillators (usually a sinusoid) 
+<LI>(7) <I>[iphs]</I> : optional starting phase argument, as in <I>oscili;</I> (rarely used) 
+</UL>
+<P>In example <I>ex3-3</I> above,  the modulating and carrier oscillators
+<PRE>
+<I><FONT SIZE="-1">   amod  oscili   p9*ipitch,  p8,  100        ; modulating oscillator</I></FONT>
+<I><FONT SIZE="-1">   acar  oscili  kenv,  ipitch + amod,  100   ; carrier oscillator</I></FONT>
+</PRE>
+could be replaced by a call to <I>foscili</I> to create the second note of our score. The arguments would be :</P>
+<PRE><DD ALIGN="CENTER"><I>acar  foscili  kenv,  ipitch,  1,  2. ,  1.5,  100</I> 
+</PRE>
+<H4><A NAME="_wmh4_847374745">3.2.2. Carrier to Modulator Ratios</A></H4>
+<P>Simple <I>c : m ratios</I> in which the modulating frequency is some integer multiple of the carrier
+(for example, 1:2, 1:3, and so on) will create pitched sounds at the carrier
+frequency. Similar ratios, in which the <B>carrier</B> is an integer multiple of the modulator (for example, 2:1 or 3:1) will
+also produce tones with well-defined pitch, but the perceived pitch will
+be that of the modulating oscillator. Simple ratios such as 2:3, 3:4, and
+2:5 will produce an apparent fundamental at frequency &quot;1&quot;. (That is, with
+a carrier at 200 hz. and the modulator at 300 hz., the perceived fundmental
+will be 100 herz.)</P>
+<P>We will obtain similar timbres by using <B>nearly</B> harmonic <I>c : m ratios,</I> such as 1:1.002 , 1:2.99, 1:.498, or 2:3.003 . However, the resulting sidebands
+will be very slightly &quot;out of tune&quot; (like the harmonics produced by most
+natural acoustic instruments), and thus will frequently be out of phase.
+That is, the &quot;harmonics&quot; will alternately come <B>in</B> phase, starting together on a new cycle, and go out of phase, starting
+some new cycles at different times. This will cause amplitude <B>beats, </B>which will be clearly audible, and can be seen on an oscilloscope. In general,
+nearly-harmonic c:m ratios are preferred to exactly harmonic ratios, because
+of the added &quot;warmth&quot; and &quot;life&quot; imparted to the tone by the amplitude beats.</P>
+<P>Non-integer c:m ratios, such as 1:1.414 (the interval of a tritone) or 1:2.7,
+produce inharmonic partials. The resulting sounds are often unpitched, percussive,
+gong-like, or noise-like, depending upon the modulation depth.</P>
+<P>Any change in the c:m ratio will produce a change in timbre. Thus, if we
+wish to introduce glissandos, vibratos, or random frequency deviations,
+such control signals must be added to the frequency inputs of <U>both</U> the modulating
+and carrier oscillators. <I>foscili</I> does this automatically. But in instances where we need to create our own
+modulating oscillator(s), we need to do it by hand, as in the following
+example. ex3-4 was created by the glissando F.M. instrument and score below:</P>
+<PRE>
+
+<B> #############################################################</B>
+<B> soundfile ex3-4   :  F.M. Glissando Instrument : Csound Tutorial</B>
+<B> #############################################################</B>
+
+<B>1   sr = 22050</B>
+<B>    kr = 2205</B>
+<B>    ksmps = 10</B>
+<B>    nchnls = 1</B>
+<B>2   instr 1</B>
+<B>3   kenv linen p5,p6,p3,p7   ; amplitude envelope</B>
+
+<B>4   ; Glissando control signal :</B>
+<B>5   ipitch1 = cpspch(p4)        ; 1st pitch</B>
+<B>6   ipitch2 = cpspch(p10)       ; 2nd pitch</B>
+<B>8   p12 = (p12 &lt; .001 ? .001 : p12)  ; for notes with no gliss</B>
+<B>9                                        ; p12 cannot be 0 in expseg below</B>
+<B>10  kgliss expseg ipitch1,p11,ipitch1,p12,ipitch2,p3-(p11+p12),ipitch2 ; gliss. envelope</B>
+<B>11      display kgliss,p3            ; let's see how it looks</B>
+
+<B>12  ; Scale the FM index : the lower the pitch, the higher the index</B>
+<B>13     k3 = octcps(kgliss)    ; convert cps to oct for scalar</B>
+<B>14     kscale = (18-k3) * .1  ; index scalar ; c4 = 1., c3=1.1, c5 = .9 etc</B>
+<B>15  kscale = kscale * kscale  ; now c4 =1., c3 = 1.21, c5 = .81 etc</B>
+
+<B>16  ; F.M.</B>
+<B>17    amod  oscili p9*p8*kgliss, p8*kgliss, 100     ; modulating oscillator</B>
+<B>18    amod = kscale*amod  ; now scale the fm index</B>
+<B>19  acar  oscili kenv,  kgliss + amod , 100   ; carrier oscillator</B>
+<B>20  out acar</B>
+<B>21  endin</B>
+<B>--------------------------------------------------------------</B>
+
+<B>&lt; score11 input file used to create  soundfile  &quot;ex3-4&quot;</B>
+<B>* f100 0 1024 10 1.;     &lt; sine wave</B>
+<B>i1 0 0 3;</B>
+<B>p3 nu 3/4/5.5;</B>
+<B>p4 no a3//d7;</B>
+<B>p5 8000;                  &lt; amplitude</B>
+
+<B>Eastman Csound Tutorial</B>
+
+
+<B>p6 .15;                   &lt; attack time</B>
+<B>p7 nu .7//  1.2;          &lt; decay time</B>
+<B>p8 nu 2.003//  2.005;   &lt; ratio of modulating freq. to carrier (c:m = 1:p8)</B>
+<B>p9 nu 1.5//1.3;         &lt; modulation index</B>
+<B>&lt; glissando parameters :</B>
+<B>p10  no a3/ c5/ ef2;      &lt; 2nd pitch</B>
+<B>p11 nu 3./ .5/ .75;       &lt; p4 duration</B>
+<B>p12 nu 0/ 1.5/ 2.5;       &lt; gliss duration</B>
+<B>end;</B>
+<B>--------------------------------------------------------------</B>
+</PRE>
+<P>Since the F.M. algorithm is used here only for audio-rate frequency modulation,
+and never for vibrato, we have streamlined the F.M. p-fields to make the
+score values more meaningful. <I>p8</I> now specifies the c:m ratio <I>(1:p8)</I> rather than the modulating frequency, and <I>p9</I> now specifies the modulation index.</P>
+<P>A glissando envelope is created on line 10. Line 8 merely allows us to leave
+p-field 12 blank in our score for notes with no glissando. In order to see
+what the glissando shape looks like, we have included a call to <B>display</B> on line 11. This line could be omitted or commented out, since it does
+not affect the audio signal in any way.</P>
+<P> Tones produced in
+the lower registers of most instruments contain a richer spectrum -- more
+partials -- than tones
+produced in higher registers. Glissandos of a perfect fifth or more are apt to
+sound artificial if the modulation index (and thus the timbre) remains constant.
+The higher pitch will sound &quot;bright,&quot; the lower pitch &quot;dull.&quot; In addition,
+we sometimes must be careful about the index level of higher pitches.
+Some of the
+sidebands will alias if the index is too high, especially at lower sampling
+rates, such as 22050, as in <I>ex3-4</I> above.</P>
+<P>For these reasons we have included an F.M. index scalar (control signal
+kscale) on lines 12-15, and have used it as a multiplier for the index on
+line 18. This scale will raise the index progressively as the pitch falls
+below middle C, and lower the index for pitch levels above middle C.</P>
+<PRE>
+  ###################################################################
+  soundfile ex3-4-2   :  The same instrument without the FM index scale
+  ###################################################################
+</PRE>
+<P>Listen to soundfile <I>ex3-4-2, </I>which &quot;plays&quot; the third note of the preceding score <I>(ex3-4), </I>and which has been created by the same
+orchestra and score files as <I>ex3-4</I>, <U>except</U> that the FM index scalar on lines 12-15 and 18 has been commented out.
+Without the index attenuation provided by the control signal <I>kscale,</I> the beginning of the high tone <I>(d7) </I>includes aliasing, and the low <I>ef2</I> at the end of the note sounds anemic.</P>
+<H4><A NAME="_wmh4_847374752">3.2.3. Modulation Index</A></H4>
+<P>So far we have used either a constant or a scaled value for the modulation
+index, and the resulting timbre has remained pretty much fixed, and therefore
+rather "dull," "artificial" or "electronic-sounding," not unlike the
+fixed waveform oscillatr examples in chapters 1 and 2.
+
+The real power of F.M., or of any modulation procedure,
+however, often comes from <U>varying</U> the index with an envelope to produce changes in spectral &quot;brightness&quot;
+within a tone. Typically, an F.M. index will resemble an amplitude envelope
+(though with lower values, of course), since  our perception of
+&quot;loudness&quot;, and of note articulations, accents and phrasing,
+often are psychoacoustic
+responses to changes in both amplitude and in spectrum (especially in high frequency energy). However,
+timbres often are more interesting if the amplitude and modulation envelopes do not
+coincide <U>too</U> precisely.
+<P>Generaly, we construct modulation depth envelopes to simulate spectral
+changes (changes in the percentage of high and low frequency energy) that
+occur within acoustic sounds. Idiophonic and membranophonic sounds (including
+pizzicato and piano tones), for example, generally
+contain the greatest amount of high frequency energy at the very beginning
+of the attack (the click, scrape or pop which articulates the onset of the
+sound). Thus, an FM index for such a sound should have a very rapid rise, or begin
+at a high value, and then decrease during the rest of the tone.
+In bowed string, aerophone and vocal tones, by contrast, higher partials
+typically have a longer rise time, and a more rapid decay, than lower partials.
+<P>Here is a more sophisticated F.M. instrument, with a more flexible amplitude
+envelope and a second envelope that controls changes in the F.M. index:</P>
+<DD><B> #############################################################</B>
+<DD><B> soundfile ex3-5  : "Classical" FM with modulation index envelope : ECMC Csound Tutorial</B>
+<DD><B> #############################################################</B>
+<CODE>
+<DD><TT><B>; FM - single carrier, single modulator "classical fm" instrument 
+<DD>; p3 = duration ; p4 = pitch (cps or pch); p5 = amplitude 
+<DD>; p6 = attack time ; p7 = decay time ; p8 = atss amplitude multiplier 
+<DD>; frequency modulation : p9 freq. ratio of modulator to carrier 
+<DD>; fm index envelope values : p10 beginning; p11 after p6; p12 before p7 
+<DD>   sr = 44100
+<DD>   kr = 4410
+<DD>   ksmps = 10
+<DD>   nchnls = 1
+<DD>
+<BR>
+<DD>instr 38
+<DD>ipitch = ( p4 >  13.0 ? p4 : cpspch(p4) ) 
+<DD>p8 = (p8 &gt; 9.99? p8 : p8*p5) ; p8 can be an absolute value or * p5 
+<DD>kamp expseg 1, p6, p5, p3-(p6+p7), p8, p7, 1 ; amplitude envelope 
+<BR>
+<BR>
+<DD>kfmindex expseg p10, p6, p11, p3-(p6+p7), p12, p7, .3*p12 ; fm index envelope 
+<DD>
+<BR>
+<DD>a1 foscili kamp, ipitch , 1, p9, kfmindex , 100 
+<DD>out a1 
+<DD>endin</B>
+<PRE>
+<B>--------------------------------------------------------------</B>
+<DD><B>< score11 input file used to create  soundfile  "ex3-5"</B>
+   <B>* f100 0 1024 10 1.;            < SINE WAVE
+
+   i38 0 0 4;
+   p3 4.;
+   du 304;                         < du = Duration       
+   p4 no ef3;                      < p4 = frequency : use notes,pch or cps
+   < amplitude envelope
+   p5 nu 10000/1500/10000//;       < p5 = amplitude 
+   p6 nu  .05/ 1. / .08/ .05;      < p6 =Attack time 
+   p7 nu 3.8 /.2  / 3.4 / 3.6;     < p7 = Decay time  
+   p8 nu  .5 /7.0 / .6 / .4 ;      <  atss - amplitude before p7 
+                                < absolute or *p5 if < 10.00
+   < F.M. values : p9-p13
+   p9  nu 1.005/1.996/1.4/2.7;     < modulating frequency (*p4 or fixed if > 9.99)
+   p10 nu  7.  / .1  / .5/8.;      < Index at beginning
+   p11 nu  2.  / .4  /1.6/3.5;     < Index after p6 
+   p12 nu  .8  / 4.5 / .5/ .8;     < Index before p7 
+   end
+--------------------------------------------------------------</B></PRE>
+</TT> 
+</CODE>
+<P>What you are looking at here is the core of the ECMC Csound Library instrument <B>fmod</B>,
+and one of its Library example score files, <I>fmod1</I>.
+Only a few items, including subroutine control signals for &quot;attack hardness,&quot; and
+a microtonal tuning option have
+been stripped from the code. Note, in this example, that we can change the
+value of any score p-field except <I>p2</I> (note start time)
+within an orchestra file, as in the following conditional
+evaluation of <I>p8:</I></P>
+<CENTER><DD ALIGN="CENTER"><I>p8 = (p8 &gt; 9.99? p8 : p8*p5) ; p8 can be an absolute value or * p5</I> </CENTER>
+<P>By this point some of you probably have had enough of <I>FM</I>, thank you
+very much. But for those who would like to try some extensions to "classical FM"
+procedures,
+<A HREF="./appendix2.html">Appendix 2 </A> provides examples of
+multiple carrier and multiple modulator algorithms, through which one can
+create more complex timbres that, unlike simple FM sounds, don't always
+sound as though they have a sinus infection.
+
+
+<H4><A NAME="_wmh4_847374767">3.3 if...else constructions</A></H4>
+<P><I>if ... else </I>constructions are logical operations within an orchestra file that enable
+the algorithm to evaluate a variable or expression and,
+based upon this evaluation or comparison, to perform one
+of two or more operations.
+One might liken such decision-making operations to forks in a path.
+The principal types of logical operations
+available within Csound are <I>conditional statements</I> and <I>program control (goto)</I> statements.</P>
+<H4><A NAME="_wmh4_847374774">3.3.1 Conditional Statements</A></H4>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/cond.html"><B>CONDITIONAL VALUES</B></A>
+in the Csound reference manual ]</P>
+<P>Our instruments thus far have assumed that the frequency argument to oscillators
+will be given in the score <U>either</U> in <I>cps</I> or in <I>pch</I> format. Suppose, however, that we would like to be able to use <U>both</U> of these types of frequency input within an instrument, sometimes feeding
+it <I>cps,</I> but at other times a <I>pch</I> value. We could, of course, create two nearly identical copies of our instrument
+algorithm, one accepting <I>cps</I> input, the other<I> pch.</I> But this would clutter our directory with needless extra files. Besides,
+what if we want to use both <I>cps</I> and <I>pch</I> inputs within a single score?</P>
+<P>The solution is to build a little &quot;intelligence&quot; into our algorithm, so
+that it can evaluate the input data we provide and make suitable decisions
+on how to interpret and operate upon this data. <B>Conditional values</B> enable instruments to make such decisions. The first example in the Csound
+manual :</P>
+<CENTER><DD ALIGN="CENTER"><I>(a &gt; b ? v1 : v2)</I> 
+</CENTER><P>is read by Csound as follows :</P>
+<DD><I>Is &quot;a&quot; greater than &quot;b&quot; ? If so, return (use) value 1 : Otherwise, return
+value 2.</I> 
+<P>In <I>ex3-5</I> we included the following
+conditional variable within our algorithm to
+enable our instrument to distinguish between <I>cps</I> and <I>pch</I> data:</P>
+<PRE>
+               (a    &gt;   b      ?   v1   :  v2)
+<I>      ipitch = (p4   &gt;   13.0   ?   p4   :  cpspch(p4)  )</I>
+<I>      asound oscili kenv , ipitch , 100</I>
+</PRE>
+<P>The highest pitch class <I>C</I> on the piano (4186 herz) is specified as 12.00 in
+<I>pch</I> notation. It is highly unlikely that we ever would want to call for a pitch
+more the one octave <U>higher</U> than this note (13.00 in pch notation, or 8372 herz). Likewise, we cannot
+hear fundamental frequencies below about 20 herz, so it is uncommon to call
+for a fundamental frequency below 13.0 herz.[3]</P>
+<DD><FONT SIZE="2">[3] However, using subaudio fundamentals with rich waveforms (containing
+higher partials that <U>are</U> in the audible range), can produce many intriguing types of pulsating,
+throbbing and motoristic sounds. (See <I>ex4-4</I>.)</FONT> 
+<P>In the example above, therefore, we define the variable <I>ipitch</I> as follows :</BR>
+<BLOCKQUOTE><TT>If <I>p4</I> is greater than 13.00, assume that it is already in <I>cps</I> format, and assign this value to the variable <I>ipitch.</I> However, if <I>p4</I> is <U>less</U> than 13.0, assume that it is in <I>pch</I> format. Convert this <I>p4</I> value to <I>cps,</I> and assign the resulting <I>cps </I>value to <I>ipitch.</I> </TT></BLOCKQUOTE>
+
+<P>Note that the whole evaluation operation to the right of the &quot;=&quot; (assignment)
+sign must be enclosed in parentheses. The parentheses tell the compiler
+to do nothing until the entire expression within the parentheses has been
+evaluated.</P>
+<P>In addition to the &gt; (&quot;greater than&quot;) sign, the other comparison symbols
+that can be used in such evaluations are :</P>
+<PRE>
+               &lt;       less than
+               &gt;=      greater than or equal to
+               &lt;=      less than or equal to
+               ==      equal to
+               !=      not equal to
+</PRE>
+<P>Here's another example :</P>
+<DD><I>irise = (p6 &gt; 0 ? p6 : abs(p6) * p3</I> 
+<DD><I>idecay = (p7 &gt; 0 ? p7 : abs(p7) * p3</I> 
+<DD><I>kenv expseg 1, irise , p5 , p3 - (irise + idecay) , .5* p5, i3, 1</I> 
+<DD><I>a1 oscili kenv , i1, 1</I> 
+<DD>
+<P>Here we tell the compiler to evaluate the <I>p6</I> (rise time) and the <I>p7</I>
+(decay time) score values. If <I>p6</I> is positive (greater than 0), use this value for attack time.
+If <I>p6</I> is negative (less than 0), however,  use the <I>absolute</I> value
+of <I>p6</I> (ignore the minus sign)
+as a multiplier for (or decimal percentage of) <I>p3.</I>
+Thus, a <I>p6</I> value of -.33 would return a value of <I>.33 * p3,</I> or an attack time lasting one-third the total duration of the note. If
+our score provides a <I>p7</I> value of -.5, the decay would last one-half the total duration of the
+note. It also would be possible to mix these two types of values in our
+score:</P>
+<CENTER><P ALIGN="CENTER"><I>p6 nu .25*3 / -.4 / .1 / -.5;</I></P></CENTER>
+<H4><A NAME="_wmh4_847374780">3.3.2. goto statements</A></H4>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/igoto.html"><B>PROGRAM CONTROL STATEMENTS</B></A>
+in the Csound reference manual ]</P>
+<P>There is another way to build conditional (alternative) operations into
+an instrument - <B>goto statements.</B> Experienced programmers of structured languages such as <I>C</I> and <I>Pascal</I> may recoil in distate at programs that bounce around like
+a tennis ball. Given the sometimes rather archaic syntax provided by Csound,
+however, such jumps
+can provide a serviceable, if ugly, means to implement <I>if..else</I> decisions and program
+forks. Consider the following group of statements, which define envelope
+values based on whether a note is &quot;long&quot; or &quot;short.&quot;</P>
+<PRE>
+<I>   1  if p3 &lt;= .5  goto short</I>
+<I>   2    kenv  expseg  1,.15,12000,.10,10000,(p3-.5),6000,.25,1</I>
+<I>   3    goto audio</I>
+<I>   4  short:</I>
+<I>   5    kenv  expseg 1,(.2*p3),12000,(.1*p3),10000,(.5*p3),6000,(.2*p3),1</I>
+<I>   6  audio:  asound  oscili kenv, ipitch , 1</I>
+</PRE>
+<P>Here, two alternative envelopes are provided, one for notes <I>longer</I> than .5 seconds, the other for notes with durations <I>shorter</I> than, or equal to .5 second.</P>
+<P>Line 1 is interpreted as follows : If <I>p3</I> is less than or equal to .5, skip ahead in the code until the label <I>short</I> is found. Lines 2 and 3 are ignored in this case. The envelope created
+on line 5 will have exponential rise and fall segments based on percentages
+of the total note duration, so it will work no matter how short a note might
+be.</P>
+<P>By contrast, for notes longer than .5 seconds, lines 1,2,3 and 6 will be
+executed. Here, the envelope is generated on line 2. Line 5 must now be
+skipped, else it will overwrite the <I>kenv</I> signal already produced on line 2. Hence, the jump statement on line 3.</P>
+<P>Note that the destination labels <I>short:</I> and <I>audio:</I> on lines 4 and 6) must end with a colon, but this colon is not included
+in the <I>goto</I> commands on line 1 and 3.</P>
+<P>There are four types of goto statements :</P>
+<DD>1) igoto : The jump in the program is made only dur- ing the <I>initialization</I> pass, when score values are filled in and <I>i-rate</I> variables are computed. <I>igoto</I> jumps are not made during &quot;performance&quot; passes (during the computation
+of samples). In the example above, if we had mistakenly used <I>igoto</I> instead of <I>goto</I> on lines 1 and 3, the jumps would have been ignored during sample passes,
+and we would always get the envelope on line 5. 
+<DD>
+<DD>2) <I>kgoto</I> : Program jumps are <U>not</U> made during the initialization pass, but <I>are</I> performed during every sample pass. 
+<DD>
+<DD>3) <I>goto</I> : Program jumps are observed both on the initialization pass, and on every
+sample pass. 
+<DD>
+<DD>4)<FONT SIZE="2"> <I>tgoto</I> : Used only in connection with &quot;tied&quot; notes in a Csound score. This is
+a more advanced technique beyond the scope of this tutorial.</FONT> 
+<P>Thus, a program control evaluation and jump may be made</P>
+<DD>1) only during the initialization pass <I>(igoto)</I> 
+<DD>
+<DD>2) only during performance passes <I>(kgoto)</I> or else 
+<DD>
+<DD>3) on all passes <I>(goto)</I> 
+<DD>
+<P>Here's an alternative coding for the example above the uses an <I>if ... else</I> evaluation to determine whether and where jumps in the code are to be made.
+The result would be identical to the previous example :</P>
+<PRE>
+         if p3 &lt;= .5 igoto short
+                 i3 = .5
+                 i4 = .1
+                 i5 = p3 - .5
+                 i6 = .25
+                 igoto env
+         short:  i3 = .2*p3
+                 i4 = .1*p3
+                 i5 = .5*p3
+                 i6 = .2*p3
+         env: kenv expseg 1, i3, 12000, i4, 10000, i5, 6000, i6, 1
+</PRE>
+<P>Actually, this coding is much more efficient, and thus preferable, to the
+earlier example. The reason is computation time. In the earlier example,
+the <I>if .. else</I> statement on line 1 (&quot;is p3 &lt;=.5?&quot;) must be evaluated on every control
+pass. If the <I>k-rate</I> is 2205, and a note lasts 5 seconds, this decision must be made 11025 times,
+and the &quot;answer&quot; will always be the same! In the second example, the decision
+need only be made once.</P>
+<H4><A NAME="_wmh4_847374788">3.3.3. Scaling Values By Register</A></H4>
+<P>When we need to specify more than two options, multiple program control<I> (&quot;if...else&quot;)</I> statements become necessary. Here's an example, based on a common problem.
+Low pitched tones generally require more amplitude than &quot;middle range&quot; pitches
+to sound &quot;equally loud.&quot; However, very high tones, above 1 kHz or so, also
+may require some boost. Thus, if we specify a constant <I>p5</I> amplitude of 10000 for several notes, very low and, perhaps, very high
+tones are apt to sound &quot;softer.&quot; We don't want to have to consider this
+every time we create a new score for our instrument. We'd like the instrument
+to make amplitude adjustments based on pitch, relieving us of this drudgery.
+Here is one way in which this could be accomplished :</P>
+<PRE>
+  1  ipitch = (p4 &lt; 13 ? cpspch(p4) : p4)
+  2     i2 = octcps(ipitch); middle c  =8.0, c5 = 9.0, c3 = 7.0, etc.
+  3     i3 = (18 - i2)*.1  ; scalar:  &quot;  &quot;  = 1.0, c5 = .9 , c3 = 1.1, etc.
+  4  if i2 &gt; 10.0 igoto veryhi
+  5  if i2 &lt; 6.0 igoto verylo
+  6  iscale = (i2 &lt; 8.0 ? p5*i3 : p5); scale the amplitude value for 
+                                     ; notes between c2 &amp; c6
+  7  igoto ready
+  8  veryhi:
+  9    iscale = p5/i3  ; boost amplitude progressively for highest tones
+  10   igoto ready
+  11 verylo:
+  12   iscale = i3*i3*p5  ; extra amplitude boost for very low notes
+  13 ready: kenv expon 1 , p6, iscale ,p3-p6, 1; attack &amp; decay envelope
+  14 a1 oscili kenv, ipitch, 100
+</PRE>
+<P>On line 2 we declare a variable i2, which converts the frequency of the
+note <I>(ipitch)</I> to octave decimal notation. Line 3 then creates another variable, i3, which
+will act as a <I>scalar. </I>The lower the pitch, the <I>higher</I> the value of <I>i3. </I>If we were to multiply every <I>p5</I> (amplitude) score value by <I>i3,</I> like this :</P>
+<CENTER><DD ALIGN="CENTER"><I>iscale = i3 * p5</I> 
+</CENTER><P>then the lower the note, the greater the value we would get for variable <I>iscale,</I> which we could use for our final, scaled peak amplitude value. This might
+work reasonably well for lower notes, but likely will <U>not</U> work very well for very high notes, where we want to increase the amplitude
+somewhat. Furthermore, we might well find that for pitches in the lowest
+register of the piano, we need more gain than the scalar <I>iscale</I> provides. This amplitude scaling problem is turning out to be more complex
+than we at first envisioned!</P>
+<P>The example above attempts to solve all of these problems.</P>
+<DD>1) Line 6 : Notes between <I>c4</I> and <I>c2</I> receive progressively larger scaled amplitudes, while notes between middle
+C and two octaves above it receive the straight <I>p5</I> amplitude value, with no alteration. 
+<DD>
+<DD>2) Line 9 : Notes <U>above</U> <I>c6</I> are boosted by using our <I>i3</I> scalar as a DIVISOR rather than multiplier. 
+<DD>
+<DD>3) Line 12 : For contrabass tones we double the boost provided by our <I>i3</I> scalar. 
+<P>This may seem like a lot of work to solve a single problem in one instrument.
+The amount of added Csound computation time, however, is trivial, since
+all of the <I>if...igoto</I> evaluations are made only once, during the initialization pass. If our
+amplitude scaling routine works well, we can create any number of scores
+for the instrument and never have to worry again about balance considerations
+for notes in different registers. And, we can copy this amplitude scaling
+module of code into other instrument algorithms.</P>
+<P>Timbral scaling is often even more important than amplitude scaling in achieving
+a &quot;well-modulated&quot; instrument. In general, the lower the pitch, the greater
+should be the strength of the higher partials. This acoustic principle holds
+true for most orchestral instruments. A flute, for example, produces somewhere
+between eight and ten significant partials for notes around middle C, but
+only about four significant particals for notes a couple of octave higher.</P>
+<P>With some instruments, scaling by register of other parameters, such as
+vibrato or tremolo depth, is also helpful. One reason that some synthesizer
+and sampler &quot;patches&quot; (timbres) work well only within a restricted portion
+of the keyboard range (say, over an octave or two), and sound progressively
+more artificial, flaccid or irritating as one approaches the keyboard extremes,
+is that constants are used for such parameters. Since the architecture of
+the synthesizer is fixed - decided by engineers in Japan, Korea or California,
+then etched onto silicon chips - and there is no way to make these values
+dependent on other values.</P>
+
+
+<H4><A NAME="PHASOR_TABLE">3.4 Reading in Soundfiles with tablei, phasor and gen1</A></H4>
+<P>The instrument algorithm in <I>ex3-6</I> employs <I>conditional values</I>
+and <I>program control</I> jumps. The algorithm is more complicated than
+most of those we have presented so far, so take a deep, cleansing breath,
+and if the going gets tough
+take a break for a glass of fine French wine (or perhaps a Hersey bar)
+If you understand the overall
+logic of this algorithm  and its score p-fields
+you will be able to use it, or to use it as a model
+for an algorithm of your own design, even if you do not understand the full
+inner workings of each line of code.
+<P>This algorithm is designed to
+read in monophonic soundfiles (stereo input soundfiles also could be used,
+but all stereo channel separation would be lost)
+and to provide us with the following processing (sound modification) options:
+<UL>
+<LI> transposing the pitch of the input soundfile
+<LI> using only a portion of the input soundfile (specified by <I>start read</I> and <I>end read</I>
+p-fields within the score file)
+<LI> reading the input soundfile (or the specified portion of this soundfile)
+either forwards or backwards
+<LI> panning the (monophonic) input samples to left-right stereo locations
+</UL>
+The algorithm also spares us the necessity figuring out an accurate output duration, a chore
+that could become irksome when pitch transpositions are applied and only a portion of
+an input soundfile is used.
+We can supply the algorithm with dummy <I>p3</I> durations in our score file.
+Any <I>p3</I> value other than 0 will do, because it will be changed by the
+instrument, which will calculate the correct output duration based upon the
+pitch tranposition and the points within the input soundfile at which we
+begin and end reading samples.
+<P>The key players within this instrument are unit generators <I>tablei</I>
+and <I>phasor</I>.
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/table.html"><B>tablei</B></A>
+reads in the values from a function table loaded into RAM, and, like
+<I>oscil</I><B>i</B>, interpolates between consecutive input sample values
+to produce better audio signal resolution.
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/phasor.html"><B>phasor</B></A>
+provides a moving pointer to locations within this table. Its output tells
+<I>tablei</I> which value within the table to use in calculating
+each output sample.
+To read the samples from an input soundfile into this RAM function table, we employ
+a call to function generating subroutine
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Function/gen01.html"><B>GEN01</B></A>
+(which is designed for exactly this purpose) within our score file.
+In <I>ex3-6</I> we will employ the beloved <I>sflib/x</I> soundfile <I>voicetest</I>,
+a stirring spoken recitation of the immortal text:
+<PRE><I>
+   "The only significance of this soundfile is as it is post-processed by various </I>
+<FONT SIZE="-1"><TT>                                       .885                1.535                     2.46   </FONT></TT>
+<I>   orchestra Library instruments, so that it becomes more interesting."</I>
+<FONT SIZE="-1"><TT>                                                                        6.263  6.49   </FONT></TT>
+</PRE></TT>
+The timings at which certain syllables 
+occur within the input soundfile are:
+<PRE>
+     <I>of</I>        .885
+     <I>file</I>     1.535
+     <I>post</I>     2.46
+     <I>comes</I>    6.263
+     <I>more</I>     6.49</PRE>
+Compare these with the <I>p7</I> and <I>p8</I> values in the score for <I>ex3-6</I>.
+<P>On the ECMC systems the easiest way to create a <I>gen1</I> function
+definition of this soundfile for inclusion within a <I>score11</I> input
+file is with the local script
+<PRE>
+        <B>mksffuncs</B>     <FONT SIZE="3">("<TT><B>m</B>a<B>k</B>e<B>s</B>ound<B>f</B>ile <B>func</B>tion definition<B>s</B>")</FONT>.</TT>
+
+Typing:     <I>mksffuncs   voicetest</I></PRE>
+will return the <I>gen1</I> function definition statement below, which we
+have copied into the beginning of our <I>score11</I>
+input file:
+<PRE>
+<FONT SIZE="-1"><TT> (f#  time     size  gen01      filcod                   skiptime format channel) </FONT></TT>
+<I>* f1 0 524288 -1 "/sflib/x/voicetest" 0     0     0 ; < dur = 7.27</I>
+</PRE></TT><BR>
+The <B>-1</B> (minus 1) call to <I>gen1</I> in the fourth argument above tells
+<I>gen 1</I> <U>not</U> to normalize the samples
+when loading them into the table. Had we placed a <B>1</B> instead of <B>-1</B>
+in this argument, <I>gen01</I> would have rescaled the sample values so that
+the highest input sample value in the table would have been maxamp (floating point
+<B>1.</B> or integer 32767).
+This would require some processing time. If
+our input soundfile already has a fairly high peak value, there is no
+no need for us to normalize the soundfile everytime we run a Csound compile
+job with this score.<BR>
+<BR><FONT SIZE="-1"><FONT SIZE="2">(Note: <I>gen01</I> also is used to create function
+definitions for input soundfiles read by Csound unit generator <I>loscil</I>.)<BR>
+(Note also that the largest permitted table size,
+16,777,216, will hold a 44.1k mono soundfile of 380.436 seconds, or about
+6 minutes and 20 seconds duration.)</FONT>
+</FONT>
+<P><I>ex3-6</I> reads in fragments from <I>voicetest</I> four times, sometimes
+forwards and sometimes backwards, with various pitch transpositions. Our orchestra
+file begins with comments that explain the purpose of each score p-field. We
+have not numbered these initial comments or the header, but have included
+line numbers for the instrument body for quick reference in the following discussion.
+
+<PRE>
+<B>;  ########################################################</B>
+<B>;  soundfile ex3-6   :  reading in soundfiles with tablei  </B>
+<B>;  #######################################################</B>
+<B>; Orchestra file used to create this soundfile example:</B>
+<B>-----------------------------------------------------------
+sr=44100
+kr=2205
+ksmps=20
+nchnls=1
+
+
+ ; p4 : gen1 function number
+ ; p5 : amplitude  {.001 - 10. = multiplier ; 10.1 - 32767 = new raw amplitude}
+ ; p6 = length of input soundfile, in seconds or samples
+ ; p7 : time in input soundfile to BEGIN reading samples
+ ; p8 : time in input soundfile to END reading samples
+ ; p9 : pitch multiplier
+ ; p10 : stereo pan location {for stereo only}
+
+1   instr 1
+2      ;  init values : --------------
+3   isound   = p4  ; number of gen1 function table of source soundfile
+4   iamp    =  (p5 = 0 ? 1. : p5) ; amplitude multiplier; 0 = no attenuation or boost
+5   ilength = (p6 < 400 ? p6 * sr : p6) ; length of input soundfile, in seconds or samples
+
+6   ; p9 specifies pitch transposition ratio of output to input pitch levels
+7   itransp	 = (p9 = 0 ? 1. : p9 )
+
+8   iphspeed  = sr/ilength  ; phasor speed to read soundfile at original pitch
+9   isfdur   = ilength/sr ; duration in seconds of input soundfile
+
+10   ; p7 & p8:
+11   ; if positive, indicates start or end time in seconds
+12   ; if negative between -.001 and -1., indicates start or end
+13   ; time as % of total duration of input soundfile
+
+14  istart = (p7 < 0 ? abs(p7) *isfdur : p7) ; time in seconds to begin
+15                  ; reading in samples from the input soundfile
+16  iend = (p8 < 0 ? abs(p8) *isfdur : p8) ; time in seconds to end
+17                  ; reading in samples from the input soundfile
+
+18  ioutdur = abs(iend - istart) / itransp ; compute actual output duration
+19  p3 = ioutdur ; change score p3 value to computed output duration for note
+20  print istart, iend, itransp, ioutdur
+
+21  if iend < istart goto backwards
+22  ; --- read soundfile FORWARD:
+23       index = istart/isfdur  ; beginning index into gen 1 table
+24       apointer  phasor   iphspeed*itransp   ;transpose pitch by p9
+25       asound  tablei   (index + apointer)*ilength, isound  ;read the table at current phasor index 
+26            goto gotsound
+27  backwards: ; --- read soundfile BACKWARDS beginning at p8 time
+28          index = iend/isfdur  ; beginning index into gen 1 table
+29          ibacklength = p3 * itransp * sr
+30          ibackspeed = sr/ibacklength
+31          apointer  phasor  ibackspeed * itransp
+32          apointer = 1. - apointer
+33          iratio = ( ibacklength/ilength)
+34          apointer = apointer * iratio
+35          asound   tablei  (index + apointer) *ilength, isound 
+
+36  gotsound:  ; choose mono or stereo out
+37       ; mono out:
+38  out iamp * asound
+39       ; stereo out
+40  ;    outs sqrt(p10) * asound, sqrt(1. - p10) * asound
+41  endin</B>
+
+<B>-----------------------------------------------------------</B>
+<I>&lt; score11 file used to create soundfile example  &quot;ex3-6&quot; :</I>
+<B>* f1 0 524288 -1 "/sflib/x/voicetest" 0 0 0 ; < dur = 7.27
+
+i1  0 0 4;
+p3  nu 2/3/4;
+du  301.;
+   < p4 = gen1 function number 
+p4  1;
+
+   < p5 = output amplitude ;default 0 = same amplitude as input soundfile
+p5  nu .15/.4/.65/.9;
+
+   < p6 = length of input soundfile, in seconds  por in samples
+p6 nu  7.297/320574;  < 7.297 seconds, 320574 samples
+   < p7 = skip time into gen1 func : if positive p7  = skip time in seconds
+      < if negative between -.001 and -1. p7 = % of soundfile skipped
+  < p7 = stime in input soundfile to START reading samples
+  < p8 = stime in input soundfile to END reading samples
+  < if negative between -.001 and -1.p7 or p8  = % of total soundfile duration
+p7  nu 0/1.535/2.46/-1; 
+p8  nu .885/0/6.26/2.46; 
+
+   < p9 = pitch multiplier {default 0 = no pitch change}
+p9  nu 1/.9/1.122/.84;  
+   < for stereo output only p10 = pan location {1. = hard left, 0 = hard right}
+< p10  
+end; 
+</B></PRE></FONT>
+<P><I>p4</I> in our score provides the number of the function table with the input
+sound samples to be read by <I>tablei</I>. This variable becomes the <I>init</I> variable
+<I>isound</I> on line 3 of the instrument. <I>p5</I> provides an amplitude
+multiplier (adjustment) for the input samples, primarily so that we can achieve
+the desired balance between two or more input soundfiles or output "notes."
+<P>In order to calculate the actual output duration and the phasor speed the
+instrument algorithm needs to know the duration of the complete input soundfile,
+which must be provided in <I>p6</I>, expressed either in seconds or else, if we prefer,
+in number of samples.
+On line 5 of the instrument code the algorithm evaluates our
+<I>p6</I> argument:
+<PRE><I>  ilength = (p6 < 400 ? p6 * sr : p6) ; <FONT SIZE="2">length of input soundfile, in seconds or samples</I></PRE></FONT>
+If <I>p6</I> is less than 400, it is presumed to be the input duration in seconds,
+otherwise the input duration in samples. (Why use 400? Because 380 seconds is the longest
+possible duration table duration that can be created by <I>gen01</I>, and it is highly
+unlikely we would ever want to read in only 400 samples from a soundfile.)
+In our score file, for
+didactic purposes, we have alternately provided the input duration of <I>voicetest</I>
+in seconds and in samples, just to show that these two values produce an identical
+result.
+<P><I>p7</I> and <I>p8</I>, which respectively become the <I>init</I> variables
+<I>istart</I> and <I>iend</I> on lines 14 and 16 in the instrument, specify the times
+within the input soundfile to <I>start</I> reading in samples (<I>p7</I>)
+at the beginning of each output "note,"
+and the time within the input soundfile to <I>end</I> reading in the samples
+(<I>p8</I>). Positive values specify these start and end read times in seconds,
+while negative values between -.001 and -1. specify these times as percentages
+of the total duration of the input soundfile. For example, if we wanted
+to begin reading in samples exactly 25 % of the way through the input soundfile,
+and stop the reading of these samples exactly 82 % of the way through the input
+soundfile, we could use these arguments:
+<CENTER><I>p7  -.25:<BR>
+p8  -.82;</I></CENTER></I>
+A <I>p7</I> or <I>p8</I> value of <I>0</I> specifies the beginning of the
+input soundfile, while a value of <I>-1</I> specifies the end of the input
+table samples. If <I>p7 (istart)</I> is <U>less</U> than <I>p8 (iend</I>),
+the input samples will be read in <STRONG>backwards</STRONG> from the <I>p7</I> to
+<I>p8</I> points within the input soundfile.
+<P>The <I>p7</I> and <I>p8</I> values provided in our score:
+<CENTER><I>
+p7  nu 0 / 1.535 / 2.46 / -1;<BR>
+p8  nu .885 / 0 / 6.26 / 2.46; </CENTER></I>
+produce the following results:
+<UL>
+<LI>Note 1: The input samples are read forward from the beginning of the table to
+time .885 seconds within the input soundfile by lines 22-25 of the instrument.
+<LI>Note 2: The input samples are read backwards from time 1.535 to the beginning
+by lines 27-35 in the instrument.
+<LI>Note 3: The input samples are read forwards from time 2.46 to time 6.26 seconds
+within the input soundfile.
+<LI>Note 4: The input samples are read backwards, from the end of the soundfile to
+time 2.46 seconds within <I>voicetest</I>.
+</UL>
+<P><I>p9</I> in our score specifies a pitch transposition ratio. In this case:
+<CENTER><I>p9  nu 1 / .9 / 1.122 / .84;   </CENTER></I>
+the first note will not be transposed, the second note will be shifted
+down a major second (.9), the third note will be transposed up a major second
+(1.122) and the final note will be shifted down a minor third (.84).
+<P>On lines 37-40 of our instrument we have provided alternative mono and
+stereo outputs. To change this instrument to stereo, we need merely change
+the <I>nchnls</I> argument in the header from <I>1</I> to <I>2</I>, comment
+out line 38 with a semicolon, remove the semicolon comment from line 40,
+and then remove the <B><</B> comment from <I>p10</I> in our score file
+and fill in the <I>p10</I> pan values we desire.
+<HR>
+<H5>Assignment </H5>
+<P>From this point on your work with Csound should be divided into two tracks:</P>
+<P>1) Create short orchestra and companion score files that try out the
+major new resources
+discussed within each chapter of this tutorial. For this chapter you should
+explore: </P>
+<UL>
+<LI>audio-rate and subaudio-reate amplitude modulation 
+<LI>audio-rate and subaudio-rate frequency modulation 
+<LI>program controls ( conditional and goto statements) 
+<LI> You may also wish to try out <I>tablei, phasor</I> and <I>gen 1</I>, as illusrated
+in <I>ex3-6</I>, as an alternative to <I>soundin</I> and <I>diskin</I>
+for reading soundfile into Csound.
+</UL>
+<P>2) You should also begin more concentrated work on two or three more complex
+instruments, which will be useful to you in your compositional work in the
+studio. Step-by-step, incorporate additional features into these algorithms
+to make them more powerful and flexible, and incorporating refinements discussed
+in subsequent chapters of this tutorial.</P>
+<P>Tip: When you want to add a new feature to an instrument or orchestra, make
+a copy of the orchestra file, and edit the copy. Always keep the previous
+(working) version of the orchestra file on hand, in case you don't like
+the results of your changes.</P>
+<A NAME="END"></A>
+<HR><CENTER><FONTSIZE="-2">Eastman Csound Tutorial: End of <I>Chapter 3</I></FONT></CENTER><BR>
+<PRE>
+<H5>   <A HREF="./chapter3.html#"><FONT SIZE="+1">TOP</FONT> of this chapter</A>  -- <A HREF="chapter4.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 4)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</H5><HR></PRE>
+
+</BODY>
+</HTML>

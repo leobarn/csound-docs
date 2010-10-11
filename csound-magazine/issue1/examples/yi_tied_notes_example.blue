@@ -1,0 +1,634 @@
+<blueData version='0.99.7'>
+  <projectProperties>
+    <author>Steven Yi</author>
+    <title>Tied Note Example</title>
+    <sampleRate>44100</sampleRate>
+    <ksmps>10</ksmps>
+    <channels>2</channels>
+    <commandLine>csound</commandLine>
+    <diskSampleRate>44100</diskSampleRate>
+    <diskKsmps>1</diskKsmps>
+    <diskChannels>2</diskChannels>
+    <diskCommandLine>csound -Wdo test.wav</diskCommandLine>
+    <CsOptions></CsOptions>
+    <notes>Example instruments and score written for &quot;Exploring Tied Notes in Csound&quot; article in The Csound Journal, Volume 1, Issue 1.</notes>
+  </projectProperties>
+  <arrangement>
+    <instrumentAssignment arrangementId='1' isEnabled='true'>
+      <instrument type='blue.orchestra.GenericInstrument'>
+        <name>Normal Instrument</name>
+        <comment></comment>
+        <globalOrc></globalOrc>
+        <globalSco></globalSco>
+        <instrumentText>
+idur	= abs(p3)
+ipch	= cpspch(p4)
+iamp	= ampdb(p5)
+
+kenv	adsr	.05, .05, .9, .05
+
+kvibEnv	linseg	0, .05, 3, idur - .05, 4
+
+kvib	lfo    	kvibEnv, 4.5
+
+afeedback 	init 0
+
+aout	vco2 	1, ipch + kvib
+aout	moogladder		aout, 4000, 0.5
+aout	= aout + afeedback
+
+adelay	delay	aout * .2, 0.02
+
+aout	= aout + adelay
+
+afeedback = aout * .2
+
+
+
+aout = aout * iamp * kenv
+
+outs aout, aout
+
+</instrumentText>
+      </instrument>
+    </instrumentAssignment>
+    <instrumentAssignment arrangementId='2' isEnabled='true'>
+      <instrument type='blue.orchestra.GenericInstrument'>
+        <name>Type 1 Instrument (Monosynth)</name>
+        <comment></comment>
+        <globalOrc></globalOrc>
+        <globalSco></globalSco>
+        <instrumentText>
+idur	= abs(p3)
+ipch	= cpspch(p4)
+iamp	= ampdb(p5)
+
+itiestatus tieStatus
+iskip 	tival
+
+tigoto skipInit
+    ioldpch init ipch
+    afeedback 	init 0
+skipInit:
+
+inewpch 	= ipch
+kpchline	linseg	ioldpch, .05, inewpch, idur - .05,  inewpch
+ioldpch	= inewpch
+
+print itiestatus
+
+if (itiestatus == -1) then
+    kenv	adsr	.05, .05, .9, .05
+
+elseif (itiestatus == 0) then	
+    kenv	linseg	0, .05, 1,  .2, 1
+
+elseif (itiestatus == 1) then	
+    kenv init 1
+
+elseif (itiestatus == 2) then
+    kenv linseg	1, idur - .05, 1, .05, 0
+
+endif
+
+kvibEnv	linseg	0, .2, 3, p3 - .2, 4
+
+kvib	lfo    	kvibEnv, 4.5
+
+
+aout	vco2 	1, kpchline + kvib, iskip
+aout	moogladder		aout, 4000, 0.5, iskip
+aout	= aout + afeedback
+
+adelay	delay	aout * .2, 0.02
+
+aout	= aout + adelay
+
+afeedback = aout * .2
+
+aout = aout * iamp * kenv
+
+outs aout, aout
+
+</instrumentText>
+      </instrument>
+    </instrumentAssignment>
+    <instrumentAssignment arrangementId='3' isEnabled='true'>
+      <instrument type='blue.orchestra.GenericInstrument'>
+        <name>Type 2 Instrument (Glissandi)</name>
+        <comment></comment>
+        <globalOrc></globalOrc>
+        <globalSco></globalSco>
+        <instrumentText>
+p3	= (p3 &lt; 0) ? p3 - 1 : p3 + 1
+
+idur	= abs(p3)
+ipch 	= p4
+ipch2	= p5
+
+ipch 	= (ipch &lt; 15 ? cpspch(ipch) : ipch)
+ipch2 	= (ipch2 &lt; 15 ? cpspch(ipch2) : ipch2)
+
+;kpchline 	line ipch, p3, ipch2
+
+iamp 	= ampdb(p6)
+
+iSpace	= p7
+ienvType	= p8
+
+imode	= 1
+istor 	= 1
+
+itiestatus tieStatus
+iskip 	tival
+
+tigoto skipInit
+    ioldpch init ipch
+    afeedback 	init 0
+skipInit:
+
+;print itiestatus
+
+if (itiestatus == -1) then
+    kenv		adsr	.05, .05, .9, .05
+    kpchline	init ipch
+    kamp		init iamp
+
+elseif (itiestatus == 0) then	
+    kenv		linseg	0, .05, 1,  .2, 1
+    kpchline	init ipch
+    kamp		init iamp
+    ioldpch 	= ipch
+    ioldamp	= iamp
+
+elseif (itiestatus == 1) then	
+    kenv 		init 1
+    kpchline	line ioldpch, idur, ipch
+    kamp		line ioldamp, idur, iamp
+    ioldpch 	= ipch
+    ioldamp	= iamp
+
+elseif (itiestatus == 2) then
+    kenv linseg	1, idur - .05, 1, .05, 0
+    kpchline	line ioldpch, idur, ipch
+    kamp		line ioldamp, idur, iamp
+
+endif
+
+;print itiestatus
+
+aout	vco2 	1, kpchline, iskip
+aout	moogladder		aout, 4000, 0.5, iskip
+aout	= aout + afeedback
+
+adelay	delay	aout * .2, 0.02
+
+aout	= aout + adelay
+
+afeedback = aout * .2
+
+aout = aout * iamp * kenv
+
+iSpace	= iSpace * 3.14159265359 * .5
+krtl     	= sqrt(2) / 2 * (cos(iSpace) + sin(iSpace)) ; CONSTANT POWER PANNING
+krtr     	= sqrt(2) / 2 * (cos(iSpace) - sin(iSpace)) ; FROM C.ROADS &quot;CM TUTORIAL&quot; pp460
+
+aLeft 	=	aout * krtl
+aRight	=	aout * krtr
+
+outs aLeft, aRight
+
+</instrumentText>
+      </instrument>
+    </instrumentAssignment>
+  </arrangement>
+  <tables></tables>
+  <soundObjectLibrary/>
+  <globalOrcSco>
+    <globalOrc></globalOrc>
+    <globalSco></globalSco>
+  </globalOrcSco>
+  <opcodeList>
+    <udo>
+      <opcodeName>tieStatus</opcodeName>
+      <outTypes>i</outTypes>
+      <inTypes>0</inTypes>
+      <codeBody>itie tival
+
+if (itie == 0 &amp;&amp; p3 &lt; 0) ithen
+    ; this is an initial note within a group of tied notes
+    itiestatus = 0
+       
+elseif (p3 &lt; 0 &amp;&amp; itie == 1) ithen
+    ; this is a middle note within a group of tied notes 
+    itiestatus = 1
+
+elseif (p3 &gt; 0 &amp;&amp; itie == 1) ithen
+    ; this is an end note out of a group of tied notes
+    itiestatus = 2
+
+elseif (p3 &gt; 0 &amp;&amp; itie == 0) ithen
+    ; this note is a standalone note
+    itiestatus = -1
+
+endif  
+
+	xout	itiestatus</codeBody>
+    </udo>
+  </opcodeList>
+  <liveData>
+    <commandLine>csound -Wdo devaudio -L stdin</commandLine>
+  </liveData>
+  <soundObject type='blue.soundObject.PolyObject'>
+    <subjectiveDuration>2.0</subjectiveDuration>
+    <startTime>0.0</startTime>
+    <name>root</name>
+    <backgroundColor>-10066279</backgroundColor>
+    <timeBehavior>0</timeBehavior>
+    <noteProcessorChain/>
+    <isRoot>true</isRoot>
+    <pixelSecond>34</pixelSecond>
+    <heightIndex>2</heightIndex>
+    <snapEnabled>true</snapEnabled>
+    <snapValue>1.0</snapValue>
+    <timeDisplay>1</timeDisplay>
+    <timeUnit>4</timeUnit>
+    <soundLayer name='' muted='false' solo='false'>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>0.0</startTime>
+        <name>GenericScore</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i1 0 .25 9.04 80
+i1 + . 8.07 &gt;
+i1 + . 9.04 &gt;
+i1 + . 8.07 &gt;
+i1 + . 9.04 &gt;
+i1 + . 8.07 &gt;
+i1 + . 9.04 &gt;
+i1 + . 8.07 70
+
+i1 + . 9.02 80
+i1 + . 8.07 &gt;
+i1 + . 9.02 &gt;
+i1 + . 8.07 &gt;
+i1 + . 9.02 &gt;
+i1 + . 8.07 &gt;
+i1 + . 9.02 &gt;
+i1 + . 8.07 70
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>7.0</startTime>
+        <name>GenericScore</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i1.1 0 -.25 9.04 80
+i1.1 + . 8.07 &gt;
+i1.1 + . 9.04 &gt;
+i1.1 + . 8.07 &gt;
+i1.1 + . 9.04 &gt;
+i1.1 + . 8.07 &gt;
+i1.1 + . 9.04 &gt;
+i1.1 + .25 8.07 70
+
+i1.1 + -.25 9.02 80
+i1.1 + . 8.07 &gt;
+i1.1 + . 9.02 &gt;
+i1.1 + . 8.07 &gt;
+i1.1 + . 9.02 &gt;
+i1.1 + . 8.07 &gt;
+i1.1 + . 9.02 &gt;
+i1.1 + .25 8.07 70
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>14.0</startTime>
+        <name>GenericScore</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i2 0 .25 9.04 80
+i2 + . 8.07 &gt;
+i2 + . 9.04 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.04 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.04 &gt;
+i2 + . 8.07 70
+
+i2 + . 9.02 80
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + . 8.07 70
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>21.0</startTime>
+        <name>GenericScore</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i2 0 -.25 9.04 80
+i2 + . 8.07 &gt;
+i2 + . 9.04 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.04 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.04 &gt;
+i2 + .25 8.07 70
+
+i2 + -.25 9.02 80
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + .25 8.07 70
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>27.0</startTime>
+        <name>GenericScore</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i2 0 -.25 9.00 80
+i2 + . 8.07 &gt;
+i2 + . 9.00 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.00 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.00 &gt;
+i2 + .25 8.07 70
+
+i2 + -.25 9.02 80
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + . 8.07 &gt;
+i2 + . 9.02 &gt;
+i2 + .25 8.07 70
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.PythonObject'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>34.0</startTime>
+        <name>PythonObject</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <pythonCode>from orchestra import *
+
+def getXValue(index, numNotes):
+    x = index
+
+    halfNum = numNotes / 2.0
+
+    if x &gt; halfNum:
+        x = 1 - ((x - halfNum) / halfNum)
+    else:
+        x = x / halfNum
+
+    return x
+
+
+
+def createUnstableGroup(numNotes, pch, ampStart, ampEnd):
+
+    dur = .4
+    ampM = ampEnd - ampStart
+
+    retVal = &quot;0 -%f %f 1 %f 3\n&quot;%(dur, pch,ampStart)
+
+    for i in range(1, numNotes):
+        x = getXValue(i, numNotes)
+
+        ampVal = (ampM * x) + ampStart
+        pchVal = pch + (random.random() * .01 * x)
+
+        if(i == (numNotes - 1)):
+            retVal += &quot;+ %f %f . %f .\n&quot;%(dur, pchVal, ampVal)
+        else:
+            retVal += &quot;+ . %f . %f .\n&quot;%(pchVal, ampVal)
+
+    notes = createNoteList(retVal)
+
+    return notes
+
+
+# SETUP PERFORMERGROUPS
+groupA = PerformerGroup()
+
+for i in range(8):
+    performerNum = &quot;3.&quot; + str(i )
+    groupA.append(   Performer(performerNum, 1, -.3 + (i / 12.0) * .6)    )
+
+
+groupB = PerformerGroup()
+
+for i in range(8):
+    performerNum = &quot;3.&quot; + str(i + 10)
+    groupB.append(   Performer(performerNum, 1, -.3 + (i / 12.0) * .6)    )
+
+
+groupC = PerformerGroup()
+
+for i in range(12):
+    performerNum = &quot;3.&quot; + str(i + 20)
+    groupC.append(   Performer(performerNum, 1, -.3 + (i / 12.0) * .6)    )
+
+
+groupD = PerformerGroup()
+
+for i in range(12):
+    performerNum = &quot;3.&quot; + str(i + 35)
+    groupD.append(   Performer(performerNum, 1, -.3 + (i / 12.0) * .6)    )
+</pythonCode>
+      </soundObject>
+    </soundLayer>
+    <soundLayer name='' muted='false' solo='false'>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>21.0</startTime>
+        <name>Chords</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i1 0 1 7.07 70
+i1 0 . 8.00 70
+i1 0 . 8.04 70
+
+i1 1 1 7.07 70
+i1 1 . 7.11 70
+i1 1 . 8.04 70
+
+
+
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>27.0</startTime>
+        <name>Chords</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i1 0 1 7.00 70
+i1 0 . 8.00 70
+i1 0 . 8.04 70
+
+i1 1 1 7.07 70
+i1 1 . 7.11 70
+i1 1 . 8.04 70
+
+
+
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>0.0</startTime>
+        <name>Chords</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i1 0 1 7.07 70
+i1 0 . 8.00 70
+i1 0 . 8.04 70
+
+i1 1 1 7.07 70
+i1 1 . 7.11 70
+i1 1 . 8.04 70
+
+
+
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>7.0</startTime>
+        <name>Chords</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i1 0 1 7.07 70
+i1 0 . 8.00 70
+i1 0 . 8.04 70
+
+i1 1 1 7.07 70
+i1 1 . 7.11 70
+i1 1 . 8.04 70
+
+
+
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.GenericScore'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>14.0</startTime>
+        <name>Chords</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <score>i1 0 1 7.07 70
+i1 0 . 8.00 70
+i1 0 . 8.04 70
+
+i1 1 1 7.07 70
+i1 1 . 7.11 70
+i1 1 . 8.04 70
+
+
+
+</score>
+      </soundObject>
+      <soundObject type='blue.soundObject.PythonObject'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>34.0</startTime>
+        <name>Group A</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <pythonCode>
+notes = createUnstableGroup(20, 8.00, 63, 74)
+
+score = groupA.performAleatorically(notes, .2, .05, 0, blueDuration, 3) 
+</pythonCode>
+      </soundObject>
+    </soundLayer>
+    <soundLayer name='' muted='false' solo='false'>
+      <soundObject type='blue.soundObject.PythonObject'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>35.0</startTime>
+        <name>Group B</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <pythonCode>
+notes = createUnstableGroup(20, 8.01, 63, 74)
+
+score = groupB.performAleatorically(notes, .2, .05, 0, blueDuration, 3) 
+</pythonCode>
+      </soundObject>
+    </soundLayer>
+    <soundLayer name='' muted='false' solo='false'>
+      <soundObject type='blue.soundObject.PythonObject'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>38.0</startTime>
+        <name>Group C</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <pythonCode>
+notes = createUnstableGroup(20, 9.02, 63, 74)
+
+score = groupC.performAleatorically(notes, .2, .05, 0, blueDuration, 3) 
+</pythonCode>
+      </soundObject>
+    </soundLayer>
+    <soundLayer name='' muted='false' solo='false'>
+      <soundObject type='blue.soundObject.PythonObject'>
+        <subjectiveDuration>6.0</subjectiveDuration>
+        <startTime>39.0</startTime>
+        <name>Group D</name>
+        <backgroundColor>-12566464</backgroundColor>
+        <timeBehavior>0</timeBehavior>
+        <noteProcessorChain/>
+        <pythonCode>
+notes = createUnstableGroup(20, 9.01, 63, 74)
+
+score = groupD.performAleatorically(notes, .2, .05, 0, blueDuration, 3) 
+</pythonCode>
+      </soundObject>
+    </soundLayer>
+  </soundObject>
+  <scratchPadData>
+    <isWordWrapEnabled>true</isWordWrapEnabled>
+    <scratchText></scratchText>
+  </scratchPadData>
+  <noteProcessorChainMap/>
+  <renderStartTime>0.0</renderStartTime>
+  <renderEndTime>-1.0</renderEndTime>
+  <markersList>
+    <marker time='0.0' name='Normal Instrument - Non Tied Notes'/>
+    <marker time='7.0' name='Normal Instrument - Tied Example'/>
+    <marker time='14.0' name='Type 1 Example - Non Tied Notes'/>
+    <marker time='21.0' name='Type 1 Example - Tied Notes'/>
+    <marker time='34.0' name='Type 2 Example Score'/>
+  </markersList>
+  <loopRendering>false</loopRendering>
+</blueData>

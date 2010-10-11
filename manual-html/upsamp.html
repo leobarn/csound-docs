@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>upsamp</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="unirand.html" title="unirand" />
+    <link rel="next" href="urd.html" title="urd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">upsamp</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="unirand.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="urd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="upsamp">
+      <a id="upsamp"></a>
+      <div class="titlepage"></div>
+      <a id="IndexUpsamp" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">upsamp</span>
+        </h2>
+        <p>upsamp — 
+      Modify a signal by up-sampling.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3659385"></a>
+        <h2>Description</h2>
+        <p>
+      Modify a signal by up-sampling.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3659396"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>upsamp</strong></span> ksig</pre>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3659414"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>upsamp</em></span> converts a control signal to an audio signal. It does it by simple repetition of the kval. <span class="emphasis"><em>upsamp</em></span> is a slightly more efficient form of the assignment, <span class="emphasis"><em>asig</em></span> = <span class="emphasis"><em>ksig</em></span>.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3660250"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+asrc  <span class="emphasis"><em>buzz</em></span>      10000,440,20, 1     ; band-limited pulse train
+adif  <span class="emphasis"><em>diff</em></span>      asrc                ; emphasize the highs
+anew  <span class="emphasis"><em>balance</em></span>   adif, asrc          ;   but retain the power
+agate <span class="emphasis"><em>reson</em></span>     asrc,0,440          ; use a lowpass of the original
+asamp <span class="emphasis"><em>samphold</em></span>  anew, agate         ;   to gate the new audiosig
+aout  <span class="emphasis"><em>tone</em></span>      asamp,100           ; smooth out the rough edges
+        </pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3660296"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="diff.html" title="diff"><em class="citetitle">diff</em></a>,
+      <a class="link" href="downsamp.html" title="downsamp"><em class="citetitle">downsamp</em></a>,
+      <a class="link" href="integ.html" title="integ"><em class="citetitle">integ</em></a>,
+      <a class="link" href="interp.html" title="interp"><em class="citetitle">interp</em></a>,
+      <a class="link" href="samphold.html" title="samphold"><em class="citetitle">samphold</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="unirand.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="urd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">unirand </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> urd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

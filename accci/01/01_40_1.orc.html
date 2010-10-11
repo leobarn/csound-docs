@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>01_40_1.orc.html</title>
+<meta name="FORMATTER" content="Microsoft FrontPage 2.0">
+</head>
+
+<body stylesrc="../admin/adporc.html"
+background="../admin/AccciDefaultBackground.gif"
+bgcolor="#FFFFFF">
+
+<pre>; ************************************************************************
+; ACCCI:     01_40_1.ORC
+; synthesis: simple(01),
+;            basic instrument with continuous pitch control mechanism:
+;            optional LFO modulation of frequency(40)
+; coded:     jpg 10/93
+
+sr = 44100
+kr   = 441
+ksmps =100
+nchnls = 1
+
+
+instr  1; ****************************************************************
+idur  = p3
+if1   = p4            ; chooses waveform
+iamp2 = p5        ; determines frequency of note event together with if2
+irate = p6/idur   ; repetition rate of LFO
+if2   = p7            ; chooses frequency control function
+iamp3 = p8        ; amplitude of note
+if3   = p9            ; chooses envelope shape
+
+        a3   oscili  iamp3, 1/idur, if3         ; envelope
+        a2   oscili  iamp2, irate, if2          ; LFO modulation of pitch
+        a1   oscili  a3, a2, if1                ; waveform
+             out     a1
+
+endin</pre>
+</body>
+</html>

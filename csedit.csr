@@ -1,0 +1,187 @@
+[Convert Amp to Vel]
+Author=Istvan Varga
+Comments=Convert amplitude to velocity.
+Code=#define AMP2VELOC(xamplitude) # (sqrt((($xamplitude)-0.0039)*16192.0)) #
+Category=Macros
+
+[Convert Vel to Amp]
+Author=Istvan Varga
+Comments=Convert velocity to amplitude.
+Code=#define VELOC2AMP(xvelocity) # (0.0039+(($xvelocity)*($xvelocity))/16192.0) #
+Category=Macros
+
+[Frequency to MIDI note #]
+Code=#define CPS2MIDI(xfreqcps) # (12.0*(log(($xfreqcps)/440.0)/log(2.0))+69.0) #
+Author=Istvan Varga
+Category=Macros
+
+[MIDI note # to frequency]
+Author=Istvan Varga
+Comments=Convert MIDI note number to frequency.
+Code=#define MIDI2CPS(xmidikey) # (440.0*exp(log(2.0)*(($xmidikey)-69.0)/12.0)) #
+Category=Macros
+
+[Pi]
+Author=Built-in
+Code=i_pi = 3.14159265
+Category=Math
+
+[Saw]
+Author=Built-in
+Category=Function Tables
+Code=f1 0 8192 7 1 8192 -1 ;saw
+
+[Square]
+Author=Built-in
+Category=Function Tables
+Code=f1 0 8192 7 1 4096 1 0 -1 4096 -1 ;square
+
+[Triangle]
+Author=Built-in
+Category=Function Tables
+Code=f1 0 8192 7 0 2048 1 4096 -1 2048 0 ;triangle
+
+[Sine]
+Author=Built-in
+Category=Function Tables
+Code=f1 0 8192 10 1 ;sine
+
+[CSD]
+Author=Built-in
+Category=Templates
+Code=<CsoundSynthesizer>\n\n<CsOptions>\n\n</CsOptions>\n\n<CsInstruments>\n\nsr = 44100\nkr = 4410\nksmps = 10\nnchnls = 1\n\ninstr 1\n\nendin\n\n</CsInstruments>\n\n<CsScore>\n\n;ins\tstart\tdur\ni1\t0\t1\n\ne\n</CsScore>\n\n</CsoundSynthesizer>
+
+[fog]
+Author=Built-in
+Category=Opcodes
+Code=ar\tfog\txamp, xdens, xtrans, aphs, koct, kband, kris, kdur, kdec, iolaps, ifna, ifnb, itotdur[, iphs][, itmode]
+
+[fof2]
+Author=Built-in
+Code=ar\tfof2\txamp, xfund, xform, koct, kband, kris, kdur, kdec, iolaps, ifna, ifnb, itotdur, kphs, kgliss
+Category=Opcodes
+
+[fof]
+Author=Built-in
+Code=ar\tfof\txamp, xfund, xform, koct, kband, kris, kdur, kdec, iolaps, ifna, ifnb, itotdur[, iphs][, ifmode]
+Category=Opcodes
+
+[granule]
+Author=Built-in
+Category=Opcodes
+Code=ar\tgranule\txamp, ivoice, iratio, imode, ithd, ifn, ipshift, igskip, igskip_os, ilength, kgap, igap_os, kgsize, igsize_os, iatt, idec [,iseed] [,ipitch1] [,ipitch2] [,ipitch3] [,ipitch4] [,ifnenv]
+
+[grain]
+Author=Built-in
+Category=Opcodes
+Code=ar\tgrain\txamp, xcps, xdens, kampoff, kcpsoff, kgdur, igfn, ienvfn, imgdur [, igrnd]
+
+[scanu]
+Author=Built-in
+Category=Opcodes
+Code=scanu\tiinit, irate, ifnvel, ifnmass, ifnstif, ifncentr, ifndamp, kmass, kstif, kcentr, kdamp, ileft, iright, kx, ky, ain, idisp, iid
+
+[scans]
+Author=Built-in
+Category=Opcodes
+Code=ar\tscans\tkamp, kfreq, ifntraj, iid
+
+[planet]
+Author=Built-in
+Category=Opcodes
+Code=ax,ay,az\tplanet\tkmass1, kmass2, ksep, ix, iy, iz, ivx, ivy, ivz, idelta [, ifriction]
+
+[lorenz]
+Author=Built-in
+Category=Opcodes
+Code=ax,ay,az\tlorenz\tks, kr, kb, kh, ix, iy, iz, iskip
+
+[All MIDI chans to one instr]
+Comments=All MIDI channels are routed to the same instrument.
+Code=#define INSNUM #1# ;Instrument number\nmassign 1, $INSNUM\nmassign 2, $INSNUM\nmassign 3, $INSNUM\nmassign 4, $INSNUM\nmassign 5, $INSNUM\nmassign 6, $INSNUM\nmassign 7, $INSNUM\nmassign 8, $INSNUM\nmassign 9, $INSNUM\nmassign 10, $INSNUM\nmassign 11, $INSNUM\nmassign 12, $INSNUM\nmassign 13, $INSNUM\nmassign 14, $INSNUM\nmassign 15, $INSNUM\nmassign 16, $INSNUM
+Author=Built-in
+Category=MIDI
+
+[tablemix]
+Author=Built-in
+Category=Opcodes
+Code=tablemix\tkdfn, kdoff, klen, ks1fn, ks1off, ks1g, ks2fn, ks2off, ks2g
+
+[tableimix]
+Author=Built-in
+Category=Opcodes
+Code=tableimix\tidfn, idoff, ilen, is1fn, is1off, is1g, is2fn, is2off, is2g
+
+[tempest]
+Author=Built-in
+Category=Opcodes
+Code=ktemp\ttempest\tkin, iprd, imindur, imemdur, ihp, ithresh, ihtim, ixfdbak,  istartempo, ifn[, idisprd, itweek]
+
+[pitch]
+Author=Built-in
+Category=Opcodes
+Code=koct, kamp\tpitch\tasig, iupdte, ilo, ihi, idbthresh [, ifrqs, iconf, istrt, iocts, iq, inptls, irolloff, iskip]
+
+[pitchamfd]
+Author=Built-in
+Category=Opcodes
+Code=kcps,krms\tpitchamdf\tasig, imincps, imaxcps [,icps] [,imedian] [,idowns] [,iexcps] [,irmsmedi]
+
+[xyin]
+Author=Built-in
+Category=Opcodes
+Code=kx, ky\txyin\tiprd, ixmin, ixmax, iymin, iymax[, ixinit, iyinit]
+
+[oscili]
+Author=Built-in
+Category=Opcodes
+Code=ar\toscili\txamp, xcps, ifn[, iphs]
+
+[table]
+Author=Built-in
+Category=Opcodes
+Code=xr\ttable\txndx, ifn [,ixmode] [,ixoff] [,iwrap]
+
+[Golden ratio]
+Author=Built-in
+Comments=Fibonacci golden ratio with numerical value = 1.61803
+Category=Math
+Code=i_goldenratio = (1 + sqrt(5)) / 2
+
+[e]
+Author=Built-in
+Comments=Base of natural logarithms
+Category=Math
+Code=i_e = 2.718282
+
+[Noise]
+Author=Built-in
+Category=Function Tables
+Code=f1 0 8192 21 1 ;white noise
+
+[Header sr44100 kr22050]
+Author=Built-in
+Code=sr = 44100\nkr = 22050\nksmps = 2\nnchnls = 2
+Category=Templates
+
+[Header sr44100 kr4410]
+Code=sr = 44100\nkr = 4410\nksmps = 10\nnchnls = 2
+Author=Built-in
+Category=Templates
+
+[Header sr44100 sr44100]
+Author=Built-in
+Code=sr = 44100\nkr = 44100\nksmps = 1\nnchnls = 2
+Category=Templates
+
+[Conversions]
+Code=ifrq = cpspch(p5)\niamp = ampdb(p4)
+Author=Built-in
+Comments=Frequently used orchestra conversions.
+Category=Orchestra
+
+[Windows]
+Author=Built-in
+Comments=Window functions used for spectrum analisys and granular synthesis.
+Category=Function Tables
+Code=f1 0 8192 20 1 1 ;Hamming\nf2 0 8192 20 2 1 ;Hanning\nf3 0 8192 20 3 1 ;Bartlett (triangle)\nf4 0 8192 20 4 1 ;Blackman\nf5 0 8192 20 5 1 ;Blackman-Harris\nf6 0 8192 20 6 1 ;Gaussian\nf7 0 8192 20 7 1 ;Rectangle

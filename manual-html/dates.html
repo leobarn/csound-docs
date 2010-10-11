@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>dates</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="date.html" title="date" />
+    <link rel="next" href="db.html" title="db" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">dates</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="date.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="db.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="dates">
+      <a id="dates"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDates" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">dates</span>
+        </h2>
+        <p>dates — 
+      Returns as a string the date and time specified.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3199551"></a>
+        <h2>Description</h2>
+        <p>
+      Returns as a string the date and time specified.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3199562"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">Sir <span class="command"><strong>dates</strong></span> [ itime]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3199886"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>itime</em></span> -- the time is seconds since the
+      start of the epoch.  If omited or negative the current time is
+      taken.
+    </p>
+        <p>
+      <span class="emphasis"><em>Sir</em></span> -- the date and time as a string.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3199909"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the dates opcode. It uses the file <a class="ulink" href="examples/date.csd" target="_top"><em class="citetitle">date.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="id3199925"></a>
+          <p class="title">
+            <b>Example 111. Example of the dates opcode.</b>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in</span>
+-odac           -iadc    <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o date.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+<span class="oblock">instr</span> 1
+      ii <span class="opc">date</span>
+      <span class="opc">print</span> ii
+      Sa <span class="opc">dates</span> ii
+      <span class="opc">prints</span> Sa
+      Ss <span class="opc">dates</span> <span class="op">-</span>1
+      <span class="opc">prints</span> Ss
+      St <span class="opc">dates</span> 1
+      <span class="opc">prints</span> St 
+<span class="oblock">endin</span>
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+<span class="stamnt">i</span> 1 0 1
+<span class="stamnt">e</span>
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+instr 1:  ii = 1165665152.000
+Sat Dec  9 11:52:32 2006
+Sat Dec  9 11:51:46 2006
+Thu Jan  1 01:00:01 1970
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3200344"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="date.html" title="date"><em class="citetitle">date</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3200362"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>December 2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.05</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="date.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="db.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">date </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> db</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

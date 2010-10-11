@@ -1,0 +1,201 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:p="urn:schemas-microsoft-com:office:powerpoint"
+xmlns:oa="urn:schemas-microsoft-com:office:activation"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=PowerPoint.Slide>
+<meta name=Generator content="Microsoft PowerPoint 11">
+<link id=Main-File rel=Main-File href="../The%20Csound%20Utilities.htm">
+<link rel=Preview href=preview.wmf>
+<link rel=OLE-Object-Data href=oledata.mso>
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+p\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+v\:textbox {display:none;}
+</style>
+<![endif]-->
+<title>Two-step Processing in Csound</title>
+<meta name=Description content="11/19/2006: Simple Examples">
+<link rel=Stylesheet href="master08_stylesheet.css">
+<!--[if gte IE 5]>
+<object id=MSOANIM classid="CLSID:A4639D2F-774E-11D3-A490-00C04F6843FB"></object>
+<object id=MSOTIME classid="CLSID:A4639D29-774E-11D3-A490-00C04F6843FB"></object>
+<![endif]-->
+<![if !ppt]>
+<style media=print>
+<!--.sld
+	{left:0px !important;
+	width:6.0in !important;
+	height:4.5in !important;
+	font-size:107% !important;}
+-->
+</style>
+<style>
+<!--
+oa\:* { BEHAVIOR: url(#MSOANIM#ANIM) url(#MSOTIME#TIME) }
+oa\:par,oa\:seq,oa\:iterate { BEHAVIOR:url(#MSOTIME) }
+oa\:video,oa\:audio {BEHAVIOR:url(#MSOTIME) url(#MSOTIME#MEDIA) }
+-->
+</style>
+<script src=script.js></script><script><!--
+if( !IsNts() ) Redirect( "PPTSld" );
+//--></script><script><!--
+g_animItemsToHide=new Array("_x0000_s46084","_x0000_s46083_213_291","_x0000_s46083_172_212","_x0000_s46083_0_172");
+
+//--></script><!--[if vml]><script>g_vml = 1;
+</script><![endif]--><![endif]><o:shapelayout v:ext="edit">
+ <o:idmap v:ext="edit" data="45"/>
+</o:shapelayout>
+</head>
+
+<body lang=EN-US style='margin:0px;background-color:black'
+onclick="DocumentOnClick()" onresize="_RSW()" onload="LoadSld()"
+onkeypress="_KPH()" oa:clockstart="onstart">
+
+<div id=SlideObj class=sld style='position:absolute;top:0px;left:0px;
+width:534px;height:400px;font-size:16px;background-color:white;clip:rect(0%, 101%, 101%, 0%);
+visibility:hidden'><p:slide coordsize="720,540"
+ colors="#ffffff,#003366,#003366,#006666,#99cc99,#33cccc,#666699,#cc99ff"
+ masterhref="master08.xml">
+ <p:shaperange href="master08.xml#_x0000_s1025"/><![if !ppt]><p:shaperange
+  href="master08.xml#_x0000_s1046"/><![if !vml]><img border=0
+ v:shapes="_x0000_s1046,_x0000_s1027,_x0000_s1028,_x0000_s1029"
+ src="master08_image001.gif" style='position:absolute;top:0%;left:0%;
+ width:64.41%;height:100.5%'><![endif]><p:shaperange
+  href="master08.xml#_x0000_s1037"/><p:shaperange
+  href="master08.xml#_x0000_s1038"/><p:shaperange
+  href="master08.xml#_x0000_s1045"/><![if !vml]><img border=0
+ v:shapes="_x0000_s1045,_x0000_s1036,_x0000_s1044" src="master08_image002.gif"
+ style='position:absolute;top:29.0%;left:2.43%;width:81.08%;height:5.0%'><![endif]><![endif]><p:shaperange
+  href="master08.xml#_x0000_m1031"/><v:shape id="_x0000_s46082" type="#_x0000_m1031"
+  style='position:absolute;left:1in;top:60pt;width:630pt;height:90pt'
+  o:userdrawn="f">
+  <v:fill o:detectmouseclick="f"/>
+  <v:stroke o:forcedash="f"/>
+  <o:lock v:ext="edit" text="f"/>
+  <p:placeholder type="title"/></v:shape>
+ <div v:shape="_x0000_s46082" class=T style='position:absolute;top:19.75%;
+ left:11.04%;width:85.58%;height:7.75%'>Simple Examples</div>
+ <p:shaperange href="master08.xml#_x0000_m1032"/><v:shape id="_x0000_s46083"
+  type="#_x0000_m1032" style='position:absolute;left:1in;top:186pt;width:630pt;
+  height:354pt' o:userdrawn="f">
+  <v:fill o:detectmouseclick="f"/>
+  <v:stroke o:forcedash="f"/>
+  <o:lock v:ext="edit" text="f"/>
+  <p:placeholder type="body" position="1"/><p:animation number="2" delay="0"
+   type="text" level="1" effect="cut" direction="noBlack"/></v:shape>
+ <div v:shape="_x0000_s46083" class=B>
+ <div id="_x0000_s46083_0_172" style='position:absolute;top:35.5%;left:11.04%;
+ width:101.68%;height:24.75%;white-space:nowrap'><span style='position:absolute;
+ top:0%;left:3.68%;width:86.92%;height:24.24%'><span class=BB style='position:
+ absolute;left:-4.23%;top:.3em'>l</span>If the Impulse Response <i>b </i>is [1,
+ 0, 0, 0, …] </span><span style='position:absolute;top:25.25%;left:3.68%;
+ width:96.31%;height:24.24%'>(called the <i>unit impulse</i>), then convolving
+ it with </span><span style='position:absolute;top:50.5%;left:3.68%;width:88.39%;
+ height:24.24%'>any arbitrary Excitation Signal <i>a </i>results in a </span><span
+ style='position:absolute;top:75.75%;left:3.68%;width:80.47%;height:24.24%'>single,
+ unmodified copy of <i>a&#13;</i></span></div>
+ <div id="_x0000_s46083_172_212" style='position:absolute;top:61.5%;left:11.04%;
+ width:85.58%;height:6.0%;white-space:nowrap'><span style='position:absolute;
+ top:0%;left:4.37%;width:95.62%;height:100.0%'><span class=BB style='position:
+ absolute;left:-4.57%;top:.3em'>l</span>FIR filtering is, in fact,
+ convolution:&#13;</span></div>
+ <div style='position:absolute;top:69.0%;left:11.04%;width:85.58%;height:6.0%'><span
+ style='position:absolute;top:0%;left:4.37%;width:95.62%;height:100.0%'><span
+ style='visibility:hidden'><span class=BB style='position:absolute;left:-4.57%'>l</span></span>&#13;</span></div>
+ <div id="_x0000_s46083_213_291" style='position:absolute;top:76.5%;left:11.04%;
+ width:101.12%;height:12.25%;white-space:nowrap'><span style='position:absolute;
+ top:0%;left:3.7%;width:96.29%;height:48.97%'><span class=BB style='position:
+ absolute;left:-3.84%;top:.3em'>l</span>Where the coefficients [a,b,c…] are the
+ IR, and </span><span style='position:absolute;top:51.02%;left:3.7%;width:80.92%;
+ height:48.97%'>x[n] is the Excitation Signal</span></div>
+ </div>
+ <v:shapetype id="_x0000_t75" coordsize="21600,21600" o:spt="75"
+  o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+  <v:stroke joinstyle="miter"/>
+  <v:formulas>
+   <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+   <v:f eqn="sum @0 1 0"/>
+   <v:f eqn="sum 0 0 @1"/>
+   <v:f eqn="prod @2 1 2"/>
+   <v:f eqn="prod @3 21600 pixelWidth"/>
+   <v:f eqn="prod @3 21600 pixelHeight"/>
+   <v:f eqn="sum @0 0 1"/>
+   <v:f eqn="prod @6 1 2"/>
+   <v:f eqn="prod @7 21600 pixelWidth"/>
+   <v:f eqn="sum @8 21600 0"/>
+   <v:f eqn="prod @7 21600 pixelHeight"/>
+   <v:f eqn="sum @10 21600 0"/>
+  </v:formulas>
+  <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+  <o:lock v:ext="edit" aspectratio="t"/>
+ </v:shapetype><v:shape id="_x0000_s46084" type="#_x0000_t75" style='position:absolute;
+  left:162pt;top:366pt;width:438pt;height:43.5pt'>
+  <v:imagedata src="slide0005_image007.wmz" o:title=""/>
+  <p:animation number="5" delay="0" type="object" effect="cut"
+   direction="noBlack" flag="17412"/></v:shape><o:OLEObject Type="Embed"
+  ProgID="Equation.3" ShapeID="_x0000_s46084" DrawAspect="Content" ObjectID="5">
+  <p:oleclientdata subtype="equation" menuname="Equation"
+   clipboardname="Microsoft Equation 3.0"/></o:OLEObject>
+ <![if !vml]><img border=0 v:shapes="_x0000_s46084" src="slide0005_image008.gif"
+ style='position:absolute;top:67.75%;left:22.47%;width:60.86%;height:8.0%'><![endif]></p:slide></div>
+
+<p:animation number="-1103912228"/><oa:par id="TimeNode0" dur="indefinite"
+ restart="never" p:nodeType="timingRoot">
+ <oa:seq id="TimeNode1" dur="indefinite" prev="document.onpptprev"
+  next="document.onpptnext" concurrent="enabled" nextAction="seek"
+  p:nodeType="mainSeq">
+  <oa:par id="TimeNode2" begin="indefinite" fill="hold">
+   <oa:par id="TimeNode3" begin="0.0" fill="hold">
+    <oa:par id="TimeNode4" o:presetID="ppt_1" o:presetClass="entrance"
+     o:presetSubType="0x0" begin="0.0" fill="hold" o:groupID="0"
+     p:nodeType="clickEffect">
+     <oa:set id="TimeNode5" begin="0.0" dur="0.001" fill="hold"
+      targetElement="_x0000_s46083_0_172" attributeName="style.visibility"
+      to="visible"/>
+    </oa:par>
+   </oa:par>
+  </oa:par>
+  <oa:par id="TimeNode6" begin="indefinite" fill="hold">
+   <oa:par id="TimeNode7" begin="0.0" fill="hold">
+    <oa:par id="TimeNode8" o:presetID="ppt_1" o:presetClass="entrance"
+     o:presetSubType="0x0" begin="0.0" fill="hold" o:groupID="0"
+     p:nodeType="clickEffect">
+     <oa:set id="TimeNode9" begin="0.0" dur="0.001" fill="hold"
+      targetElement="_x0000_s46083_172_212" attributeName="style.visibility"
+      to="visible"/>
+    </oa:par>
+   </oa:par>
+  </oa:par>
+  <oa:par id="TimeNode10" begin="indefinite" fill="hold">
+   <oa:par id="TimeNode11" begin="0.0" fill="hold">
+    <oa:par id="TimeNode12" o:presetID="ppt_1" o:presetClass="entrance"
+     o:presetSubType="0x0" begin="0.0" fill="hold" o:groupID="0"
+     p:nodeType="clickEffect">
+     <oa:set id="TimeNode13" begin="0.0" dur="0.001" fill="hold"
+      targetElement="_x0000_s46083_213_291" attributeName="style.visibility"
+      to="visible"/>
+    </oa:par>
+    <oa:par id="TimeNode14" o:presetID="ppt_1" o:presetClass="entrance"
+     o:presetSubType="0x0" begin="0.0" fill="hold" p:nodeType="withEffect">
+     <oa:set id="TimeNode15" begin="0.0" dur="0.001" fill="hold"
+      targetElement="_x0000_s46084" attributeName="style.visibility"
+      to="visible"/>
+    </oa:par>
+   </oa:par>
+  </oa:par>
+ </oa:seq>
+</oa:par>
+<![if ppt]>
+<oa:buildParagraph targetElement="_x0000_s46083" groupID="0" build="byParagraph"
+ buildLevel="1" reverse="false" buildAdvance="onclick" userSetAnimBgd="false"/>
+<![endif]>
+</body>
+
+</html>

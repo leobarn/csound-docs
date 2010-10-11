@@ -1,0 +1,15 @@
+
+
+   Here we stretch the trumpet sound (file 1) to the length
+   of the Violin sound (2) via the command
+
+   hetroMix -a 200 -w mixer.input Trumpet_orig_ds5.het Violins_ds5.het
+
+   We use only hetroMix's time-stretch ability.  We begin the time
+   stretch after 200 milliseconds
+
+
+amplitude: default  1  0  
+frequency: default  1  0  
+
+

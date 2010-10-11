@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>TclCsound as a language wrapper</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="tclcsound.html" title="TclCsound" />
+    <link rel="prev" href="tclscripting.html" title="A Scripting Environment" />
+    <link rel="next" href="tclrefe.html" title="TclCsound Command Reference" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> TclCsound as a language wrapper </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tclscripting.html">Prev</a> </td>
+          <th width="60%" align="center">TclCsound</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tclrefe.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section" title="TclCsound as a language wrapper">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="tclwrapper"></a> TclCsound as a language wrapper </h2>
+          </div>
+        </div>
+      </div>
+      <p>It is possible to use TclCsound at a slightly lower level, as many of the 
+C API functions have been wrapped as Tcl commands. For instance it is possible to create a ‘classic' 
+Csound command-line frontend completely written in Tcl. The following script demonstrates this: </p>
+      <pre class="programlisting">#!/usr/local/bin/cstclsh </pre>
+      <pre class="programlisting">
+set result 1
+csCompileList $argv
+while { $result != 0 } {
+set result csPerformKsmps
+}
+</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tclscripting.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tclcsound.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tclrefe.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">A Scripting Environment  </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">  TclCsound Command Reference</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

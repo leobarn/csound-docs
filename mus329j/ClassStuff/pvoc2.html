@@ -1,0 +1,99 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Example Phase Vocoder Cross Synthesis Instrument</TITLE>
+<META NAME="Template" CONTENT="C:\Program Files\Microsoft Office\Office\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<PRE>&#9;sr&#9;=&#9;44100
+&#9;kr&#9;=&#9;4410
+&#9;ksmps&#9;=&#9;10
+&#9;nchnls&#9;=&#9;1
+
+;==================================================================
+;Simple cross synthesis instrument using pvbufread and pvcross. 
+;Notes:
+;&#9;- pvcross requires a preceding pvbufread to work
+;&#9;- pvbufread reads the analysis data from one pvanal 
+;&#9;  output file. The output is buffered for use by 
+;&#9;  subsequent pvcross or pvinterp units in the same instr.
+;&#9;- pvcross reads the analysis data from a second pvanal
+;&#9;  output file and then resynthesizes it using a combination
+;&#9;  of the amplitude data in its own pvanal file and the one
+;&#9;  being read by pvbufread, according to the two kamp args.
+;&#9;- To produce a amp data crossfade from file1 to file2,
+;&#9;  make kamp1 and kamp2 be 1 and 0, respectively.
+;&#9;- To produce a pure "cross synthesis," make the values for
+;&#9;  both kamp1 and kamp2 be 0. This will cause pvcross to use
+;&#9;  the amp data from file1 only, and the freq data from file2.
+; RP
+;===================================================================
+
+&#9;instr&#9;2
+idur&#9;=&#9;p3
+ipvfn1&#9;=&#9;p4
+ilen1&#9;=&#9;p5
+ipvfn2&#9;=&#9;p6
+ilen2&#9;=&#9;p7
+iamp1&#9;=&#9;p8
+iamp2&#9;=&#9;p9
+ifmod&#9;=&#9;p10&#9;&#9;;max pitch change in semitones
+ifmfn&#9;=&#9;(p11 == 0 ? 1 : p11) ;default to a valid fn#
+
+; Independent timptrs for pvbufread and pvcross
+ktime1  line    0, idur, ilen1
+ktime2  line    0, idur, ilen2
+; Allows a crossfade between the two analysis files for amp control 
+kcross&#9;line&#9;iamp1, idur, iamp2    
+; Frequency modification control function
+kfctrl&#9;oscil1i&#9;0,ifmod,p3,ifmfn
+kfmod&#9;=&#9;exp(kfctrl/12*log(2))
+&#9;pvbufread       ktime1, ipvfn1
+apv     pvcross ktime2, kfmod, ipvfn2, 1-kcross, kcross
+apv&#9;linen&#9;apv,.1,p3,.2&#9;;overall envelope
+&#9;out&#9;apv
+&#9;endin&#9;</PRE>
+<P><HR></P>
+<PRE>f01&#9;0&#9;513&#9;7&#9;0&#9;513&#9;1
+f02&#9;0&#9;513&#9;7&#9;1&#9;513&#9;0
+f03&#9;0&#9;513&#9;1&#9;"pvoctest.fun"&#9;0&#9;4&#9;0
+;
+;Cross synthesis with pvoc.904 and pvoc.905 (eroi.wav)
+;Both use frame size 1024 and overlap 8.
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;ifmod&#9;ifmfn
+i2&#9;0&#9;3.646&#9;904&#9;1.67&#9;905&#9;3.646&#9;0&#9;1&#9;0&#9;0
+i2&#9;4&#9;.&#9;.&#9;.&#9;.&#9;.&#9;1&#9;0
+i2&#9;8&#9;3.646&#9;905&#9;3.646&#9;904&#9;1.67&#9;0&#9;1
+i2&#9;12&#9;.&#9;.&#9;.&#9;.&#9;.&#9;1&#9;0
+f0&#9;16.0
+s
+;Cross synthesis with pvoc.904 and pvoc.906 (wavest44.wav)
+;Both use frame size 1024 and overlap 8.
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;ifmod&#9;ifmfn
+i2&#9;0&#9;8&#9;904&#9;1.67&#9;906&#9;16.81&#9;0&#9;1&#9;0&#9;0
+i2&#9;8&#9;8&#9;904&#9;1.67&#9;906&#9;16.81&#9;.5&#9;.5
+i2&#9;16&#9;.&#9;.&#9;.&#9;.&#9;.&#9;1&#9;0
+f0&#9;26
+s
+;Same 2 pvoc files, now with freq mod control function
+f04&#9;0&#9;513&#9;7&#9;0&#9;128&#9;1&#9;256&#9;-1&#9;129&#9;0
+;
+;nn&#9;st&#9;dur&#9;pvfn1&#9;len1&#9;pvfn2&#9;len2&#9;amp1&#9;amp2&#9;ifmod&#9;ifmfn
+i2&#9;0&#9;8&#9;904&#9;1.67&#9;906&#9;16.81&#9;.5&#9;.5&#9;3&#9;4
+e</PRE>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="32%" VALIGN="TOP">
+<P><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvoc2.orc">Download pvoc2.orc</A></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<P ALIGN="CENTER"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvfiles2.zip">Download pvfiles2.zip </A></TD>
+<TD WIDTH="31%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvoc2.sco">Download pvoc2.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

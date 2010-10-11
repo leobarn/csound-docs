@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Building Csound</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOverview.html" title="Part I. Overview" />
+    <link rel="prev" href="tclrefe.html" title="TclCsound Command Reference" />
+    <link rel="next" href="CsoundLinks.html" title="Csound Links" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Building Csound</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tclrefe.html">Prev</a> </td>
+          <th width="60%" align="center">Part I. Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CsoundLinks.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" title="Building Csound">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="BuildingCsound"></a>Building Csound</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Csound has become a complex project and can involve many dependencies. Unless you are a Csound developer or need to develop Csound plugins, 
+you should try to use one of the precompiled distributions from <a class="ulink" href="http://www.sourceforge.net/projects/csound" target="_top">http://www.sourceforge.net/projects/csound</a>. However, 
+building from source is probably the best option on GNU/Linux.
+  </p>
+      <p>
+    This section focuses on the main Csound 5 build system, which uses <a class="ulink" href="http://www.scons.org" target="_top">SCons</a>, a Python program that replaces <span class="emphasis"><em>make</em></span> for cross-platform configuration and building.
+  </p>
+      <p>
+    When building Csound from source instead of using a precompiled package, you first need to obtain the sources for a release of Csound at <a class="ulink" href="http://www.sourceforge.net/projects/csound" target="_top">http://www.sourceforge.net/projects/csound</a>. The source packages have either a zip or tar.gz extension.
+  </p>
+      <p>
+    The latest (possibly unstable) Csound source code is also available through the Concurrent Versions System (CVS). It's likely (if you're running Mac OS X or Linux) that you already have CVS installed on your machine. If not, it can be downloaded from (<a class="ulink" href="http://www.cvshome.org" target="_top">http://www.cvshome.org</a>). There are many graphical front ends for cvs, but you can easily get the sources using the command line version.
+  </p>
+      <p>
+    The Csound CVS front page is located at: <a class="ulink" href="http://sourceforge.net/cvs/?group_id=81968" target="_top">http://sourceforge.net/cvs/?group_id=81968</a>. Information about accessing the CVS repository may be found in the SourceForge document <a class="ulink" href="http://sourceforge.net/docs/E04/" target="_top">http://sourceforge.net/docs/E04/</a>. To download Csound sources using CVS, run the following commands (from a terminal or DOS shell):
+  </p>
+      <pre class="programlisting">
+    cvs -d:pserver:anonymous@csound.cvs.sourceforge.net:/cvsroot/csound login
+
+    cvs -z3 -d:pserver:anonymous@csound.cvs.sourceforge.net:/cvsroot/csound co -P csound5</pre>
+      <p>
+    To update the Csound5 sources you already have in your csound5 directory, change to that directory,  and then type:
+  </p>
+      <pre class="programlisting">
+    cvs -z3 update -d</pre>
+      <p>
+    To update only a single file, change to the sources directory, and then type:
+  </p>
+      <pre class="programlisting">
+    cvs -z3 update filename</pre>
+      <h2><a id="id3050960"></a>Basic requirements to build Csound 5 on any platform</h2>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+        Install libdsndfile version 1.0.13 or later from <a class="ulink" href="http://www.mega-nerd.com/libsndfile" target="_top">www.mega-nerd.com/libsndfile</a>.
+      </li>
+          <li class="listitem">
+        Install Python from <a class="ulink" href="http://www.python.org" target="_top">www.python.org</a>. In most cases it is best to install the most recent stable version. Python is needed for SCons to run.
+      </li>
+          <li class="listitem">
+        Install the SCons build system from <a class="ulink" href="http://www.scons.org" target="_top">www.scons.org</a>.
+      </li>
+        </ul>
+      </div>
+      <p>
+    These are the minimum requirements for a build, but csound has many optional components which enhance functionality and add opcodes which may require additional libraries.
+  </p>
+      <h2><a id="id3051016"></a>Optional configurations (ALL platforms)</h2>
+      <p>In most cases it is best to install the most recent stable versions of the optional libraries.
+  </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+        Real-time audio can use the cross-platform PortAudio library (trunk version or devel-19 branch) from <a class="ulink" href="http://www.portaudio.com/usingcvs.html" target="_top">www.portaudio.com/usingcvs.html</a>. Please note that stable version 18 will not work. Csound can also use several platform specific audio APIs like ALSA, JACK, CoreAudio and the Windows multimedia library, see each platform notes for details.
+      </li>
+          <li class="listitem">
+        Real-time MIDI can use the cross-platform PortMidi library from <a class="ulink" href="http://www.cs.cmu.edu/~music/portmusic" target="_top">www.cs.cmu.edu/~music/portmusic</a>
+      </li>
+          <li class="listitem">
+        For GUI widgets, install FLTK 1.1 or 1.3 from <a class="ulink" href="http://www.fltk.org" target="_top">www.fltk.org</a>.
+        You must configure and build FLTK with <code class="literal">--enable-shared --enable-threads</code>.
+      </li>
+          <li class="listitem">
+        For generating Python and Java interfaces, install the Software Interface and Wrapper Generator (SWIG) from <a class="ulink" href="http://www.swig.org" target="_top">http://www.swig.org</a>.
+      </li>
+          <li class="listitem">
+        <span class="emphasis"><em>CsoundAC</em></span> requires FLTK and the boost C++ template libraries for random numbers and linear algebra, from  <a class="ulink" href="http://www.boost.org" target="_top">http://www.boost.org</a>. <span class="emphasis"><em>CsoundAC</em></span> requires at least version 1.32.1.
+      </li>
+          <li class="listitem">The fluid opcodes require the Fluidsynth library from <a class="ulink" href="http://savannah.nongnu.org/download/fluid" target="_top">http://savannah.nongnu.org/download/fluid</a>.
+      </li>
+          <li class="listitem">
+        The OSC opcodes require the latest version of the liblo library from 
+        <a class="ulink" href="http://plugin.org.uk/liblo" target="_top">http://plugin.org.uk/liblo</a>. 
+        On Windows, liblo requires a Windows version of the POSIX thread library (pthreads) which is available from 
+        <a class="ulink" href="http://sourceware.org/pthreads-win32" target="_top">http://sourceware.org/pthreads-win32</a>; 
+        copy libpthreadGC2.a to libpthread.a. 
+        You may also need the latest version of autoconf from MinGW.
+      </li>
+          <li class="listitem">
+        The STK opcodes require STK source code from <a class="ulink" href="http://ccrma.stanford.edu/software/stk" target="_top">http://ccrma.stanford.edu/software/stk</a>, copied into <code class="filename">csound5/Opcodes/stk</code>.
+      </li>
+          <li class="listitem">
+        The Loris opcodes require Loris source code from <a class="ulink" href="http://sourceforge.net/projects/loris" target="_top">http://sourceforge.net/projects/loris</a>, copied into <code class="filename">csound5/Opcodes/Loris</code>.
+      </li>
+        </ul>
+      </div>
+      <h2><a id="id3051201"></a>Windows</h2>
+      <p>The following is needed to build on Windows (more complete build instructions for Windows may be found in the csound-build.tex document (csound-build.pdf)):</p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+            <p class="simpara">
+        Install a compiler like gcc or Microsoft Visual Studio (there is also support for the Intel C++ compiler). If using MinGW (gcc), install all of the current release of MinGW  using the Automated MinGW Installer from <a class="ulink" href="http://www.mingw.org" target="_top">www.mingw.org</a>, for example into <code class="literal">c:/mingw</code>. This should install gcc, g++, GNU binutils, the MinGW runtime, and the win32 API. Then install the current release of MSys.
+      </p>
+            <p class="simpara">
+        On Windows you can use Microsoft Visual C++ (except for CsoundAC). The free Express Edition, from <a class="ulink" href="http://www.microsoft.com/express/vc/" target="_top">http://www.microsoft.com/express/vc/</a> works fine. You will need to obtain a copy of the <code class="filename">dirent.h</code> header file for Windows, e.g. from <a class="ulink" href="http://www.softagalleria.net/dirent.php" target="_top">http://www.softagalleria.net/dirent.php</a>. You may also need to obtain the <code class="literal">bufferoverflowu.lib</code> library from Microsoft and put it into the Visual C++ <code class="filename">lib</code> directory. Then open a shell in which to compile Csound, (usually called Visual Studio Command Prompt command, within the Visual C++ program menu).
+      </p>
+          </li>
+        </ul>
+      </div>
+      <p>Optional configurations for Windows include the following:</p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+        Real-time audio and MIDI can use the Windows multimedia library. This module will be built automatically if the headers are found.
+      </li>
+          <li class="listitem">
+        The VST Host opcodes require both the Steinberg VST headers.
+      </li>
+        </ul>
+      </div>
+      <h2><a id="id3051305"></a>Linux</h2>
+      <p>Optional configurations for Linux include the following:</p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+        Real-time audio on Linux can use ALSA (<a class="ulink" href="http://www.alsa-project.org" target="_top">www.alsa-project.org</a>) and JACK (<a class="ulink" href="http://www.jackaudio.org/" target="_top">www.jackaudio.org/</a>) in addition to PortAudio. Distributions usually provide the appropriate dev packages for these systems through their repositories.
+      </li>
+          <li class="listitem">
+        The DSSI Host opcodes require both the LADSPA and DSSI headers.
+      </li>
+        </ul>
+      </div>
+      <h2><a id="id3051346"></a>Mac OS X</h2>
+      <p>Optional configurations for Mac OS X include the following:</p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+        Real-time audio can use CoreAudio (OSX builtin native audio system) and Jack, appart from PortAudio.
+      </li>
+          <li class="listitem">
+        The DSSI Host opcodes require both the LADSPA and DSSI headers.
+      </li>
+        </ul>
+      </div>
+      <h2><a id="id3051374"></a>Building Csound 5 with SCons</h2>
+      <p>
+    When you have all the necessary packages and their sources (or -dev packages) to support your particular requirements on your hardware platform, execute "scons -h" to discover the current configuration options.
+  </p>
+      <p>
+    Building is made considerably easier if, when installing, the downloaded headers and libraries are installed in their default locations. To modify the default build,  in particular to handle non-standard options for third-party dependencies, such as where headers and libraries are to be found:
+  </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+        On Windows, when building with Microsoft Visual C++, modify custom-msvc.py. 
+      </li>
+          <li class="listitem">
+        On Windows, when building with MinGW/MSys, modify custom-mingw.py
+      </li>
+          <li class="listitem">
+        On Linux and Mac OSX edit custom.py
+      </li>
+        </ul>
+      </div>
+      <p>
+    If you do modify this file, you should make it read-only (or otherwise protect it) so that CVS will not overwrite it when you next update the sourcefiles. Avoid modifying the SConstruct file.
+  </p>
+      <p>Execute scons with the optional custom variables you desire. For example:</p>
+      <pre class="programlisting">scons buildOSC=1 buildCsound5GUI=1 buildPythonOpcodes=1 useOSC=1 buildLoris=0</pre>
+      <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>
+      It is important that you set the environment variable <code class="literal">OPCODEDIR</code> to the directory where plugin libraries are installed; in the case of a double precision build, <code class="literal">OPCODEDIR64</code> should be set instead. Installers usually take care of this, but it is necessary when building from source so Csound can find its plugin libraries.
+    </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <h2><a id="id3051461"></a>Current build options</h2>
+      <div class="table">
+        <a id="id3051465"></a>
+        <p class="title">
+          <b>Table 4. Current SCons Build Options</b>
+        </p>
+        <div class="table-contents">
+          <table summary="Current SCons Build Options" border="1">
+            <colgroup>
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Custom Variable</th>
+                <th>Effect if set to 1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>buildCsoundVST</td>
+                <td>Build CsoundVST. Needs CsoundAC, FLTK, boost, Python, SWIG.</td>
+              </tr>
+              <tr>
+                <td>buildCsoundAC</td>
+                <td>Build CsoundAC. Needs FLTK, boost, Python, SWIG.</td>
+              </tr>
+              <tr>
+                <td>buildCsound5GUI</td>
+                <td>Build FLTK GUI frontend. Requires FLTK 1.1.7 or later.</td>
+              </tr>
+              <tr>
+                <td>buildCSEditor</td>
+                <td>Build the Csound syntax highlighting text editor. Requires FLTK headers and libs.</td>
+              </tr>
+              <tr>
+                <td>buildDSSI</td>
+                <td>Build DSSI/LADSPA host opcodes.</td>
+              </tr>
+              <tr>
+                <td>buildImageOpcodes</td>
+                <td>Build image opcodes. 1 by default. Set to 0 to avoid.</td>
+              </tr>
+              <tr>
+                <td>buildInterfaces</td>
+                <td>Build interface library for Python, JAVA, Lua, C++, and other languages.</td>
+              </tr>
+              <tr>
+                <td>buildJavaWrapper</td>
+                <td>Build Java wrapper for the interface library.</td>
+              </tr>
+              <tr>
+                <td>buildLoris</td>
+                <td>Build the Loris Python extension and opcodes.</td>
+              </tr>
+              <tr>
+                <td>buildNewParser</td>
+                <td>Enable building new parser. Requires Flex/Bison.</td>
+              </tr>
+              <tr>
+                <td>buildOSXGUI</td>
+                <td>Build the basic GUI frontend. OSX only.</td>
+              </tr>
+              <tr>
+                <td>buildPDClass</td>
+                <td>Build csoundapi~ PD class. Needs m_pd.h in the standard places.</td>
+              </tr>
+              <tr>
+                <td>buildPythonOpcodes</td>
+                <td>Build Python opcodes</td>
+              </tr>
+              <tr>
+                <td>buildRelease</td>
+                <td>Build for release. Implies noDebug.</td>
+              </tr>
+              <tr>
+                <td>buildSDFT</td>
+                <td>Build SDFT code. 1 by default. Set to 0 to avoid.</td>
+              </tr>
+              <tr>
+                <td>buildTclcsound</td>
+                <td>Build Tclcsound frontend (cstclsh, cswish and tclcsound dynamic module). Requires Tcl/Tk headers and libs.</td>
+              </tr>
+              <tr>
+                <td>buildUtilities</td>
+                <td>Build stand-alone executables for utilities that can also be used with -U.</td>
+              </tr>
+              <tr>
+                <td>buildVirtual</td>
+                <td>Build Virtual MIDI keyboard. Requires FLTK 1.1.7 or later headers and libs.</td>
+              </tr>
+              <tr>
+                <td>buildvst4cs</td>
+                <td>Build vst4cs plugins. Requires Steinberg VST headers.</td>
+              </tr>
+              <tr>
+                <td>buildWinsound</td>
+                <td>Build Winsound frontend. Requires FLTK headers and libs.</td>
+              </tr>
+              <tr>
+                <td>dynamicCsoundLibrary</td>
+                <td>Build dynamic Csound library instead of libcsound.a.</td>
+              </tr>
+              <tr>
+                <td>gcc3opt</td>
+                <td>Enable gcc 3.3.x or later optimizations for the specified CPU architecture (e.g. pentium3); implies noDebug.</td>
+              </tr>
+              <tr>
+                <td>gcc4opt</td>
+                <td>Enable gcc 4.0 or later optimizations for the specified CPU architecture (e.g. pentium3); implies noDebug.</td>
+              </tr>
+              <tr>
+                <td>generateTags</td>
+                <td>Generate TAGS.</td>
+              </tr>
+              <tr>
+                <td>generatePdf</td>
+                <td>Generate PDF documentation.</td>
+              </tr>
+              <tr>
+                <td>install</td>
+                <td>Enables the Install targets.</td>
+              </tr>
+              <tr>
+                <td>Lib64</td>
+                <td>Build for lib64 rather than lib.</td>
+              </tr>
+              <tr>
+                <td>noDebug</td>
+                <td>Build without debugging information.</td>
+              </tr>
+              <tr>
+                <td>noFLTKThreads</td>
+                <td>Disable use of a separate thread for FLTK widgets.</td>
+              </tr>
+              <tr>
+                <td>useAltivec</td>
+                <td>On OSX use the gcc AltiVec optmisation flags.</td>
+              </tr>
+              <tr>
+                <td>useALSA</td>
+                <td>ALSA for real-time audio and MIDI input and output.</td>
+              </tr>
+              <tr>
+                <td>useCoreAudio</td>
+                <td>use CoreAudio for real-time audio input and output.</td>
+              </tr>
+              <tr>
+                <td>useDouble</td>
+                <td>Use double-precision floating point for audio samples.</td>
+              </tr>
+              <tr>
+                <td>useFLTK</td>
+                <td>Use FLTK for graphs and widget opcodes.</td>
+              </tr>
+              <tr>
+                <td>useGettext</td>
+                <td>Use the GNU internationalisation/localisation scheme</td>
+              </tr>
+              <tr>
+                <td>useGprof</td>
+                <td>Build with profiling information (-pg).</td>
+              </tr>
+              <tr>
+                <td>usePortAudio</td>
+                <td>Use PortAudio for real-time audio input and output.</td>
+              </tr>
+              <tr>
+                <td>usePortMIDI</td>
+                <td>Build PortMidi plugin for real time MIDI input and output.</td>
+              </tr>
+              <tr>
+                <td>useJack</td>
+                <td>Used if you compiled PortAudio to use Jack; also builds Jack plugin.</td>
+              </tr>
+              <tr>
+                <td>useLrint</td>
+                <td>Use lrint() and lrintf() for converting floating point values to integers.</td>
+              </tr>
+              <tr>
+                <td>useOSC</td>
+                <td>For OSC support.</td>
+              </tr>
+              <tr>
+                <td>useUDP</td>
+                <td>For UDP support. 1 by default. Set to 0 to avoid.</td>
+              </tr>
+              <tr>
+                <td>withICL</td>
+                <td>Build with the Intel C++ Compiler (also requires Microsoft Visual C++), Set to 0 to build with MinGW. Windows only.</td>
+              </tr>
+              <tr>
+                <td>withMSVC</td>
+                <td>Build with Microsoft Visual C++, or set to 0 to build with MinGW. Windows only.</td>
+              </tr>
+              <tr>
+                <td>Word64</td>
+                <td>Build for 64bit computer.</td>
+              </tr>
+              <tr>
+                <td>pythonVersion</td>
+                <td>Set to the Python version to be used.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <br class="table-break" />
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tclrefe.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CsoundLinks.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top"> TclCsound Command Reference </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Csound Links</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Pinkston Example Comb Instrument</TITLE>
+<META NAME="Template" CONTENT="C:\Program Files\Microsoft Office\Office\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<PRE>sr&#9;=&#9;22050
+kr&#9;=&#9;2205
+ksmps&#9;=&#9;10.0
+nchnls&#9;=&#9;2
+
+&#9;instr&#9;1&#9;;simple soundin player 
+gasend&#9;init&#9;0&#9;;init global "send"
+iskip&#9;=&#9;p6&#9;;optional skip time in p6
+asig&#9;soundin&#9;"richard.wav",iskip&#9;
+adrysig&#9;=&#9;asig*p4&#9;;p4 = amp fac for dry signal
+awetsig&#9;=&#9;asig*p5&#9;;p5 = amp fac for wet signal
+&#9;outs&#9;adrysig,adrysig&#9;;straight out
+gasend&#9;=&#9;gasend+awetsig&#9;;add to global var
+&#9;endin&#9;&#9;
+;------------- Single Comb Filter -----------------;&#9;&#9;&#9;
+&#9;instr&#9;2&#9;;comb filter
+;p4 has comb loop time - usually in seconds, but if &gt; 5,
+;assume pch and calculate loop time by 1/cpspch(p4)
+ilpt&#9;=&#9;(p4 &gt; 5 ? 1/cpspch(p4) : p4)
+irvt&#9;=&#9;p5&#9;;reverb time for comb in secs
+iscale&#9;=&#9;p6&#9;;rescaling factor
+iflag&#9;=&#9;p7&#9;;if non-zero, we clear gasend
+istor&#9;=&#9;p8&#9;;0 (default) to clear istor
+ainsig&#9;=&#9;gasend*iscale
+arvbsig&#9;comb&#9;ainsig,irvt,ilpt,istor
+&#9;outs&#9;arvbsig,arvbsig&#9;
+;Allow for multiple notes on instrument 2 - only the 
+;last currently executing instance should zero gasend
+&#9;if&#9;(iflag = 0) goto exit
+gasend&#9;=&#9;0&#9;;zero only if flag set
+exit:&#9;endin&#9;&#9;
+&#9;</PRE>
+<P><HR></P>
+<PRE>;Example score for combtest.orc
+;First, play source sound without any effects added
+;nn&#9;st&#9;dur&#9;dryfac&#9;wetfac&#9;iskip
+i01&#9;0&#9;3.5&#9;1&#9;0&#9;0
+;Replay source sound, sending output only to effects instr
+;nn&#9;st&#9;dur&#9;dryfac&#9;wetfac&#9;iskip
+i01&#9;+&#9;.&#9;0&#9;1
+;Keep effects instrument on throughout section
+;nn&#9;st&#9;dur&#9;ilpt&#9;irvt&#9;igain&#9;flag&#9;istor
+i02&#9;0&#9;10&#9;.05&#9;3&#9;.5&#9;1
+s
+;Play only 1st second of richard.wav 4 times ("hello")
+;nn&#9;st&#9;dur&#9;dryfac&#9;wetfac&#9;iskip
+i01&#9;0&#9;1&#9;0&#9;1&#9;0
+i01&#9;1.5
+i01&#9;3
+i01&#9;4.5
+;Generate a 4-note chord using comb. Notes:
+;1) Each new note requires a separate comb filter, with the 
+;   ilpt set to 1/frequency of the desired pitch. 
+;2) Each comb instrument must accept input from gasend only
+;   for one second (enough to get the "hello"); then the comb
+;   unit must be allowed to continue executing for irvt seconds.
+;   This involves playing two notes in the score for every pitch
+;   of the chord: one note of 1-second duration with igain set
+;   to some positive value; a second note long enough to complete
+;   the decay, which has igain = 0 and istor = 1, so the comb
+;   filter can finish reverberating what is already in its memory.
+;   This technique requires the use of specific instrument instances
+;   (i02.1, i02.2, etc.), to ensure that the same comb filter
+;   is being continued once the input is shut off.
+;first note of chord
+;nn&#9;st&#9;dur&#9;ipch&#9;irvt&#9;igain&#9;flag&#9;istor
+i02.1&#9;0&#9;1&#9;6.07&#9;11.5&#9;.25&#9;1
+;shut off input after 1 second, but continue reverb
+i02.1&#9;1&#9;10.5&#9;.&#9;.&#9;0&#9;0&#9;1
+;second note of chord
+;nn&#9;st&#9;dur&#9;ipch&#9;irvt&#9;igain&#9;flag&#9;istor
+i02.2&#9;1.5&#9;1&#9;6.11&#9;9&#9;.25&#9;1&#9;0
+;shut off input after 1 second, but continue reverb
+i02.2&#9;2.5&#9;9&#9;.&#9;.&#9;0&#9;0&#9;1
+;third note of chord
+;nn&#9;st&#9;dur&#9;ipch&#9;irvt&#9;igain&#9;flag&#9;istor
+i02.3&#9;3&#9;1&#9;7.02&#9;7.5&#9;.15&#9;1&#9;0
+;shut off input after 1 second, but continue reverb
+i02.3&#9;4&#9;7.5&#9;.&#9;.&#9;0&#9;0&#9;1
+;fourth note of chord
+;nn&#9;st&#9;dur&#9;ipch&#9;irvt&#9;igain&#9;flag&#9;istor
+i02.4&#9;4.5&#9;1&#9;7.05&#9;6&#9;.25&#9;1&#9;0
+;shut off input after 1 second, but continue reverb
+i02.4&#9;5.5&#9;6&#9;.&#9;.&#9;0&#9;0&#9;1
+s
+;Richard in the barbershop
+;nn&#9;st&#9;dur&#9;dryfac&#9;wetfac&#9;iskip
+i01&#9;0&#9;2.2&#9;0&#9;1&#9;0
+i01&#9;4&#9;1&#9;0&#9;1&#9;2.2
+;nn&#9;st&#9;dur&#9;ipch&#9;irvt&#9;igain&#9;flag&#9;istor
+i02.1&#9;0&#9;4&#9;7.00&#9;6&#9;.08&#9;0
+i02.2&#9;.&#9;.&#9;7.07
+i02.3&#9;.&#9;.&#9;8.04
+i02.4&#9;.&#9;.&#9;8.10&#9;.&#9;.&#9;1
+;nn&#9;st&#9;dur&#9;ipch&#9;irvt&#9;igain&#9;flag&#9;istor
+i02.1&#9;4&#9;2&#9;7.00&#9;6&#9;0&#9;0&#9;1
+i02.2&#9;.&#9;.&#9;7.07
+i02.3&#9;.&#9;.&#9;8.04
+i02.4&#9;.&#9;.&#9;8.10&#9;.&#9;.&#9;
+i02&#9;2.8&#9;7&#9;6.05&#9;6&#9;.1&#9;0&#9;0
+i02&#9;.&#9;.&#9;7.00
+i02&#9;.&#9;.&#9;8.03
+i02&#9;.&#9;.&#9;8.09&#9;.&#9;.&#9;1
+e&#9;&#9;</PRE>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="34%" VALIGN="TOP">
+<P><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/combtest.orc">Download combtest.orc</A></TD>
+<TD WIDTH="35%" VALIGN="TOP">
+<P ALIGN="CENTER"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/delsnds.zip">Download delsnds.zip</A></TD>
+<TD WIDTH="31%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/combtest.sco">Download combtest.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

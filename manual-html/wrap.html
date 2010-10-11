@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wrap</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="wiisend.html" title="wiisend" />
+    <link rel="next" href="wterrain.html" title="wterrain" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wrap</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="wiisend.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wterrain.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="wrap">
+      <a id="wrap"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWrap" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wrap</span>
+        </h2>
+        <p>wrap — 
+      Wraps-around the signal that exceeds the low and high thresholds.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3724303"></a>
+        <h2>Description</h2>
+        <p>
+      Wraps-around the signal that exceeds the low and high thresholds.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3724314"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>wrap</strong></span> asig, klow, khigh</pre>
+        <pre class="synopsis">ires <span class="command"><strong>wrap</strong></span> isig, ilow, ihigh</pre>
+        <pre class="synopsis">kres <span class="command"><strong>wrap</strong></span> ksig, klow, khigh</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3725193"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>isig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>ilow</em></span> -- low threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>ihigh</em></span> -- high threshold
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3725221"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xsig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>klow</em></span> -- low threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>khigh</em></span> -- high threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>wrap</em></span> wraps-around the signal that exceeds the low and high thresholds.
+    </p>
+        <p>
+      This opcode is useful in several situations, such as table indexing or for clipping and modeling a-rate, i-rate or k-rate signals. <span class="emphasis"><em>wrap</em></span> is also useful for wrap-around of table data when the maximum index is not a power of two (see <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a> and <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>). Another use of <span class="emphasis"><em>wrap</em></span> is in cyclical event repeating, with arbitrary cycle length.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3725289"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="limit.html" title="limit"><em class="citetitle">limit</em></a>,
+      <a class="link" href="mirror.html" title="mirror"><em class="citetitle">mirror</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3725314"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.49</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="wiisend.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wterrain.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">wiisend </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wterrain</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

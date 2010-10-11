@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tigoto</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tempoval.html" title="tempoval" />
+    <link rel="next" href="timedseq.html" title="timedseq" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tigoto</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tempoval.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="timedseq.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="tigoto">
+      <a id="tigoto"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTigoto" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tigoto</span>
+        </h2>
+        <p>tigoto — 
+      Transfer control at i-time when a new note is being tied onto a previously held note
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3644918"></a>
+        <h2>Description</h2>
+        <p>
+      Similar to <a class="link" href="igoto.html" title="igoto"><em class="citetitle">igoto</em></a> but effective only during an i-time pass at which a new note is being <span class="quote">“<span class="quote">tied</span>”</span> onto a previously held note. (See <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i Statement</em></a>) It does not work when a tie has not taken place. Allows an instrument to skip initialization of units according to whether a proposed tie was in fact successful. (See also <a class="link" href="tival.html" title="tival"><em class="citetitle">tival</em></a>).
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3645943"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>tigoto</strong></span> label</pre>
+        <p>
+      where <span class="emphasis"><em>label</em></span> is in the same instrument block and is not an expression.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3645967"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="cigoto.html" title="cigoto"><em class="citetitle">cigoto</em></a>,
+      <a class="link" href="goto.html" title="goto"><em class="citetitle">goto</em></a>,
+      <a class="link" href="if.html" title="if"><em class="citetitle">if</em></a>,
+      <a class="link" href="igoto.html" title="igoto"><em class="citetitle">igoto</em></a>,
+      <a class="link" href="kgoto.html" title="kgoto"><em class="citetitle">kgoto</em></a>,
+      <a class="link" href="timout.html" title="timout"><em class="citetitle">timout</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tempoval.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="timedseq.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tempoval </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> timedseq</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

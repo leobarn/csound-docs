@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>A Scripting Environment</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="tclcsound.html" title="TclCsound" />
+    <link rel="prev" href="csserver.html" title="A Csound server" />
+    <link rel="next" href="tclwrapper.html" title="TclCsound as a language wrapper" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">A Scripting Environment </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="csserver.html">Prev</a> </td>
+          <th width="60%" align="center">TclCsound</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tclwrapper.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section" title="A Scripting Environment">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="tclscripting"></a>A Scripting Environment </h2>
+          </div>
+        </div>
+      </div>
+      <p>With TclCsound, it is possible to transform the popular text editor e-macs into a Csound scripting/performing 
+environment. When in Tcl mode, the editor allows for Tcl expressions to be evaluated by selection and use of a simple 
+escape sequence (Ctrl-C Ctrl-X). This facility allows the integrated editing and performance of Csound and Tcl/Tk code. </p>
+      <p>In Tcl it is possible to write score and orchestra files that can be saved, compiled and run by the same script, 
+under the e-macs environment. The following example shows a Tcl script that builds a csound instrument and then 
+proceeds to run a csound performance. It creates 10 slightly detuned parallel oscillators, generating sounds similar 
+to those found in Risset's <span class="emphasis"><em>Inharmonique</em></span>. </p>
+      <pre class="programlisting">load tclcsound.so Tclcsound </pre>
+      <pre class="programlisting"># set up some intermediary files </pre>
+      <pre class="programlisting">
+set orcfile "tcl.orc"
+set scofile "tcl.sco"
+set orc [open $orcfile w]
+set sco [open $scofile w] 
+</pre>
+      <pre class="programlisting"># This Tcl procedure builds an instrument
+proc MakeIns { no code } {
+global orc sco
+puts $orc "instr $no"
+puts $orc $code
+puts $orc "endin"
+} 
+</pre>
+      <pre class="programlisting">
+# Here is the instrument code
+append ins "asum init 0 \n"
+append ins "ifreq = p5 \n"
+append ins "iamp = p4 \n" 
+</pre>
+      <pre class="programlisting">
+for { set i 0 } { $i &lt; 10 } { incr i } {
+append ins "a$i oscili iamp,
+ifreq+ifreq*[expr $i * 0.002], 1\n"
+} 
+</pre>
+      <pre class="programlisting">for { set i 0 } {$i &lt; 10 } { incr i } {
+if { $i } {
+append ins " + a$i"
+} else {
+append ins "asum = a$i "
+}
+} 
+</pre>
+      <pre class="programlisting">
+append ins "\nk1 linen 1, 0.01, p3, 0.1 \n"
+append ins "out asum*k1" 
+</pre>
+      <pre class="programlisting">
+# build the instrument and a dummy score 
+</pre>
+      <pre class="programlisting">
+MakeIns 1 $ins
+puts $sco "f0 10"
+close $orc
+close $sco 
+</pre>
+      <pre class="programlisting">
+# compile
+csCompile $orcfile $scofile -odac -d -m0 
+</pre>
+      <pre class="programlisting">
+# set a wavetable
+csTable 1 0 16384 10 1 .5 .25 .2 .17 .15 .12 .1 
+</pre>
+      <pre class="programlisting">
+# send in a sequence of events and perform it
+for {set i 0} { $i &lt; 60 } { incr i } {
+csNote 1 [expr $i * 0.1] .5 \
+[expr ($i * 10) + 500] [expr 100 + $i * 10]
+}
+csPerform 
+</pre>
+      <pre class="programlisting">
+# it is possible to run it interactively as
+# well
+csNote 1 0 10 1000 200
+csPlay 
+</pre>
+      <p>The use of such facilities as provided by e-macs can emulate an environment not 
+unlike the one found under the so-called ‘modern synthesis systems', such as SuperCollider (SC).
+In fact, it is possible to run Csound in a client-server set-up, which is one of the features of SC3. 
+A major advantage is that Csound provides about three or four times the number of unit generators 
+found in that language (as well as providing a lower-level approach to signal processing, in fact 
+these are but a few advantages of Csound). </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="csserver.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tclcsound.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tclwrapper.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">A Csound server  </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">  TclCsound as a language wrapper </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

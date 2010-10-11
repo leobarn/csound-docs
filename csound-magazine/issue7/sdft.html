@@ -1,0 +1,358 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  
+
+
+  
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+
+
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL<a href="index.html"></a>
+</div>
+
+
+<div id="header">
+<h2>Csound and the Sliding Discrete Fourier Transform</h2>
+
+    
+<h3>Subtitle of Article</h3>
+John ffitch<br>
+jpff AT cs.bath.ac.uk
+</div>
+
+
+<div id="content">
+<h2>Introduction</h2>
+
+Many Csound users may have seen me referring to the SDFT or Sliding
+Discrete Fourier Transform in recent months.  In this article I will
+introduce the basic ideas, and describe the Csound implementation.
+The main message is that it is integrated with the Richard Dobson
+f-signals and so is easy to use.  The down side is that it is slow,
+and definitely not for real-time performance.
+<p>
+The work is the product of a research project carried out by Russell
+Bradford (a mathematician), Richard Dobson (a musician) and myself (a
+hacker), and was funded largely by the <b>Arts and Humanities Research
+Council</b> under their <i>Speculative Research</i> theme, to whom we
+express our thanks.
+
+<h2><br>
+I. The SDFT <br>
+</h2>
+
+The use of the spectral domain is well known and there is no reason to
+reiterate the underlying concepts.  Most people use an algorithm
+called the FFT (Fast Fourier Transform) to calculate the Discrete
+Fourier transform of a window of audio signal, and then perform
+whatever operation on it they wish.  The reconstruction of the
+time-domain signal is then performed by the IFFT (Inverse Fast Fourier
+Transform) algorithm, together with some averaging process.
+
+<p>
+
+The SDFT is an alternative algorithm, whereby the analysis window is
+always moved on by one sample, and the value of the DFT for the new
+window is calculated from the previous one.  That such a process
+should exist is not a surprise, as the FFT calculates the spectral
+components in a window, and if that window is moved (slide) by one
+sample, it is obvious that most of the information will remain the
+same.  Details can be found in many places, such as James Moorer's
+<i>Audio in the New Millennium</i>, JAES 48(5), 2000, or more recently
+in  Bradford, Dobson and ffitch <i>Sliding is Smoother than
+Jumping</i> p287--290, ICMC2005.  The bottom line is that for each
+frequency bin the process of moving one involves adding the new
+sample, subtracting the sample that has fallen off the start of the
+window, and a multiplication (rotation) by a complex value.
+<br>
+<img src="maths.jpg">
+<br>
+where <i>t</i> refers to time, <i>n</i> the bin number and <i>N</i>
+the window size.  We start from all zeros so there is no starting
+problem for the first DFT.
+<p>
+There are a number of implications of this formulation, most obviously
+there is no requirement for the window size to be a power of two.
+Some of the more surprising implications can be found in Bradford,
+Dobson and ffitch's paper on the Sliding Phase Vocoder in ICMC2007.
+Here I just draw attention to the bandwidth of each bin, which is up
+to Nyquist, and so each bin can contribute to any frequency.
+<p>
+But the point of this article is not to discuss the mathematics, but
+rather the Csound implementation, and the opcodes that can use it.
+Before that we do need to consider an important issue, windowing.
+
+<h3>Windowing and Sliding</h3>
+
+The normal process is to apply an envelope window to the sample to
+improve frequency resolution and minimise smear.  In the SDFT this
+cannot be done in the time domain.  But it is well known that
+convolution in the time domain is multiplication in the frequency
+domain, and that is what we do.  This does impose a slight
+restriction, that practically the window type must be built from
+cosines.  This is acceptable for rectangular, Hamming, von Hann,
+Blackman (and variants), Blackman-Harris, and Nutall.  It does not
+include Kaiser windows which is pity; we think we have a solution but
+it is a compromise, and is currently not implemented.
+<p>
+We are also forced to lose the ability to provide a window as a
+ftable.  Technically it would be possible to provide a user-window
+facility presented as coefficients of the cosine, but this does seem
+rather detailed for common use!
+
+<h2><br>
+II. Integration into Csound <br>
+</h2>
+
+Due to earlier work by Richard Dobson, and extended by Victor
+Lazzarini, Csound has a useful and well constructed streaming phase
+vocoder.  The process here is to construct a new DFT frame when
+sufficient samples have been obtained, with a restriction that this
+cannot be more that once per k-rate frame.  Internally the f-variables
+have a structure to maintain the bin values, window size and type and
+various housekeeping data.  The SDFT implementation in Csound reuses
+this structure, so from an elementary point of view the introduction
+of the sliding option has no syntactic change.  All existing use of the
+pvsXXX opcodes and f-variables should continue to work after the
+introduction of sliding.  Actually this is not totally true, if small
+hop sizes are used with small <b>ksmps</b>, but I hope this is a very
+small problem.  This is explained later.
+<p>
+In essence the SDFT is a transform with an overlap parameter of 1
+sample.  That plus the restriction on the existing <b>pvsanal</b> give
+the clue to the way the integration has been done.  In the overlap is
+less than the ksmps or is small (currently set to less than 10 but
+maybe this should be 2) the sliding format it use.  This requires a
+transform frame for each of the ksmps, and that happens underneath the
+user's view.  The construction of the frames then proceeds using the
+formula above rather than the FFT.
+<p>
+The reconstruction of the signal is rather different.  In the original
+Moorer paper in AES the inverse algorithm is very memory intensive
+which looking deceptively similar to the forward transform.
+Fortunately there is a better way that Russell Bradford noticed.  As
+we have a transform for each sample we can treat each frame as a
+representation of a single sample, and then the fundamental Discrete
+Fourier Transform formula
+<br>
+<img src="imath.jpg">
+<br>
+applies.  There is a choice we can make; if each frame represents one
+sample, which one?  If we choose the oldest sample then the <i>t</i> in this
+formula is zero, and the equation collapses to a straight addition of
+the bins!  This does introduce a latency of the window size of
+course.  By considering the middle sample to be represented by the
+frame this becomes and alternating add/subtract formula.  A zero
+latency version is more expensive, and while we have had it
+implemented in our experimental code if seems rather too much.
+<p>
+It should not come as a surprise that such a simple formula exists, as
+it is just treating the reconstruction as an oscillator bank.  In the
+Csound SDFT implementation of pvsynth we are using the midpoint
+version.  We could make an option for alternatives but that seems a
+little over-complex.
+
+<h3>Csound Opcodes</h3>
+
+The opcode to create a sliding DFT frame is <b>pvsanal</b> as before.
+The arguments are not changed, but if the overlap parameter is 1 or
+less than <b>ksmps</b> then sliding is use.  In the manual the example
+given is
+<pre>
+ain   in                             ; live source
+ffin   pvsanal  ain,1024,256,2048,0  ; analyze, using Hamming
+</pre>
+If this is replaced by
+<pre>
+ain   in                             ; live source
+ffin   pvsanal  ain,1024,1,2048,0    ; analyze, using Hamming
+</pre>
+the sliding mechanism will be used, and the internal structures will
+be different.
+<p>
+The reconstruct the signal the opcode <b>pvsynth</b> is used; if the
+f-signal is a sliding one then the appropriate mechanism is used.
+
+
+<h2><br>
+III. Transforming in the Spectral Domain<br>
+</h2>
+
+Just translating to and from the spectral domain is not very
+interesting.  The value lies in the transformations.  Csound has a
+rich (and growing) collection of these, and they all need to be made
+aware of the sliding format.  In addition this opens the possibility
+for a-rate changes in some cases.  In this section I indicate the
+progress so far in this.  There are three classes; those known to
+work, those believed to work but untested, and those not done.
+
+<h3>Verified Transformations</h3>
+
+A very common use of the spectral domain is to change the pitch of a
+signal.  Csound provides two opcodes for this, <b>pvscale</b> which
+scales the frequency components in a harmonic way, and <b>pvshift</b>
+which shifts the frequency components, stretching/compressing its
+spectrum.  Both these are implemented with sliding, but with one
+important additional feature, the the shift amount (the second
+argument in both cases) can optionally be an a-rate variable.  This
+gives much finer-grained control over the transformation, and allows a
+<b>kr</b> value as required elsewhere.
+
+<pre>
+instr 3
+      al   line     400, p3, 500
+      asig in
+      fsig pvsanal  asig,128,1,128,1
+      fs   pvshift  fsig, al, 10
+      acln pvsynth  fs
+           out      acln
+endin
+
+instr 4
+      asig oscili   16000, 440, 1 
+      fsig pvsanal  asig,512,1,512,0
+      fs   pvscale  fsig, 1.1
+      acln pvsynth  fs
+           out      acln
+endin
+</pre>
+<p>
+
+Another common use of the spectral freeze.  Csound provides
+<b>pvsfreeze</b> which can also be used in a sliding fashion, but is
+otherwise unchanged
+<pre>
+instr  1
+       kl   line       100, p3, 1000
+       asig oscili     16000, kl, 1 
+       fsig pvsanal    asig,128,1,128,1
+       ktrig oscil     1.5, 2, 1             ; trigger
+       ktrig = abs(ktrig)
+       fou  pvsfreeze  fsig, ktrig, ktrig    ; regular 'freeze' of spectra
+       aa   pvsynth    fou
+            out        aa
+endin
+</pre>
+
+There are different ways of filtering in the spectral domain.  The
+<b>pvstencil</b> provides one such transformation, using a masking
+function table.  For example
+<pre>
+instr 2
+       kl   line      100, p3, 1000
+       asig oscili    16000, kl, 1 
+       fsig pvsanal   asig,128,1,128,1
+       fcln pvstencil fsig, 0, 1, 1
+       acln pvsynth   fcln
+            out       acln
+endin
+</pre>
+with "f1 0 4096 10 1" in the score.
+<p>
+The last if the verified opcodes is <b>pvsmix</b> which does a
+spectral mix of two signals, taking the largest amplitude from each
+matching pair of bins
+<pre>
+instr 5
+      a2   diskin2    "latedemo.wav", 1
+      f2   pvsanal    a2,1000,1,1000,1
+      asig in
+      fsig pvsanal    asig,1000,1,1000,1
+      fs   pvsmix     fsig, f2
+      acln pvsynth    fs
+           out        acln
+endin
+</pre>
+
+<h3>Converted but Untested Transformations</h3>
+
+It is only time that has not permitted the full checking of these
+opcode.
+
+<p>
+
+Another filtering opcode <b>pvsfilter</b> filters one stream according
+to a second.  The code for this is included in the version, as is the
+cross-synthesis opcode <b>pvscross</b>.
+<p>
+The previous version of <b>pvscent</b> to calculate the spectral
+centroid of a signal has been changed to return either a k-rate answer
+or an a-rate one.
+<p>
+<b>pvsbin</b> could return the a-rate values, but so far it is
+limited to returning the values at that start of each k-cycle.
+<p>
+The opcodes <b>pvsosc</b>, <b>pvsmaska</b>, <b>pvsblur</b>,
+<b>pvsinit</b> and <b>pvsmooth</b> have unverified code that may work.
+<p>
+<b>pvsinfo</b>, the information opcode has not been changed, but
+should work the same.  It does not give an explicit statement that it is
+doing sliding, but the overlap value includes that.
+
+<h3>Non-functional Transformations</h3>
+
+The modified opcodes fall into two major categories; those which have
+just not yet been looked at and those that have major design
+questions.
+<p>
+The first category includes <b>pvsdemix</b>, <b>pvsmorph</b>,
+<b>pvspitch</b>, <b>pvsifd</b>, and <b>pvsarp</b>. 
+<p>
+The problematic opcodes are those that read and write, as the data
+from the sliding variant is much larger.  Reading externally generated
+PVOC-EX data will not work either, unless that is generated at 1
+sample overlap, and the utility to do that needs to be written.
+The opcodes here are
+<b>pvsdiskin</b>, <b>pvsftr</b>, <b>pvsftw</b>, <b>pvsfread</b>,
+<b>pvsin</b>, <b>pvsout</b>, <b>pvsdisp</b>, <b>pvsfwrite</b>,
+<b>pvsvoc</b>, <b>pvsbuffer</b>, and <b>pvsbufread</b>.
+<p>
+And I just do not know what should be done with <b>pvsadsyn</b> as we
+are already using an oscillator-bank to reconstruct.
+
+<h2><br>
+IV. Some Thoughts<br>
+</h2>
+
+Clearly this is work in progress.  The untested opcodes will be tested
+soon, and the opcodes I failed to notice initially will get looked
+at.  What to do about read/write and external data needs some
+reflection and advise.
+<p>
+There is also one important caveat.  This process is not fast.  I will
+repeat that: <b>THIS PROCESS IS NOT FAST</b>, and so do not expect to
+use it in real-time performance, at least until hardware improves and
+our next research project is funded.
+<p>
+More technical information about the process can be found in the
+slides presented at ICMC2007 which are available <a
+href="http://dream.cs.bath.ac.uk/SDFT">here</a> with audio examples. 
+
+
+<h2>Acknowledgements</h2>
+That to the Arts and Humanities Research Council for their confidence
+in our work, and for their funds.  The work described here is the
+result of collaboration between myself, Russell Bradford a
+mathematician) and Richard Dobson (a musician).  The words here are
+mine, but the insights and inspirations of my collaborators cannot be
+underestimated.
+<p>
+I would also like to thank all the members of the Csound community who,
+knowingly or otherwise, have encouraged me in this area.  I will
+mention especially Victor Lazzarini and Rick Boulanger in this regard,
+who both had a larger part than they realise.
+</div>
+
+
+</div>
+
+</body>
+</html>

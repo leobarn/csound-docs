@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>sinsyn</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sininv.html" title="sininv" />
+    <link rel="next" href="sleighbells.html" title="sleighbells" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">sinsyn</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sininv.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sleighbells.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="sinsyn">
+      <a id="sinsyn"></a>
+      <div class="titlepage"></div>
+      <a id="Indexsinsyn" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">sinsyn</span>
+        </h2>
+        <p>sinsyn — 
+    Streaming partial track additive synthesis with cubic phase interpolation 
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3568847"></a>
+        <h2>Description</h2>
+        <p>
+  The sinsyn opcode takes an input containg a TRACKS pv streaming signal (as generated,
+  for instance by the partials opcode). It sinsynthesises the signal using linear amplitude and cubic phase
+  interpolation to drive a bank of interpolating oscillators with amplitude and pitch scaling controls. Sinsyn 
+  attempts to preserve the phase of the partials in the original signal and in so doing it does not allow for
+  pitch or timescale modifications of the signal.
+	      </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3568865"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>sinsyn</strong></span> fin, kscal,  kmaxtracks, ifn</pre>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3569824"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- output audio rate signal
+    </p>
+        <p>
+      <span class="emphasis"><em>fin</em></span> -- input pv stream in TRACKS format
+    </p>
+        <p>
+      <span class="emphasis"><em>kscal</em></span> -- amplitude scaling
+    </p>
+        <p>
+      <span class="emphasis"><em>kmaxtracks</em></span> -- max number of tracks in sinsynthesis. Limiting this will cause
+	  a non-linear filtering effect, by discarding newer and higher-frequency tracks (tracks are ordered
+	  by start time and ascending frequency, respectively)
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- function table containing one cycle of a sinusoid (sine or cosine) </p>
+        <p>
+    
+  </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3569873"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="id3569880"></a>
+          <p class="title">
+            <b>Example 494. Example</b>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+ain inch 1                  ; input signal
+fs1,fsi2 pvsifd ain,2048,512,1 ; ifd analysis
+fst  partials fs1,fsi2,.003,1,3,500  ; partial tracking
+      aout  sinsyn fst, 1, 1.5, 500, 1 ; resynthesis (up a 5th)
+out aout
+        </pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+
+    </p>
+        <p>
+The example above shows partial tracking of an ifd-analysis signal and
+cubic-phase additive resynthesis. 
+    
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3569904"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>June 2005 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>November 2004.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sininv.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sleighbells.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sininv </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sleighbells</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

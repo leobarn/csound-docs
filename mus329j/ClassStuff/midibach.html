@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft FrontPage 4.0">
+<TITLE>MIDIFile Playback Instrument</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>;MIDIFile playback instrument designed in class on 10-15-2002 RP
+;Perf with csound -gWo midibach.wav -F bachinv.mid midibach.orc stupid.sco 
+
+sr	=	44100
+kr	=	4410
+ksmps	=	10
+nchnls	=	1
+
+gisine	ftgen	1,0,8192,10,1	;Sine wave table for foscil
+
+	instr 1
+ifn	=	1	;sine
+index	=	4	;brassy
+icar	=	1	;all harmonics
+imod	=	1
+ivibwth	=	.1	;max vib width
+ilfohz	=	100	;max vib rate
+icps	cpsmidi		;cvt this midinote to cps
+iamp	ampmidi	10000	;cvt this midi vel to amp
+kmodwh	midictrl	1,0,1	;cc#1 (mod wheel) scaled 0-1</pre>
+<pre>; use the mod wheel to control vib width and rate
+klfo	oscili	ivibwth*kmodwh,ilfohz*kmodwh,gisine
+kvib	=	1+klfo	;offset by 1 for use as multiplier
+kamp	linenr	iamp,.01,.5,.01
+kindex	linenr	index,.01,.25,.01
+asig	foscil	kamp,icps*kvib,icar,imod,kindex,gisine
+	out	asig
+	endin
+</pre>
+<HR>
+
+<pre>;dumb score for midibach.orc to force Csound to execute for 2 minutes while playing bachinv.mid
+f0	120</pre>
+<HR>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="229" VALIGN="TOP">
+<P><a HREF="../../../dwnld/classorc/MIDIBACH.ORC">Download
+midibach.orc</a></TD>
+  <TD WIDTH="193" VALIGN="TOP">
+<p align="center"><a href="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/bachinv.mid">Download
+bachinv.mid</a></TD>
+<TD WIDTH="168" VALIGN="TOP">
+<p ALIGN="RIGHT"><a HREF="../../../dwnld/classsco/MIDIBACH.SCO">Download
+midibach.sco</a></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>
+nload
+stupid.sco</a></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fluidCCk</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fluidCCi.html" title="fluidCCi" />
+    <link rel="next" href="fluidControl.html" title="fluidControl" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fluidCCk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fluidCCi.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fluidControl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="fluidCCk">
+      <a id="fluidCCk"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFluidCCk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fluidCCk</span>
+        </h2>
+        <p>fluidCCk — 
+      Sends a MIDI controller data message to fluid.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3283955"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>fluidCCk</strong></span> iEngineNumber, iChannelNumber, iControllerNumber, kValue</pre>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3283980"></a>
+        <h2>Description</h2>
+        <p>Sends a MIDI controller data (MIDI controller number and value to use)
+    message to a fluid engine by number on the user specified MIDI channel number.
+    </p>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3283993"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>iEngineNumber </em></span> -- engine number assigned from
+    fluidEngine</p>
+        <p><span class="emphasis"><em>iChannelNumber </em></span> -- MIDI channel number to which the
+    Fluidsynth program is assigned: from 0 to 255. MIDI channels numbered 16 or
+    higher are virtual channels.</p>
+        <p><span class="emphasis"><em>iControllerNumber </em></span> -- MIDI controller number to use
+    for this message</p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3284021"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>kValue </em></span> -- value to set for controller (usually
+  0-127)</p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3284034"></a>
+        <h2>See Also</h2>
+        <p><a class="link" href="fluidEngine.html" title="fluidEngine"><em class="citetitle">fluidEngine</em></a>, <a class="link" href="fluidNote.html" title="fluidNote"><em class="citetitle">fluidNote</em></a>, <a class="link" href="fluidLoad.html" title="fluidLoad"><em class="citetitle">fluidLoad</em></a>, <a class="link" href="fluidCCi.html" title="fluidCCi"><em class="citetitle">fluidCCi</em></a></p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3284943"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot com), Steven Yi. 
+    Thanks to Peter Hanappe for Fluidsynth.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fluidCCi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fluidControl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fluidCCi </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fluidControl</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

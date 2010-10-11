@@ -1,0 +1,150 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft FrontPage 4.0">
+<TITLE>Example Sound File Playback Instruments</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>	sr        = 44100
+	kr        = 4410
+	ksmps     = 10.0
+	nchnls    = 2
+
+;================================================================;
+;        Example Sound File Playback Instruments                 ;
+;                                                                ;  
+; These instruments demonstrate various approaches to sound file ;
+; playback from disk in Csound. The sound files are located in   ;
+; the zip archive sounds1.zip. Unzip the files into your SSDIR   ;
+; before running this orchestra. RP                              ;
+;================================================================; 
+
+;simple soundin instrument with rescaling factor
+          instr     1
+iscale    =         (p5 == 0 ? 1 : p5)	;optional rescale fact in p5
+asound    soundin   p4			;p4 is nn of soundin.nn
+aoutput   =         asound * iscale	;rescale
+          outs      aoutput,aoutput
+          endin
+;soundin instrument with skip time &amp; envelope
+          instr     2
+ifile     =         p4			;p4 is nn of soundin.nn
+iskip     =         p5			;p5 is skiptime in seconds
+irise     =         p6
+idecay    =         p7
+iscale    =         (p8 == 0 ? 1 : p8)	;optional rescale fact in p8
+asound    soundin   ifile,iskip
+kgate     linen     iscale,irise,p3,idecay
+aoutput   =         asound * kgate	;apply envelope and rescale
+          outs      aoutput,aoutput
+          endin
+;soundfile playback with gen01 and tablei
+          instr     3
+;table will be rescaled to +/- 1, so need pk amp
+iamp      =         p4			;peak amplitude
+ifunc     =         p5			;gen01 function number
+istart    =         p6			;start sample for playback
+idur      =         p7			;playback duration
+iend      =         p8			;end sample for playback
+irise     =         p9
+idecay    =         p10
+aindex    line      istart,idur,iend	;play forwards or backwards
+asound    tablei    aindex,ifunc	
+kgate     linen     iamp,irise,p3,idecay
+aoutput   =         asound * kgate	;apply envelope
+          outs      aoutput,aoutput
+          endin
+;soundfile playback with gen01 and loscil
+          instr     4
+iamp      =         p4			;peak amplitude
+icps      =         cpspch(p5)		;desired pitch
+ifunc     =         p6			;gen01 function no
+iroot     =         cpspch(p7)		;original pitch of sample
+irise     =         p8
+idecay    =         p9
+kamp      linen     iamp,irise,p3,idecay
+asig      loscil    kamp,icps,ifunc,iroot,p10,p11,p12
+          outs      asig,asig
+          endin
+;loscil instrument that assumes aiff files and reads all info from file
+          instr     5
+iamp      =         p4			;peak amplitude
+icps      =         cpspch(p5)		;desired pitch
+ifunc     =         p6			;gen01 function no
+irise     =         p7
+idecay    =         p8
+kamp      linen     iamp,irise,p3,idecay
+asig      loscil    kamp,icps,ifunc
+          outs      asig,asig
+          endin</pre>
+<HR>
+
+<pre>;Test score for soundins.orc. 
+;load in some .wav sound files using gen01
+;&quot;Hello, my name is Richard Boulanger.&quot; 132098 samples. 2.995 seconds.
+;	st	size	gen#	filecod		skip	format	chan
+f01	0	262145	1	&quot;richard.wav&quot;	0	4	0
+;a cello note: dur = 1.568; len = 34569; root = 7.05
+f02	0	65537	1	&quot;cello.wav&quot;	0	4	0
+;an alto flute note with loop, deferred table size, read loop info from file
+f03	0	0	1	&quot;altfloop.aif&quot;	0	0	0
+;test instrument 1 - uses soundin.42 (Beethoven excerpt)
+;nn	st	dur	snd#	rscl
+i01	0	6	42	0
+s
+;test instrument 2 - uses soundin.41 (copy of &quot;richard.wav&quot;)
+;the whole phrase
+;nn	st	dur	snd#	skip	rise	decay	rscl
+i02	0	3	41	0	0	0	0
+;skip to the name and fade in/out
+i02	4	1.5	.	1.7	.1	1
+s
+;test instrument 3 - uses &quot;richard.wav&quot; in fn01
+;first, the whole phrase forwards at original pitch
+;nn	st	dur	amp	fn#	start	dur	end	rise	decay
+i03	0	3	30000	1	0	2.995	132098	0	0
+;next, the whole phrase backwards at original pitch
+i03	+	.	.	.	132098	.	0
+f00	7
+s
+;test instrument 4 - uses &quot;cello.wav&quot; in fn02
+;play some cello notes at different pitches
+;nn	st	dur	amp	pch	fn#	root	rise	decay	mode	lpst	lpend
+i04	0	1	15000	7.00	2	7.05	.01	.1	0	0	1
+i04	+	.	.	7.03
+i04	+	.	.	7.06
+i04	+	.	.	7.09
+i04	+	.	.	8.00
+i04	+	2	.	6.05
+f00	7.5
+s
+;test instrument 5 with alto flute sample
+;nn	st	dur	amp	pch	fn#	rise	decay
+i05	0	1.5	15000	7.05	3	.01	.1
+i05	1.5	.5	&lt;	7.09
+i05	2	.	.	8.00
+i05	2.5	.	25000	8.05
+i05	3	2	8000	7.07
+i .	.	.	.	7.10
+i .	.	.	.	8.01
+i .	.	.	.	8.04
+e
+</pre>
+<HR>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="229" VALIGN="TOP">
+<P><a HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/soundins.orc">Download
+soundins.orc</a></TD>
+  <TD WIDTH="193" VALIGN="TOP">
+<p align="center"><a href="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/sounds1.zip">Download
+sounds1.zip</a></TD>
+<TD WIDTH="168" VALIGN="TOP">
+<p ALIGN="RIGHT"><a HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/soundins.sco">Download
+soundins.sco</a></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

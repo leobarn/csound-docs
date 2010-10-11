@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>What's new in Csound 5.12</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PrefaceTop.html" title="Preface" />
+    <link rel="prev" href="PrefaceGettingStarted.html" title="Getting Started with Csound" />
+    <link rel="next" href="PartOverview.html" title="Part I. Overview" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">What's new in Csound 5.12</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="PrefaceGettingStarted.html">Prev</a> </td>
+          <th width="60%" align="center">Preface</th>
+          <td width="20%" align="right"> <a accesskey="n" href="PartOverview.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section" title="What's new in Csound 5.12">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="PrefaceWhatsNew"></a>What's new in Csound 5.12</h2>
+          </div>
+        </div>
+      </div>
+      <h3><a id="id2986211"></a>New in Version 5.12 (January 2010)</h3>
+      <p>
+   </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+            <p>New opcodes:
+         </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+	       <a class="link" href="transegr.html" title="transegr"><em class="citetitle">transegr</em></a>
+               is a version of
+               the <a class="link" href="transeg.html" title="transeg"><em class="citetitle">transeg</em></a>
+               opcode which has a release section which is triggered
+               by midi,
+               a <a class="link" href="turnoff2.html" title="turnoff2"><em class="citetitle">turnoff2</em></a>
+               opcode or a negative instrument
+               number <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i score event</em></a>.
+	     </li>
+                <li class="listitem">
+	       <a class="link" href="ftgenonce.html" title="ftgenonce"><em class="citetitle">ftgenonce</em></a>
+               generates a function table from within an instrument
+               definition, without duplication of data.
+	     </li>
+                <li class="listitem">
+	       The new <a class="link" href="SignalFlowGraphOpcodes.html" title="Signal Flow Graph Opcodes"><em class="citetitle">Signal
+		   Flow opcodes </em></a> enable the usage of
+               signal flow graphs in Csound.
+	     </li>
+                <li class="listitem"><a class="link" href="passign.html" title="passign"><em class="citetitle">passign</em></a>
+             allows quick initialization of i-rate variables from p-fields</li>
+                <li class="listitem"><a class="link" href="crossfm.html" title="crossfm"><em class="citetitle">crossfm</em></a>
+             implements crossed fm synthesis.</li>
+                <li class="listitem">
+	       <a class="link" href="loopxseg.html" title="loopxseg"><em class="citetitle">loopxseg</em></a>
+               is
+               like <a class="link" href="loopseg.html" title="loopseg"><em class="citetitle">loopseg</em></a>
+               but with exponential envelope.
+	     </li>
+                <li class="listitem">
+	       <a class="link" href="looptseg.html" title="looptseg"><em class="citetitle">looptseg</em></a>
+               is like <a class="link" href="loopseg.html" title="loopseg"><em class="citetitle">loopseg</em></a>
+               but with a flexible envelope like <a class="link" href="transeg.html" title="transeg"><em class="citetitle">transeg</em></a> 
+	     </li>
+              </ul>
+            </div>
+            <p>
+       </p>
+          </li>
+          <li class="listitem">
+            <p>Bug fixes and improvements:
+         </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">    
+	       <a class="link" href="pvshift.html" title="pvshift"><em class="citetitle">pvshift</em></a> would overwrite in double mode.
+             </li>
+                <li class="listitem">
+	       <a class="link" href="pan2.html" title="pan2"><em class="citetitle">pan2</em></a> case 3 fixed.
+             </li>
+                <li class="listitem">
+	       <a class="link" href="clockon.html" title="clockon"><em class="citetitle">clockon</em></a>
+	       and  <a class="link" href="clockoff.html" title="clockoff"><em class="citetitle">clockoff</em></a>
+	       now work again.
+             </li>
+                <li class="listitem">
+	       <a class="link" href="cross2.html" title="cross2"><em class="citetitle">cross2</em></a> and <a class="link" href="interp.html" title="interp"><em class="citetitle">interp</em></a> could have divided by zero
+             </li>
+                <li class="listitem">
+	       linecount for error messages no longer includes text
+	       from <a class="link" href="CommandUnifileParFile.html" title="Command Line Parameter File (.csoundrc)"><em class="citetitle">.csoundrc</em></a>
+             </li>
+                <li class="listitem">
+	       <a class="link" href="p5gconnect.html" title="p5gconnect"><em class="citetitle">p5gconnect</em></a>
+	       changed to use a separate thread to avoid timeout problem.
+             </li>
+                <li class="listitem">
+	       <a class="link" href="transeg.html" title="transeg"><em class="citetitle">transeg</em></a> checks argument count.
+             </li>
+                <li class="listitem">
+	       <a class="link" href="sfload.html" title="sfload"><em class="citetitle">sfload</em></a>
+               used to be limited to 10 sound fonts and was not policed.
+               Now open-ended.
+             </li>
+              </ul>
+            </div>
+            <p>
+       </p>
+          </li>
+          <li class="listitem">
+            <p>
+         Internal Changes:
+         </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+	       \" allowed as an escape in orchestral strings
+             </li>
+                <li class="listitem">
+	       New parser fixed on optional arguments
+             </li>
+                <li class="listitem">
+	       Better checking of <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f</em></a> statement with negative number
+             </li>
+                <li class="listitem">
+	       Soundfonts only initialise pitches array once, in the
+	       soundfont opcodes.
+             </li>
+                <li class="listitem">
+	       Usual collection of gratuitous minor changes, layout and comments
+             </li>
+              </ul>
+            </div>
+            <p>
+       </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+ </p>
+      <h3><a id="id2987463"></a>New in Version 5.11 (June 2009)</h3>
+      <p>
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+            <p>New opcodes:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem"><a class="link" href="mp3in.html" title="mp3in"><em class="citetitle">mp3in</em></a>
+              allows reading of mp3 files directly in the orchestra.</li>
+                <li class="listitem"><a class="link" href="wiiconnect.html" title="wiiconnect"><em class="citetitle"></em>wiiconnect</a>, <a class="link" href="wiidata.html" title="wiidata"><em class="citetitle"></em>wiidata</a>, <a class="link" href="wiisend.html" title="wiisend"><em class="citetitle"></em>wiisend</a>, <a class="link" href="wiirange.html" title="wiirange"><em class="citetitle"></em>wiirange</a> opcodes by john ffitch to recieve and send data to a wiimote controller.</li>
+                <li class="listitem">New opcodes to receive data directly from a p5glove by john ffitch <a class="link" href="p5gdata.html" title="p5gdata"><em class="citetitle">p5gdata</em></a></li>
+                <li class="listitem"><a class="link" href="tabsum.html" title="tabsum"><em class="citetitle">tabsum</em></a> sums sections of ftables</li>
+                <li class="listitem"><a class="link" href="MixerSetLevel_i.html" title="MixerSetLevel_i"><em class="citetitle">MixerSetLevel_i</em></a> an init-time only version of <a class="link" href="MixerSetLevel.html" title="MixerSetLevel"><em class="citetitle">MixerSetLevel</em></a></li>
+                <li class="listitem"><a class="link" href="doppler.html" title="doppler"><em class="citetitle">doppler</em></a>
+              implements a simulation of the doppler effect.</li>
+                <li class="listitem"><a class="link" href="filebit.html" title="filebit"><em class="citetitle">filebit</em></a> reports the file depth of a file.</li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          New functionality
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                New panning type for <a class="link" href="pan2.html" title="pan2"><em class="citetitle"></em>pan2</a> opcode
+              </li>
+                <li class="listitem">
+                New csd score tag &lt;CsExScore&gt;.
+              </li>
+                <li class="listitem">
+                New -Ma option for ALSA RT MIDI module which listens to all devices.
+              </li>
+                <li class="listitem">There is a gen49 to read mp3 files
+              </li>
+                <li class="listitem">
+                Added rounding bin code to <a class="link" href="pvscale.html" title="pvscale"><em class="citetitle">pvscale</em></a>
+              </li>
+                <li class="listitem">
+              Added non-power-of-2 table support for <a class="link" href="ftload.html" title="ftload"><em class="citetitle">ftload</em></a> and <a class="link" href="ftsave.html" title="ftsave"><em class="citetitle">ftsave</em></a>
+              </li>
+                <li class="listitem">
+              GEN23 totally rewritten to be more consistent in what constitutes
+       a separator and comments. (Still no /* */ comments)
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>Bug fixes and improvements:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                New examples for pvs opcodes by Joachim Heintz: <a class="link" href="pvsarp.html" title="pvsarp"><em class="citetitle"></em>pvsarp</a>, <a class="link" href="pvscent.html" title="pvscent"><em class="citetitle"></em>pvscent</a>, <a class="link" href="pvsbandp.html" title="pvsbandp"><em class="citetitle"></em>pvsbandp</a>, <a class="link" href="pvsbandr.html" title="pvsbandr"><em class="citetitle"></em>pvsbandr</a>, <a class="link" href="pvsbufread.html" title="pvsbufread"><em class="citetitle"></em>pvsbufread</a>,  <a class="link" href="pvsadsyn.html" title="pvsadsyn"><em class="citetitle"></em>pvsadsyn</a>,  <a class="link" href="pvsynth.html" title="pvsynth"><em class="citetitle"></em>pvsynth</a>,  <a class="link" href="pvsblur.html" title="pvsblur"><em class="citetitle"></em>pvsblur</a>,  <a class="link" href="pvscale.html" title="pvscale"><em class="citetitle"></em>pvscale</a>,  <a class="link" href="pvscross.html" title="pvscross"><em class="citetitle"></em>pvscross</a>,  <a class="link" href="pvsfilter.html" title="pvsfilter"><em class="citetitle"></em>pvsfilter</a>,  <a class="link" href="pvsfreeze.html" title="pvsfreeze"><em class="citetitle"></em>pvsfreeze</a>,  <a class="link" href="pvshift.html" title="pvshift"><em class="citetitle"></em>pvshift</a>,  <a class="link" href="pvsmaska.html" title="pvsmaska"><em class="citetitle"></em>pvsmaska</a>,  <a class="link" href="pvsmorph.html" title="pvsmorph"><em class="citetitle"></em>pvsmorph</a>
+              </li>
+                <li class="listitem">Use of automatic numbering of ftables reuses table numbers
+              </li>
+                <li class="listitem"><a class="link" href="seed.html" title="seed"><em class="citetitle"></em>seed</a> with positive argument was wrong
+              </li>
+                <li class="listitem"><a class="link" href="sprintf.html" title="sprintf"><em class="citetitle"></em>sprintf</a> with an empty string printed wrong data
+              </li>
+                <li class="listitem"><a class="link" href="mute.html" title="mute"><em class="citetitle"></em>mute</a> now works with both numeric and named instruments
+              </li>
+                <li class="listitem">Small fixes in <a class="link" href="diskin.html" title="diskin"><em class="citetitle"></em>diskin</a>, and in <a class="link" href="tablexkt.html" title="tablexkt"><em class="citetitle"></em>tablexkt</a>
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Internal Changes:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">SConstruct now builds completely independent shared libraries
+       for Python, Lua, and Java wrappers.
+              </li>
+                <li class="listitem">New Parser almost usable
+              </li>
+                <li class="listitem"> Redrawing of graphs fixed so that only selected ones get redrawn.
+              </li>
+                <li class="listitem">RT-alsa more forgiving on near sample rates
+              </li>
+                <li class="listitem">It is possible to have the score generated by an external program
+         rather than using standard score format using
+         &lt;CScore bin="translater"&gt; to call the program translater on the
+         score data
+              </li>
+                <li class="listitem">lpc_export fixed
+              </li>
+                <li class="listitem">Removed limit on macro names length
+              </li>
+                <li class="listitem">PMAX, the number of arguments to a score event has been reduced
+    by 2, and an overflow system introduced so GENs can have
+    arbitrary numbers of arguments.
+              </li>
+                <li class="listitem">Increased API version to 2.1.
+              </li>
+                <li class="listitem">    New API function pointer ldmemfile2withCB() which is
+       a version of ldmemfile() allowing a callback to be set and called
+       exactly once to process the MEMFIL buffer after it is loaded.
+              </li>
+                <li class="listitem">csound-&gt;floatsize set; zero in earlier versions
+              </li>
+                <li class="listitem">GetChannelLock added
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <h3><a id="id2987970"></a>New in Version 5.10 (December 2008)</h3>
+      <p>
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+            <p>
+          New functionality
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                New option to listen to all MIDI devices using the portmidi realtime module. To enable listening to all devices use "-+rtmidi=portmidi -Ma".
+              </li>
+                <li class="listitem">Dither on output implemented; rectangular and triangular dither
+    available in some cases
+              </li>
+                <li class="listitem"><a class="link" href="GEN20.html" title="GEN20"><em class="citetitle">GEN20</em></a> type 6 now has option to set variance
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>Bug fixes and improvements:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                Locale set to C numeric to avoid , versus . problems.
+              </li>
+                <li class="listitem"><a class="link" href="diskin.html" title="diskin"><em class="citetitle">diskin</em></a> fixed
+              </li>
+                <li class="listitem"><a class="link" href="outo.html" title="outo"><em class="citetitle">outo</em></a> was broken regarding channel 6
+              </li>
+                <li class="listitem"><a class="link" href="pitchamdf.html" title="pitchamdf"><em class="citetitle">pitchamdf</em></a> fixed
+              </li>
+                <li class="listitem"><a class="link" href="zfilter2.html" title="zfilter2"><em class="citetitle">zfilter2</em></a> intialization fixed
+              </li>
+                <li class="listitem"><a class="link" href="s32b14.html" title="s32b14"><em class="citetitle">s32b14</em></a> fixed
+              </li>
+                <li class="listitem">Fixed other bugs fixed that have not been reported publicly.
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Internal Changes:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+    The major version of the Csound API is increased to 2; affected csound.so as well. This means that Csound 5.10 is incompatible with applications ("front ends", "clients", or "hosts") that were built for Csound 5.08 and earlier and that use API version 1.x. These applications will need to be rebuilt to work with the current and future versions of Csound.  Csound front ends written in interpreted languages such as Python or Java may continue to work without modification.  It may also be possible to keep both an earlier version of the Csound library and an API 2.0 version on the same machine together so that new and old Csound-based applications can run side-by-side.  These changes do not in any way affect the
+    compatibility of Csound orchestras and scores: all old documents should continue to work as before.
+              </li>
+                <li class="listitem">
+                Time now counted internally in samples, overcoming a longstanding bug with rounding of time to k-rate.
+              </li>
+                <li class="listitem">
+                Many internal changes related to branch prediction.  Some opcodes are substantially quicker.
+              </li>
+                <li class="listitem">
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <h3><a id="id2988174"></a>New in Version 5.09 (October 2008)</h3>
+      <p>
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+            <p>New opcodes:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">New <a class="link" href="vosim.html" title="vosim"><em class="citetitle">vosim</em></a> opcode by Rasmus Ekman which recreates the historic VOSIM (VOcal SIMulator) technique.</li>
+                <li class="listitem">New <a class="link" href="dcblock2.html" title="dcblock2"><em class="citetitle">dcblock2</em></a> opcode by Victor Lazzarini.</li>
+                <li class="listitem">New Chua's oscillator model: <a class="link" href="chuap.html" title="chuap"><em class="citetitle">chuap</em></a> by Michael Gogins.</li>
+                <li class="listitem">New <a class="link" href="linearalgebraopcodes.html" title="Linear Algebra Opcodes"><em class="citetitle">Linear Algebra</em></a> opcodes by Michael Gogins. Standard Linear algebra over real and complex vectors and matrices: elementwise arithmetic, norms, transpose and conjugate, inner products, matrix inverse, LU decomposition, QR decomposition, and QR-based eigenvalue decomposition. Includes copying vectors to and from a-rate signals, function tables, and f-signals.</li>
+                <li class="listitem">New ambisonic opcodes: <a class="link" href="bformdec1.html" title="bformdec1"><em class="citetitle">bformdec1</em></a> and <a class="link" href="bformenc1.html" title="bformenc1"><em class="citetitle">bformenc1</em></a>. These opcodes deprecate the older <a class="link" href="bformdec.html" title="bformdec"><em class="citetitle">bformdec</em></a> and <a class="link" href="bformenc.html" title="bformenc"><em class="citetitle">bformenc</em></a>.</li>
+                <li class="listitem">New Score control opcodes by Victor Lazzarini: <a class="link" href="rewindscore.html" title="rewindscore"><em class="citetitle">rewindscore</em></a> and <a class="link" href="setscorepos.html" title="setscorepos"><em class="citetitle">setscorepos</em></a>.</li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          New functionality:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                The <span class="emphasis"><em>vbap</em></span> family of opcodes (<a class="link" href="vbap4.html" title="vbap4"><em class="citetitle">vbap4</em></a>, <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a>, <a class="link" href="vbap16.html" title="vbap16"><em class="citetitle">vbap16</em></a> and <a class="link" href="vbapz.html" title="vbapz"><em class="citetitle">vbapz</em></a>) now accept k-rate variables for all their input arguments.
+              </li>
+                <li class="listitem">
+                New pulseaudio I/O module on Linux.
+              </li>
+                <li class="listitem">
+                New optional <span class="emphasis"><em>ienv</em></span> parameter to generate envelopes for the soundfont opcodes: <a class="link" href="sfplay.html" title="sfplay"><em class="citetitle">sfplay</em></a>,  <a class="link" href="sfplay3.html" title="sfplay3"><em class="citetitle">sfplay3</em></a>,  <a class="link" href="sfplaym.html" title="sfplaym"><em class="citetitle">sfplaym</em></a> and  <a class="link" href="sfplay3m.html" title="sfplay3m"><em class="citetitle">sfplay3m</em></a>.
+              </li>
+                <li class="listitem">
+                Added 'skip normalisation argument'  to "tanh" named GEN routine. (See <a class="link" href="ScoreGenRef.html" title="GEN Routines"><em class="citetitle">Named GEN Routines</em></a>)
+              </li>
+                <li class="listitem">
+                Added scheduler priority option on alsa.
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>Bug fixes and improvements:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                Allow scientific notation (as was in csound4!) in <a class="link" href="GEN23.html" title="GEN23"><em class="citetitle">GEN23</em></a>.
+              </li>
+                <li class="listitem">
+                Fixed bug in FLTK initialization. Should make FLTK usage more stable.
+              </li>
+                <li class="listitem">
+                Error on /* */ comments in orchestra fixed.
+              </li>
+                <li class="listitem">
+                <a class="link" href="poscil.html" title="poscil"><em class="citetitle">poscil</em></a> no longer overwrites frequency if variable is shared.
+              </li>
+                <li class="listitem">
+                <a class="link" href="printk.html" title="printk"><em class="citetitle">printk</em></a> and <a class="link" href="printks.html" title="printks"><em class="citetitle">printks</em></a> check that opcode is initialised.
+              </li>
+                <li class="listitem">
+                Deprecate <a class="link" href="soundout.html" title="soundout"><em class="citetitle">soundout</em></a> and <a class="link" href="soundouts.html" title="soundouts"><em class="citetitle">soundouts</em></a> in favour of <a class="link" href="fout.html" title="fout"><em class="citetitle">fout</em></a>.
+              </li>
+                <li class="listitem">
+                Fixed <a class="link" href="space.html" title="space"><em class="citetitle">space</em></a> opcode to accept non-pow-2 (deferred) tables.
+              </li>
+                <li class="listitem">
+                Fixed <a class="link" href="pvsmorph.html" title="pvsmorph"><em class="citetitle">pvsmorph</em></a> bug.
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Internal Changes:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                New parser has #include and argumentless macros.
+              </li>
+                <li class="listitem">
+                Less casting between floats and doubles in float version.
+              </li>
+                <li class="listitem">
+                Includes experimental multicore support.
+              </li>
+                <li class="listitem">
+                <a class="link" href="buzz.html" title="buzz"><em class="citetitle">buzz</em></a> opcode rewritten.
+              </li>
+                <li class="listitem">
+                Many other internal changes and small bug fixes.
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <h3><a id="id2988598"></a>New in Version 5.08 (February 2008)</h3>
+      <p>
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+            <p>New opcodes:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                <a class="link" href="imagecreate.html" title="imagecreate"><em class="citetitle">imagecreate</em></a>,
+                <a class="link" href="imagesize.html" title="imagesize"><em class="citetitle">imagesize</em></a>,
+                <a class="link" href="imagegetpixel.html" title="imagegetpixel"><em class="citetitle">imagegetpixel</em></a>,
+                <a class="link" href="imagesetpixel.html" title="imagesetpixel"><em class="citetitle">imagesetpixel</em></a>,
+                <a class="link" href="imagesave.html" title="imagesave"><em class="citetitle">imagesave</em></a>,
+                <a class="link" href="imageload.html" title="imageload"><em class="citetitle">imageload</em></a> and
+                <a class="link" href="imagefree.html" title="imagefree"><em class="citetitle">imagefree</em></a>: New image file processing opcodes by Cesare Marilungo to read/write png images from Csound.
+              </li>
+                <li class="listitem"><a class="link" href="pvsbandp.html" title="pvsbandp"><em class="citetitle">pvsbandp</em></a> and <a class="link" href="pvsbandr.html" title="pvsbandr"><em class="citetitle">pvsbandr</em></a> by John ffitch, which perform band-pass and band-reject filtering in the spectral domain on a pvs signal.</li>
+                <li class="listitem">New HRTF opcodes by Brian Carty:<a class="link" href="hrtfmove.html" title="hrtfmove"><em class="citetitle">hrtfmove</em></a>, <a class="link" href="hrtfmove2.html" title="hrtfmove2"><em class="citetitle">hrtfmove2</em></a> and <a class="link" href="hrtfstat.html" title="hrtfstat"><em class="citetitle">hrtfstat</em></a>.</li>
+                <li class="listitem">New waveshaping opcodes: <a class="link" href="powershape.html" title="powershape"><em class="citetitle">powershape</em></a>,
+              <a class="link" href="polynomial.html" title="polynomial"><em class="citetitle">polynomial</em></a>, 
+              <a class="link" href="chebyshevpoly.html" title="chebyshevpoly"><em class="citetitle">chebyshevpoly</em></a>,
+              <a class="link" href="pdclip.html" title="pdclip"><em class="citetitle">pdclip</em></a>,
+              <a class="link" href="pdhalf.html" title="pdhalf"><em class="citetitle">pdhalf</em></a>,
+              <a class="link" href="pdhalfy.html" title="pdhalfy"><em class="citetitle">pdhalfy</em></a>, and
+              <a class="link" href="syncphasor.html" title="syncphasor"><em class="citetitle">syncphasor</em></a></li>
+                <li class="listitem">New jack transport control opcode: <a class="link" href="jacktransport.html" title="jacktransport"><em class="citetitle">jacktransport</em></a></li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          New functionality
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">Added <a class="link" href="CommandFlags.html#FlagsMinusCsdLineNums"><em class="citetitle">--csd-line-nums=</em></a> command line option to select mode for error line reporting.
+              </li>
+                <li class="listitem">
+                New "no-carry" operator (<a class="link" href="ScoreTop.html#ScoreCarry" title="Carry"><em class="citetitle">!</em></a> ) for score language that prevents implicit carrying of p-fields in i-statements.
+              </li>
+                <li class="listitem">
+                Added <a class="link" href="CommandFlags.html#FlagsMinusSyntaxCheckOnly"><em class="citetitle">--syntax-check-only</em></a> commandline flag (exclusive with <a class="link" href="CommandFlags.html#FlagsMinusUpperI"><em class="citetitle">--i-only</em></a>)
+              </li>
+                <li class="listitem">
+                <span class="emphasis"><em>&lt;CsLicence&gt;</em></span> tag for <a class="link" href="CommandUnifile.html#CommandUnifileDescription" title="Description"><em class="citetitle">CSDs</em></a>. <span class="emphasis"><em>&lt;CsLicense&gt;</em></span> is accepted as an alternative to <span class="emphasis"><em>&lt;CsLicence&gt;</em></span>.
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>Bug fixes and improvements:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+              Changed order of outputs for <a class="link" href="hilbert.html" title="hilbert"><em class="citetitle">hilbert</em></a>. This change breaks compatibility with previous versions, but fixes the opcode and now works as documented.
+            </li>
+                <li class="listitem">
+              Messages about loading opcode plugins modified so can be suppressed with message level flag.
+            </li>
+                <li class="listitem">Major changes to score error reporting; now accurately reports the line numbers for the chain of inputs for most errors.</li>
+                <li class="listitem">Corrected <a class="link" href="pan2.html" title="pan2"><em class="citetitle">pan2</em></a> so it agrees with documentation.</li>
+                <li class="listitem">
+                <a class="link" href="CommandUnifile.html#CommandUnifileDescription" title="Description"><em class="citetitle">&lt;CsVersion&gt;</em></a> tag works again according to the manual.</li>
+                <li class="listitem">
+                Fixed the { and } score looping statements. Added missing documentation for them and ~, &amp;, |, and # operators in score expressions.
+              </li>
+                <li class="listitem">
+                <a class="link" href="hilbert.html" title="hilbert"><em class="citetitle">hilbert</em></a> had its outputs reversed, now correct. Manual example updated.
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Internal Changes:
+          </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">Change to gettext localisation; French and Columbian-Spanish translations available.</li>
+                <li class="listitem">
+                Internal changes to <a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a>, interpolation of waveform read and windowing, allowing more precise pitch synchronous granular synthesis. Updated examples for <a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a>.
+              </li>
+                <li class="listitem">
+                <a class="link" href="pvscale.html" title="pvscale"><em class="citetitle">pvscale</em></a>: Improved algorithm for SDFT case so no ampltitude variation.
+              </li>
+              </ul>
+            </div>
+            <p>
+        </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <h3><a id="id2988999"></a>New in Version 5.07 (October 2007)</h3>
+      <p>
+      </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+            <p>New opcodes:
+            </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem"><a class="link" href="pan2.html" title="pan2"><em class="citetitle">pan2</em></a>: a stereo panning opcode</li>
+                <li class="listitem"><a class="link" href="cpsmidinn.html" title="cpsmidinn"><em class="citetitle">cpsmidinn</em></a>, <a class="link" href="pchmidinn.html" title="pchmidinn"><em class="citetitle">pchmidinn</em></a>, <a class="link" href="octmidinn.html" title="octmidinn"><em class="citetitle">octmidinn</em></a>: converters for MIDI note numbers</li>
+                <li class="listitem"><a class="link" href="fluidSetInterpMethod.html" title="fluidSetInterpMethod"><em class="citetitle">fluidSetInterpMethod</em></a>: interpolation in fluid sound fonts</li>
+                <li class="listitem"><a class="link" href="sflooper.html" title="sflooper"><em class="citetitle">sflooper</em></a>: a soundfont version of <a class="link" href="flooper2.html" title="flooper2"><em class="citetitle">flooper2</em></a></li>
+                <li class="listitem"><a class="link" href="pvsbuffer.html" title="pvsbuffer"><em class="citetitle">pvsbuffer</em></a> and <a class="link" href="pvsbufread.html" title="pvsbufread"><em class="citetitle">pvsbufread</em></a>: buffering/reading of fsigs for delays/timescale changes.</li>
+              </ul>
+            </div>
+            <p>
+          </p>
+          </li>
+          <li class="listitem">
+            <p>
+            New functionality
+            </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">
+                  <p>SDFT - the Sliding Discrete Fourier Transform -- added seamlessly to <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a>, etc opcodes if the overlap is less than the ksmps or less than 10. Some pvsXXX opcodes extended to take a-rate parameters when sliding.
+                </p>
+                </li>
+                <li class="listitem">
+                  <p>New feature (<a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperO"><em class="citetitle">-O null</em></a> / <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperO"><em class="citetitle">--logfile=null</em></a>) that disables all messages and printing to the console.
+                </p>
+                </li>
+              </ul>
+            </div>
+            <p>
+          </p>
+          </li>
+          <li class="listitem">
+            <p>Bug fixes and improvements:
+            </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem"><a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a> -- particle synthesis had an inadvertent bug, now fixed.</li>
+                <li class="listitem">Closing of MIDI input on Windows(MM) failed; now fixed</li>
+                <li class="listitem"><a class="link" href="fluidEngine.html" title="fluidEngine"><em class="citetitle">fluidEngine</em></a> opcode now takes optional number of channels (range 16-256, default to 256) and polyphony (range 16-4096, default to 4096) to use.</li>
+                <li class="listitem"><a class="link" href="UtilityAtsa.html" title="atsa"><em class="citetitle">atsa</em></a> utility safer when given silence.</li>
+                <li class="listitem"><a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a>: improved checking.</li>
+                <li class="listitem">Ambisonics (<a class="link" href="bformdec.html" title="bformdec"><em class="citetitle">bformdec</em></a>, <a class="link" href="bformenc.html" title="bformenc"><em class="citetitle">bformenc</em></a>) has more options for controlled opposites.</li>
+                <li class="listitem">Bug in <a class="link" href="turnoff2.html" title="turnoff2"><em class="citetitle">turnoff2</em></a> fixed.</li>
+                <li class="listitem"><a class="link" href="het_export.html" title="het_export"><em class="citetitle">het_export</em></a>: invalid check caused export to fail.</li>
+              </ul>
+            </div>
+            <p>
+          </p>
+          </li>
+          <li class="listitem">
+            <p>
+            Internal Changes:
+            </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" type="circle">
+                <li class="listitem">Improved Windows installer.</li>
+                <li class="listitem">CsoundVST replaced by CsoundAC, that does not depend on the VST SDK headers.</li>
+                <li class="listitem">Less messages in Windows(MM) startup.</li>
+                <li class="listitem">P argument type added (k-rate defaults to 1) for opcode in and out types.</li>
+              </ul>
+            </div>
+            <p>
+          </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+    </p>
+      <h3><a id="id2989304"></a>New in Version 5.06 (June 2007)</h3>
+      <p>
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" type="disc">
+          <li class="listitem">
+            <p>New granular opcodes:
+          <a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a>,
+          <a class="link" href="partikkelsync.html" title="partikkelsync"><em class="citetitle">partikkelsync</em></a> and
+          <a class="link" href="diskgrain.html" title="diskgrain"><em class="citetitle">diskgrain</em></a>.
+        </p>
+          </li>
+          <li class="listitem">
+            <p>New opcode for event dispatch:
+          <a class="link" href="scoreline.html" title="scoreline"><em class="citetitle">scoreline</em></a>.
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Many new opcodes from Gabriel Maldonado's CsoundAV:
+          <a class="link" href="hvs1.html" title="hvs1"><em class="citetitle">hvs1</em></a>,
+          <a class="link" href="hvs2.html" title="hvs2"><em class="citetitle">hvs2</em></a>,
+          <a class="link" href="hvs3.html" title="hvs3"><em class="citetitle">hvs3</em></a>,
+          <a class="link" href="vphaseseg.html" title="vphaseseg"><em class="citetitle">vphaseseg</em></a>,
+          <a class="link" href="inrg.html" title="inrg"><em class="citetitle">inrg</em></a>,
+          <a class="link" href="outrg.html" title="outrg"><em class="citetitle">outrg</em></a>,
+          <a class="link" href="lposcila.html" title="lposcila"><em class="citetitle">lposcila</em></a>,
+          <a class="link" href="lposcilsa.html" title="lposcilsa"><em class="citetitle">lposcilsa</em></a>,
+          <a class="link" href="lposcilsa2.html" title="lposcilsa2"><em class="citetitle">lposcilsa2</em></a>,
+          <a class="link" href="tabmorph.html" title="tabmorph"><em class="citetitle">tabmorph</em></a>,
+          <a class="link" href="tabmorpha.html" title="tabmorpha"><em class="citetitle">tabmorpha</em></a>,
+          <a class="link" href="tabmorphi.html" title="tabmorphi"><em class="citetitle">tabmorphi</em></a>,
+          <a class="link" href="tabmorphak.html" title="tabmorphak"><em class="citetitle">tabmorphak</em></a>,
+          <a class="link" href="trandom.html" title="trandom"><em class="citetitle">trandom</em></a>,
+          <a class="link" href="vtable1k.html" title="vtable1k"><em class="citetitle">vtable1k</em></a>,
+          <a class="link" href="slider8table.html" title="slider8table"><em class="citetitle">slider8table</em></a>,
+          <a class="link" href="slider16table.html" title="slider16table"><em class="citetitle">slider16table</em></a>,
+          <a class="link" href="slider32table.html" title="slider32table"><em class="citetitle">slider32table</em></a>,
+          <a class="link" href="slider64table.html" title="slider64table"><em class="citetitle">slider64table</em></a>,
+          <a class="link" href="slider8tablef.html" title="slider8tablef"><em class="citetitle">slider8tablef</em></a>,
+          <a class="link" href="slider16tablef.html" title="slider16tablef"><em class="citetitle">slider16tablef</em></a>,
+          <a class="link" href="slider32tablef.html" title="slider32tablef"><em class="citetitle">slider32tablef</em></a>,
+          <a class="link" href="slider64tablef.html" title="slider64tablef"><em class="citetitle">slider64tablef</em></a>,
+          <a class="link" href="sliderKawai.html" title="sliderKawai"><em class="citetitle">sliderKawai</em></a>
+          and the a-rate version of
+          <a class="link" href="ctrl7.html" title="ctrl7"><em class="citetitle">ctrl7</em></a>.
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Also from CsoundAV, many new FLTK widget opcodes: 
+          <a class="link" href="FLkeyIn.html" title="FLkeyIn"><em class="citetitle">FLkeyIn</em></a>,
+          <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>,
+          <a class="link" href="FLvslidBnk.html" title="FLvslidBnk"><em class="citetitle">FLvslidBnk</em></a>,
+          <a class="link" href="FLvslidBnk2.html" title="FLvslidBnk2"><em class="citetitle">FLvslidBnk2</em></a>,
+          <a class="link" href="FLmouse.html" title="FLmouse"><em class="citetitle">FLmouse</em></a>,
+          <a class="link" href="FLxyin.html" title="FLxyin"><em class="citetitle">FLxyin</em></a>,
+          <a class="link" href="FLhvsBox.html" title="FLhvsBox"><em class="citetitle">FLhvsBox</em></a>,
+          <a class="link" href="FLslidBnkSet.html" title="FLslidBnkSet"><em class="citetitle">FLslidBnkSet</em></a>,
+          <a class="link" href="FLslidBnkSetk.html" title="FLslidBnkSetk"><em class="citetitle">FLslidBnkSetk</em></a>,
+          <a class="link" href="FLslidBnk2Set.html" title="FLslidBnk2Set"><em class="citetitle">FLslidBnk2Set</em></a>,
+          <a class="link" href="FLslidBnk2Setk.html" title="FLslidBnk2Setk"><em class="citetitle">FLslidBnk2Setk</em></a>,
+          <a class="link" href="FLslidBnkGetHandle.html" title="FLslidBnkGetHandle"><em class="citetitle">FLslidBnkGetHandle</em></a>,
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          New pvs opcodes:
+          <a class="link" href="pvsdiskin.html" title="pvsdiskin"><em class="citetitle">pvsdiskin</em></a>,
+          <a class="link" href="pvsmorph.html" title="pvsmorph"><em class="citetitle">pvsmorph</em></a>,
+        </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="eqfil.html" title="eqfil"><em class="citetitle">eqfil</em></a>
+        </p>
+          </li>
+          <li class="listitem">
+            <p>New command line options (<a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerMW"><em class="citetitle">--m-warnings</em></a>)to control messages
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          csladspa: a CSD to LADSPA plugin kit.
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          And many bug fixes including (but not limited to): fixed k-rate version of <a class="link" href="system.html" title="system"><em class="citetitle">system</em></a>; fixed scaling problems of <a class="link" href="vrandh.html" title="vrandh"><em class="citetitle">vrandh</em></a> and <a class="link" href="vrandi.html" title="vrandi"><em class="citetitle">vrandi</em></a>; fixed ocasional failure of <a class="link" href="turnoff.html" title="turnoff"><em class="citetitle">turnoff</em></a>; fixed  <a class="link" href="tempest.html" title="tempest"><em class="citetitle"></em></a> OS X bug; fixed <a class="link" href="ATScross.html" title="ATScross"><em class="citetitle">ATScross</em></a> and fixed <a class="link" href="modulus.html" title="%"><em class="citetitle">mod</em></a>.
+        </p>
+            <p>Csound5GUI now works properly on all platforms and csoundapi~ (pd object) has been updated.
+        </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="PrefaceGettingStarted.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PrefaceTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="PartOverview.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Getting Started with Csound </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Part I. Overview</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

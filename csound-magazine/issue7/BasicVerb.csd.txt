@@ -1,0 +1,95 @@
+<CsoundSynthesizer>
+<CsInstruments>
+sr     = 44100
+kr     = 44100
+ksmps  = 1
+nchnls = 1
+
+
+
+
+
+
+
+
+; ---- Parameters ----
+
+; Filename           # ??? #  ; Name of file to process.  Required parameter,
+                              ; supplied by user at the command prompt call.
+
+# define Amp         # 1.0 #  ; Scales final amplitude, in case of clipping.
+# define Mix         # 0.5 #  ; Dry / Wet mix.  0.0 = Dry, 1.0 = Wet.
+# define ReverbTime  # 1.0 #  ; Time of the reverb.
+
+
+
+
+
+
+
+
+instr Setup
+
+	ilength   filelen "$Filename"            ; Length of file in seconds
+	iduration =       ilength + $ReverbTime  ; Calculate duration of output file
+
+
+
+
+	; Process audio file
+
+	event_i "i", "Process", 0, iduration
+
+
+
+
+	turnoff
+endin
+
+
+
+
+
+
+
+
+instr Process
+
+	idur  = p3
+	iamp  = $Amp
+	itime = $ReverbTime
+	imix  = $Mix
+
+
+
+
+	; Reverb Processor
+
+	ifilesr filesr "$Filename"                ; Get samplerate of file
+	ain     diskin "$Filename", ifilesr / sr  ; Read file from disk
+	areverb reverb ain, itime                 ; Process file with reverb
+
+
+
+
+	; Output Audio
+
+	out ain * ( 1 - imix ) + areverb * imix
+endin
+
+
+
+
+
+
+
+
+</CsInstruments>
+<CsScore>
+
+i "Setup" 0 0.0001  ; Start processor
+
+</CsScore>
+</CsoundSynthesizer>
+
+

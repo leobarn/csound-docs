@@ -1,0 +1,840 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Extending Csound</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartReference.html" title="Part III. Reference" />
+    <link rel="prev" href="CscoreAdvancd.html" title="More Advanced Examples" />
+    <link rel="next" href="pt04.html" title="Part IV. Opcode Quick Reference" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Extending Csound</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CscoreAdvancd.html">Prev</a> </td>
+          <th width="60%" align="center">Part III. Reference</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pt04.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" title="Extending Csound">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="csound5extending"></a>Extending Csound</h2>
+          </div>
+        </div>
+      </div>
+      <div class="section" title="Adding Unit Generators">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="csound5addingopcodes"></a>Adding Unit Generators</h2>
+            </div>
+          </div>
+        </div>
+        <p>If the existing Csound unit generators do not suit your needs,
+it is relatively easy to extend Csound by writing new unit generators
+in C or C++. The translator, loader, and run-time monitor will treat
+your module just like any other, provided you follow some conventions.
+</p>
+        <p>Historically, this has been done with builtin unit generators,
+that is, with code that is statically linked with the rest of the
+Csound executable.</p>
+        <p>Today, the preferred method is to create plugin unit
+generators. These are dynamic link libraries (DLLs) on Windows, and
+loadable modules (shared libraries that are <code class="literal">dlopen</code>ed) on
+Linux. Csound searches for and loads these plugins at run time. The
+advantage of this method, of course, is that plugins created by any
+developer at any time can be used with already existing versions of
+Csound.</p>
+        <div class="section" title="Creating a Builtin Unit Generator">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="id4130112"></a>Creating a Builtin Unit Generator</h3>
+              </div>
+            </div>
+          </div>
+          <p>You need a structure defining the inputs, outputs and
+workspace, plus some initialization code and some perf-time code. Let's
+put an example of these in two new files,
+<code class="filename">newgen.h</code> and
+<code class="filename">newgen.c</code>. The examples given are for Csound 5. 
+For earlier versions, all opcode functions omit the first parameter (<code class="literal">CSOUND *csound</code>).
+
+</p>
+          <div class="informalexample">
+            <pre class="programlisting">
+/* newgen.h  -  define a structure */
+
+/* Declares Csound structures and functions. */
+#include "csoundCore.h"
+
+typedef struct
+{
+  OPDS h;                                         /* required header */
+  MYFLT *result, *istrt, *incr, *itime, *icontin; /* addr outarg, inargs */
+  MYFLT curval, vincr;                            /* private dataspace */
+  long countdown;                                 /* ditto */
+} RMP;
+
+
+/* newgen.c -  init and perf code */
+/* Declares Csound structures and functions. */
+#include "csoundCore.h"
+/* Declares RMP structure. */
+#include "newgen.h"
+
+int rampset (CSOUND *csound, RMP * p)     /* at note initialization: */
+{
+  if (*p-&gt;icontin == FL(0.0))
+    p-&gt;curval = *p-&gt;istrt;                /* optionally get new start value */
+  p-&gt;vincr = *p-&gt;incr / csound-&gt;esr;      /* set s-rate increment per sec. */
+  p-&gt;countdown = *p-&gt;itime * csound-&gt;esr; /* counter for itime seconds */
+  return OK;
+}
+
+int ramp (CSOUND *csound, RMP * p)        /* during note performance: */
+{
+  MYFLT *rsltp = p-&gt;result;               /* init an output array pointer */
+  int nn = csound-&gt;ksmps;                 /* array size from orchestra */
+  do
+    {
+      *rsltp++ = p-&gt;curval;               /* copy current value to output */
+      if (--p-&gt;countdown &gt; 0)             /* for the first itime seconds, */
+        p-&gt;curval += p-&gt;vincr;            /* ramp the value */
+    }
+  while (--nn);
+  return OK;
+}</pre>
+          </div>
+          <p>
+</p>
+          <p>Now we add this module to the translator table in
+<code class="filename">entry1.c</code>, under the opcode name
+<code class="literal">rampt</code>:
+
+</p>
+          <div class="informalexample">
+            <pre class="programlisting">
+#include "newgen.h"
+
+int rampset(CSOUND *, RMP *), ramp(CSOUND *, RMP *);
+
+/*   opname    dsblksiz  thread    outypes   intypes   iopadr    kopadr    aopadr  */
+
+{ "rampt",  S(RMP),  5,        "a",      "iiio",     (SUBR) rampset, (SUBR) NULL, (SUBR) ramp  },</pre>
+          </div>
+          <p>
+</p>
+          <p>Finally you must relink Csound with the new module. Add the name of the C file to the <code class="literal">libCsoundSources</code> list in the <code class="literal">SConstruct</code> file:
+
+</p>
+          <div class="informalexample">
+            <pre class="programlisting">
+libCsoundSources = Split('''
+Engine/auxfd.c
+...
+OOps/newgen.c
+...
+Top/utility.c
+''')</pre>
+          </div>
+          <p>
+</p>
+          <p>Run <span class="application">scons</span> just as you would for any
+other Csound build, and the new module will be built into your Csound.</p>
+          <p>
+    The above actions have added a new generator to the Csound language. It is an audio-rate linear ramp function which modifies an input value at a user-defined slope for some period. A ramp can optionally continue from the previous note's last value. The Csound manual entry would look like:
+    </p>
+          <div class="informalexample">
+            <pre class="programlisting">ar rampt istart, islope, itime [, icontin]</pre>
+          </div>
+          <p>
+  </p>
+          <p>
+    <span class="emphasis"><em>istart</em></span> -- beginning value of an audio-rate linear ramp. Optionally overridden by a continue flag.
+  </p>
+          <p>
+    <span class="emphasis"><em>islope</em></span>  -- slope of ramp, expressed as the y-interval change per second.
+  </p>
+          <p><span class="emphasis"><em>itime</em></span> -- ramp time in seconds, after which the value is held for the remainder of the note.
+  </p>
+          <p><span class="emphasis"><em>icontin</em></span> (optional) -- continue flag. If zero, ramping will proceed from input <span class="emphasis"><em>istart</em></span> . If non-zero, ramping will proceed from the last value of the previous note. The default value is zero.
+  </p>
+          <p>
+    The file <code class="filename">newgen.h</code> includes a one-line list of
+    output and input parameters. These are the ports through which the
+    new generator will communicate with the other generators in an
+    instrument. Communication is by <span class="emphasis"><em>address</em></span>, not
+    <span class="emphasis"><em>value</em></span>, and this is a list of pointers to
+    values of type MYFLT (which is double if the macro USE_DOUBLE is
+    defined, and float otherwise). There are no restrictions on names,
+    but the input-output argument types are further defined by character
+    strings in entry1.c (inargs, outargs). Inarg types are commonly
+    <span class="emphasis"><em>x</em></span>, <span class="emphasis"><em>a</em></span>,
+    <span class="emphasis"><em>k</em></span>, and <span class="emphasis"><em>i</em></span>, in the normal
+    Csound manual conventions; also available are o (optional,
+    defaulting to 0), p (optional, defaulting to 1). Outarg types
+    include <span class="emphasis"><em>a</em></span>, <span class="emphasis"><em>k</em></span>,
+    <span class="emphasis"><em>i</em></span> and <span class="emphasis"><em>s</em></span> (asig or
+    ksig). It is important that all listed argument names be assigned
+    a corresponding argument type in <code class="filename">entry1.c</code>.
+    Also, i-type args are valid only at initialization time, and other-type
+    args are available only at perf time. Subsequent lines in the RMP
+    structure declare the work space needed to keep the code re-entrant.
+    These enable the module to be used multiple times in multiple instrument
+    copies while preserving all data.</p>
+          <p>
+    The file <span class="emphasis"><em>newgen.c</em></span> contains two subroutines,
+    each called with a pointer to the Csound instance and a pointer to the uniquely allocated RMP structure and its data. The subroutines can be of three types: note initialization, <code class="literal">k</code>-rate signal generation, <code class="literal">a</code>-rate signal generation. A module normally requires two of these: initialization, and either <code class="literal">k</code>-rate or <code class="literal">a</code>-rate subroutines which become inserted in various threaded lists of runnable tasks when an instrument is activated. The thread-types appear in entry1.c in two forms: <span class="emphasis"><em>isub</em></span>, <span class="emphasis"><em>ksub</em></span> and <span class="emphasis"><em>asub</em></span> names; and a threading index which is the sum of isub=1, ksub=2, asub=4. The code itself may reference (but should only read) public members of the CSOUND structure defined in <span class="emphasis"><em>csoundCore.h</em></span>, the most useful of which are:
+
+    </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+        OPARMS  *oparms
+        MYFLT   esr                 user-defined sampling rate
+        MYFLT   ekr                 user-defined control rate
+        int     ksmps               user-defined ksmps
+        int     nchnls              user-defined nchnls
+        int     oparms-&gt;odebug      command-line -v flag
+        int     oparms-&gt;msglevel    command-line -m level
+        MYFLT   tpidsr              2 * PI / esr</pre>
+          </div>
+          <p>
+  </p>
+          <div class="section" title="Function tables">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="CS5AddmodFtables"></a>Function tables</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+      To access <a id="CS5IndexStoredFuncTables" class="indexterm"></a> stored function tables, special help is available. The newly defined structure should include a pointer
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">FUNC        *ftp;</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      initialized by the statement
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">ftp = csound-&gt;FTFind(csound, p-&gt;ifuncno);</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      where MYFLT *ifuncno is an i-type input argument containing the ftable number. The stored table is then at ftp-&gt;ftable, and other data such as length, phase masks, cps-to-incr converters, are also accessed from this pointer. See the FUNC structure in csoundCore.h, the csoundFTFind() code in fgens.c, and the code for oscset() and koscil() in OOps/ugens2.c.
+    </p>
+          </div>
+          <div class="section" title="Additional Space">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="AddmodAddSpace"></a>Additional Space</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+      Sometimes the space requirement of a module is too large to be part of a structure (upper limit 65279 bytes, due to the unsigned short dsblksiz parameter and reserved codes &gt;= 0xFF00), or it is dependent on an i-arg value which is not known until initialization. Additional space can be dynamically allocated and properly managed by including the line
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">AUXCH      auxch;</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      in the defined structure (*p), then using the following style of code in the init module:
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">
+csound-&gt;AuxAlloc(csound, npoints * sizeof(MYFLT), &amp;p-&gt;auxch);</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      The address of this auxiliary space is kept in a chain of such spaces belonging to this instrument, and is automatically managed while the instrument is being duplicated or garbage-collected during performance. The assignment
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">void *auxp = p-&gt;auxch.auxp;</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      will find the allocated space for init-time and perf-time use. See the LINSEG structure in ugens1.h and the code for lsgset() and klnseg() in OOps/ugens1.c.
+    </p>
+          </div>
+          <div class="section" title="File Sharing">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="AddmodFsharing"></a>File Sharing</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+        When accessing an external file often, or doing it from multiple places, it is often efficient to read the entire file into memory. This is accomplished by including the line
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">MEMFIL    *mfp;</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      in the defined structure (*p), then using the following style of code in the init module:
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">p-&gt;mfp = csound-&gt;ldmemfile(csound, filname);</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      where char *filname is a string name of the file requested. The data read will be found between
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">(char *)  p-&gt;mfp-&gt;beginp; and (char *) p-&gt;mfp-&gt;endp;</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      Loaded files do not belong to a particular instrument, but are automatically shared for multiple access. See the ADSYN structure in ugens3.h and the code for adset() and adsyn() in OOps/ugens3.c.
+    </p>
+          </div>
+          <div class="section" title="String arguments">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="AddmodStringargs"></a>String arguments</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+      To permit a string input argument (MYFLT *ifilnam, say) in our defined structure (*p), assign it the argtype <span class="emphasis"><em>S</em></span> in entry1.c, and include the following code in the init module:
+      </p>
+            <div class="informalexample">
+              <pre class="programlisting">strcpy(filename, (char*) p-&gt;ifilnam);</pre>
+            </div>
+            <p>
+    </p>
+            <p>
+      See the code for adset() in OOps/ugens3.c, lprdset() in OOps/ugens5.c, and pvset() in OOps/ugens8.c.
+    </p>
+          </div>
+        </div>
+        <div class="section" title="Adding a Plugin Unit Generator">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="id4131313"></a>Adding a Plugin Unit Generator</h3>
+              </div>
+            </div>
+          </div>
+          <p>The procedure for creating a plugin unit generator is very
+similar to the procedure for creating a builtin. The actual unit
+generator code would normally be identical. The differences are as
+follows.</p>
+          <p>Again supposing that your unit generator is named
+<code class="literal">newgen</code>, perform the following steps:</p>
+          <div class="orderedlist">
+            <ol class="orderedlist" type="1">
+              <li class="listitem">
+                <p>Write your <code class="literal">newgen.c</code> and <code class="literal">newgen.h</code> file as
+you would for a builtin unit generator. Put these files in the
+<code class="literal">csound5/Opcodes</code> directory.</p>
+              </li>
+              <li class="listitem">
+                <p><code class="literal">#include "csdl.h"</code> in your unit generator
+sources, instead of csoundCore.h.</p>
+              </li>
+              <li class="listitem">
+                <p>Add your <code class="literal">OENTRY</code> records and unit generator
+registration functions at the bottom of your C file. Example (but you
+can have as many unit generators in one plugin as you like):</p>
+                <pre class="programlisting">
+#define S sizeof
+
+static OENTRY localops[] = {
+{
+        { "rampt",  S(RMP),  5, "a", "iiio",  (SUBR) rampset, (SUBR) NULL, (SUBR)ramp  },
+};
+
+/*
+ * The following macro from csdl.h defines
+ * the "csound_opcode_init()" opcode registration
+ * function for the localops table.
+ */
+LINKAGE</pre>
+              </li>
+              <li class="listitem">
+                <p>Add your plugin as a new target in the plugin opcodes section of the <code class="literal">SConstruct</code> build file:</p>
+                <pre class="programlisting">
+pluginEnvironment.SharedLibrary('newgen',
+    Split('''Opcodes/newgen.c
+    Opcodes/another_file_used_by_newgen.c
+    Opcodes/yet_another_file_used_by_newgen.c'''))</pre>
+              </li>
+              <li class="listitem">
+                <p>Run the Csound 5 build in the regular way.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="section" title="OENTRY Reference">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="id4131430"></a><code class="literal">OENTRY</code> Reference</h3>
+              </div>
+            </div>
+          </div>
+          <p>The <code class="literal">OENTRY</code> structure (see
+<code class="literal">H/csoundCore.h</code>, <code class="literal">Engine/entry1.c</code>,
+and <code class="literal">Engine/rdorch.c</code>) contains the following
+public fields:</p>
+          <pre class="programlisting">
+opname, dsblksiz, thread, outypes, intypes, iopadr, kopadr, aopadr</pre>
+          <div class="variablelist">
+            <dl>
+              <dt>
+                <span class="term">
+                  <code class="literal">dsblksiz</code>
+                </span>
+              </dt>
+              <dd>
+                <p>There
+are two types of opcodes, polymorphic and non-polymorphic. For
+non-polymorphic opcodes, the <code class="literal">dsblksiz</code> flag specifies
+the size of the opcode structure in bytes, and arguments are always
+passed to the opcode at the same rate. Polymorphic opcodes can accept
+arguments at different rates, and those arguments are actually
+dispatched to other opcodes as determined by the
+<code class="literal">dsblksiz</code> flag and the following naming convention
+(note: the following list is not complete, see Engine/entry1.c
+for all possible special dsblksiz codes):
+
+</p>
+                <div class="variablelist">
+                  <dl>
+                    <dt>
+                      <span class="term">
+                        <code class="literal">0xffff</code>
+                      </span>
+                    </dt>
+                    <dd>
+                      <p>The
+type of the first output argument determines which unit generator
+function is actually called: <code class="literal">XXX</code> -&gt;
+<code class="literal">XXX.a</code>, <code class="literal">XXX.i</code>, or
+<code class="literal">XXX.k</code>.</p>
+                    </dd>
+                    <dt>
+                      <span class="term">
+                        <code class="literal">0xfffe</code>
+                      </span>
+                    </dt>
+                    <dd>
+                      <p>The
+types of the first two input arguments determine which unit generator
+function is actually called:  <code class="literal">XXX</code> -&gt;
+<code class="literal">XXX.aa</code>, <code class="literal">XXX.ak</code>,
+<code class="literal">XXX.ka</code>, or <code class="literal">XXX.kk</code>, as in the
+<code class="literal">oscil</code> unit generator.</p>
+                    </dd>
+                    <dt>
+                      <span class="term">
+                        <code class="literal">0xfffd</code>
+                      </span>
+                    </dt>
+                    <dd>
+                      <p>Refers
+to one input argument of type a or k, as in the <code class="literal">peak</code>
+unit generator.</p>
+                    </dd>
+                  </dl>
+                </div>
+                <p>
+</p>
+              </dd>
+              <dt>
+                <span class="term">
+                  <code class="literal">thread</code>
+                </span>
+              </dt>
+              <dd>
+                <p>Specifies
+the rate(s) at which the unit generator's functions are called, as
+follows:
+
+</p>
+                <div class="table">
+                  <a id="id4131634"></a>
+                  <p class="title">
+                    <b>Table 22. Rate at which ugens are called according to thread parameter</b>
+                  </p>
+                  <div class="table-contents">
+                    <table summary="Rate at which ugens are called according to thread parameter" border="1">
+                      <colgroup>
+                        <col />
+                        <col />
+                      </colgroup>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <code class="literal">0</code>
+                          </td>
+                          <td><code class="literal">i</code>-rate <span class="emphasis"><em>or</em></span> <code class="literal">k</code>-rate (B out only)</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">1</code>
+                          </td>
+                          <td><code class="literal">i</code>-rate</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">2</code>
+                          </td>
+                          <td><code class="literal">k</code>-rate</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">3</code>
+                          </td>
+                          <td><code class="literal">i</code>-rate <span class="emphasis"><em>and</em></span> <code class="literal">k</code>-rate</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">4</code>
+                          </td>
+                          <td><code class="literal">a</code>-rate</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">5</code>
+                          </td>
+                          <td><code class="literal">i</code>-rate <span class="emphasis"><em>and</em></span> <code class="literal">a</code>-rate</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">7</code>
+                          </td>
+                          <td><code class="literal">i</code>-rate <span class="emphasis"><em>and</em></span> (<code class="literal">k</code>-rate <span class="emphasis"><em>or</em></span> <code class="literal">a</code>-rate)</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <p><br class="table-break" />
+</p>
+              </dd>
+              <dt>
+                <span class="term">
+                  <code class="literal">outypes</code>
+                </span>
+              </dt>
+              <dd>
+                <p>Lists
+the return values of the unit generator functions, if any. The types
+allowed are (note: the following list is not complete, see Engine/entry1.c
+for all possible output types):
+
+</p>
+                <div class="table">
+                  <a id="id4131836"></a>
+                  <p class="title">
+                    <b>Table 23. List of out types for ugens</b>
+                  </p>
+                  <div class="table-contents">
+                    <table summary="List of out types for ugens" border="1">
+                      <colgroup>
+                        <col />
+                        <col />
+                      </colgroup>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <code class="literal">i</code>
+                          </td>
+                          <td><code class="literal">i</code>-rate scalar</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">k</code>
+                          </td>
+                          <td><code class="literal">k</code>-rate scalar</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">a</code>
+                          </td>
+                          <td>a-rate vector</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">x</code>
+                          </td>
+                          <td><code class="literal">k</code>-rate scalar or a-rate vector</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">f</code>
+                          </td>
+                          <td><code class="literal">f</code>-rate streaming pvoc fsig type</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">m</code>
+                          </td>
+                          <td>multiple a-rate output arguments</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <p><br class="table-break" />
+</p>
+              </dd>
+              <dt>
+                <span class="term">
+                  <code class="literal">intypes</code>
+                </span>
+              </dt>
+              <dd>
+                <p>Lists
+the arguments the unit generator functions take, if any.  The types
+allowed are (note: the following list is not complete, see Engine/entry1.c
+for all possible input types):
+
+</p>
+                <div class="table">
+                  <a id="id4131967"></a>
+                  <p class="title">
+                    <b>Table 24. List of in types ofr ugens</b>
+                  </p>
+                  <div class="table-contents">
+                    <table summary="List of in types ofr ugens" border="1">
+                      <colgroup>
+                        <col />
+                        <col />
+                      </colgroup>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <code class="literal">i</code>
+                          </td>
+                          <td><code class="literal">i</code>-rate scalar</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">k</code>
+                          </td>
+                          <td><code class="literal">k</code>-rate scalar</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">a</code>
+                          </td>
+                          <td><code class="literal">a</code>-rate vector</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">x</code>
+                          </td>
+                          <td><code class="literal">a</code>-rate scalar or <code class="literal">a</code>-rate vector</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">f</code>
+                          </td>
+                          <td><code class="literal">f</code>-rate streaming pvoc fsig type</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">S</code>
+                          </td>
+                          <td>String</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">B</code>
+                          </td>
+                          <td> </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">l</code>
+                          </td>
+                          <td> </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">m</code>
+                          </td>
+                          <td>Begins an indefinite list of <code class="literal">i</code>-rate arguments
+(any count)</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">M</code>
+                          </td>
+                          <td>Begins an indefinite list of arguments (any
+rate, any count)</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">N</code>
+                          </td>
+                          <td>Begins an indefinite list of (optional <code class="literal">a</code>-, <code class="literal">k</code>-, <code class="literal">i</code>-, or <code class="literal">S-rate</code>)-rate arguments (any odd count)</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">n</code>
+                          </td>
+                          <td>Begins an indefinite list of <code class="literal">i</code>-rate arguments
+(any odd count)</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">O</code>
+                          </td>
+                          <td>Optional k-rate, defaulting to 0</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">o</code>
+                          </td>
+                          <td>Optional i-rate, defaulting to 0</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">p</code>
+                          </td>
+                          <td>Optional i-rate, defaulting to 1</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">q</code>
+                          </td>
+                          <td>Optional i-rate, defaulting to 10</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">V</code>
+                          </td>
+                          <td>Optional k-rate, defaulting to 0.5</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">v</code>
+                          </td>
+                          <td>Optional i-rate, defaulting to 0.5</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">j</code>
+                          </td>
+                          <td>Optional i-rate, defaulting to -1</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">h</code>
+                          </td>
+                          <td>Optional i-rate, defaulting to 127</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">y</code>
+                          </td>
+                          <td>Begins an indefinite list of <code class="literal">a</code>-rate arguments
+(any count)</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">z</code>
+                          </td>
+                          <td>Begins an indefinite list of <code class="literal">k</code>-rate arguments
+(any count)</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code class="literal">Z</code>
+                          </td>
+                          <td>Begins an indefinite list of alternating <code class="literal">k</code>-rate
+and <code class="literal">a</code>-rate arguments (kaka...)
+(any count)</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <p><br class="table-break" />
+</p>
+              </dd>
+              <dt>
+                <span class="term">
+                  <code class="literal">iopadr</code>
+                </span>
+              </dt>
+              <dd>
+                <p>The
+        address of the unit generator function (of type <code class="literal">int
+        (*SUBR)(CSOUND *, void *)</code>) that is called at i-time, or NULL for no
+        function.</p>
+              </dd>
+              <dt>
+                <span class="term">
+                  <code class="literal">kopadr</code>
+                </span>
+              </dt>
+              <dd>
+                <p>The address of the unit
+        generator function (of type <code class="literal">int (*SUBR)(CSOUND *, void *)</code>) that is called at <code class="literal">k</code>-rate, or NULL for no function.</p>
+              </dd>
+              <dt>
+                <span class="term">
+                  <code class="literal">aopadr</code>
+                </span>
+              </dt>
+              <dd>
+                <p>The address of the unit
+        generator function (of type <code class="literal">int (*SUBR)(CSOUND *, void *)</code>) that is called at a-rate, or NULL for no function.</p>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CscoreAdvancd.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartReference.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pt04.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">More Advanced Examples </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Part IV. Opcode Quick Reference</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+  
+
+
+  
+  
+  
+  
+  
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  <style>
+ 
+pre {
+padding-left: 30px;
+}
+  </style>
+</head>
+
+
+<body>
+
+
+
+
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL: <a href="../index.html">Home</a> | <a href="index.html">Winter
+  2006</a> </div>
+
+
+
+
+<div id="header">
+<h2>Creating Encapsulated Instruments in Csound5 </h2>
+
+
+
+
+Steven Yi<br>
+
+
+
+
+Email: stevenyi AT gmail.com
+</div>
+
+
+
+
+<div id="content">
+<h2>Introduction</h2>
+
+
+
+
+A great deal of work has gone into the development of Csound5, and with
+it a number of new features which are useful for users both composing
+with Csound and developing with it. &nbsp;Amongst the many new
+opcodes
+that have been added to Csound5 are the "chn" set of opcodes. These
+opcodes are able to be used as a way of communicating between a host
+application and the Csound engine, but they can also be very useful
+within Csound alone. Acting as a global string-indexed map, the use of
+the chn opcodes allows for new techniques in approaching Csound
+instrument design.
+<p>The focus of this article will be to analyze traditional
+Csound
+instrument design to show how it puts limitations on reusability of
+instruments, then to take a look at the chnset and chnget opcodes to
+see how we can use these to get past these limitations to create
+reuable, encapsulated instruments.<br>
+</p>
+
+
+
+
+
+
+<h2>I. Csound Instrument Dependencies<br>
+
+
+
+
+</h2>
+
+
+
+
+<p>Csound instrument's often have dependencies: things which
+exist outside the instrument code body but which the instrument depends
+on. &nbsp;Sometimes this is intentional as part of the instrument
+design and the way the instrument is meant to be used. &nbsp;Other
+times, dependencies are left outside of the instrument body because
+that used to be the only way to do it.</p>
+<p>The most common dependency which an instrument relies on
+are those of ftables created either in the SCO using f-statements or
+created in the ORC using ftgen statements. There are other types of
+dependencies as well,&nbsp;such as global variables, but for the
+scope of this article we will only look at how to deal with ftable
+dependencies, as the techniques for working with ftable dependencies
+may also apply to other dependencies.</p>
+
+
+
+<p>We'll start off with a simple instrument that depends on an ftable,
+examine the benefits and drawbacks of coding in this style, and then
+take a couple other views on how create the same basic instrument but
+coded in different ways, each time handling the dependency in a new
+way. &nbsp;In the end, we'll take a look at the techniques introduced
+and look at things to be aware about when using these techniques.<br>
+</p>
+
+
+<p> </p>
+
+
+
+<h2>II. Using f-statement table</h2>
+
+
+
+
+<p>Let's take a look at a very basic Csound instrument and its
+dependency:</p>
+
+
+
+
+<pre>&lt;CsoundSynthesizer&gt;<br><br>&lt;CsInstruments&gt;<br>sr=44100<br>ksmps=1<br>nchnls=2<br><br>instr 1 ; Sine Oscilator Instrument<br><br>iamp 	= ampdb(p4)<br>ipch 	= cpspch(p5)<br>itable 	= 1 ; sine<br><br>aout 	oscil3 1, ipch, itable<br><br>aout	= aout * iamp<br><br>	outs aout, aout<br><br>endin<br><br>&lt;/CsInstruments&gt;<br><br>&lt;CsScore&gt;<br><br>f1 0 65537 10 1 ; sine wave<br><br>i1 0 1 70 8.00<br>i1 + . .  8.01<br>i1 + . .  8.02<br>i1 + . .  8.01<br>i1 + 4 .  8.00<br><br>&lt;/CsScore&gt;<br><br>&lt;CsoundSynthesizer&gt;</pre>
+
+
+
+
+<p>The above example contains an instrument that depends on
+an&nbsp;ftable . &nbsp;The ftable is declared in the SCO
+section of the CSD. &nbsp;Note: The ftable is declared outside of
+the instrument's code.&nbsp;</p>
+
+
+
+<p>This method of Csound instrument design is not unusual and in fact
+is probably the most common style found in Csound code. Historically,
+this was the only way to do it until the ftgen opcode was created. In terms of reusability, the above offers:</p>
+
+
+<ul>
+
+
+  <li>a global ftable, reusable by many different instruments and
+instances of those instruments, thus making efficient use of memory by
+not having to create the ftable every time it is needed</li>
+
+
+</ul>
+
+
+However, there are some drawbacks to this:<br>
+
+
+<ul>
+
+
+  <li>Ftables are referenced by number, thus requiring&nbsp;the user to remember what the number refers to</li>
+
+
+  
+  
+  <ul>
+
+
+    <li>The above may be fine if the user has a standard set of
+tables
+and memorizes the meaning of the table number (i.e. I always use ftable
+1 as a sine
+wave), but on the other hand, sharing this with others will require
+either leaving comments as to what the ftable means, or requiring the
+next user (even if yourself) to reread and interpret the meaning of the
+ftable statement.</li>
+
+
+    <li>The number in the ftable statement&nbsp;could be replaced with a macro to help with remembering what the ftable means, i.e.:<br>
+
+
+      
+      
+      <pre>#define SINE_TABLE # 1 #<br><br>f $SINE_TABLE 0 65537 10 1</pre>
+
+
+I tend to avoid using macros myself as I find them hard to use as well as to debug
+if there are problems. I also find it makes the code a bit harder to read for myself.
+&nbsp;</li>
+
+
+  
+  
+  </ul>
+
+
+  <li>Ftables are defined in the SCO file or CsScore section of the
+CSD, away from the instrument definition. &nbsp;If your instrument
+usage is such that you are expecting to reuse instruments with many
+different ftables, this is beneficial, but if your instrument
+is&nbsp;tightly coupled with this dependency and you're expecting to
+copy and reuse this instrument with its ftables as a whole, this can
+make it a little difficult to manage.</li>
+  <li>If you copy your instrument into a new ORC or CSD, you have to
+also find and copy the ftable statements that the instrument depends
+upon into the SCO or CSD. &nbsp;If you are copying the instrument into
+a project that already has numerous other ftables already defined, you
+will have to manually check if your ftable statements clash numerically
+by ID with other ftable statements, and if so, you&nbsp;will have to
+modify your ftable statement numbers and also your instrument code to
+refer to the new ftable number</li>
+
+
+</ul>
+
+
+
+<p>The ability to share ftables is very useful for making efficient
+instruments, but defining ftables with f-statements can make it
+difficult to make easily reusable instruments. &nbsp;<br>
+</p>
+
+
+
+
+
+<h2>III.&nbsp;Using ftgen table</h2>
+
+
+
+<p>The following example shows another way of creating the same
+instrument, but using ftgen statements in the ORC instead of an
+f-statement in the SCO:</p>
+
+
+
+
+<pre>&lt;CsoundSynthesizer&gt;<br><br>&lt;CsInstruments&gt;<br>sr=44100<br>ksmps=1<br>nchnls=2<br><br>gi_sine ftgen 0, 0, 65537, 10, 1 ; sine wave<br><br>instr 1 ; Sine Oscilator Instrument<br><br>iamp 	= ampdb(p4)<br>ipch 	= cpspch(p5)<br>itable 	= gi_sine ; sine<br><br>aout 	oscil3 1, ipch, gi_sine<br><br>aout	= aout * iamp<br><br>	outs aout, aout<br><br>endin<br><br>&lt;/CsInstruments&gt;<br><br>&lt;CsScore&gt;<br><br>i1 0 1 70 8.00<br>i1 + . .  8.01<br>i1 + . .  8.02<br>i1 + . .  8.01<br>i1 + 4 .  8.00<br><br>&lt;/CsScore&gt;<br><br>&lt;CsoundSynthesizer&gt;</pre>
+
+
+
+
+<p>Using an ftgen statement instead of a SCO f-statement gives us some
+flexibilty. &nbsp;The table is auto-assigned a number and that number
+is stored in a global variable. &nbsp;The global variable can be given
+an easy to remember name that signifies what that ftable is. &nbsp;In
+this case, now instead of referring to ftable 1 in the instrument code
+we are referring to ftable gi_sine. &nbsp;</p>
+
+
+<p>With this method, we still maintain the advantage of being able to
+share ftables between instruments, as was the case with the f-statement
+table instrument in section II. With the above, we also gain:</p>
+
+
+<ul>
+
+
+  <li>Clearly defined label for the ftable, thus making it easier to remember what that ftable contains</li>
+
+
+  <li>Ftable is now contained in the ORC or CsInstruments section of the CSD, staying closer to the instrument code that depends on it</li>
+
+
+  <li>When copying this instrument into a new project, it is likely
+that if another ftable already exists in the new project with the same
+name as the gi_sine ftable, that they will be likely be the same table
+(and&nbsp;for f-statements, it is not likely that ftable 1 in one
+project means the same thing as ftable 1 in another)</li>
+
+
+</ul>
+
+
+The above method gives us a number of advantages in making it easier to
+manage our instrument code as well as making it easier to reuse our
+instruments in other projects. &nbsp;However, there are still some
+drawbacks:<br>
+
+
+<ul>
+
+
+  <li>The ftable dependency that the instrument has still remains
+outside of the instrument definition, thus when trying to reuse the
+instrument in another project it will still require to find the ftgen
+statements the instrument depends on and moving them over to the new
+project. &nbsp;This can be tedious with projects with very large
+orchestras.</li>
+
+
+</ul>
+
+
+<br>
+
+
+<h2>IV. Using ftgen with chnset/chnget</h2>
+
+
+
+<p>With Csound5 there are many new opcodes and with them they have openned
+  new techniques for coding instruments. &nbsp;For the purpose of creating a
+  completely encapsulated instrument we'll be using the chnset and chnget opcodes.
+  The chnset and chnget opcodes allow for accessing a global string-indexed
+  software bus whose purpose as a bus is to communicate values to and from a
+  host which also reads the bus. However, these opcodes can also be used in a
+  much different way.</p>
+
+
+<p>In programmer terms, the bus that backs the chnset/chnget opcodes is a global
+  map. In C++, this might be defined as map&lt;string,float&gt;. In layman terms, what
+  this allows is us to look at the bus and get values for a given string as well
+  as set what that string means. </p>
+
+
+<p>For example:</p>
+
+
+<pre>itablenum 	chnget	"table_sine"<br>			chnset 	20, "table_sine"</pre>
+
+
+<p>Here, in the first line, we're looking to see what the current value of "table_sine"
+  is on the bus. If it has not been defined before, the value will default to zero. (We
+  will be using this feature shortly to determine if a table has been defined).
+  The second line sets the value of "table_sine" to 20. If you were to call chnget
+  again after the chnset line, as in the following:</p>
+
+<pre>			chnset 	20, "table_sine"<br>itablenum 	chnget	"table_sine" </pre>
+
+<p> itablenum would be set to&nbsp;the value 20.</p>
+
+<p>With the chnget and chnset opcode as well using the ftgen opcode, we
+have everything we need to create a completely encapsulated instrument.
+To do so, the basic technique will be:</p>
+
+<ol>
+
+  <li>Check to see if the table we are depending on is defined.&nbsp;</li>
+
+  <li>If it is already defined, use pre-existing table.</li>
+
+  <li>If it is not defined, create the table and use.</li>
+
+</ol>
+
+Modifying the instrument from Section III, we now have:<br>
+
+<br>
+
+<pre>&lt;CsoundSynthesizer&gt;<br><br>&lt;CsInstruments&gt;<br>sr=44100<br>ksmps=1<br>nchnls=2<br><br><br>instr 1 ; Sine Oscilator Instrument<br><br>iamp 	= ampdb(p4)<br>ipch 	= cpspch(p5)<br><br>itable	chnget	"table_sine"<br><br>if (itable == 0) then<br>	itable	ftgen 	0, 0, 65537, 10, 1 ; sine wave<br>	chnset	itable, "table_sine"<br>endif<br><br>print itable<br><br>aout 	oscil3 1, ipch, itable<br><br>aout	= aout * iamp<br><br>	outs aout, aout<br><br>endin<br><br>&lt;/CsInstruments&gt;<br><br>&lt;CsScore&gt;<br><br>i1 0 1 70 8.00<br>i1 + . .  8.01<br>i1 + . .  8.02<br>i1 + . .  8.01<br>i1 + 4 .  8.00<br><br>&lt;/CsScore&gt;<br><br>&lt;CsoundSynthesizer&gt;</pre>
+
+<p>Notice now that everything we need for the instrument is contained
+  within the instrument body itself. You are now able to take the instrument
+  and easily copy and paste it into another project or share it with others knowing
+  that there is a good chance it will be able to just be added to a project and
+  work right out of the box. </p>
+
+<p>When running the CSD, you'll find from the print statement will
+alway prints the same value for itable, telling us that itable has been
+set only once, and therefore the ftable create with ftgen has only been
+created once.</p>
+<span style="font-weight: bold;">Tips On Usage<br>
+</span>
+<ul>
+  <li>When working multiple dependencies, it is useful to use one
+special key to check for as a signifier if this instrument's
+dependencies as a whole has been initialized, rather than to check if
+each individual dependency is initialized. It is more efficient as well
+as you'll only have one check done when running the instrument instead
+of one for every dependency. &nbsp;An example of this is:<br>
+    <br>
+    <pre>iInit	chnget	"myinstrument.isInitialized"<br>itab1	chnget	"myinstrument.table1"<br>itab2	chnget	"myinstrument.table2"<br><br>if (iInit == 0) then<br>	chnset 	1, "iInit"<br><br>	itab1	ftgen 	0, 0, 65537, 10, 1 ; sine wave<br>	itab2	ftgen	0, 0, 65537, 11, 1 ; cosine wave<br><br>	chnset 	itab1, "myinstrument.table1"<br>	chnset 	itab2, "myinstrument.table2"<br>endif</pre>
+  </li>
+  <li>It is useful to have a strategy/approach to naming the keys you
+will use, as you'll want to make sure you don't unnecessarily duplicate
+tables so as to save memory&nbsp;as well as to insure not having a
+clash (defining the same key with different values) so as to have
+unexpected results. &nbsp;I'd reccomend to use at least one prefix that
+gives&nbsp;a scope as to where the dependency will be used, together
+with the name of what the depdenecy means. &nbsp;For example, using a
+key of "global.sine" could signify that this table is meant to be a
+table that all instruments may use, while a key of "myPad.table1" may
+be an ftable that is really only going to be used in your pad
+instrument. &nbsp;(In other words, many instruments may be looking to
+use and or define a sine ftable, but no other instrument is really
+going to be using myPad's table1.) &nbsp;If you'd like to be very sure
+that your instrument's table won't clash, you could use a unique
+idenifier, such as your name or the url of your website (a Java
+convention for package naming). &nbsp;For example,
+"com.kunstmusik.global.sine".</li>
+  <li>Another reason to be careful about naming your keys for
+chnset/chnget is that the values in the chnset/chnget bus are also
+accessible by host applications, which is something either to design
+for and use or to take caution to avoid clashing with values a host may
+assume to use.<br>
+  </li>
+</ul>
+<h2>Acknowledgements</h2>
+I'd like to thank Istvan Varga for implementing the named software bus
+and creating the chn family of opcodes, without which this article and
+the techniques discussed would not have been possible.<br>
+</div>
+
+
+
+
+</div>
+
+
+
+
+</body>
+</html>

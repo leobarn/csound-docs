@@ -1,0 +1,59 @@
+<xml xmlns:v="urn:schemas-microsoft-com:vml"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:p="urn:schemas-microsoft-com:office:powerpoint">
+ <p:presentation>
+  <p:master id="4" type="main" href="master04.htm" xmlhref="master04.xml"
+   template="Edge" layout="title_body"
+   slots="title,body,dateTime,footer,slideNumber">
+   <p:schemes>
+    <p:colorscheme
+     colors="#820000,#FFFFFF,#333333,#FFFFFF,#FF9900,#CC3300,#808080,#666633"/>
+    <p:colorscheme
+     colors="#0B0506,#CCCCFF,#333333,#FFFFFF,#3366CC,#3333CC,#808080,#666633"/>
+    <p:colorscheme
+     colors="#221013,#FFFFFF,#333333,#FFFFFF,#CC3300,#CC9900,#808080,#666633"/>
+    <p:colorscheme
+     colors="#0000CC,#FFFFFF,#11054B,#FFFFFF,#FF6600,#FF3300,#CC9900,#B2B2B2"/>
+    <p:colorscheme
+     colors="#002600,#F8F8F8,#9B8D65,#FAFACC,#CC9933,#8F9967,#336600,#808000"/>
+    <p:colorscheme
+     colors="#006699,#FFFFFF,#333333,#FFFFFF,#CC9900,#FF9900,#FFCC00,#706F37"/>
+    <p:colorscheme
+     colors="#FFFFFF,#000000,#5F5F5F,#006633,#CC9900,#3B812F,#996600,#AFBF39"/>
+    <p:colorscheme
+     colors="#FFFFFF,#000000,#666699,#CC0000,#808080,#999933,#4C6D80,#B2B2B2"/>
+    <p:colorscheme
+     colors="#FFFFFF,#000000,#666699,#003399,#009999,#4C6D4E,#4C6D80,#B2B2B2"/>
+   </p:schemes>
+   <p:tag name="___PPT10" type="binary" datasize="105" dataoffset="0"/>
+  </p:master>
+  <p:master id="5" type="title" href="master05.htm" xmlhref="master05.xml"
+   layout="title_subtitle"
+   slots="centerTitle,subTitle,dateTime,footer,slideNumber">
+   <p:tag name="___PPT10" type="binary" datasize="105" dataoffset="1"/>
+  </p:master>
+  <p:slide id="1" href="slide0001.htm" masterhref="master05.htm"
+   layout="title_subtitle" slots="centerTitle,subTitle">
+   <p:tag name="___PPT10" type="binary" datasize="16" dataoffset="2"/>
+  </p:slide>
+  <p:slide id="2" href="slide0002.htm" layout="title_body" slots="title,body">
+   <p:tag name="___PPT10" type="binary" datasize="16" dataoffset="3"/>
+  </p:slide>
+  <p:slide id="3" href="slide0003.htm" layout="title_body" slots="title,body">
+   <p:tag name="___PPT10" type="binary" datasize="16" dataoffset="4"/>
+  </p:slide>
+  <p:slide id="4" href="slide0004.htm" layout="title_body" slots="title,body">
+   <p:tag name="___PPT10" type="binary" datasize="16" dataoffset="5"/>
+  </p:slide>
+  <p:viewstate type="slideView" restoredleft="156" restoredtop="946"
+   hideoutlineicons="t"/>
+  <p:tag name="___PPT10" type="binary" datasize="16" dataoffset="6"/>
+  <p:font name="Arial" charset="0" type="6" family="34"/>
+  <p:font name="Garamond" charset="0" type="6" family="18"/>
+  <p:font name="Times New Roman" charset="0" type="4"/>
+  <p:font name="Wingdings" charset="2" type="6" family="2"/>
+  <p:headersfooters noheader="t"/>
+  <p:pptdocumentsettings framecolors="WhiteTextOnBlack" hideslideanimation="t"/>
+ </p:presentation>
+ <o:shapedefaults v:ext="edit" spidmax="10242"/>
+</xml>

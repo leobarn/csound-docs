@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>chnrecv</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="chnparams.html" title="chnparams" />
+    <link rel="next" href="chnsend.html" title="chnsend" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">chnrecv</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="chnparams.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="chnsend.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="chnrecv">
+      <a id="chnrecv"></a>
+      <div class="titlepage"></div>
+      <a id="IndexChnrecv" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">chnrecv</span>
+        </h2>
+        <p>chnrecv — 
+      Recieves data from the software bus.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3173613"></a>
+        <h2>Description</h2>
+        <p>
+      Receives data from a channel of the inward named software bus.
+      Implies declaring the channel with imode=1 (see also chn_k, chn_a,
+      and chn_S).
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3173626"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ival <span class="command"><strong>chnrecv</strong></span> Sname</pre>
+        <pre class="synopsis">kval <span class="command"><strong>chnrecv</strong></span> Sname</pre>
+        <pre class="synopsis">aval <span class="command"><strong>chnrecv</strong></span> Sname</pre>
+        <pre class="synopsis">Sval <span class="command"><strong>chnrecv</strong></span> Sname</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3173716"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sname</em></span> -- a string that identifies a channel
+      of the named software bus to read.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3174418"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ival</em></span> -- the control value read at i-time.
+    </p>
+        <p>
+      <span class="emphasis"><em>kval</em></span> -- the control value read at performance time.
+    </p>
+        <p>
+      <span class="emphasis"><em>aval</em></span> -- the audio signal read at performance time.
+    </p>
+        <p>
+      <span class="emphasis"><em>Sval</em></span> -- the string value read at i-time.
+    </p>
+        <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p></p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1" title="Example">
+        <a id="id3174458"></a>
+        <h2>Example</h2>
+        <p>
+      The example shows the software bus being used as an asynchronous
+      control signal to select a filter cutoff.  It assumes that an
+      external program that has access to the API is feeding the values.
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+        sr = 44100
+        ksmps = 100
+        nchnls = 1
+
+        instr   1
+           kc   chnrecv    "cutoff"
+           a1   oscil     p4, p5, 100
+           a2   lowpass2  a1, kc, 200
+                out       a2
+        endin
+      </pre>
+        </div>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3174484"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="chnparams.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="chnsend.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">chnparams </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> chnsend</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

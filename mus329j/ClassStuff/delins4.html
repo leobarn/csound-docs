@@ -1,0 +1,57 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Pinkston Delay Instruments 4 - Variable Delay Vibrato</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<PRE>;------------------------------;
+; Pinkston Delay Instruments 4 ;
+;------------------------------;
+
+sr&#9;=&#9;22050
+kr&#9;=&#9;2205
+ksmps&#9;=&#9;10
+nchnls&#9;=&#9;2
+
+&#9;instr&#9;4&#9;&#9;;vdelay vibrato
+icps&#9;=&#9;cpspch(p5)&#9;;basic pitch
+ilfohz&#9;=&#9;p6&#9;&#9;;LFO rate in cps
+idelfac&#9;=&#9;p7&#9;&#9;;between 0 &amp; .999
+imaxdel&#9;=&#9;p8&#9;&#9;;max delay in secs
+ilfoamp&#9;=&#9;idelfac*imaxdel/2&#9;;lfo fn is +/- 1
+kgate&#9;linen&#9;p4,.1,p3,.2&#9;;basic note envlp
+avardel&#9;oscili&#9;ilfoamp,ilfohz,1&#9;;fn1 is LFO wave
+asig&#9;oscili&#9;kgate,icps,2&#9;;fn2 is Osc wave
+adelay&#9;=&#9;imaxdel/2+avardel&#9;;offset to .5 max
+aout&#9;vdelay&#9;asig,adelay,imaxdel&#9;;varying delay
+&#9;outs&#9;aout,aout&#9;
+&#9;endin&#9;&#9;&#9;&#9;&#9;
+&#9;</PRE>
+<P><HR></P>
+<PRE>;Sample Score for Pinkston Delay Chapter Instrument 4
+;LFO wave is a sine&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;
+f01&#9;0&#9;512&#9;10&#9;1&#9;&#9;&#9;&#9;
+;Oscil wave&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;
+f02&#9;0&#9;512&#9;10&#9;1&#9;.5&#9;.3&#9;.2&#9;.1
+;LFO depth factor is .9, gradually increase max delay time
+;&#9;st&#9;dur&#9;amp&#9;pch&#9;lfohz&#9;depth&#9;maxdlt&#9;
+i4&#9;0&#9;3&#9;10000&#9;8.00&#9;5&#9;.9&#9;1&#9;
+i4&#9;+&#9;.&#9;.&#9;.&#9;.&#9;.&#9;2&#9;
+i4&#9;+&#9;.&#9;.&#9;.&#9;.&#9;.&#9;3&#9;
+i4&#9;+&#9;.&#9;.&#9;.&#9;.&#9;.&#9;4&#9;
+e&#9;&#9;</PRE>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="50%" VALIGN="TOP">
+<P><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/delins4.orc">Download delins4.orc</A></TD>
+<TD WIDTH="50%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/delins4.sco">Download delins4.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

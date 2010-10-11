@@ -1,0 +1,125 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>main.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* main.c */
+
+#include &lt;stdio.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs, prototypes */
+
+<A NAME="main">void main(void)</A>
+{
+&#9;int wha;
+
+&#9;char i1pf[NUM_I1PFIELDS+1][15]={"", I1PF};
+&#9;char i2pf[NUM_I2PFIELDS+1][15]={"", I2PF};
+&#9;char i4pf[NUM_I4PFIELDS+1][15]={"", I4PF};
+
+&#9;init(MINSPEC, NA);
+&#9;init(SPECPLEX, NA);
+&#9;init(FULLPLEX, NA);
+&#9;init(PARS, ALL);
+&#9;for(;;) switch(task()) {
+
+&#9;&#9;case 'a' : adj_params();
+&#9;&#9;&#9;break;
+
+&#9;&#9;case 'v' : display(wh(DATAFIELDW, DFABBW), stdout);
+&#9;&#9;&#9;break;
+
+&#9;&#9;case 'i' : init(wh(DATAFIELDW, DFABBW), ALL);
+&#9;&#9;&#9;break;
+
+&#9;&#9;case 'l' : load(wh(DATAFIELDL, DFABBL));
+&#9;&#9;&#9;break;
+
+&#9;&#9;case 'w' : 
+&#9;&#9;&#9;wha=wh(DATAFIELDW, DFABBW);
+&#9;&#9;&#9;if(wha&lt;=ASCF) write(wha,wh(FILETYPE, FTABB));
+&#9;&#9;&#9;else write(wha,TXT);
+&#9;&#9;&#9;break;
+
+&#9;&#9;case 'e' : enteredit_specxy();
+&#9;&#9;&#9;break;
+
+&#9;&#9;case 'f' :
+&#9;&#9;&#9;if(GOT_MINSPEC==NO) {
+&#9;&#9;&#9;&#9;printf("\n; You must first enter or load a minspec.\n");
+&#9;&#9;&#9;&#9;printf("; Cannot create specplex.\n");
+&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;}
+&#9;&#9;&#9;else {&#9;&#9;&#9;
+&#9;&#9;&#9;&#9;printf("; Calculating hd and hr values...\n");
+&#9;&#9;&#9;&#9;calc_hd_hr();
+&#9;&#9;&#9;&#9;GOT_SPECPLEX=YES;
+&#9;&#9;&#9;&#9;printf("; ...done.\n");
+&#9;&#9;&#9;}
+&#9;&#9;&#9;break;
+
+&#9;&#9;case 'm' :
+&#9;&#9;&#9;if(GOT_SPECPLEX==NO) {
+&#9;&#9;&#9;&#9;printf("\n; You must first calculate or load a specplex.\n");
+&#9;&#9;&#9;&#9;printf("; Cannot create fullplex.\n");
+&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;}
+&#9;&#9;&#9;else {
+&#9;&#9;&#9;&#9;printf("\n; Fitting %i-point spec to %i-point fullplex...\n",
+&#9;&#9;&#9;&#9;&#9;PA_SPECPOI, PA_SPECPOI*(MAX_POI/PA_SPECPOI));
+&#9;&#9;&#9;&#9;make_fullplex();
+&#9;&#9;&#9;&#9;GOT_FULLPLEX=YES;
+&#9;&#9;&#9;&#9;printf("; ...done.\n");
+&#9;&#9;&#9;}
+&#9;&#9;&#9;break;
+
+&#9;&#9;case 's' :
+&#9;&#9;&#9;if(GOT_FULLPLEX==NO) {
+&#9;&#9;&#9;&#9;printf("\n; You must first calculate or load a fullplex.\n");
+&#9;&#9;&#9;&#9;printf("; Cannot scale non-existent data.\n");
+&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;}
+&#9;&#9;&#9;else {
+&#9;&#9;&#9;&#9;printf("\n; in fullplex:\n");
+&#9;&#9;&#9;&#9;printf("; Scaling x and y values to pitch/amp ranges\n");
+&#9;&#9;&#9;&#9;printf(";   (pitch-range: %.2f to %.2f, ", PA_MINPCH, PA_MAXPCH);
+&#9;&#9;&#9;&#9;printf("amp range: %.2f to %.2f dB)\n", PA_MINDB, PA_MAXDB);
+&#9;&#9;&#9;&#9;printf(";   and quantizing pitch-values into %i pitch-classes,\n", PA_NPC);
+&#9;&#9;&#9;&#9;printf("; Scaling hd values to max. dur of %.3f, min. of %.3f\n", PA_MAXDUR, PA_MINDUR);
+&#9;&#9;&#9;&#9;printf(";   (quantizing into %.3f/%.3fs),\n", PA_DURUNIT, PA_MAXDUR);
+&#9;&#9;&#9;&#9;printf("; Scaling hr values to varying min. reach of +/-%i, max. reach of +/-%i...\n", PA_MINREACH, PA_MAXREACH);
+&#9;&#9;&#9;&#9;s_and_q();
+&#9;&#9;&#9;&#9;SCALED_FULLPLEX=YES;
+&#9;&#9;&#9;&#9;printf("; ...done\n");
+&#9;&#9;&#9;}
+&#9;&#9;&#9;break;
+&#9;&#9;case 'c' :
+&#9;&#9;&#9;if(SCALED_FULLPLEX==NO) {
+&#9;&#9;&#9;&#9;if(GOT_FULLPLEX==YES) {
+&#9;&#9;&#9;&#9;&#9;printf("\n; Warning: Fullplex in memory is not scaled.\n");
+&#9;&#9;&#9;&#9;&#9;if(wh("Generate score anyway (y/[n])", "ny")==2)
+&#9;&#9;&#9;&#9;&#9;&#9;SCALED_FULLPLEX=YES;
+&#9;&#9;&#9;&#9;&#9;else {
+&#9;&#9;&#9;&#9;&#9;&#9;printf("; Aborting score generation.\n");
+&#9;&#9;&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;&#9;&#9;&#9;break;
+&#9;&#9;&#9;&#9;&#9;}
+&#9;&#9;&#9;&#9;}
+&#9;&#9;&#9;&#9;else {
+&#9;&#9;&#9;&#9;&#9;printf("\n; You must first calculate or load a fullplex.\n");
+&#9;&#9;&#9;&#9;&#9;printf("; No score generated.\n");
+&#9;&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;&#9;&#9;break;
+&#9;&#9;&#9;&#9;}
+&#9;&#9;&#9;}
+&#9;&#9;&#9;printf("\n; Beginning Csound file generation...\n");
+&#9;&#9;&#9;make_sco();
+&#9;&#9;&#9;printf("; ...done.  Score is ready for Csound.\n");
+&#9;&#9;&#9;GOT_SCO=YES;
+&#9;&#9;&#9;break;
+&#9;&#9;case 'q' : exit(0);
+&#9;}
+&#9;&#9;
+}</PRE></BODY>
+</HTML>

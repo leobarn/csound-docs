@@ -1,0 +1,410 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Csound Journal</title>
+<link href="csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+<body bgcolor="#FFFFFF">
+<div id="wrap">
+  <div id="navigation">CSOUND JOURNAL: <a href="../index.html">Home</a> | <a href="index.html">Winter
+      2006</a> </div>
+  <div id="header">
+    <h2><span
+lang=EN-US>Introducing PVSPITCH:</span></h2>
+    <h3><span
+lang=EN-US>A Pitch Tracking Opcode for Csound</span></h3>
+    <span class="MsoBodyText"><span lang=EN-US>Alan O Cinneide<br>
+    alan.ocinneide AT gmail.com </span></span></div>
+  <div id="content">
+    <h2>Introduction</h2>
+    <p style='text-align:justify'><span style='font-family:Times;"Times New Roman"'>An
+        accurate pitch tracker has many useful applications, whether for creating
+        interactive electroacoustic compositions, music transcription, ethnomusicological
+        research and numerous others.</span>&nbsp;<span style='font-family:Times;
+"Times New Roman"'> Designed for the Csound sound synthesis and signal processing
+        language, PVSPITCH is an opcode that can be utilised for such purposes.</span>&nbsp;<span style='font-family:Times;
+"Times New Roman"'> The opcode performs a mathematical analysis upon Csound</span>'<span style='font-family:Times;"Times New Roman"'>s
+        phase vocoder data streams</span>&nbsp;<span style='font-family:Times;
+"Times New Roman"'>and from this examination, ascertains what it determines to
+        be the signal</span>'<span style='font-family:Times;
+"Times New Roman"'>s pitch.</span>&nbsp;<span style='font-family:Times;
+"Times New Roman"'> The algorithm handles well many types of signals, including
+        those missing various harmonics, even a fundamental, and also signals
+        with inharmonic partials. The only signal restrictions are that it be
+        single-voiced, strongly-pitched and slowly-changing.</span></p>
+    <p style='text-align:justify'>&nbsp;<span
+style='font-family:Times;"Times New Roman"'>This paper introduces the opcode
+        and illustrates PVSPITCH</span>'<span style='font-family:Times;
+"Times New Roman"'>s pitch determination algorithm.</span>&nbsp;<span
+style='font-family:Times;"Times New Roman"'> Schouten</span>'<span
+style='font-family:Times;"Times New Roman"'>s pitch determination hypothesis
+        and the concept of tonal fusion are briefly discussed as the background
+        to the opcode</span>'<span style='font-family:Times;"Times New Roman"'>s
+        development.</span>&nbsp;<span style='font-family:Times;
+"Times New Roman"'> Three cases studies are also explored to demonstrate the
+        accuracy of the algorithm.</span></p>
+    <h2><br>
+      I.<span lang=EN-US> Developmental Background</span></h2>
+    <h3> <span lang=EN-US>The Place Theory of Pitch Perception</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>For work
+        that earned him the Nobel Prize, the Hungarian scientist Georg von B&eacute;k&eacute;sy
+        devised ingenious experiments observing the vibration of the basilar
+        membrane within the inner ear in reaction to pure tones.&nbsp; The displacement
+        envelope of the membrane would generate a bulge traveling down its length.&nbsp; The
+        position of peak displacement is frequency specific, with low notes causing
+        motion towards the thicker apex of the structure and higher notes displacing
+        maximally near the thinner base of the membrane.&nbsp; In other words,
+        a frequency analysis of incoming sounds is performed at this stage of
+        the hearing process.&nbsp; This information is passed onto the brain
+        for further processing via the neural firings of tiny hair cells on the
+        membrane.</span></p>
+    <p class=MsoBodyText style='text-align:justify'><span
+lang=EN-US>This phenomenon forms the basis of the Place theory of pitch perception,
+        as the location, i.e. “place”, of the peaks on the basilar membrane indicate
+        the frequency components of incoming signals.&nbsp; The theory proposes
+        that the brain examines the relationship between these partials and pitch
+        is determined from the nature of that relationship.&nbsp; The exact details
+        of that examination are disputed, but postulates have been formed by
+        various academics.</span></p>
+    <h3><span lang=EN-US>The Higher Neural Processes of the Brain</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>One such
+        academic, J. F. Schouten suggested that the pitch of the sound is the
+        highest common factor with all the components.&nbsp; He supported his
+        claims by experimenting with synthetic tones whose spectrum could be
+        generated to have any desired components.&nbsp; His hypothesis explains
+        how sounds that are missing various harmonics, even the fundamental,
+        can be judged to have the pitch equal to the fundamental frequency.</span></p>
+    <p class=MsoBodyText style='text-align:justify'><span
+lang=EN-US>That sounds lacking various components can be ascribed pitch is explained
+        by the concept of tonal fusion.&nbsp; It seems that when the brain deems
+        the partials of a sound adequately harmonic, the fusion of these pure
+        tone components into one pitch takes place.&nbsp; The fusion only occurs
+        if the harmonics in the sound can be viewed as members of a particular
+        harmonic series, or a close approximation thereof.&nbsp; This explains
+        why sounds with incomplete harmonic structure and sounds that do not
+        have exact integer relationships amongst their partials exhibit the pitch
+        of a particular fundamental frequency: the skeleton of that fundamentals
+        harmonic series is outlined by the given sonic constituents.</span></p>
+    <p class=MsoBodyText style='text-align:justify'><span
+lang=EN-US>Pitch then can be seen as the recognition of a harmonic series by
+        the brain.&nbsp; In fact, the brain seems to impose a further restriction
+        on the harmonics of the sounds it perceives: they must lie adjacent or
+        near adjacent in the harmonic series.&nbsp; Schouten showed this in an
+        experiment involving artificial sounds.&nbsp; A tone was generated with
+        three components: 1040 Hz, 1240 Hz, and 1440 Hz.&nbsp; The pitch perceived
+        by participants of the experiment was approximately 207 Hz, as the components
+        roughly correspond to the fifth, sixth and seventh harmonics of the harmonic
+        series of that frequency.&nbsp; Schouten termed the fundamental frequency
+        perceived under these circumstances as the “residue pitch”.&nbsp; This
+        is most interesting, as these harmonics do have a true fundamental frequency
+        at 40 Hz where they are the 26<sup>th</sup>, 31<sup>st</sup> and 36<sup>th</sup> harmonics,
+        respectively.&nbsp; In order to give an accurate representation of the
+        pitch that might be perceived by our auditory system, a pitch tracking
+        algorithm must incorporate this detail.</span><br>
+    </p>
+    <h2>II. <span lang=EN-US>The Operation of PVSPITCH</span></h2>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The pitch
+        detection algorithm implemented by PVSPITCH is based upon Schouten's
+        hypothesis of the neural processes of the brain used to determine the
+        pitch of a sound after the frequency analysis of the basilar membrane.&nbsp; Except
+        for some further considerations, PVSPITCH essentially seeks out the highest
+        common factor of an incoming sound's spectral peaks to find the pitch
+        that may be attributed to it.</span></p>
+    <h3><span lang=EN-US>Peak Isolation</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The first
+        step of the algorithm is to analyse a frame of the input signal using
+        the phase vocoder.&nbsp; The result of this process is amplitude and
+        frequency parameters for the sinusoidal oscillators needed to re-synthesise
+        that signal frame.&nbsp; As the prefix of the opcode name might indicate,
+        advantage is taken of Csound's suite of phase vocoder stream opcodes
+        in order to obtain the spectral coefficients of the signal.</span></p>
+    <p class=MsoBodyText style='text-align:justify;'><span
+lang=EN-US>In general, input sounds that exhibit pitch will as exhibit peaks
+        in their spectrum according to where their harmonics lie.&nbsp; However,
+        when speaking in generalities, it is important to be aware of the exceptions.&nbsp; Some
+        sounds whose spectral representation is continuous can impart a sensation
+        of pitch.&nbsp; Such sounds are explained by the centroid or center of
+        gravity of the spectrum and are beyond the scope of the method of pitch
+        detection implemented by PVSPITCH.</span></p>
+    <p class=MsoBodyText style='text-align:justify;'><span
+lang=EN-US>With the spectral information now available, the program locates the
+        peaks, these being the strongest components of the sound.&nbsp; A peak
+        is defined as a value whose amplitude is bigger than both its neighbours
+        and also larger than a threshold value, provided to the algorithm by
+        the user.&nbsp; The threshold parameter is of utmost importance, as adjusting
+        it can introduce weak yet significant harmonics into the calculation
+        of the fundamental. However, bringing the threshold too low would allow
+        harmonically unrelated partials into the analysis algorithm and this
+        will compromise the method's accuracy.&nbsp; These initial steps emulate
+        the response of the basilar membrane by identifying physical characteristics
+        of the input sound.</span></p>
+    <h3><span lang=EN-US>Highest Common Factor</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The execution
+        of Schouten's hypothesis of the further sonic processes of the brain
+        begins here.&nbsp; The frequency values of the peaks in the phase vocoder
+        data are stored in an array.&nbsp; All of the frequency values in the
+        array are assumed to be the harmonics of the input signal and the highest
+        common factor between all these values is the fundamental frequency.&nbsp; There
+        exists many elegant algorithms for obtaining the greatest common divisor
+        of a set of integers but we are not restricted to the integers.&nbsp; Also,
+        inharmonicity of any of the partials would render these algorithms incapable
+        of determining even an approximate solution.&nbsp; For these reasons,
+        the concept of an inharmonicity factor is introduced.&nbsp; </span></p>
+    <h3><span lang=EN-US>Pitch Candidates and Partial Inharmonicity</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The inharmonicity
+        factor is a numeric value inversely proportional to the likelihood of
+        each potential fundamental frequency candidate to be the fundamental
+        frequency of the partials of the sound.&nbsp; These candidates are calculated
+        from the lowest frequency peak present in the peak array, as that peak
+        must be the either fundamental frequency, first harmonic, second harmonic
+        and so on.&nbsp; Candidates are tested as long as they fall within the
+        audible bandwidth; fundamental frequencies are not tested if they fall
+        below 20 Hz.</span></p>
+    <p class=MsoBodyText style='text-align:justify'><span
+lang=EN-US>To ascertain the inharmonicity factor for a pitch contender, each
+        fundamental frequency possibility is divided into each of the peaks.&nbsp; The
+        remainder from each division indicates the relationship between the partial
+        and the fundamental.&nbsp; If the remainder is zero, then the numbers
+        have an integer relationship and are completely harmonic otherwise the
+        partial being examined falls outside the harmonic series of the candidate
+        frequency.&nbsp; The distance from an integer quotient is calculated
+        and, in keeping with the logarithmic perception of pitch, this value
+        is divided by the peak frequency value being tested to scale it.&nbsp; This
+        is a measurement of the inharmonicity of a particular partial in relation
+        to a particular fundamental frequency candidate.&nbsp; For every pitch
+        candidate, these measurements of the inharmonicity for each partial are
+        summed and the result is the inharmonicity factor for that particular
+        pitch candidate.&nbsp; As the fundamental frequency with the lowest inharmonicity
+        conforms best to the harmonic series, it is chosen as the best pitch
+        candidate of the sound.</span></p>
+    <h3><span lang=EN-US>Partial Adjacency</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The phenomenon
+        of the residue pitch of a certain tones shows the importance attached
+        to partial adjacency to the perception of pitch by the auditory system.&nbsp; This
+        fact is taken into account PVSPITCH by weighting those pitch candidates
+        that give rise to neighbouring components more heavily than those which
+        do not.&nbsp; If a sound has multiple harmonics, a successful pitch candidate
+        must agree that at least one pair of partials is separated by a distance
+        of not less than 3 times the fundamental frequency.</span></p>
+    <h3><span lang=EN-US>Harmonic Agreement of Pitch Frequency</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The process
+        of ascertaining a fundamental candidate relies purely on the first peak
+        found in the spectrum of the sound.&nbsp; The pitch of a waveform will
+        be required to be more representative of all the sound's partials.&nbsp; If
+        any partial is even slightly inharmonic with the best pitch candidate,
+        its harmonic number will not be an integer.&nbsp; The frequency of the
+        fundamental whereby each partial's harmonic number is the closest integer
+        is determined.&nbsp; The average of all these frequency values is then
+        taken and that is determined to by the pitch of the input waveform.</span></p>
+    <h3><span lang=EN-US>Inappropriate Analysis Signals and Primitive Transient
+        Detection</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>It is important
+        to remember that the input to the PVSPITCH opcode is assumed to be characterised
+        by strong partials within its spectrum.&nbsp; If this is not the case,
+        the results outputted by the opcode may not bear any relation to the
+        pitch of the input signal.&nbsp; If a spectral frame with many unrelated
+        partials was analysed, the greatest common factor of these frequency
+        values that allows for adjacent “harmonics” would be chosen.&nbsp; Thus,
+        noisy frames can be characterised by low frequency outputs of PVSPITCH.</span></p>
+    <p class=MsoBodyText style='text-align:justify'><span
+lang=EN-US>This fact allows for a primitve type of instrumental transient detection,
+        as the attack portion of some instrumental tones contain inharmonic components.&nbsp; Should
+        the lowest frequency of the analysed melody be known, than all frequencies
+        detected below this threshold are inaccurate readings, due to the presence
+        of unrelated partials.</span></p>
+    <h3><span lang=EN-US>Signal Amplitude</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>In order
+        to facilitate efficient testing of the PVSPITCH algorithm, an amplitude
+        value proportional to the one in the observed in the signal frame is
+        also outputted.&nbsp; The results of PVSPITCH can then be employed to
+        drive an oscillator whose pitch can be audibly compared with that of
+        the original signal.&nbsp; This value is ascertained by adding the amplitudes
+        of the individual components isolated by the phase vocoder analysis and
+        scaling appropriately.<br>
+      </span></p>
+    <h2><span lang=EN-US>III. Results</span></h2>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>Three investigations
+        were carried out to examine the accuracy of the pitch detection algorithm
+        implemented.&nbsp; To offer a challenge to the method, a variety of instruments
+        were chosen for analysis: a clarinet, a violin and the human voice.&nbsp; Each
+        instrument has its individual timbre and acoustic characteristics and
+        would pose different harmonic combinations for the pitch detector.&nbsp; Alongside
+        the musical notation of the passages performed, graphs of the results
+        are presented, showing the detected pitch against time. </span></p>
+    <h3><span lang=EN-US>The Voice</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The human
+        voice operates by a flow of air from the lungs being modulated by the
+        vocal cords, or folds, and resonated by various regions of the vocal
+        tract.&nbsp; The pitch of the note is determined by the vibration frequency
+        of the vocal folds, but its timbre is greatly affected by the resonance
+        regions.&nbsp; Singers are trained to manipulate the vocal tracts in
+        such a way to produce the desired tone.</span></p>
+    <p class=MsoBodyText style='text-align:justify'><span
+lang=EN-US>Charts 1 and 2 show the passages performed by the vocalist.&nbsp; The
+        pitch tracker works extremely well in determining the pitch of the sung
+        notes, even the small frequency deviations.&nbsp; The phenomenon known
+        as vocal drift is clearly observed, whereby slight alterations of pitch
+        are made before the signer settles on the appropriate note.</span></p>
+    <p class=MsoBodyText style='text-align:justify'><span
+lang=EN-US>The pitch tracker also illustrates other details of the performance.
+        It can be seen in Chart 1 that even though the singer attempted to sing
+        a D harmonic minor scale, the sixth degree of the scale was sharpened
+        while descending.&nbsp; In Chart 2, the pitch tracker also captures the
+        wide vibrato of the longer notes.</span></p>
+    <p class=MsoNormal align=center style='text-align:center'> <img src="images/pvspitch/articleTemplate_clip_image002.jpg" alt="example 1" width="622" height="70"> </p>
+    <p class=MsoNormal align=center style='text-align:center'><img src="images/pvspitch/Image1.jpg" alt="chart 1" width="549" height="268"> </p>
+    <p class=MsoNormal align=center style='text-align:center'> <img width="596" height="155" alt="example 2" src="images/pvspitch/articleTemplate_clip_image002_0000.jpg"><span lang=EN-US><img src="images/pvspitch/Image3.jpg" alt="chart 2" width="541" height="281"></span></p>
+    <p class=MsoCaption><span class=Heading3Char><span lang=EN-US style='font-size:
+14.0pt;
+font-style:normal'>The Violin</span></span></p>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The violin
+        is a chordophone, a musical instrument whose tone is produced by a vibrating
+        string.&nbsp; The strings of a violin are set into vibration by bowing,
+        though sometimes they are plucked.&nbsp; In chordophones, the vibrations
+        of this strings is typically amplified by a resonator, and it is the
+        acoustic characteristics of the violin's resonant wooden body that is
+        responsible for the quality of tone produced from it.&nbsp; The technique
+        of the violinist also contributes greatly to the harmonics of the resultant
+        tones.</span></p>
+    <p class=MsoBodyText style='text-align:justify;'><span
+lang=EN-US>In studio, an ascending and descending major scale on D5 and a brief
+        melody were recorded for analysis.&nbsp; The passages played and the
+        resultant detected pitches can be seen on the charts 3 and 4.</span></p>
+    <p class=MsoBodyText style='text-align:justify;'><span
+lang=EN-US>In Chart 3, the step-like motion of the scale is clear to be seen.&nbsp; The
+        pitch tracker detects unusual pitches at the beginning of the notes,
+        indicating the difficulties posed by onset transients.&nbsp; Also, poor
+        bow-string contact introduces noisy elements, particularly obvious on
+        the G5 note when the scale is descending.&nbsp; These superfluous inharmonic
+        components confuse the detector.</span></p>
+    <p class=WW-BodyText2 style='line-height:normal;'><span lang=EN-US style='font-family:"Times New Roman";
+'>Chart 4 shows the detected pitches of the violin melody.&nbsp; Transients again
+        prove the biggest inconsistencies and other pitch anomalies can be attributed
+        to inadvertent string contact on the part of the player. </span></p>
+    <p class=MsoNormal align=center style='text-align:center'> <img width="596" height="74" src="images/pvspitch/articleTemplate_clip_image002_0001.jpg" alt="example 3"> </p>
+    <p class=MsoNormal align=center style='text-align:center'><img src="images/pvspitch/Image4.jpg" width="574" height="309" alt="chart 3"></p>
+    <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US> &nbsp; </span> <img width="606" height="73" src="images/pvspitch/articleTemplate_clip_image002_0002.jpg" alt="example 4"> </p>
+    <p class=MsoNormal align=center style='text-align:center'><img src="images/pvspitch/Image5.jpg" width="551" height="332" alt="chart 4"></p>
+    <h3><span lang=EN-US>The Clarinet</span></h3>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The clarinet
+        produces its characteristic tone by the vibrations of a column of air
+        being excited by the movements of a mechanical reed.&nbsp; The clarinet
+        is therefore classified as an aerophone.&nbsp; For all intents and purposes,
+        the instrument can be viewed as a tube with one open end, meaning that
+        only odd harmonics will be present in its spectrum.&nbsp; The resonance
+        of the tube is also very important for the tone quality.</span></p>
+    <p class=MsoCaption style='text-align:justify;
+'><span lang=EN-US style='font-style:normal'>The scale and melody of the recorded
+        examples can be seen on charts 5 and 6.&nbsp; The pitch of both excerpts
+        are tracked very well, with any anomalies being readily explained by
+        the breath of the musicians and the clicking of the clarinets keys as
+        notes are changed.</span></p>
+    <p class=MsoNormal align=center style='text-align:center'> <img width="606" height="77" src="images/pvspitch/articleTemplate_clip_image002_0003.jpg" alt="example 5"> </p>
+    <p class=MsoNormal align=center style='text-align:center'><img src="images/pvspitch/Image6.jpg" width="574" height="372" alt="chart 5"></p>
+    <p class=MsoNormal align=center style='text-align:center'> <img width="607" height="77" src="images/pvspitch/articleTemplate_clip_image002_0004.jpg" alt="example 6"> </p>
+    <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><img src="images/pvspitch/Image7.gif" width="564" alt="chart 6" height="305"><br>
+      </span></p>
+    <h2><span lang=EN-US>IV. Conclusion</span></h2>
+    <p class=MsoBodyText style='text-align:justify'><span lang=EN-US>The pitch
+        tracker presented in this thesis can be very useful depending on its
+        intended purpose.&nbsp; It has been shown that the range of sounds for
+        which it was designed, i.e. those sounds that are strongly pitched, it
+        can be very accurate, plotting the even slight frequency deviations like
+        vocal pitch scoops and vibrato.&nbsp; Failure to recognise the correct
+        pitch at some points during the analysis of the examples was due to when
+        the portion of the sounds did not adhere to this set criterion or perhaps
+        the pitch of the incoming signal changes to rapidly to be captured correctly
+        by the window of analysis.&nbsp; For monophonic signals that are strongly-pitched
+        and slow-changing as a pitch tracker, PVSPITCH works sufficiently well
+        for most purposes.</span><br>
+    </p>
+    <h2>Acknowledgements</h2>
+    <p class="MsoBodyText"><span lang=EN-US>I would like to acknowledge the guidance
+        of Dr. Victor Lazzarini of the Music Technology Laboratory at the National
+        University of Ireland, Maynooth, for his help with this article.</span></p>
+    <h3 class="MsoBodyText"><span lang=EN-US>Selected bibliography and further
+        reading:</span></h3>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"MS Mincho";"Courier New"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'>Arfib, D., Keiler, F. and Z&ouml;lzer,
+        U.: 'Time-frequency Processing', <i>DAFX – Digital Audio Effects</i>,
+        ed. Udo Z&ouml;lzer (London: John Wiley &amp; Sons, Ltd. 2002), pp. 237-297.</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'>Arfib, D., Keiler, F. and Z</span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'>&ouml;</span><span
+style='font-size:12.0pt;font-family:"Times New Roman";"MS Mincho";"Courier New"'>lzer,
+        U.: 'Source-Filter Processing', <i>DAFX – Digital Audio Effects</i>,
+        ed. Udo Z</span><span
+style='font-size:12.0pt;font-family:"Times New Roman";"Courier New"'>&ouml;</span><span style='font-size:12.0pt;font-family:"Times New Roman";
+"Courier New"'>lzer (London: John Wiley &amp; Sons, Ltd. 2002), pp. 299-372.</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"MS Mincho";"Courier New"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"MS Mincho";"Courier New"'>Campell, Murray &amp; Greated,
+        Clive: <i>The Musician's Guide to Acoustics</i> (London: J. M. Dent &amp; Sons
+        Ltd. 1987).</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"MS Mincho";"Courier New"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"MS Mincho";"Courier New"'>Dolson, Mark: 'The Phase
+        Vocoder: A Tutorial', <i>The Computer Music Journal, </i>10(4):1</span><span
+style='font-size:12.0pt;font-family:"Times New Roman";"MS Mincho";"Courier New"'>4</span><span style='font-size:
+12.0pt;font-family:"Times New Roman";"Courier New"'>-27. MIT Press, Cambridge,
+        Mass.</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'> </span><span lang=EN-US>ffitch,
+        John: 'Extending Csound',&nbsp; </span><i><span lang=EN-US>The Csound
+        Book</span></i><span
+lang=EN-US>, ed. R. Boulanger (Cambridge, Mass.: MIT Press. 2000), pp. 599-612.</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'> </span><span lang=EN-US>Gerhard,
+        D.: 'Pitch Extraction and Fundamental Frequency' </span><span lang=EN-US>PDF
+        file, available from http://www2.cs.uregina.ca/~gerhard/publications.html,
+        accessed 25 July 2005.</span></p>
+    <p class=MsoNormal style='text-align:justify;text-autospace:ideograph-numeric'><span
+lang=EN-US style='"MS Mincho"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'>Howard, David M. &amp; Angus, James: <i>Acoustics
+          and Psychoacoustics </i>(Oxford: Focal Press. 2<sup>nd</sup> edn 2001).</span></p>
+    <p class=MsoNormal style='text-align:justify'><span lang=EN-US> </span><span lang=EN-US>Lazzarini,
+        V.: &quot;Extensions to the Csound Language: from User-Defined to Plugin
+        Opcodes and Beyond&quot;. Proc. Of the 3rd Linux Audio Developer's Conference,
+        Zentrum fuer Kunst- und Medientechnologie, Karlsruhe, Germany, 2005. </span></p>
+    <p class=MsoNormal style='text-align:justify'><span lang=EN-US> </span><span lang=EN-US>Lazzarini,
+        V.: &quot;Developing Spectral Processing Applications&quot;. 2nd Linux
+        Audio Developers Conference (LAD2), Zentrum fuer Kuenst und Medientechnologie,
+        Karlsruhe, Germany, 2004. </span></p>
+    <p class=MsoNormal style='text-align:justify'><span lang=EN-US> </span><span lang=EN-US>Lazzarini,
+        V.: &quot;Developing User-Defined and Plugin Opcodes&quot;. PDF file,
+        available from http://www.csounds.com/, accessed 12 July 2005.</span></p>
+    <p class=MsoNormal style='text-align:justify'><span lang=EN-US> &nbsp;</span><span lang=EN-US>Mulgrew,
+        B., Grant, P. &amp; Thompson, J.: <i>Digital Signal Processing: Concepts
+        and Applications</i> (London: MacMillan Press Ltd. 1999).</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'>Rabiner, L. R., Cheng, M. J., Rosenberg
+        A. E. &amp; McGonegal, C. A.: “A Comparative Performance Study of Several
+        Pitch Detection Algorithms”, <i>IEEE Trans. Acoust., Speech and Signal
+        Processing, </i>vol. ASSP-24, pp. 399-418, Oct. 1976.</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'>Rabiner, L. R.: “On the Use of Autocorrelation
+        Analysis for Pitch Detection”, <i>IEEE Trans. Acoust., Speech and Signal
+        Processing, </i>vol. ASSP-25, pp. 24-33, Feb. 1977.</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'>Roads, Curtis: <i>The Computer Music
+          Tutorial </i>(Cambridge, Mass., The MIT Press. 2000)</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'> </span><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'>Serra, Marie-H&eacute;l&egrave;ne:
+        'Introducing the Phase Vocoder', <i>Musical Signal Processing</i>, eds.
+        C. Roads, S. T. Pope, A. Piccialli and G. De Poli (Lisse: Swets &amp; Zeitlinger
+        B. V. 1997), pp. 31-90.</span></p>
+    <p class=WW-PlainText style='text-align:justify'><span style='font-size:12.0pt;
+font-family:"Times New Roman";"Courier New"'> </span><span lang=EN-US>Slaney,
+        Malcolm and Lyon, Richard, &quot;A Perceptual Pitch Detector,&quot; <i>Proceedings
+        of the International Conference of Acoustics, Speech, and Signal Processing</i>,
+        1990, Albuquerque, New Mexico. </span></p>
+  </div>
+</div>
+</body>
+</html>

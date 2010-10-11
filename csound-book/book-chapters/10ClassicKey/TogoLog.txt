@@ -1,0 +1,47 @@
+------------------------------  Web Buddy: to go trace log------------------------------Page Title   : Modeling Classic Keyboard InstrPage URL     : http://reality.sgi.com/hpm_cfdevsun/classic/classkey.htmlStart time   : -1305182221Finish time  : -1305181841Elapsed time : 6 minutes 20 secondsDisk space   : 45 KB Persistence  : 3Levels       : Base page + 1 level deepSummary: - Links resolved : 1 of 1 - Graphics resolved : 18 of 18----------------------------------------
+ 43135  - 0 - Begin Session Update: time = -1305182221 - 
+ 43135  - 0 - Begin Main Loop - 
+ 43135  - 31180844 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/classkey.html
+ 59484  - 31180844 -  - Resolve Complete
+ 59485  - 0 - Parsing file - http://reality.sgi.com/hpm_cfdevsun/classic/classkey.html
+ 59486  - 0 - Fetch Graphics - 
+ 59486  - 31179848 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image16.gif
+ 59487  - 31180568 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image17.gif
+ 59488  - 31180412 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image18.gif
+ 59488  - 31180792 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image19.gif
+ 60503  - 31180412 -  - Resolve Complete
+ 60504  - 31180716 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image20.gif
+ 60524  - 31180792 -  - Resolve Complete
+ 60524  - 31180356 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image21.gif
+ 60664  - 31179848 -  - Resolve Complete
+ 60665  - 31180776 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image22.gif
+ 60968  - 31180716 -  - Resolve Complete
+ 60969  - 31043728 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image23.gif
+ 61055  - 31180568 -  - Resolve Complete
+ 61056  - 31180480 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image24.gif
+ 61172  - 31180356 -  - Resolve Complete
+ 61172  - 31043696 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image25.gif
+ 61367  - 31043728 -  - Resolve Complete
+ 61367  - 31179836 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image26.gif
+ 61464  - 31180480 -  - Resolve Complete
+ 61465  - 31179860 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image27.gif
+ 61862  - 31179860 -  - Resolve Complete
+ 61863  - 31180364 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image28.gif
+ 62453  - 31180364 -  - Resolve Complete
+ 62454  - 31180376 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image29.gif
+ 62804  - 31180376 -  - Resolve Complete
+ 62805  - 31179820 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image30.gif
+ 63011  - 31179836 -  - Resolve Complete
+ 63012  - 31043332 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image31.gif
+ 63179  - 31043696 -  - Resolve Complete
+ 63180  - 31179924 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image32.gif
+ 65045  - 31180776 -  - Resolve Complete
+ 65046  - 31180732 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/classic/image33.gif
+ 65262  - 31043332 -  - Resolve Complete
+ 65505  - 31180732 -  - Resolve Complete
+ 65603  - 31179820 -  - Resolve Complete
+ 65966  - 31179924 -  - Resolve Complete
+ 65966  - 0 - Begin Main Loop - 
+ 65966  - 0 - Begin Main Loop - 
+ 65966  - 0 - Update links - 
+ 66016  - 0 - Session Update Complete: time = -1305181841 - 

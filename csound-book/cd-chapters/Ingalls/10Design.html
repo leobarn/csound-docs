@@ -1,0 +1,146 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<title>Welcome to Adobe GoLive 4</title>
+	</head>
+
+	<body bgcolor="white">
+		<h1>10. Improving a Composer&#146;s Interface: Recent Developments to Csound for the Power Macintosh Computer</h1>
+		<h2>Matt Ingalls</h2>
+		<p><b>Introduction</b></p>
+		<div align="justify">
+			<p>Thirty years ago, in the beginnings of computer music, realizing sound digitally was a laborious and time-consuming process. As a result, considerable research was conducted to develop computationally efficient algorithms to speed up the generation of sound on a computer. Complex and powerful programs were created for the handful of composers who had access to the various mainframe computers owned by research and educational institutions. Today, even with the abundance of commercially available software, these programs remain some of the most versatile and powerful computer music applications. (This is most probably due to clever solutions to the severe limitations of computers at the time.) Now running on personal computers, these applications have both an accessibility and processing power far greater than they had on the now obsolete mainframe machines of the 1960s. Moreover, unlike present day commercial music software, these older programs lack the user interface capabilities possible on today's personal computers. Barry Vercoe's digital sound processing program, Csound, is one of these applications.</p>
+			<p>This paper will detail problems facing a composer working with Csound. By tracing through my own compositions and developments in Csound (notably the Power Macintosh version developed by Mike Berry, Dave Madole, and myself), a history of the Csound composing environment will be shown. In conclusion, I will propose further directions for Csound development from a composer's perspective. The instruction manual, <i>Csound for Power Macintosh </i>(slated to be published on the CD-ROM contained within the M.I.T. Csound Textbook in Fall 1997), is included as an appendix to this paper.</p>
+			<p><b>The Csound Software</b></p>
+			<p>Csound is a freely distributed application for synthesizing and manipulating digital audio. It functions as a high-level interpretive language, in which a user programs synthesis instruments in an &quot;orchestra&quot; file that are compiled into digital sound samples specified by note events in a &quot;score&quot; file. The programming is done in text, modeling its language and program flow from analog synthesizers. To initiate the sound generation, a user forms a &quot;command line&quot; containing all the file names and other information needed to create the sound.</p>
+			<p>The history of Csound dates back to Max Matthews' general-purpose sound synthesis programs, <i>Music 3</i> and <i>Music 4</i>, developed at the Bell Telephone Laboratories in the early 1960s. In 1968, while an instructor at M.I.T., Barry Vercoe created <i>Music 360</i>, drawing from Matthews' work as well as from additions made by Godfrey Winham at Princeton University. Further improvements were made by Vercoe in 1973 with <i>Music 11</i>, the first computer music language written for a minicomputer: Digital Equipment Corporation's PDP-11. In the mid-1980s, Vercoe rewrote <i>Music 11</i> in the C programming language, entitling it &quot;Csound.&quot; Because Csound was written in C, it could be compiled easily on various platforms and operating systems, ensuring a larger user population as well as a longer existence.</p>
+			<p>For approximately ten years, Csound continued to be developed by Vercoe and others at M.I.T. New opcodes, data types, MIDI implementation, sound file analysis utilities, and hooks for potential real-time processes were all added in the early part of the nineties. In addition, John Fitch, Paris Smaragdis, Greg Sullivan, Robin Whittle, and many others contributed significant changes and additions to the source code. Presently, Csound is still evolving and exists on most known operating systems, the most common being NeXT, SGI, SUN, Linux, DOS, Windows, and Macintosh.</p>
+			<p><b>Early Compositions with Csound</b></p>
+			<p>I was first exposed to Csound at the University of Texas at Austin in 1991 while learning the basics of computer music synthesis on a PC. Later that year, I began writing C programs that algorithmically generated Csound scores. In 1992, I wrote my first Csound composition, <i>Silent Cacophony</i>, a seven minute work for four-channel tape consisting of manipulated vocal sounds. I realized the entire work on a NeXT computer, which had a much faster CPU and larger hard-disk space than the IBM clones with which I was previously working. In addition, the NeXT was a multitasking environment, so it was possible to have a sound player application, a text editor, and multiple instances of Csound running simultaneously. As a result, I could edit a Csound instrument while processing a different instrument or playing a sound file. Even though the NeXT eliminated switching between applications and contained a much faster processor than the PC, most of my studio time was still spent waiting for Csound to finish rendering a file. As my patience grew shorter, I had to discover new working methods that would increase productivity and shorten computation time.</p>
+			<p>The first solution was to create a Csound &quot;mixing&quot; instrument. With a mixing instrument, I could dynamically change the volume of a previously created sound file while simultaneously combining it with other sound files. Before creating the mixing instrument, I used the score file for my Csound instruments to completely represent all events within a piece. A problem, however, was as I added more material to a piece, I added more time to the generation of the score: progress became slower and slower. With my new mixing instrument, I could create numerous gestures in separate Csound processes, then later combine them with the mixer. In fact, with the NeXT's multitasking abilities, I could run a mix of the entire piece in the background while simultaneously creating new gestures.</p>
+			<p>Another problem I encountered while working on <i>Silent Cacophony</i> was a difficulty in debugging some instruments I was creating. By using the &quot;timeout&quot; and &quot;reinit&quot; unit generators, I had managed to assemble some convoluted algorithmic instruments that were as slow as they were complex. To simplify the situation, I created a C application that algorithmically generated note events to a Csound score. By using this technique, I not only simplified and increased the speed of my instruments, but I also created greater flexibility in the use of my algorithms.</p>
+			<p>In fact, generating Csound scores has become my primary method of creating electronic sound. Over the years, I have created a handful of pieces using different variants of my original program. When I arrived at Mills College in the fall of 1994, I used the NeXT machine to finish two works, <i>CrusT</i>, a thirteen minute composition for clarinet and tape, and <i>Gargoyles</i>, a tape accompaniment for dance. As with my previous compositions, I used Csound and my score generator program to granularly manipulate sound files. To combine the gestures, I abandoned my Csound mixing instrument in favor of Paul Lansky's application, <i>rt</i>. Running on NeXT machines, <i>rt</i> is a text-based mixing application designed to run in real-time.</p>
+			<p>Using <i>rt</i> was my first experience composing computer generated tape music in real-time, and I began to realize its potential. By eliminating the waiting time, real-time mixing gave me immediate feedback on my input, creating a greater sense of connection to the sound. I felt as if I were playing a (fairly limited) instrument, rather than listening to a performance of my composition. For the first time, my experiences as an acoustic instrumentalist and a computer music programmer had overlapped.</p>
+			<p>While I was exploring real-time mixing on the NeXT, Mills acquired a <i>ProTools</i> system along with a Power Macintosh 7100/66. <i>ProTools</i> is a hardware/software mixing environment more complex than <i>rt</i>, and includes a graphic interface. With the new Motorola PPC processor, the Power Macintosh far exceeded the NeXT in speed. The new Macintosh became my machine of choice.</p>
+			<p>Unfortunately, I could not simply switch my work over from the NeXT. My score generator application could only run on the NeXT. It was possible, however, to run the score generator and Csound on the NeXT then transfer all the sounds to the Macintosh for mixing in <i>ProTools</i>, but transferring files over the network was impractical due to its slow speed. In addition, I had developed a method of working that was continually alternating between mixing and running Csound, making the use of two platforms awkward.</p>
+			<p>The main reason I did not want to compose with the Macintosh version of Csound, however, was my dissatisfaction with the program itself. On the Macintosh, Csound was not fully developed, often crashed, and contained many problems with the interface, some of which could not be worked around. With the Macintosh Csound version considerably outperforming the NeXT in generation times, my desire to work on the more powerful Macintosh was intense. In order to fulfill my wish, however, I first needed certain improvements to be made to the interface. This would not be an easy task, for some of my problems with the application had been present ever since Csound was first ported to a Macintosh.</p>
+			<p><b>Macintosh Csound</b></p>
+			<p>The first version of Csound for Macintosh computers was developed by Bill Gardner from 1989 to 1992. Gardner set up a standard Macintosh interface that allowed a user to form a Csound command line by graphically selecting the required option flags and file names. Although it was functional, the port was not terribly useful for musicians, as Macintosh computers were not yet powerful enough for practical rendering of sound. In other words, they took a very long time to generate even simple instruments compared to the current UNIX and NeXT machines.</p>
+			<p>There were also interface problems specific to Gardner's port. Most significantly, due to the procedural nature of the original UNIX code, the Macintosh version had to be closed after every generation of sound. Originally this was not a problem. Since there was no play feature in Csound, the user had to open another program to hear the newly created sound file anyway. With the arrival of System 7, however, composers wanted to take advantage of the multitasking environment by running Csound, a text editor, and a sound editor simultaneously. There were other problems with the port as well, stemming from differences in the way the two operating systems handled files, input, and output.</p>
+			<p>In 1995, Erik Dahl released a new version of Csound for Power Macintosh which combined a PC version (Vercoe-Ffitch-Whittle) with Gardner's old Macintosh interface. With this port, he fixed bugs, added real-time output capabilities, and implemented real-time MIDI input, using the French MIDI driver, MIDIShare. Dahl added many invaluable changes that simplified or eliminated steps to process sound, including the ability to generate sound immediately upon launching, to send a new sound file automatically into a different application, and to quit after generation. These features were significant in that their focus was to improve the Csound composer's working environment.</p>
+			<p><b>The Mills Development</b></p>
+			<p>During the first part of 1996, Dave Madole downloaded Dahl's new version to Mills College for Berry, Madole, and myself to begin testing. We were all extremely excited, for with Dahl's improvements, combined with the new speed of the Power Macintosh, composing with Csound on a Macintosh was finally becoming a realistic possibility. However, there were still many changes and improvements needed before an enjoyable and productive Csound working environment was achieved. In fact, Madole had been in contact with Dahl, giving suggestions and reporting bugs we found at Mills, most of which Dahl tried to implement or fix. Later that year, however, Dahl announced that he would halt development, turning his attention towards other platforms. With the desire to use Csound on our studio's most powerful machine and with no other options available, we asked Dahl for permission to complete the development he had just abandoned.</p>
+			<p>By the time we received Dahl's code, we had already begun brainstorming about our Macintosh Csound development. Quickly, our ideas exceeded fixing bugs, as we started to formulate the perfect working environment for Csound composers. On February 18, 1996, I mailed a list of bugs, changes, and additions for potential development:</p>
+			<p><b>Table 1. </b>Initial Development Proposals</p>
+
+					<dir>
+						<p><u><b>Bugs</b></u></p>
+						<p>The sound input directory selection did not work.</p>
+						<p>A click outside the table window caused a crash.</p>
+						<p>Real-time MIDI note-offs (instead of 0 velocity) were not recognized and sometimes caused a crash.</p>
+						<p>The directory button was disabled during real-time audio, which was not always wanted.</p>
+						<p><u><b>Annoyances</b></u></p>
+						<p>The available header selections did not include Sound Designer II (even though that was the default header).</p>
+						<p>It was possible to select more than one header at once.</p>
+						<p>There was no way within the program to stop a generation.</p>
+						<p>There were many options that were not included in the graphic interface, even though they could be typed in the command line dialog box.</p>
+						<p>There was a ten note maximum polyphony with real-time MIDI input.</p>
+						<p><u><b>Desired Changes and Additions to the Interface</b></u></p>
+						<p>Allow unlimited generations, so that a user does not need to quit after each run.</p>
+						<p>Add the ability to play the generated sound file.</p>
+						<p>Add real-time audio input.</p>
+						<p>Add an &quot;Executables&quot; menu that will run Csound utilities (hetro, lpanal, pvanal, cvanal, and sndinfo).</p>
+						<p>Create a &quot;Mega-options&quot; window that will replace all UNIX flags.</p>
+						<p>Improve primitive MIDI (and other) communication with other applications, such as HMSL.</p>
+						<p>Create an internal text editor</p>
+						<p>Make the windows modeless, so a user could view the options, file formats, file names, the command line, and any other information while running a sound generation.</p>
+						<p>In turn, make these windows launchable from a &quot;Windows&quot; menu.</p>
+						<p>Create an &quot;orc/sco&quot; default directory.</p>
+						<p>Create a &quot;Generate&quot; menu option, corresponding to the button in the main window.</p>
+						<p>Create a &quot;project&quot; file to save all current options, default directories, and files. This would be really useful for a machine with multiple users and projects, each with separate sound file directories and options.</p>
+						<p>Create the ability to automate multiple generations in a single &quot;batch.&quot;</p>
+						<p>Create the ability to playback through a multi-channel sound card, such as a <i>ProTools</i> system.</p>
+						<p>Add a scroll bar to the table graphics window.</p>
+						<p>Update the core source code to the most current version controlled by John Fitch at Bath University, England.</p>
+						<p>&nbsp;</p>
+					</dir>
+
+			<p>With these goals in mind, we began the development process. All of the programming occurred on Power Macintoshes at either the Center for Contemporary Music (CCM) at Mills College, or at our respective homes. The CCM supplied <i>CodeWarrior</i>, <i>ResEdit</i>, <i>THINKRef</i>, and <i>Resorcerer</i> development software, as well as references such as <i>Inside Macintosh</i> .</p>
+			<p>Madole began the development by downloading the code and organizing all the files into a working <i>CodeWarrior</i> project file. The next task, and in some ways the most important, was to get Csound to stay open indefinitely, letting the user generate sound as many times as needed. Since the original UNIX code was structured to run as a command line executable, no measure was programmed by Barry Vercoe to reinitialize variables or file descriptors, making it nearly impossible to restructure the program to generate sound more than once per launch. Dahl's implementations worked around this problem by bypassing the graphical interface altogether--in some ways a step backwards toward the port's UNIX past. Upon Madole's suggestion, and following ports on other platforms, I decided to break up the code into two separate applications.</p>
+			<p>One application, <i>Csound, </i>became the &quot;front-end&quot; application, containing all the graphic interface and handling almost all user interaction. The other application, <i>perf</i>, became the &quot;performer&quot; by rendering the sound with the original UNIX code. Acting as if it were a UNIX application, <i>perf</i> simply launches, creates sound, and quits immediately. Usually, <i>Csound </i>controls the<i>perf</i> application, opening and closing <i>perf</i> when needed. To the user, these two applications act as one, simulating what would be expected from a single application.</p>
+			<p>Once the two applications were in place, we began to overhaul <i>Csound's</i> interface, with the primary objective of improving the entire environment while composing with <i>Csound</i>. Working for more than a year, our developments have finally made <i>Csound</i> productive and enjoyable on the Macintosh. Currently, this version is being praised by musicians around the world, and is being used for composition, sound design, and as a teaching tool in electronic music courses.</p>
+			<p>Looking back, most of our initial development goals (Table 1) have been accomplished:</p>
+			<p><b>Table 2. </b>Present State of the Initial Development Proposals</p>
+
+					<dir>
+						<p><u><b>Bugs</b></u></p>
+						<p>The sound input directory selection now works.</p>
+						<p>The table window does not crash when it is clicked outside of.</p>
+						<p>Real-time MIDI note-offs are now recognized with a new OMS implementation.</p>
+						<p>The directory button is now enabled during real-time audio.</p>
+						<p><u><b>Annoyances</b></u></p>
+						<p>The header choices have been moved to a pop-up menu, allowing only one choice among &quot;No Header,&quot; &quot;Sound Designer II,&quot; &quot;AIFF-C,&quot; or &quot;WAV.&quot;</p>
+						<p>A transport was added to pause, play, continue, and kill a generation.</p>
+						<p>All options except for -i and -L have been implemented.</p>
+						<p>There is now no maximum polyphony limitation for real-time MIDI input.</p>
+						<p><u><b>Desired Changes and Additions to the Interface</b></u></p>
+						<p>The <i>Csound/perf</i> separation has removed the need to quit after each generation.</p>
+						<p>The ability to play the generated sound file has been added.</p>
+						<p>Real-time audio input has been added.</p>
+						<p>Csound utilities (hetro, lpanal, pvanal, cvanal, and sndinfo) have been supported, including a graphic interface.</p>
+						<p>An &quot;Options&quot; menu has been added in favor of a &quot;Mega-options&quot; window.</p>
+					</dir>
+
+			<p>OMS and new MIDI opcodes have been added.</p>
+	
+					<dir>
+						<p>The ability to select a preferred text editor has been added instead of creating an internal text editor to <i>Csound.</i></p>
+						<p>All the windows have been removed except for the main window and default directories. These still remain modal however.</p>
+						<p>A &quot;Windows&quot; menu has been decided not needed.</p>
+						<p>An &quot;orc/sco&quot; default directory has been decided not needed.</p>
+						<p>A &quot;Generate&quot; menu option has been decided not needed.</p>
+						<p>&quot;Project&quot; files have been created, allowing one to save all current options, default directories, and files.</p>
+						<p>The ability to automate multiple generations in a single &quot;batch&quot; has been implemented.</p>
+						<p>The ability to playback through the <i>ProTools</i> multi-channel sound card, has not implemented due to Digidesign's refusal to supply the necessary information.</p>
+						<p>A scroll bar has been added to the table graphics window.</p>
+						<p>The core source code has been updated to the most current version controlled by John Fitch.</p>
+r>
+			</dir>
+			<p>In addition, there have been many other developments that we did not initially anticipate:</p>
+			<p><b>Table 3. </b>Additional Development Not Originally Proposed</p>
+
+					<dir>
+						<p>A score generator was included into the front-end.</p>
+						<p>A handful of minor bugs were found and corrected.</p>
+						<p>The &quot;command line&quot; dialog was moved out of the front-end and into <i>perf.</i></p>
+						<p>Color was added.</p>
+						<p>Elements in the main window were graphically rearranged for aesthetics and ease of use.</p>
+						<p>The &quot;Edit&quot; menu was enabled.</p>
+						<p>A &quot;Preferences&quot; menu was created to contain all Macintosh specific options.</p>
+						<p>A &quot;Set Buffers...&quot; item dialog box was added where the user can select audio buffer sizes, set the maximum number of displayed function tables, and change the screen buffer size.</p>
+						<p>A &quot;safety&quot; feature was created to prevent overwriting a preexisting sound file.</p>
+						<p>The &quot;Quit after Generation&quot; option was removed.</p>
+						<p>An option to &quot;Play When Done&quot; was added.</p>
+						<p>An option to &quot;Reset all Options/Settings&quot; was added.</p>
+						<p>A new floating point file header option for AIFF-C was created.</p>
+						<p>An option to rescale floats to shorts was implemented.</p>
+						<p>The Graphics Window was improved with a scroll bar, graph lines, a red center line, a function information display, and different size options.</p>
+						<p>The ability to record MIDI input was added.</p>
+						<p>The &quot;xyin&quot; opcode was made functional.</p>
+						<p>A &quot;diskin&quot; opcode was created to shift pitch of sound files.</p>
+						<p>The &quot;sndinfo&quot; utility was made to play the sound in addition to displaying information.</p>
+						<p>The manual was created in application form, using <i>DocMaker.</i></p>
+						<p>A <i>CsRef</i> reference application was created to display opcode prototypes.</p>
+						<p>A <i>Mr. Tweaky</i> application was created to convert analysis files to text files and back.</p>
+						<p>&nbsp;</p>
+					</dir>
+
+			<p>Future developments will depend on the state of the Macintosh Operating System. Apple's promise for a multi-threading and preemptive multitasking operating system means that <i>Csound</i> will be able to run multiple generations at once, be controlled by another running application without conflicts, and obtain an increased efficiency in real-time sound input/output. In addition, with the speed of new Power PC processors increasing exponentially, new models of Macintoshes will make <i>Csound</i> faster and able to handle more complex real-time instruments. Other plans for <i>Csound</i> development include a function editor, &quot;scrubbing&quot; playback, the ability to view a generated wave form, a cleaner looking front-end, and some graphical editing features for the analysis utilities.</p>
+			<p></p>
+			<p></p>
+			<p></p>
+			<p></div>
+	</body>
+
+</html>

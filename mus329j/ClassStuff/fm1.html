@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Pinkston FM Instruments 1 - Chowning Examples</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<PRE>;---------------------------;
+; Pinkston: FM Instrument 1 ;
+;---------------------------;
+
+sr      =       44100
+kr      =       4410
+ksmps   =       10
+nchnls  =       1
+
+&#9;instr&#9;1&#9;;simple FM instrument
+isine&#9;=&#9;1&#9;;f01 has sine table
+iamp&#9;=&#9;p4&#9;;peak amp of carrier
+icarhz&#9;=&#9;p5&#9;;carrier frequency
+imodhz&#9;=&#9;p6&#9;;modulator frequency
+index&#9;=&#9;p7&#9;;max index of modulation
+index1&#9;=&#9;p8&#9;;minimum index
+irise&#9;=&#9;p9&#9;;rise time
+idecay&#9;=&#9;p10&#9;;decay time
+isteady&#9;=&#9;p3-irise-idecay&#9;;steady state time
+imaxdev&#9;=&#9;index*imodhz&#9;;D = I * M
+imindev&#9;=&#9;index1*imodhz&#9;;minimum deviation
+ivardev&#9;=&#9;imaxdev-imindev&#9;;variable deviation
+kenv&#9;expseg&#9;.001,irise,1,isteady,1,idecay,.001&#9;
+kmodamp&#9;=&#9;imindev+ivardev*kenv&#9;;amplitude of modulator
+amodsig&#9;oscili&#9;kmodamp,imodhz,isine&#9;;gated modulator
+acarsig&#9;oscili&#9;iamp*kenv,icarhz+amodsig,isine&#9;;simple FM
+&#9;out&#9;acarsig&#9;
+&#9;endin&#9;&#9;&#9;
+&#9;</PRE>
+<P><HR></P>
+<PRE>;--------------------------------------------;
+; Pinkston: Sample Score for FM Instrument 1 ;
+;--------------------------------------------;
+f01     0       2048    10      1       ;simple sine wave                               
+;&#9;st&#9;dur&#9;amp&#9;carhz&#9;modhz&#9;ndx&#9;ndx1&#9;rise&#9;decay
+;Chowning brass&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;
+i01&#9;0&#9;.6&#9;20000&#9;440&#9;440&#9;5&#9;0&#9;.1&#9;.2
+;Chowning woodwind&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;
+i01&#9;1&#9;.6&#9;20000&#9;900&#9;300&#9;2&#9;0&#9;&#9;
+;Chowning bassoon&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;
+i01&#9;2&#9;.6&#9;20000&#9;500&#9;100&#9;1.5&#9;0&#9;&#9;
+;Chowning clarinet&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;
+i01&#9;3&#9;.6&#9;20000&#9;900&#9;600&#9;4&#9;2&#9;&#9;
+;Chowning bell&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;
+i01&#9;4&#9;15&#9;20000&#9;200&#9;280&#9;10&#9;0&#9;.001&#9;14.99
+e</PRE>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="50%" VALIGN="TOP">
+<P><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/fm1.orc">Download fm1.orc</A></TD>
+<TD WIDTH="50%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/fm1.sco">Download fm1.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>40_02_1.orc.html</title>
+<meta name="FORMATTER" content="Microsoft FrontPage 2.0">
+</head>
+
+<body stylesrc="../admin/adporc.html"
+background="../admin/AccciDefaultBackground.gif"
+bgcolor="#FFFFFF">
+
+<pre>; ************************************************************************
+; ACCCI:      40_02_1.ORC
+; timbre:     clarinet-like
+; synthesis:  waveshaping(40)
+;             basic instrument with duration dependent envelope(02)
+; source:     Risset(1969)
+;             #150 Serial Excerpt with Clarinet-like Sounds by Nonlinearity
+; coded:      jpg 8/93
+
+sr = 44100
+kr  =  441
+ksmps= 100
+nchnls = 1
+
+instr 1; *****************************************************************
+idur  = p3
+iamp  = p4
+ifqc  = cpspch(p5)
+
+idec  =  .64                             ; idec for idur &gt; .75
+if idur &gt;.75 igoto start
+idec  =  idur - .085                     ; idec for idur &lt;= .75
+
+start:
+        aenv    linen    255, .085, idur, idec      ; envelope
+        a1      oscili   aenv, ifqc, 1              ; sinus
+        a1      tablei   a1  + 256, 31              ; transfer function
+                out      a1 * iamp                  ; scale to amplitude
+endin</pre>
+</body>
+</html>

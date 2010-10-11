@@ -1,0 +1,880 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+  
+  
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+
+<div id="wrap">
+<div id="navigation"> CSOUND JOURNAL: <a href="../index.html">Home</a>
+|&nbsp;<a href="index.html">Issue 8</a> </div>
+
+
+
+<div id="header">
+
+<p>
+</p>
+
+<h2>Managing Csound Compositions with GNU Make</h2>
+
+
+
+Pedro Kr&ouml;ger<br>
+
+
+pedro.kroger AT gmail.com
+</div>
+
+
+
+<div id="content">
+
+<h2>
+<br>
+
+
+Introduction
+<br>
+
+</h2>
+
+
+
+<p>
+Composing with Csound involves rendering Csound orchestra and score
+files, converting sound files from WAV or AIFF to MP3, generating
+scores from pre-processors such as SCORE-11 and CMask, generating
+analysis files with tools like pvanal and hetro, and so on. Doing all
+these tasks by hand is tedious and error-prone. A build system is a
+tool designed for this kind of task&mdash;it tracks dependencies in a
+project and performs actions needed to successfully build the final
+product. For example, figure 1 shows the
+dependencies of a hypothetical Csound composition. The yellow boxes
+represent things that are automatically generated from other files.
+
+</p>
+
+<p>
+
+</p>
+
+<div>
+<table align="center">
+
+
+  <caption align="bottom"><strong>Figure 1:</strong>
+Dependencies</caption>
+  <tbody>
+
+    <tr>
+
+      <td>
+      
+      <div>  <img src="images/dependencies.png" alt="Image dependencies" align="bottom" border="0">
+  </div>
+
+      </td>
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+</div>
+
+
+
+<p>
+The final composition, <tt>foo.wav</tt>, depends on <tt>foo.orc</tt> and
+<tt>foo.sco</tt>, which is generated from <tt>foo.cmask</tt>. The file
+<tt>foo.orc</tt> uses the pvoc file <tt>flute.pvx</tt>, which has to be
+generated from <tt>flute.wav</tt>. Finally, we want to generate an Ogg Vorbis file to post the composition on the Internet. These are the
+necessary commands to render this project:
+
+</p>
+
+<p>
+</p>
+
+<pre>pvanal flute.wav flute.pvx<br>cmask foo.cmask &gt; foo.sco<br>csound -o foo.wav foo.orc foo.sco<br>oggenc -q 8 foo.wav<br></pre>
+
+
+
+<p>
+We don't want to execute these four commands every time we'll render
+the composition. For example, it is not necessary to run <tt>pvanal</tt>
+again if we change only the score. On the other hand, if we change
+<tt>foo.cmask</tt> we have to run <tt>CMask</tt> and <tt>Csound</tt> again
+(lines 2-4) but not <tt>pvanal</tt> (line 1). In this paper we will see
+how to use a build system to automate tasks like these. We will use GNU
+Make 
+[5], but there are other build systems such as
+Scons 
+[3], Rake 
+[7], and Ant
+[2].
+
+</p>
+
+<p>
+
+</p>
+
+<h2>
+<br>
+
+
+I. Building things with Make
+<br>
+
+</h2>
+
+
+
+<p>
+The rules do build a computer program, a L<sup><small>A</small></sup>T<small>E</small>X document, or a Csound composition are defined in a file called Makefile. In this file
+we define rules with the following syntax:
+
+</p>
+
+<p>
+</p>
+
+<pre>target: dependencies<br>    actions<br></pre>
+
+<p>The indentation before each action has to be done with a tab and not spaces, otherwise Make will complain.</p>
+
+<p>
+A <i>target</i> usually is a file to build, <i>dependencies</i> are
+files or other targets that the current target needs, and
+<i>actions</i> are the commands that have to be issued to build the
+target. To build a WAV file using Csound we define the following rule:
+
+</p>
+
+<p>
+</p>
+
+<pre>foo.wav: foo.orc foo.sco<br>    csound -o foo.wav foo.orc foo.sco<br></pre>
+
+
+
+<p>
+The file <tt>foo.wav</tt> is the target we want to build, foo.orc and
+foo.sco are the files needed to build <tt>foo.wav</tt>, and the second
+line is the action needed to build <tt>foo.wav</tt>. If one of them is
+missing, make will try to build them or report an error. A rule to
+build an Ogg Vorbis file from our generated WAV file is as follows:
+
+</p>
+
+<p>
+</p>
+
+<pre>foo.ogg: foo.wav<br>    oggenc -q 8 foo.wav<br></pre>
+
+
+
+<p>
+Now let's consider how these two rules would interact with each other.
+If <tt>foo.wav</tt> already exists, make will apply the rule
+<tt>foo.ogg</tt> directly, without trying to regenerate <tt>foo.wav</tt>.
+However, if make detects that <tt>foo.orc</tt> (a dependency of
+<tt>foo.wav</tt>) has changed, it will rebuild <tt>foo.wav</tt> before
+building <tt>foo.ogg</tt>. That's the nice thing about build systems;
+they build only what is necessary. Having these rules in the Makefile,
+we can ask make to build a specific rule with commands like
+&ldquo;<tt>make foo.wav</tt>'' and &rdquo;<tt>make foo.ogg</tt>''.
+
+</p>
+
+<p>
+If we want to build different targets of the same type (like three
+different Ogg Vorbis files from three different WAV files) we use what is
+called &ldquo;implicit rules''. It defines a general rule for building a
+specific kind of target. For example, the implicit rule for generating
+pvoc files is:
+
+</p>
+
+<p>
+</p>
+
+<pre>%.pvx: %.wav<br>    pvanal $&lt; $@<br></pre>
+
+
+
+<p>
+This rule depends on a WAV file and runs the pvanal utility to
+generate a pvoc file with the <tt>.pvx</tt> extension. The &ldquo;%'' symbol
+is used to define a pattern. The pattern %.wav means any file with
+the extension <tt>.wav</tt>, for example. The symbol $&lt; matches the
+name of the dependency and $@ the name of the target.
+
+</p>
+
+<p>
+Implicit rules allow us to define more concise and general rules. The
+implicit rule to generate a pvoc file will work with any pvoc file
+with a <tt>.pvx</tt> extension, while a specific rule will only work for
+a specific file:
+
+</p>
+
+<p>
+</p>
+
+<pre>foo.pvx: foo.wav<br>    pvanal foo.wav foo.pvx<br></pre>
+
+
+
+<p>
+Having defined an implicit rule, we need to define only the target and
+dependencies:
+
+</p>
+
+<p>
+</p>
+
+<pre>foo.pvx: foo.wav<br><br>bar.pvx: bar.wav<br><br>flute.pvx: flute.wav<br></pre>
+
+
+
+<p>
+Following is a rule for generating Csound scores from CMask files.
+Again, $@ is used to match the score file (the target) and $&lt; to
+match the CMask file (the dependency).
+
+</p>
+
+<p>
+</p>
+
+<pre>%.sco: %.cmask<br>    cmask $&lt; &gt; $@<br></pre>
+
+
+
+<p>
+We can define a rule to generate Ogg Vorbis files in the same way, except
+that, since the program <tt>oggenc</tt> generates Ogg Vorbis files with the
+same name of the input file automatically, we don't need to use $@.
+
+</p>
+
+<p>
+</p>
+
+<pre>%.ogg: %.wav<br>    oggenc -q 8 $&lt;<br></pre>
+
+
+
+<p>
+To define a rule to render an .orc and .sco using Csound. We use $@ as
+before to match the target name (the WAV file on this case) and $&lt; to
+match the dependencies. The symbol $&lt; actually matches all
+dependencies; in this case the orchestra and score file names.
+
+</p>
+
+<p>
+</p>
+
+<pre>%.wav: %.orc %.sco<br>    csound -o $@ $&lt;<br></pre>
+
+
+
+<p>
+
+</p>
+
+<h2>
+<br>
+
+
+II. Working with sections
+<br>
+
+</h2>
+
+
+
+<p>
+Csound has support to divide a composition into sections using the
+<tt>s</tt> statement in the score. However, it doesn't allow the
+rendering of a specific section. Csound will render the whole
+composition even if only one or two sections have changed. This
+behavior is undesired for a large and complex composition, were the
+rendering time can be high. We want a way to render only the sections
+that the composer changed since the last rendering. 
+
+</p>
+
+<p>Some composers generate sound files using Csound and assemble them
+in
+a graphical sound editor or digital audio workstation such as Pro Tools
+or Ardour. A command line mixer can be used for this same
+purpose with the advantage that if we change the composition (that is,
+the Csound files), the final mixdown will be regenerated
+automatically. In a graphical tool we would have to reassemble
+manually the music each time a change happens. There are many command
+line tools to mix sound files together. For simple uses the
+<tt>mixer</tt> Csound utility is good enough.
+
+</p>
+
+<p>
+Suppose we have 3 sections, <i>a</i>, <tt>b</tt>, and <tt>c</tt>,
+with duration of 10, 15, and 17 seconds, respectively. Section
+<tt>a</tt> starts at time 0, section <tt>b</tt> at time 10, and
+section <tt>c</tt> at 20 seconds, as shown in figure
+2.
+
+</p>
+
+<p>
+
+</p>
+
+<div>
+<table align="center">
+
+
+  <caption align="bottom"><strong>Figure 2:</strong>
+Three sections</caption>
+  <tbody>
+
+    <tr>
+
+      <td>
+      
+      <div>  <img src="images/sections.png" alt="Image sections" align="bottom" border="0">
+  </div>
+
+      </td>
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+</div>
+
+
+
+<p>
+The command to mix them with <tt>mixer</tt> is
+
+</p>
+
+<p>
+</p>
+
+<pre>mixer -T 0 a.wav -T 10 b.wav -T 20 c.wav -o final.wav<br></pre>
+
+
+
+<p>
+It is not necessary to include the durations of files&mdash;only where
+they begin. The <tt>-T</tt> flag defines the beginning time and <tt>-o</tt>
+the output file. <tt>Mixer</tt> has more options, like the <tt>-F</tt> flag
+to change the volume of a file. The following command will mix the files again, but this time <tt>c.wav</tt> will be twice as loud.
+
+</p>
+
+<p>
+</p>
+
+<pre>mixer -T 0 a.wav -T 10 b.wav -F 2 -T 20 c.wav -o final.wav<br></pre>
+
+
+
+<p>
+If <tt>a.wav</tt>, <tt>b.wav</tt>, and <tt>c.wav</tt> are generated by Csound, we can define the following rules to render the sections
+individually and mix them together:
+
+</p>
+
+<p>
+</p>
+
+<pre>a.wav: a.orc a.sco<br>b.wav: b.orc b.sco<br>c.wav: c.orc c.sco<br><br>final.wav: a.wav b.wav c.wav<br>    mixer -T 0 a.wav -T 10 b.wav -F 2 -T 20 c.wav -o final.wav<br></pre>
+
+
+
+<p>
+Make will only generate <tt>final.wav</tt> if it doesn't exist or
+<tt>a.wav</tt>, <tt>b.wav</tt>, or <tt>c.wav</tt> haven't changed. As
+stated before, if all WAV files are created and we change only one
+file, <tt>a.sco</tt> for example, only <tt>a.wav</tt> and <tt>final.wav</tt>
+will be generated again.
+
+</p>
+
+<p>
+
+</p>
+
+<h2>
+<br>
+
+
+III. Advanced usage
+<br>
+
+</h2>
+
+
+
+<p>
+We can use Csound's environment variables to organize our composition.
+The following example defines and exports SFDIR, SSDIR, and SADIR:
+
+</p>
+
+<p>
+</p>
+
+<pre>export SFDIR = /home/kroger/csound/sfdir/<br>export SSDIR = /home/kroger/csound/ssdir/<br>export SADIR = /home/kroger/csound/sadir/<br></pre>
+
+
+
+<p>
+We may want to use the <tt>vpath</tt> feature as well. It defines the
+default path for specific types of files. Using <tt>vpath</tt> we
+don't have to specify where a file has to be read or written. &nbsp;Make
+will do it automatically:
+
+</p>
+
+<p>
+</p>
+
+<pre>vpath %.aif $(SSDIR)<br>vpath %.aiff $(SSDIR)<br>vpath %.wav $(SSDIR)<br>vpath %.wav $(SFDIR)<br>vpath %.pvx $(SADIR)<br>vpath %.con $(SADIR)<br>vpath %.het $(SADIR)<br>vpath %.lpc $(SADIR)<br></pre>
+
+
+
+<p>
+In these two previous examples, SFDIR, SSDIR, and SADIR are defined as
+variables. Variables can be defined with the form <tt>variable =
+  value</tt> and called with <tt>$(variable)</tt>.
+
+</p>
+
+<p>
+If we work with sections, we will want to render all score files in a
+composition. One way to do it is to simply list all resulting WAV
+files as dependencies:
+
+</p>
+
+<p>
+</p>
+
+<pre>all: a.wav b.wav c.wav<br></pre>
+
+
+
+<p>
+When we issue &ldquo;<tt>make all</tt>'', make will build all dependencies
+for &ldquo;all'' automatically (if we have defined an implicit rule for WAV
+files). We can automatize this one step further by asking make to
+construct the dependency list for us. The command <tt>$(wildcard
+  *.sco)</tt> will return a list with all score files in the current
+directory. In our example it would return <tt>a.sco</tt>,
+<tt>b.sco</tt>, and <tt>c.sco</tt>. Now we want to substitute the
+<tt>.sco</tt> suffix to <tt>.wav</tt>. This substitution can be
+accomplished by the <tt>subst</tt> command. It accepts three
+arguments; the pattern that will be replaced (<tt>.sco</tt> in our
+case), with the new pattern (<tt>.wav</tt> in our example), and a list of
+the strings to modify (a list with file names in our case). The
+complete command is:
+
+</p>
+
+<p>
+</p>
+
+<pre>wavfiles = $(subst .sco,.wav,$(wildcard *.sco))<br></pre>
+
+
+
+<p>
+Now the variable <tt>wavfiles</tt> has a list of all WAV files that
+can be generated form our score files. The definition of the &ldquo;all''
+target them becomes:
+
+</p>
+
+<p>
+</p>
+
+<pre>all: $(wavfiles)<br></pre>
+
+
+
+<p>
+Cleaning files, that is, removing automatically generated files, is as
+important as creating them. In the same way we defined a list of WAV
+files to build, we can use that list to define the files to be
+removed. If the WAV files are generated in the current directory,
+cleaning all generated files is as simples as <tt>rm
+  $(wavfiles)</tt>. However, if they are being generated in a specific
+directory, we have do append the directory do each file in the list.
+The function <tt>addprefix</tt> can be used for this task. It accepts
+two arguments, a prefix to append and a list of strings. The prefix
+will be appended to each element of the list. The variable
+<tt>fullwavfiles</tt> will hold the list of WAV files:
+
+</p>
+
+<p>
+</p>
+
+<pre>fullwavfiles = $(addprefix $(SFDIR),$(wavfiles))<br></pre>
+
+
+
+<p>
+And the rule <tt>clean</tt> can be defined as:
+
+</p>
+
+<p>
+</p>
+
+<pre>clean:<br>    rm -f $(fullwavfiles)<br></pre>
+
+
+
+<p>
+In section 1 we defined the following implicit rule to
+generate WAV files using Csound:
+
+</p>
+
+<p>
+</p>
+
+<pre>%.wav: %.orc %.sco<br>    csound -o $@ $&lt;<br></pre>
+
+
+
+<p>
+With it we can define rules such as
+
+</p>
+
+<p>
+</p>
+
+<pre>foo.wav: foo.orc foo.sco<br></pre>
+
+
+
+<p>
+But often a target will have more dependencies. In the following
+example <tt>flute.pvx</tt> is also a dependency of <tt>foo.wav</tt> and
+make will make sure it is built before <tt>foo.wav</tt>:
+
+</p>
+
+<p>
+</p>
+
+<pre>foo.wav: foo.orc foo.sco flute.pvx<br><br>flute.pvx: flute.wav<br></pre>
+
+
+
+<p>
+The problem is that by using $&lt; in the implicit rule, make will match
+all items in the dependency list. Using the command <tt>wordlist</tt>
+we can select only the two first elements of the dependency list (that
+is, the orchestra and score files):
+
+</p>
+
+<p>
+</p>
+
+<pre>%.wav: %.orc %.sco<br>    csound -g -o $@ $(wordlist 1, 2, $^)<br></pre>
+
+
+
+<p>If we are building many files at once we may want to see only if the
+file has been built successfully or not, and not see all messages
+Csound and make produce. That would be the output, which shows the file
+name and if there were any errors in performance:
+</p>
+
+<p>
+</p>
+
+<pre>foo.wav:     0 errors in performance<br>bar.wav:     1 errors in performance<br>bla.wav:     0 errors in performance<br></pre>
+
+
+
+<p>
+The rule to implement it is as follows. The command <tt>2&gt;&amp;1</tt>
+redirects the standard error (stderr) to the standard output
+(stdout) 
+[4] and <tt>grep "errors in
+  performance"</tt> matches any message Csound gives about errors. The
+character <tt>@</tt> in front of commands like <tt>csound</tt> and
+<tt>echo</tt> tells make not to print the command when executing the
+rule. 
+
+</p>
+
+<p>
+</p>
+
+<pre>%.wav: %.orc %.sco<br>ifeq ($(verbose),0)<br>    @echo -ne "$@:\t"<br>    @csound -g -o $@ $(wordlist 1, 2, $^) 2&gt;&amp;1 | grep "errors in performance"<br>else    <br>    @csound -g -o $@ $(wordlist 1, 2, $^)<br>endif<br></pre>
+
+
+
+<p>
+If the variable <tt>verbose</tt> is different from 0, make will execute Csound as usual, with all error messages. We can change the value of
+the variable input while executing a make command:
+
+</p>
+
+<p>
+</p>
+
+<pre>make foo.wav verbose=1<br></pre>
+
+
+
+<p>
+
+</p>
+
+<h2>
+<br>
+
+
+IV. Playing your work
+<br>
+
+</h2>
+
+
+
+<p>
+SoX 
+[1] is a command line program that can convert to
+and from many sound formats, apply effects, and record and play
+sounds. Often while composing, it is necessary to listen to a passage
+over and over until we are satisfied with it. We can use a graphical
+sound player or editor, but it is much more productive to use a
+command line player to &ldquo;debug'' a specific passage. The command
+<tt>play foo.wav</tt> will play the file <tt>foo.wav</tt> from beginning
+to end. The option <tt>trim</tt> can be used to play only a passage. For
+example, the following command
+
+</p>
+
+<p>
+</p>
+
+<pre>play foo.wav trim 1:00 30<br></pre>
+
+
+
+<p>
+will start playing not from the beginning of the file, but after 1
+second. The option 30 means that the file will be played for 30
+seconds. Maybe we want to listen only to a channel from a passage, to
+isolate some problem. The following command
+
+</p>
+
+<p>
+</p>
+
+<pre>play foo.wav -c 1 mixer -l<br></pre>
+
+
+
+<p>
+will play only the left channel, for example. The option <tt>-r</tt>
+would play only the right channel. Sometimes we want to listen to a
+passage more than one time. The option <tt>repeat</tt> can be used. For
+instance, the following command will play the right channel of
+<tt>foo.wav</tt> for 15 seconds, starting two seconds from the
+beginning, and repeating it 3 times:
+
+</p>
+
+<p>
+</p>
+
+<pre>play foo.wav -c 1 mixer -r trim 2:00 15 repeat 3<br></pre>
+
+
+
+<p>
+Finally, SoX can be useful to make quick conversions. For example, we
+may want to quickly generate a stereo version of a quadraphonic
+composition:
+
+</p>
+
+<p>
+</p>
+
+<pre>sox quad.wav -c 2 stereo.wav mixer 1,1<br></pre>
+
+
+
+<p>
+We can define rules in the Makefile to play or convert files
+automatically. See section 5 for examples.
+
+</p>
+
+<p>
+
+</p>
+
+<h2>
+<br>
+
+
+V. A complete Makefile
+<br>
+
+</h2>
+
+
+
+<p>
+In this section we have a complete Makefile you can use. We can save
+it in a file like <tt>csound.mk</tt> and import it with the command
+<tt>include</tt>.
+
+</p>
+
+<p>
+</p>
+
+<pre>export SFDIR = /home/kroger/csound/sfdir/<br>export SSDIR = /home/kroger/csound/ssdir/<br>export SADIR = /home/kroger/csound/sadir/<br><br>vpath %.aif $(SSDIR)<br>vpath %.aiff $(SSDIR)<br>vpath %.wav $(SSDIR)<br>vpath %.wav $(SFDIR)<br>vpath %.pvx $(SADIR)<br>vpath %.con $(SADIR)<br>vpath %.het $(SADIR)<br>vpath %.lpc $(SADIR)<br><br>OUTPUT = 2&gt; /dev/null<br><br>wavfiles = $(subst .sco,.wav,$(wildcard *.sco))<br>fullwavfiles = $(addprefix $(SFDIR),$(wavfiles))<br><br>all: $(wavfiles)<br><br>%.ogg: %.wav<br>    oggenc -q 8 $&lt;<br><br>%.flac: %.wav<br>    flac $&lt;<br><br>%.wav: %.orc %.sco<br>ifeq ($(debug),0)<br>    @echo -ne "$@:\t"<br>    @csound -g -o $@ $(wordlist 1, 2, $^) 2&gt;&amp;1 | grep "errors in performance"<br>else    <br>    @csound -g -o $@ $(wordlist 1, 2, $^)<br>endif<br><br>%.pvx: %.aif<br>    @pvanal -n 1024 -w 8 $&lt; $(SADIR)/$@ $(OUTPUT)<br><br>%.pvx: %.wav<br>    @pvanal -n 1024 -w 8 $&lt; $(SADIR)/$@ $(OUTPUT)<br><br>%.con: %.wav<br>    @cvanal $&lt; $(SADIR)/$@ $(OUTPUT)<br><br>%.sco:  %.cmask<br>    cmaskLINUXi386 $&lt;<br><br>%.con: %.wav<br>    @cvanal $&lt; $(SADIR)/$@ $(OUTPUT)<br><br>play:<br>    play $(SFDIR)/$(file)<br><br>cleanall: clean cleananal<br><br>clean:<br>    @rm -f $(fullwavfiles)<br><br>cleananal:<br>    @rm -f $(SADIR)/*.*<br></pre>
+
+
+
+<p>
+
+</p>
+
+<h2>
+<br>
+
+
+VI. Conclusion
+<br>
+
+</h2>
+
+
+
+<p>
+This paper presented a way to make the generation of Csound
+compositions automatic with GNU Make. By using command line tools,
+many Csound-related tasks can be automated with make. Make has many
+other options and features that can be found in the excellent manual
+[5]. Ecasound 
+[6] is a very
+powerful and flexible command line multitrack audio processing tool.
+It can be used in place of Csound <tt>mixer</tt> for more sophisticated
+uses.
+
+</p>
+
+<p>
+
+
+
+
+</p>
+
+<h2>References</h2>
+
+
+   
+ [1]
+ 
+<i>SoX Home Page</i>. 
+<tt>http://sox.sourceforge.net/</tt>.
+   
+<p>
+ [2]
+ Stephane Bailliez, NicolaKen Barozzi, Jacques Bergeron, and Stefan Bodewig. 
+<i>Apache</i>
+   
+<i>Ant 1.7.0 Manual</i>. 
+<tt>http://ant.apache.org/manual/index.html</tt>.
+   </p>
+
+<p>
+ [3]
+ Steven     Knight.            
+<i>SCons    User    Guide    0.97</i>,     2007.                
+<tt>http://www.scons.org/doc/0.97/HTML/scons-user/book1.html</tt>.
+                                                                                    
+                                                                                    
+   </p>
+
+<p>
+ [4]
+ MikeG.  mikkey.    
+<i>BASH  Programming  -  Introduction  HOWTO</i>,  2000.     
+<tt>http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO.html</tt>.
+   </p>
+
+<p>
+ [5]
+ RichardM. Stallman, Roland McGrath, and Paul&nbsp;D. Smith.   
+<i>GNU Make Manual</i>,
+   2007. 
+<tt>http://www.gnu.org/software/make/manual/</tt>.
+   </p>
+
+<p>
+ [6]
+ Kai Vehmanen. 
+<i>Ecasound User&rsquo;s Guide</i>, 2006. 
+<tt>http://www.eca.cx/ecasound/</tt>.
+   </p>
+
+<p>
+ [7]
+ Jim Weirich. 
+<i>Rake User Guide</i>, 2005. 
+<tt>http://rake.rubyforge.org/</tt>.
+</p>
+
+<p>
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

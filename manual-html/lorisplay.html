@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lorisplay</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lorismorph.html" title="lorismorph" />
+    <link rel="next" href="loscil.html" title="loscil" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lorisplay</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lorismorph.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="loscil.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="lorisplay">
+      <a id="lorisplay"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLorisPlay" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lorisplay</span>
+        </h2>
+        <p>lorisplay — renders a stored set of bandwidth-enhanced partials using the method of Bandwidth-Enhanced Additive Synthesis implemented in the Loris software, applying control-rate frequency, amplitude, and bandwidth scaling envelopes.</p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3374993"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar <span class="command"><strong>lorisplay</strong></span> ireadidx, kfreqenv, kampenv, kbwenv</pre>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3375012"></a>
+        <h2>Description</h2>
+        <p><span class="emphasis"><em>lorisplay</em></span> renders a stored set of
+    bandwidth-enhanced partials using the method of Bandwidth-Enhanced
+    Additive Synthesis implemented in the Loris software, applying
+    control-rate frequency, amplitude, and bandwidth scaling
+    envelopes.</p>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3375957"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>istoreidx, ireadidx, isrcidx, itgtidx</em></span> are
+    labels that identify a stored set of bandwidth-enhanced
+    partials. <span class="emphasis"><em>lorisread</em></span> imports partials from a SDIF file and stores them
+    with the integer label istoreidx. <span class="emphasis"><em>lorismorph</em></span> morphs sets of partials
+    labeled <span class="emphasis"><em>isrcidx</em></span> and <span class="emphasis"><em>itgtidx</em></span>, and stores the resulting partials with
+    the integer label <span class="emphasis"><em>istoreidx</em></span>. <span class="emphasis"><em>lorisplay</em></span> renders the partials stored
+    with the label <span class="emphasis"><em>ireadidx</em></span>. The labels are used only at initialization
+    time, and may be reused without any cost or benefit in efficiency, and
+    without introducing any interaction between instruments or
+    instances.</p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3376004"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>lorisplay</em></span> implements signal reconstruction using
+    Bandwidth-Enhanced Additive Synthesis. The control data is obtained
+    from a stored set of bandwidth-enhanced partials imported from an SDIF
+    file using <span class="emphasis"><em>lorisread</em></span> or constructed by another unit generator such as
+    <span class="emphasis"><em>lorismorph</em></span>. <span class="emphasis"><em>kfreqenv</em></span> is a control-rate transposition factor: a value
+    of 1 incurs no transposition, 1.5 transposes up a perfect fifth, and
+    .5 down an octave. <span class="emphasis"><em>kampenv</em></span> is a control-rate scale factor that is
+    applied to all partial amplitude envelopes. kbwenv is a control-rate
+    scale factor that is applied to all partial bandwidth or noisiness
+    envelopes. The bandwidth-enhanced partial data is stored in memory
+    with a specified label for future access by another generator.</p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3376042"></a>
+        <h2>Credits</h2>
+        <p>This implementation of the Loris unit generators was written by Kelly
+    Fitz (<a class="ulink" href="mailto:loris@cerlsoundgroup.org" target="_top">loris@cerlsoundgroup.org</a>). It is patterned after a prototype implementation of the
+    <span class="emphasis"><em>lorisplay</em></span> unit generator written by Corbin Champion, and based on the
+    method of Bandwidth-Enhanced Additive Synthesis and on the sound
+    morphing algorithms implemented in the Loris library for sound
+    modeling and manipulation. The opcodes were further adapted as a
+    plugin for Csound 5 by Michael Gogins.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lorismorph.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="loscil.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lorismorph </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> loscil</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

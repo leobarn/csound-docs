@@ -1,0 +1,311 @@
+<CsoundSynthesizer>
+<CsInstruments>
+sr     = 44100
+kr     = 44100
+ksmps  = 1
+nchnls = 2
+
+
+
+
+
+
+
+
+; ---- Parameters ----
+
+; Filename           # ??? #  ; Name of file to process.  Required parameter,
+                              ; supplied by user at the command prompt call.
+
+# ifndef Amp
+# define Amp         # 1 #    ; Master amplitude
+# end
+
+# ifndef Mix
+# define Mix         # 0.1 #  ; Dry / Wet mix.
+# end
+
+# ifndef Time1
+# define Time1       # 1 #    ; Reverb time for left channel.
+# end
+
+# ifndef Time2
+# define Time2       # 1 #    ; Reverb time for right channel.
+# end
+
+# ifndef Diffusion1
+# define Diffusion1  # 0 #    ; High frequency diffusion for left channel.
+# end
+
+# ifndef Diffusion2
+# define Diffusion2  # 0 #    ; High frequency diffusion for right channel.
+# end
+
+
+
+
+
+
+
+
+; ---- Zak Channels ----
+
+zakinit 2, 1
+
+
+
+
+
+
+
+
+instr Setup
+
+	; Get information about the input file
+
+	ilength  filelen    "$Filename"    ; Length of file in seconds
+	inchnls  filenchnls "$Filename"    ; Number of channels
+	isr      filesr     "$Filename"    ; Sample rate of file
+	isamples =          ilength * isr  ; Number of samples in file, per channel
+
+
+
+
+
+
+	; Calculate the duration of the output file
+	
+	iduration = ( $Time1 > $Time2 ? $Time1 : $Time2 ) + ilength
+
+
+
+
+
+
+	; Get table length
+	
+	isize = 1
+	repeat:
+		isize = isize * 2
+	if( isize < isamples ) goto repeat
+
+	isize = isize + 1
+
+
+
+
+
+
+	; Mono or Stereo processor?
+	
+	if( inchnls == 2 ) igoto inputStereo
+
+
+
+	inputMono:
+
+		; Load Sample into table
+		
+		gitemp ftgen 1, 0, isize, 1, "$Filename", 0, 0, 1
+
+
+
+		; Play Sample
+
+		event_i "i", "Input", 0, ilength, 1, 1
+				
+		igoto continue
+
+
+
+
+
+
+	inputStereo:
+
+		; Load Sample into stereo table pair
+		
+		gitemp ftgen 1, 0, isize, 1, "$Filename", 0, 0, 1	
+		gitemp ftgen 2, 0, isize, 1, "$Filename", 0, 0, 2	
+
+
+
+		; Play Sample
+
+		event_i "i", "Input", 0, ilength, 1, 2
+
+
+
+
+
+
+	continue:
+
+
+
+
+
+
+	; Start Processor
+	
+	event_i "i", "Process", 0, iduration
+
+
+
+
+
+
+	; Send Audio to dac or file
+	
+	event_i "i", "Output", 0, iduration
+
+
+
+
+
+
+	turnoff
+endin
+
+
+
+
+
+
+
+
+instr Input
+
+	idur = p3
+	ifn1 = p4
+	ifn2 = p5
+
+
+
+	
+	; Get information about the input file
+	
+	ilength  filelen "$Filename"
+	isr      filesr  "$Filename"
+	isamples =       ilength * isr
+	
+
+	
+	
+	; Read through audio table
+	
+	aphasor phasor 1 / idur
+	asig1   table3 aphasor * isamples, ifn1, 0
+	asig2   table3 aphasor * isamples, ifn2, 0
+
+
+
+
+	; Send Audio to zak channels
+
+	zaw asig1, 1
+	zaw asig2, 2
+endin
+
+
+
+
+
+
+
+
+instr Process
+
+	idur   = p3
+	itime1 = $Time1
+	itime2 = $Time2
+	idiff1 = $Diffusion1
+	idiff2 = $Diffusion2
+	imix   = $Mix
+
+
+
+
+	; Read in Audio
+
+	asig1 zar 1
+	asig2 zar 2
+
+
+
+
+	; Add reverb
+	
+	arev1 reverb2 asig1, itime1, idiff1
+	arev2 reverb2 asig2, itime2, idiff2
+
+
+
+
+	; Adjust Dry / Wet Mix
+	
+	asig1 = asig1 * ( 1 - imix ) + arev1 * imix
+	asig2 = asig2 * ( 1 - imix ) + arev2 * imix	
+
+
+
+
+	; Send Audio to zak channels
+	
+	zaw asig1, 1
+	zaw asig2, 2
+endin
+
+
+
+
+
+
+
+
+instr Output
+
+	; Read in Audio
+	
+	asig1 zar 1
+	asig2 zar 2
+	
+	
+	
+	
+	; Adjust Volume
+	
+	asig1 = asig1 * 0dbfs * $Amp
+	asig2 = asig2 * 0dbfs * $Amp
+
+	
+	
+	
+	; Send audio to the output
+	
+	outs asig1, asig2
+	
+	
+	
+	
+	; Clear zak channels
+	
+	zacl 1, 2
+endin
+
+
+
+
+
+
+
+
+</CsInstruments>
+<CsScore>
+
+i "Setup" 0 0.0001  ; Call Setup in Orchestra
+
+</CsScore>
+</CsoundSynthesizer>
+
+

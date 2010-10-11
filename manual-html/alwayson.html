@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>alwayson</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="alpass.html" title="alpass" />
+    <link rel="next" href="ampdb.html" title="ampdb" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">alwayson</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="alpass.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ampdb.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="alwayson">
+      <a id="alwayson"></a>
+      <div class="titlepage"></div>
+      <a id="IndexAlwayson" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">alwayson</span>
+        </h2>
+        <p>alwayson — 
+      Activates the indicated instrument in the orchestra header,
+      without need for an i statement. Instruments must be 
+      activated in the same order as they are defined.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3136010"></a>
+        <h2>Description</h2>
+        <p>
+      Activates the indicated instrument in the orchestra header,
+      without need for an i statement. Instruments must be 
+      activated in the same order as they are defined.
+    </p>
+        <p>
+      The alwayson opcode is useful in conjuction with the signal flow graph opcodes.
+      The opcode enables the use of instruments as effects processors that do not 
+      have to be turned on in the score, that can receive the outputs of a set or subset 
+      of instruments, and that can be chained together.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3136032"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>alwayson </strong></span>Tinstrument [p4, ..., pn]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3136891"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Tinstrument</em></span> -- String name, or number, of the instrument to be activated.
+    </p>
+        <p>
+      <span class="emphasis"><em>Optional arguments</em></span> -- Instrument pfields from p4 on may be passed to the instrument.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3136916"></a>
+        <h2>Performance</h2>
+        <p>
+      The activated instrument will remain "on" for the duration of the performance, 
+      receiving signals in any of its inlets and sending signals out through any of its outlets.
+    </p>
+      </div>
+      <div class="note" title="Order is important" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note: Order is important">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Order is important</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>
+        The order of definition of instruments is important. A source instrument must be 
+	defined in the orchestra before any of the sink instruments to which its outlets are connected.
+      </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3136946"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outleta.html" title="outleta"><em class="citetitle">outleta</em></a>
+      <a class="link" href="outletk.html" title="outletk"><em class="citetitle">outletk</em></a>
+      <a class="link" href="outletf.html" title="outletf"><em class="citetitle">outletf</em></a>
+      <a class="link" href="inleta.html" title="inleta"><em class="citetitle">inleta</em></a>
+      <a class="link" href="inletk.html" title="inletk"><em class="citetitle">inletk</em></a>
+      <a class="link" href="inletf.html" title="inletf"><em class="citetitle">inletf</em></a>
+      <a class="link" href="alwayson.html" title="alwayson"><em class="citetitle">alwayson</em></a>
+      <a class="link" href="ftgenonce.html" title="ftgenonce"><em class="citetitle">ftgenonce</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3137021"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2009</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="alpass.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ampdb.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">alpass </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ampdb</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

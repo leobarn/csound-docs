@@ -1,0 +1,1083 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML VERSION="2.0">
+<HEAD>
+<!-- WEBMAGIC VERSION NUMBER="2.0.1" -->
+<!-- WEBMAGIC TRANSLATION NAME="ServerRoot" SRC="/var/www/htdocs/" DST="/" -->
+<!-- WEBMAGIC TRANSLATION NAME="ProjectRoot" SRC="./" DST="" -->
+<TITLE>chapter6.html</TITLE>
+</HEAD>
+<BODY>
+<A NAME="chapter6.html#"></A>
+<HR><CENTER><FONTSIZE="-1"><I>Eastman Csound Tutorial</I></FONT></CENTER>
+<PRE>
+<H5>   <A HREF="./chapter6.html#END"><FONT SIZE="+1">END</FONT> of this chapter</A>  --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</H5><HR></PRE>
+
+<H2><A NAME="_wmh3_847375111">Chapter 6<BR>
+PROCESSING FILES WITH M4 ; FINAL EXAMPLES; WHERE TO GO FOR HELP</FONT></A></H2>
+<P>In this chapter we will look at</P>
+
+<A HREF="chapter6.html#_wmh4_847375117">6.1 Preprocessing of orchestra and score files</A>, illustrated primarily with the Unix <I>m4</I> utility<BR>
+<A HREF="chapter6.html#FINAL_EXAMPLES">6.2 Some final orc/sco/soundfile examples</A> that illustrate additioanl unit generators<BR>
+<A HREF="chapter6.html#6.3">6.3 Quick pointers to some additional Csound resources</A><BR>
+<A HREF="chapter6.html#_wmh4_847375151">6.4 Where to go for more help and information</A>
+
+<H4><A NAME="_wmh4_847375117">6.1. Using m4 to prepare orchestra and score files</A></H4>
+<P>At some point you likely will begrudge the
+tedium sometimes involved in preparing Csound orchestra and score files, and wish for shortcuts
+and more powerful, easier-to-use tools. <I>Preprocessing programs</I> sometimes can provide such tools.
+Aleck Brinkman's <I>score11</I> program is one example of a pre-processor.
+Advanced Csound users sometimes write their own preprocessing procgrams to
+simplify repetitive, complex or irksome tasks.
+<P>
+Ultimately, the best source of preprocessing
+tools is a knowledge of a high level computer programming language such
+as <I>C. </I>This enables a user to write front-end utility programs, custom tailored
+to her specific requirements and preferences, which generate input used
+by other programs, such as Csound. Unix shells themselves provide many programming
+commands, similar to those of <I>C</I>, that can be patched together within an executable <I>shell script</I> file to facilitate some tasks.
+(For examples, you might look at a few local utility scripts in <I>/usr/local/bin</I>
+that you have already used, such as <I>pitchshift, mko</I> or <I>runsfcompress</I>.) 
+<P>The rub, of course, is that programming languages
+have a learning curve of their own, and may require a digression
+from from making music into the less appealing realm (for most musicians)
+of computer programming techniques. Obviously, a survey of <I> C </I>or<I> shell script</I> programming syntax and procedures is beyond the scope of this tutorial,
+and also beyond the needs of beginning users.</P>
+
+<P>Instead, to illustrate a few types of preprocessing techniques employed
+by many advanced users, we will survey some operations that
+can be performed with the Unix preprocessing program<B> m4.</B> While rather limited, and much less powerful than a full fledged programming
+environment such as <I>C, m4</I> has relatively few syntactic conventions, and its tools can be put to use
+fairly quickly, &quot;right out of the box.&quot;</P>
+<P>A copy of the Unix documentation on <I>m4</I> is available in the Linux
+studio. We will survey three types of <B>m4</B> operations -- <I>define,
+include </I>and<I> conditional</I> statements -- which, once mastered,
+can sometimes simplify Csound orchestra
+and score file preparation. In addition, these operations also can provide
+us with some rudimentary computer-assisted algorithmic compositional tools.</P>
+
+<P>Throughout this discussion, bear in mind the distinction between the standard
+Unix <B>m4</B> preprocessor and ECMC utilities such as <I>m4orch, m4expand</I>
+and<I> mko</I> that incorporate <I>m4</I> operations.
+It is more likely that ECMC users will want to use the Eastman utility programs,
+which require a slightly different (and, for most of our purposes, easier-to-use)
+syntax than &quot;straight&quot; <I>m4.</I>
+In particular, the ECMC utilities substitute
+left and right square <U>bracket</U> symbols
+<PRE><FONT SIZE=+2><B>    [ </B></FONT>      and    <FONT SIZE=+2><B> ] </B></FONT>
+     in place of the standard <I>m4 <U>quote</U> </I>symbols 
+<FONT SIZE=+3><B>    ' </B></FONT>      and    <FONT SIZE=+3><B> ' </B></FONT></PRE>
+
+<P>All <I>m4</I> operations are enclosed within balanced left and right parentheses:
+<PRE><FONT SIZE=+2><B>    ( </B></FONT>      and    <FONT SIZE=+2><B> ) </B></FONT></PRE>
+Arguments to these operations that are longer than a few characters, or
+that include newlines (carriage returns) or characters that can have a special
+meaning (such as parenthesis symbols) should be
+enclosed within balanced left and right square brackets:</P>
+<PRE><FONT SIZE=+2><B>    [ </B></FONT>      and    <FONT SIZE=+2><B> ] </B></FONT></PRE>
+
+<H4><A NAME="_wmh4_847375122">6.1.1. define statements</A></H4>
+<P>A <B>define</B> command is used to define a<B> macro</B> -- a (short) string of characters used to represent another (usually longer)
+string. A macro character string can consist of almost any combination of
+alphnumeric characters, but many users employ UPPER CASE characters so that
+occurrences of macros can be spotted quickly. In the following score file,
+macros<I> N1, N2 </I>and<I> N3 </I>are defined as particular pitch motives, while macros<I> R1 </I>and<I> R2</I> are defined as rhythmic motives. These macros are then permuted in the
+score:</P>
+<DD>define(N1,[c4/ e/ fs/]) 
+<DD>define(N2,[b4/ as/ cs5/ e4/]) 
+<DD>define(N3,[a5/ gs/ b/ c5/]) 
+<DD>define(R1,[( 4=16*5)/ -8/ 4/]) 
+<DD>define(R2,[16/ 32// 4./]) 
+<DD>instr 1 0 9; 
+<DD>p3 rh R1 R2 R2 R1 R2; 
+<DD>p4 no N1 N2 N3 
+<DD>N2 N2 N1; 
+<DD>end; 
+<P>When this file is run through <I>score11,</I> the resulting <I>sout</I> file is :</P>
+<PRE>
+<FONT SIZE="3">       ----   i1   0.000   0.200   8.00    --- </FONT>
+<FONT SIZE="3">       |      i1   0.200   0.200   8.04       | <B>N1</B></FONT>
+<FONT SIZE="3">       |      i1   0.400   0.200   8.06     --</FONT>
+<B><FONT SIZE="3">    R1</FONT></B><FONT SIZE="3"> |      i1   0.600   0.200   8.11     --</FONT>  (p4)
+<FONT SIZE="3">   (p2)|      i1   0.800   0.200   8.10       |<B> N2</B></FONT>
+<FONT SIZE="3">       |     ;i1   1.000   0.500   9.01&lt;rest&gt; |</FONT>
+<FONT SIZE="3">       ---    i1   1.500   1.000   8.04     --</FONT>
+<FONT SIZE="3">       ---    i1   2.500   0.250   9.09     --</FONT>
+<FONT SIZE="3">       |      i1   2.750   0.125   9.08       | <B>N3 </B>     </FONT>
+<FONT SIZE="3">    <B>R2</B> |      i1   2.875   0.125   9.11       |</FONT>
+<FONT SIZE="3">       ---    i1   3.000   1.500   9.00    ---</FONT>
+<FONT SIZE="3">       ---    i1   4.500   0.250   8.11    --- </FONT>
+<FONT SIZE="3">       |      i1   4.750   0.125   8.10       |<B> N2</B> </FONT>
+<B><FONT SIZE="3">    R2</FONT></B><FONT SIZE="3"> |      i1   4.875   0.125   9.01       |</FONT>
+<FONT SIZE="3">       ---    i1   5.000   1.500   8.04    ---</FONT>
+<FONT SIZE="3">       ---    i1   6.500   0.200   8.11    ---</FONT>
+<FONT SIZE="3">       |      i1   6.700   0.200   8.10       |<B> N2 </B></FONT>
+<FONT SIZE="3">       |      i1   6.900   0.200   9.01       |</FONT>
+<FONT SIZE="3">    <B>R1</B> |      i1   7.100   0.200   8.04    ---</FONT>
+<FONT SIZE="3">       |      i1   7.300   0.200   8.00    ---</FONT>
+<FONT SIZE="3">       |     ;i1   7.500   0.500   8.04&lt;rest&gt; | <B>N1</B>  </FONT>
+<FONT SIZE="3">       ---    i1   8.000   1.000   8.06    --- </FONT>
+<FONT SIZE="3">       end of score%</FONT>
+</PRE>
+<P>On the ECMC Linux systems, all files submitted to <I>score11</I> actually take a detour, and are first passed through <I>m4orch</I> for macro preprocessing. What <I>score11</I> actually &quot;sees&quot; is the output of <I>m4orch.</I> Thus, it is not necessary to process <I>score11</I> input files through <I>m4orch</I> yourself.</P>
+<P>Of course, macro definitions must be defined before they can be used in
+a file. Usually, all macro definitions are placed at the very beginning
+of a file, as in the example above. Remember that what<I> score11</I> &quot;sees&quot; is the <U>expanded</U> version of these macros. When using <I>define</I> macros, visualize the expanded output on each line, or else run the file
+through <I>m4expand </I>or<I> m4expandsc :</I></P>
+<CENTER><DD ALIGN="CENTER"><I>m4expand filename</I> 
+</CENTER><P>Do not put so many macros on one line of a score file that the line length
+of the expanded code will be too long (greater than 80 characters) for <I>score11</I> to process.</P>
+<P><I>Define</I> statements and other <I>m4</I> operations often result in the inclusion of newline characters and resulting blank lines which can result
+in gaping &quot;holes&quot; in the <I>m4 </I>output. Most of these blank lines can be suppressed by including the <I>delete newline</I>
+keyword <B>dnl</B> <U>immediately</U> (no blank spaces intervening) after the concluding &quot;)&quot; right parenthesis
+of the statement, like this:</P>
+<DD><I>define(N1,[c4/e/fs/])</I><B>dnl</B> 
+<DD><I>define(N2,[b4/as/cs5/e4/])</I><B>dnl</B> 
+<DD><I>define(N3,[a5/gs/b/c5/])</I><B>dnl</B> 
+<DD>
+<P>Orchestra files containing such <I>m4</I> macros must first be run manually through <B>m4orch</B><I> (m4o), </I>which writes its output to file
+<I>orch.orc</I> (which can be abbreviated <I>orc</I>).</I> Your Csound job should then have the following syntax :
+<CENTER><DD ALIGN="CENTER"><I>csound (- options) orc sout</I> </CENTER>
+<P>The following skeletal orchestra file :</P>
+<DD><I>define(SIMP,[instr 6])</I> 
+<DD><I>define(OUTPUT,[out a1])</I> 
+<DD><I>SETUP(44100,2205,1)</I> 
+<DD><I>SIMP</I> 
+<DD><I>kamp expseg 1,p6,p5,p3-(p6+p7),p5,p7,1</I> 
+<DD><I>a1 oscili kamp , cpspch(p4), 1</I> 
+<DD><I>OUTPUT</I> 
+<DD><I>endin</I> 
+<P>after being run through <I>m4orch</I> or <I>mko</I> would look like this :</P>
+<DD>sr=44100 
+<DD>kr=2205 
+<DD>ksmps=20 
+<DD>nchnls=1 
+<DD>instr 6 
+<DD>kamp expseg 1,p6,p5,p3-(p6+p7),p5,p7,1
+<DD>a1 oscili kamp, cpspch(p4), 1 
+<DD>out a1 
+<DD>endin 
+<P>By itself, the example above is not all that useful, since the macro <I>OUTPUT</I> will <U>always</U> be expanded to<I> out a1.</I> However, <I>ifelse</I> and <I>ifdef</I> constructions can be included within macro definitions to provide alternative
+expansions, based upon some evaluation.</P>
+<H4><A NAME="_wmh4_847375127">6.1.2. ifelse and ifdef constructions</A></H4>
+<P><I>ifelse </I>conditionals have the following format :</P>
+<CENTER><DD ALIGN="CENTER"><I>ifelse(a,b,c,d)</I> 
+</CENTER><P>This is interpreted : &quot;If character string <B>a</B> is identical to string<B> b,</B> then return string <B>c;</B> if they are not identical, return string<B> d.</B>&quot; The following definition of <I>OUTPUT</I> is an <I>ifelse</I> construction that provides two alternative expansions, depending on whether
+the orchestra header specifies mono or stereo output:</P>
+<DD><I>define(OUTPUT,[ifelse(NCHNLS,1,[out a1],[outs sqrt(p10)*a1, sqrt(1-p10)*a1])])</I> 
+<P>It may be easier to follow the logic of this nasty looking line if we &quot;explode&quot;
+the arguments:</P>
+<PRE>
+<I><FONT SIZE="3">                ifelse  (a,      b, c,        d                                 )</FONT></I>
+define(OUTPUT, [ifelse (NCHNLS, 1, [out a1], [outs sqrt(p10)*a1, sqrt(1-p10)*a1])])
+</PRE>
+<P><I>m4orch</I> (or<I> m4expand)</I> &quot;reads&quot; this line as follows: &quot;Define OUTPUT on the basis of the following
+comparison. If NCHNLS has been defined as<I> 1</I> in the SETUP header macro, return <I>out a1; </I>otherwise (for stereo) return<I> outs p10*a1,(1-p10)*a1.</I></P>
+<P>With this definition of <I>OUTPUT</I> in place, our instrument algorithm can be used, without further editing,
+to create either mono or stereo soundfiles, simply by changing the <I>NCHNLS</I> (number of channels) argument in the <I>SETUP</I> header at the top of an orchestra file.</P>
+<P><B>ifdef</B> statements, too, return a string based on an evaluation. The simple form
+is :</P>
+<CENTER><DD ALIGN="CENTER"><I>ifdef(a,b)</I> 
+</CENTER><P>which means : <I>if</I><B> a</B><I> has already been defined, return value</I><B> b.</B> <I>Otherwise, do nothing.</I><BR>
+In many cases, <B>b </B>is another define statement.</P>
+<P>More often, <I>ifdef</I> statements contain three arguments :</P>
+<CENTER><DD ALIGN="CENTER"><I>ifdef(a,b,c)</I> 
+</CENTER><P>Here, if <B>a</B> has been defined, argument <B>b</B> is returned. If<B> a</B> has NOT been defined, argument<B> c</B> is returned. Arguments <B>b </B>and<B> c</B> may be <I>define</I> statements, <I>ifelse</I> constructions, or further (nested) <I>ifdef</I> operations. Consider the following <I>ifdef</I> statement:</P>
+<DD><I>ifdef([OUTPUT],,define(OUTPUT,[ifelse(NCHNLS,1,[out a1],</I> 
+<DD><I>[outs p10 * a1,(1-p10) * a1])]))dnl</I> 
+<P>Here is how this complex statement is evaluated :</P>
+<DD><I>If OUTPUT has already been defined, use this previous definition. </I>(Notice the blank second argument &quot;<B>b</B>,&quot; indicated
+by &quot;<B>,,</B>&quot;)<I> If there is no current definition, however, provide one now, based on an
+evaluation of the NCHNLS argument in the SETUP header. If NCHNLS has been
+set to &quot;1,&quot; define OUTPUT to be</I> 
+<CENTER><DD ALIGN="CENTER"><I>out a1.</I> 
+</CENTER><DD><I>Otherwise (if NCHNLS = 2) define OUTPUT to be</I> 
+<CENTER><DD ALIGN="CENTER"><I>outs p10 * a1,(1-p10) * a1</I> 
+</CENTER><P>With this macro in place, we can use the default mono and stereo instrument
+outputs in creating most soundfiles. However, if we wish to include additional
+postprocessing, we can provide a new definition of OUTPUT, which will override
+these defaults. The new definition must <U>precede</U> the <I>ifdef</I> statement above.</P>
+<P>The most common problem with nested constructions like the one above (other
+than their repugnant ugliness) is failure to balance left and right parentheses
+and square brackets. To illustrate the necessary balancing of the preceding
+example, we have labeled the four matching sets of parentheses &quot;1&quot; through
+&quot;4&quot; below, and the four sets of square brackets &quot;W,&quot; &quot;X,&quot; &quot;Y&quot; and &quot;Z.&quot;</P>
+<PRE>
+         1W       W        2        X      3       Y      Y
+         ||       |        |        |      |       |      |
+    ifdef([OUTPUT],,define(OUTPUT,[ifelse(NCHNLS,1,[out a1],
+    [outs p10*a1,(1-p10)*a1])]))dnl
+    |            |     |   |||||
+    Z            4     4   Z3X21
+
+</PRE>
+<H4><A NAME="_wmh4_847375133">6.1.3. include statements</A></H4>
+<P>Those with experience in such programming languages as<I> C,</I> or with Unix shell scripts, already will be familiar with <B>include</B> statements, which allow us to include the complete contents of one file
+at some point within another file. <I>Includes</I> are also possible within <I>m4. </I>Here is a sample orchestra file:</P>
+<DD><I>SETUP(44100,2205,2)</I> 
+<DD><I>include(flute.orc)</I> 
+<DD><I>include(/ins/strings.orc)</I> 
+<P>After this file is processed by <I>m4orch,</I> file <I>orch.orc</I> will include file<I> flute.orc </I>from the our current directory, and file<I> strings.orc </I>from subdirectory <I><U>ins</U>.</I></P>
+<FONT SIZE="2">If you want to include files from directories that
+do NOT branch from your current working directory,
+you must include the complete path name for these files. The tilde sign
+(~) is a useful abbreviation for your home Unix directory.</FONT> 
+
+<P>If file <I>flute.orc</I> includes a macro output definition of the <I>ifdef</I> type previously discussed:</P>
+<DD><TT>ifdef([OUTFLUTE],,define(OUTFLUTE,[ifelse(NCHNLS,1,[out a1], 
+<DD>[outs sqrt(p20)*a1, sqrt(1-p20)*a1])]))dnl </TT>
+<DD>
+<P>but you want to override the default output within this particular orchestra
+file, you could create a new output definition before the <I>include </I>call to<I> flute.orc:</I></P>
+<PRE>
+<I>     define(OUTFLUTE,[ ; add a moving stereo pan</I>
+<I>     kpan oscili p22-p21, 1/p3 , p23</I>
+<I>     kpan = kpan+p21</I>
+<I>     outs  sqrt(kpan)*a1, sqrt(1-kpan) * a1])dnl</I>
+
+<I>     SETUP(44100,2205,2)</I>
+<I>     include(flute.orc)</I>
+<I>     include(/ins/strings.orc)</I>
+
+</PRE>
+<P>If this output panning module works well, and you might wish to use it again,
+either with <I>flute.orc</I> or with other instrument algorithms, you could copy it to another file,
+and, perhaps, put this new file in a directory that contains only such post-processing
+modules of Csound code. 
+In this case, we will observe the convention,
+and type our panning module code into a file called<I> pan.defs.</I> We will then place <I>pan.defs</I> in a directory called <U>m4stuff.</U></P>
+<PRE>
+<I>     define(PAN,[ ; add a moving stereo pan</I>
+<I>     kpan oscili p22-p21, 1/p3 , p23</I>
+<I>     kpan = kpan+p21</I>
+<I>     outs  sqrt(kpan)*a1, sqrt(1-kpan) * a1])dnl</I>
+</PRE>
+<P>Actually, we might wish to include macro definitions for <U>several</U> types of panning operations within this file, and give these definitions
+names such as<I> PAN1, PAN2, RANDOMPAN, FASTPAN </I>and so on. Now, we can append any of several types of panning operations,
+defined in our<I> pan.defs</I> file, to our flute algorithm: </P>
+<PRE>
+<I>     include(~/m4stuff/pan.defs)</I>
+<I>     define(OUTFLUTE,[RANDOMPAN])dnl</I>
+<I>     SETUP(44100,2205,2)</I>
+<I>     include(flute.orc)</I>
+<I>     include(/ins/strings.orc)</I>
+</PRE>
+<P>Similar macro definitions can be useful in score preparation. Here, we will
+first create a file, called <I>motives,</I> that contains definitions for various rhythmic and pitch motives. A simple
+file of this type might look something like this:</P>
+<PRE>
+<I>     define(RH1,[4./16//2./ 32 * 4/])dnl</I>
+<I>     define(RH2,[16// -2/  8*4/ 24 * 3/])dnl</I>
+<I>     define(TREBLE,[c4/b/fs/f5/af/])dnl</I>
+<I>     define(BASS,[df2/bf0/g1/a2/])dnl</I>
+</PRE>
+A more usable file might contain 10 or more lengthy <I>define</I> statements,
+rather than only four short rhythmic and pitch "motives" as in the example above.
+<P>Now we can create several score files that that access these motives. One
+such score might look like this:</P>
+<PRE>
+  <I>   include(motives)</I>
+<I>     i1 0 12;</I>
+<I>     p3 rh RH1/-2/RH1;</I>
+<I>     p4 no df3/ TREBLE / g5/bf4; </I>
+<I>     p5 mx 5 2000 1000/2 12000/ 5 12000 2000;</I>
+<I>     end;</I>
+
+<I>     i2 0 12;</I>
+<I>     p3 rh RH2/8/32//RH2/-2;</I>
+<I>     p4 no BASS/b3/f2/BASS;</I>
+<I>     p5 1. 5000 12000;</I>
+<I>     end;</I>
+</PRE>
+<P>These examples are merely illustrative, and hint at some of the many ways
+in which we can preprocess Csound orchestra and score files. Advanced users
+often employ such procedures not only to speed up score and orchestra file
+preparation, but also as compositional tools to derive a lot of mileage
+from a limited amount of initial source material. Synthesis and score generating
+algorithmic procedures thus can become modules that can be patched together
+in various configurations and combinations to permute, develop, vary and
+extend ideas, and which can enable us to go back and forth between &quot;top
+down&quot; and &quot;bottom up&quot; compositional approaches at various stages in the
+realization of a work.</P>
+
+<P>Obviously, prepreprocessing procedures such as those we have surveyed
+above are not limited to our work with
+Csound, but rather can be applied as well to the creation of input files
+or data for other sound processing programs as well.
+
+<H4><A NAME="6.1.4">6.1.4 Macros recognized by Csound</A></H4>
+<P>Beginning with version 3.48 Csound itself has included simple
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/omacro.html"><B>orchestra macro</B></A>
+and
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/NumScore/smacro.html"><B>score macro</B></A>
+
+systems that permit the use
+of <I>#define</I> and <I>#include</I> statements within orchestra and score
+files. Here is a simple example. First we create a file of
+macro function definitions, which we will call <I>defs</I>, that we might use
+within several score files:
+<BR>
+<I><TT><PRE>#  /* file of macro function definitions */
+#define SINE # f1 0 1024 10 1.#
+#define TRIANGLE # f31 0 64 7 -1. 32 1. 32 -1.#
+#define SAW # f32 0 64 7 -1 64 1 #
+#define SQUARE #f33 0 64 7 1. 16 1. 0 -1. 32 -1. 0 1. 16 1. #</PRE></I></TT>
+Next we create a Csound score file that includes some of the macro definitions
+from file <I>defs</I> as well  some additional macros unique to this score:
+<PRE><TT><I>
+#include #/u/staff/allan/SEC1/defs#
+$SINE
+$TRIANGLE
+$SAW
+$SQUARE
+#define RISEFALL # .005 .25#
+f50 0 65 7 0 64 1.
+
+  i31 0.000 1.200 100 6000 0.004 0.850 
+  i31 0.119 0.924 130 6883 $RISEFALL
+  i31 0.240 0.712 168 7897 $RISEFALL
+  i31 0.982 2.000 60 22000 0.002 .350 
+e
+</PRE></TT></I>
+The score file above would be equivalent to this:
+<PRE><TT><I>
+f 1 0 0 1024 1024 10 1.
+f 31 0 0 64 64 7 -1. 32 1. 32 -1.
+f 32 0 0 64 64 7 -1 64 1
+f 33 0 0 64 64 7 1. 16 1. 0 -1. 32 -1. 0 1. 16 1.
+f 50 0 0 65 65 7 0 64 1.
+  i31 0.000 1.200 100 6000 0.004 0.850 
+  i31 0.119 0.924 130 6883 0.005 0.250
+  i31 0.240 0.712 168 7897 0.005 0.250
+  i31 0.982 2.000 60 22000 0.002 .350 
+
+e
+</PRE></TT></I>
+
+<HR>
+<H4><A NAME="FINAL_EXAMPLES">6.2 Final orc/sco/soundfile examples</A></H4>
+<P>This section presents a few concluding orchestra/score11 file (and
+resulting <I>/sflib/x</I> soundfile) examples that illustrate some additional
+Csound opcodes and procedures that you may find useful.
+<CENTER>  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - </CENTER>
+<H5>ex6-1 and ex6-2 : harmonizer examples using loscil and harmon</H5>
+<P>Orchestra file <I>ex6-1</I> uses
+<UL>
+<LI> <A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Function/gen01.html"><B>GEN01</B></A>
+to copy the samples from one or more monophonic soundfiles into function tables in RAM<BR>
+<FONT SIZE = "-1">(To review <I>gen 01</I> and the ECMC <I>mksffuncs</I>
+command for creating <I>gen 1</I> function definitions, refer to the discussion
+of <I>ex3-6</I> within
+<A target="_new" HREF="chapter3.html#PHASOR_TABLE">Section 3.4</A>)</FONT>
+<LI> unit generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/loscil.html"><B>LOSCIL</B></A>
+to read the samples from these function tables into Csound for optional resampling
+(resulting in pitch transposition) and further processing, and
+<LI> unit generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/harmon.html"><B>HARMON</B></A>
+to "harmonize" the sound source by creating one or two pitch shifted "clones"
+of the samples it receives from <I>loscil</I>
+</UL>
+Thus, from a given input tone (or more complex sound source), this instrument
+can produce three  output tones, in exact rhythmic synchronization, at three new pitch
+levels.
+<B><PRE>
+;  #############################################################
+;  orchestra file example ex6-1 : harmonizer   :   ECMC Csound Tutorial
+;  #############################################################
+; csound header
+<FONT SIZE="-2">1</FONT> sr=44100
+<FONT SIZE="-2">2</FONT> kr=2205
+<FONT SIZE="-2">3</FONT> ksmps=20
+<FONT SIZE="-2">4</FONT> nchnls=1
+
+
+<FONT SIZE="-2">5</FONT> instr 1
+<FONT SIZE="-2">6</FONT> ;----- SOUNDFILE INPUT --------------------
+<FONT SIZE="-2">7</FONT> 	ifunc = p4 ; gen1 function number of input soundfile
+<FONT SIZE="-2">8</FONT> 	iampscale = (p5 = 0 ? 1. : p5)  ; adjust input amplitude
+<FONT SIZE="-2">9</FONT>       irise = (p6 = 0 ? .001 : p6)   ; fade-in time
+<FONT SIZE="-2">10</FONT> 	idecay =( p7  = 0 ? .001 : p7)  ; fade-out time
+
+<FONT SIZE="-2">11</FONT>     ; loscil arguments
+<FONT SIZE="-2">12</FONT>     ibasepitch = (p8 < 13. ? cpspch(p8) : p8) ; base pitch of soundfile in pch or cps
+<FONT SIZE="-2">13</FONT>     ioutpitch = (p9 < 13. ? cpspch(p9) : p9) ; output pitch in pch or cps
+<FONT SIZE="-2">14</FONT>     ioutpitch = (p9 < 3 ? p9 * ibasepitch :ioutpitch) ; or as multiplier of basepitch
+
+<FONT SIZE="-2">15</FONT>  ; output amplitude envelope
+<FONT SIZE="-2">16</FONT> kamp  expseg  .005 ,irise  , iampscale  , p3 - (irise + idecay) , iampscale , idecay , .005
+<FONT SIZE="-2">17</FONT> asource  loscil  kamp, ioutpitch, ifunc, ibasepitch
+
+<FONT SIZE="-2">18</FONT> ;----- HARMONIZER --------------------
+<FONT SIZE="-2">19</FONT> 	imin init 0
+<FONT SIZE="-2">20</FONT> 	imin = (p10 < 1. ? p10 * ioutpitch : imin)
+<FONT SIZE="-2">21</FONT> 	imin = (p10 > 1. && p10 < 13. ? cpspch(p10) : imin)
+<FONT SIZE="-2">22</FONT> 	imin = (p10 > 13 ? p10 : imin)
+
+<FONT SIZE="-2">23</FONT>       ; max. freq. variance
+<FONT SIZE="-2">24</FONT>                      ; as % of output source pitch or in pch or cps
+<FONT SIZE="-2">25</FONT> 	imaxvar = (p11 < 1. ? p11 : p11 / ioutpitch)
+<FONT SIZE="-2">26</FONT>         imode = p12 ; if 0, iharm1 & iharm2 are ratios * ioutpitch
+<FONT SIZE="-2">27</FONT>                     ;  if 1, iharm1 & iharm2 are notes in pch or cps
+<FONT SIZE="-2">28</FONT>         iprd = p15  ; pitch analysis window size
+<FONT SIZE="-2">29</FONT> iharm1 init p13
+<FONT SIZE="-2">30</FONT> iharm2 init p14
+<FONT SIZE="-2">31</FONT> if imode = 0 igoto doit
+<FONT SIZE="-2">32</FONT> if p13 = 0 igoto harm2
+<FONT SIZE="-2">33</FONT> 	iharm1 = (p13 < 13. ? cpspch(p13) : p13)
+<FONT SIZE="-2">34</FONT> harm2: if p14 = 0 igoto doit
+<FONT SIZE="-2">35</FONT> 	iharm2 = (p14 < 13. ? cpspch(p14) : p14)
+<FONT SIZE="-2">36</FONT> doit:
+
+<FONT SIZE="-2">37</FONT> aharm harmon asource, ioutpitch, imaxvar, iharm1, iharm2, imode, imin, iprd
+<FONT SIZE="-2">38</FONT> ; print ioutpitch, imaxvar, iharm1, iharm2, imode, imin, iprd
+<FONT SIZE="-2">39</FONT> ;----- SIGNAL OUTPUTS  {source/harmonizer mix} ---------------
+<FONT SIZE="-2">40</FONT> out (p16 * asource) + (p17 * aharm)
+<FONT SIZE="-2">41</FONT> endin
+</B></PRE>
+The important lines within this code are the calls to <I>loscil</I> on line 17
+and to <I>harmon</I> on line 37.
+<P>Companion <I>score11</I> input file <I>ex6-1</I> represents an initial test
+of this instrument algorithm, creating three-part harmonies in succession
+from three <I>sflib</I> soundfiles all pitched at <I>b3</I>:  a soprano tone
+(<I>sflib/voice/sop1.b3</I>), a violin tone (<I>/sflib/string/vln.b3</I>) and
+a trumpet tone (<I>sflib/wind/trp.b3</I>).
+
+<PRE><B>
+< Score file used to create "ex6-1" :
+* f1 0 524288 -1 "/sflib/voice/sop1.b3" 0 0 0 ; < dur = 6.37
+* f2 0 262144 -1 "/sflib/string/vln.b3" 0 0 0 ; < dur = 3.62
+* f3 0 524288 -1 "/sflib/wind/trp.b3" 0 0 0 ; < dur = 6.31
+
+i1 0 0 3;   < create 3 output "notes"
+p3 4;               
+du 303;        < each output note lasts 3 seconds
+p4 nu 1/2/3;   < gen 1 func number of input soundfile : sop/vln/trp
+< p5,6,7 : amplitude envelope
+p5 nu .6/.4//;         < input amplitude multiplier
+p6 0 ;         < optional fade-in time
+p7 .2;         < optional fade-out time
+<
+p8 no b3;      < base pitch of input soundfile in pch or cps
+p9 no b3//c4;      < output pitch in pch or cps
+
+< harmonizer p-fields:
+p10 no a3;  < iminfrq , in cps or as % of p9 base pitch
+p11 .5;     < kmaxvar : fraction
+p12  1;     < imode : if 0, p13 & p14 are ratios * p8 pitch
+< IMPORTANT: p12 & p13 cannot BOTH be > p8
+p13   no gs3;       < harmonizer output note or ratio 1
+p14 no  cs4;         < harmonizer output note or ratio 2
+p15 .04; < iprd : normally between .02 & .05
+< source/harmopnizer output mix
+p16 nu .5/0/.2;      < amp. multiplier for source signal output
+p17 nu 1;          < amp. multiplier for harmonizer output
+end;  <<<<<<<<<<<<<< end of ex6-1 score file >>>>>>>>>>>>>>
+</PRE></B>
+
+<P> Within the opening <I>SOUNDFILE INPUT</I> section of this instrument
+algorithm (lines 6 through 17) we first define several initialization
+values, mostly be means of
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/cond.html"><I>conditional evaluations</I></A>
+of score p-fields <I>4 </I> through <I>9</I>, so that for each <I>score11</I>
+input file we create for this instrument we can employ the most convenient
+of two or more alternative ways to set these parameter values.
+
+<PRE><I><FONT SIZE="-1"><FONT SIZE="-2">6</FONT> ;----- SOUNDFILE INPUT --------------------
+<FONT SIZE="-2">7</FONT> 	ifunc = p4 ; gen1 function number of input soundfile
+<FONT SIZE="-2">8</FONT> 	iampscale = (p5 = 0 ? 1. : p5)  ; adjust input amplitude
+<FONT SIZE="-2">9</FONT>       irise = (p6 = 0 ? .001 : p6)   ; fade-in time
+<FONT SIZE="-2">10</FONT> 	idecay =( p7  = 0 ? .001 : p7)  ; fade-out time
+
+<FONT SIZE="-2">11</FONT>     ; loscil arguments
+<FONT SIZE="-2">12</FONT>     ibasepitch = (p8 < 13. ? cpspch(p8) : p8) ; base pitch of soundfile in pch or cps
+<FONT SIZE="-2">13</FONT>     ioutpitch = (p9 < 13. ? cpspch(p9) : p9) ; output pitch in pch or cps
+<FONT SIZE="-2">14</FONT>     ioutpitch = (p9 < 3 ? p9 * ibasepitch :ioutpitch) ; or as multiplier of basepitch
+<FONT SIZE="-2">15</FONT>  ; output amplitude envelope
+<FONT SIZE="-2">16</FONT>    kamp  expseg  .005 ,irise  , iampscale  , p3 - (irise + idecay) , iampscale , idecay , .005
+</FONT></PRE></I>
+<P>With the <I>iampscale</I> init value derived from <I>p5</I> we can scale
+(adjust) the amplitude of the input soundfile (since harmonization will
+increase the output amplitude, possibly resulting in clipping if we
+do not attenuate the input signal). The <I>irise</I> and <I>idecay</I>
+values derived from score p-fields <I>6</I> and <I>7</I> allow us to
+apply fade-ins and fade-outs to the input soundfiles within the output
+amplitude envelope created by <I>expseg</I> on line 16.
+<P>In order to transpose the pitch of a soundfile by resampling (a
+process that also will alter the duration of the sound),
+<I>loscil</I> must determine the ratio between the input and output
+frequencies. The <I>ibasepitch</I> (input pitch)  conditional evaluation of
+<I>p8</I>, and the corresponding <I>ioutpitch</I> (output pitch) evaluation
+of <I>p9</I>, allow us to use either the <I>score11</I> keyword <I>notes</I>
+in <I>p8</I> and <I>p9</I>, which will output <I>pch</I> values less than
+13., or else, if we prefer, provide these values in herz. (The latter
+method could be useful if we wish to pitch shift a soundfile by only
+a few herz.)
+<P><I>Harmonization:</I> The <I>harmon</I> unit generator<BR>
+
+<PRE>     ar <B>harmon</B> asig, kestfrq, kmaxvar, kgenfreq1, kgenfreq2, imode, iminfrq, iprd
+                 or, in <I>ex6-1</I>,
+    <I>aharm harmon asource, ioutpitch, imaxvar, iharm1, iharm2, imode, imin, iprd</I></PRE>
+can create either one or two pitch shifted copies of an input audio
+signal (which, in <I>ex6-1</I>, is the signal it receives from <I>loscil</I>).
+However, only one of these copies can be pitched higher than the input
+signal, and only the copies (and not the input signal) are included in
+the audio output of <I>harmon</I>. Unlike <I>loscil, harmon</I> performs
+time correction when pitch shifting. This can make the unit generator useful,
+apart from its typical "harmonization" applications, for pitch shifting a source
+sound without altering its duration, and for correcting the inaccurate
+pitch of a sound.
+<P>However, while the input pitch tracking within
+<I>harmon</I> (and within many of today's hardware harmonizers) generally
+is accurate, the audio input signal often suffers some
+degradation from the process of harmonization . (This is one of the reasons
+why  harmonizers most often are used
+on "background," tracks in pop music.) 
+This degradation may be just a little grunge, or may result in
+audible distortion or other artifacts.
+Input signals with wide vibratos or tremolos, or with complex
+timbres, or which lack a well-defined fundamental pitch,  are especially prone 
+to distortion.
+<P>To help the pitch tracking algorithm within <I>harmon</I> perform
+its rather complex task we must provide it with several arguments:
+<OL>
+<LI> An estimated center input pitch (called <I>kestfrq</I>), in herz,
+and provided in <I>ex6-1</I> by the <I>ioutpitch</I> variable
+<LI> a maximum allowable variance from this pitch (<I>kmaxvar</I>),
+to help the pitch tracker cope with glissandi, vibratos and other
+pitch inflections. <I>harmon</I> requires that this value be expressed
+as a decimal fraction, where a value of .25 would indicate that the
+pitch can vary by +/- 25 % of the estimated center pitch  value.<BR>
+The <I>imaxvar</I> conditional value in <I>ex6-1</I> allows us to express
+this variance either in this fractional manner in <I>p11</I>, or else, should we
+prefer, in <I>cps</I>. (For example, a <I>p11</I> value of 40 would
+specify that the input pitch does not drift by more than 40 herz
+from the estimated center pitch.)
+<LI> A minimum estimated frequency -- the lowest frequency that the pitch
+tracker might detect within the input signal.<BR>
+The <I>imin</I> variable in <I>ex6-1</I> allows us to express this value in
+one of three ways within <I>p10</I>:
+<PRE><TT>   --> if <I>p10</I> is less than 1., it specifies a ratio between the lowest
+   possible frequency and the estimated center frequency
+   Example: A <I>p10</I> value of .8 thus specifies <I>.8 </I>times the <I> ioutputpitch</I> value 
+   derived from <I>p9</I> </FONT>
+   --> if <I>p10</I>  is between 1. and 13., we can use the <I>score11</I> keyword <I>notes</I> to specify <I>imin</I>
+        Example:  <I>p10  no  a3</I>
+        (and a resulting Csound score value of 7.09) would set the <I>imin</I> value to 220 herz
+   --> if <I>p10</I> is greater than 13., we can specify this value directly in herz
+</PRE></TT>
+<LI> an analysis period (or window size), called <I>irpd</I> and  generally set to between .02 and .05, which
+determines how frequently the pitch analysis will be updated
+</OL>
+<P>The remaining three arguments to <I>harmon</I> specify
+<UL>
+<LI> <I>imode</I> : whether the two new pitches
+will be expressed as frequency transposition <I>ratios</I> to the source
+pitch  (if <I>imode</I> is set to 0) or, instead, in <I>cps</I>
+(if <I>imode</I> is set to 1), and
+<LI> the transposition ratios or frequencies for the generated tones (arguments
+<I>iharm1</I> and <I>iharm2</I> in <I>ex6-1</I>)
+</OL>
+
+<P>In <I>ex6-1</I> we have included two final mixer p-fields, <I>p 15</I> and <I>p 16</I>,
+to control the output balance between the source tone, from <I>loscil</I>,
+and the harmonizer-generated tones.
+In the trumpet tone harmonization the source signal from <I>loscil</I> is
+suppressed: <PRE>
+   p16 nu .5/ <B><FONT SIZE="+1"> 0</B></FONT> /.2;      < amp. multiplier for source signal output
+   p17 nu 1;             < amp. multiplier for harmonizer output</PRE>
+
+<P>The results of our <I>ex6-1</I> score are mixed. The soprano harmonization is
+clean, but the violin harmonization suffers distortion (possibly caused by
+the wide tremolo) and the attack of the trumpet tone harmonization also is
+distorted. By tweaking the <I>iprd</I> and input amplitude values we
+might be able to clean up the violin and trumpet harmonizations, or we might
+spend a lot of time fussing to little gain.
+<P>In <B>ex6-2</B> we employ the same orchestra file, but a (hopefully) more interesting
+score, employing a multisample collection of short soprano tones as source
+sounds.
+<PRE><B>
+;  #############################################################
+< Score file used to create "ex6-2" :
+;  #############################################################
+
+< **** sop3 {soprano, short tones sung loudly }function tables  ***
+*f1 0 32768 -1  "/sflib/voice/sop3.b3"   0 0 0;  < dur = .44
+*f2 0 32768 -1  "/sflib/voice/sop3.ds4"  0 0 0;  < dur = .47
+*f3 0 32768 -1  "/sflib/voice/sop3.fs4"  0 0 0;  < dur = .448
+*f4 0 32768 -1  "/sflib/voice/sop3.as4"  0 0 0;  < dur = .45
+*f5 0 32768 -1  "/sflib/voice/sop3.cs5"  0 0 0;  < dur = .43
+*f6 0 32768 -1  "/sflib/voice/sop3.e5"   0 0 0;  < dur = .475
+*f7 0 32768 -1  "/sflib/voice/sop3.gs5"  0 0 0;  < dur = .52
+*f8 0 32768 -1  "/sflib/voice/sop3.b5"   0 0 0;  < dur = .50
+
+ <; f99 = input soundfile function numbers & split points {in MIDI note numbers}
+*f99 0 128 -17 0 1 61 2 65  3 68 4 72 5 75 6 78 7 82 8 ;
+ <; f98 = base pitches of input soundfiles {expressed in MIDI note numbers}
+*f98 0  16  -2 0 59 63 66 70 73 76 80 83 ; 
+<  -------------End of SOP3 functions ---------
+
+te x 3.5 60 90/4.5 90 60;
+i1  0 8;  
+rs 999;
+rd .03;
+p3 .33; < mx 4. .45 .25 .18 .3/3. .18 .3 .5;
+du  mo 3.5  300.3 300.5 300.3/4.5 300.25 300.4 300.5 300.3;
+p4 nu 1/3/5/7/ < gen 1 func number of input soundfile 
+ 8/6/4/2;
+< p5,6,7 : amplitude envelope
+p5  mx 3. .03 .5/4. .5 .02;        < input amplitude multiplier
+p6 mx 3. .1 .06 .005 .02/      < optional fade-in time
+  4. .005 .01 .1;
+p7 mx 4 .24 .12 .1 .18/3. .18 .1 .2 .25;   < optional fade-out time
+<
+p8 no b3/fs4/cs5/gs5/ < base pitch of input soundfile in pch or cps
+ b5/e5/as4/ds4;
+p9 1. .89 1.12;    < output pitch in pch or cps or * p8
+
+< harmonizer p-fields:
+p10  .9; < iminfrq , in cps or as % of p9 base pitch
+p11 .3;     < kmaxvar : fraction
+p12  0;     < imode : if 0, p13 & p14 are ratios * p8 pitch
+ < IMPORTANT: p12 & p13 cannot BOTH be > p8
+p13  1. .67 .94;    < harmonizer output note or ratio 1
+p14 1. 1.05 1.33;     < harmonizer output note or ratio 2
+p15 .03; < iprd : normally between .02 & .05
+< source/harmonizer output mix
+p16 1. .3 .5;      < amp. multiplier for source signal output
+p17 1. .8 1.;      < amp. multiplier for harmonizer output
+end; <<< End of ex6-2 score >>>>>
+</PRE></B>
+
+<HR>
+</B>
+<H5>The  DAM  amplitude compression/expansion opcode</H5>
+<P>Th
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/dam.html"><B>DAM</B></A>
+unit generator
+<CENTER><PRE><I>aout  <B>dam  </B> ain,  kthreshold,  icomp1,  icomp2,  rtime,  ftime</I></PRE></CENTER>
+performs amplitude compression/expansion, reducing or increasing the dynamic range
+of an audio input signal. Such amplitude adjustments can have several traditional
+and a few non-traditional applications. Like hardware and digital mixing console
+<I>compressor/limitor</I> and <I>noise gate</I> circuits, <I>dam</I> compares the time
+varying intensity level of an input signal (<I>ain</I>) with a user-defined
+amplitude threshold, or reference, level (<I>kthreshold</I>). Signals
+that exceed the threshold level can be compressed (reduced in amplitude)
+by a ratio determined by the <I>icomp1</I> parameter, in a manner similar
+to that of traditional <I>compressor/limiter/compander</I> circuits. With
+<I>dam</I>, however, it also is possible to further <I>increase</I> the
+output level of "hot" signals that exceed the threshold level by setting
+<I>icomp1</I> to a value greater than 1., thus increasing
+the dynamic range of the signal -- something not possible with most
+hardware <I>compressors</I>.
+<P>Similarly, if we set the <I>icomp2</I> paramter to a value less than 1.,
+low intensity (usually "soft" or "decaying" ) signals, below
+the threshold level, can be further attenuated, similar to the manner in which
+<I>noise gate</I> circuits are used to reduce background noise, or to exaggerate
+the decays of tones to produce a more staccato," "punchier" performance
+quality. Alternatively, if <I>icomp2</I> is set to a value greater than 1.,
+signal levels below the threshhold can
+be <I>boosted</I>, to reduce the difference between high and low
+intensity levels and compress the dynamic range.
+The quickness with which adjustments are applied to the output amplitude
+is controlled by the <I>rtime</I> ("rise time") and <I>ftime</I> ("fall
+time") paramters.
+<P>In <I>ex6-3</I> amplitude compression/expansion is applied first to an
+<I>sflib</I> wire brush snare drum roll soundfile, and then to a
+portion of the much
+(and, to my mind, unjustly) maligned <I>voicetest</I> soundfile.
+<PRE><B><TT>
+;  ###########################################
+;  orchestra file for examples ex6-3
+;  amplitude compression/expansion with dam
+;  ##########################################
+    ; csound header
+sr=44100
+kr=2205
+ksmps=20
+nchnls=1
+
+instr 1
+asig  soundin  p4, p6    ; read in soundfile
+; input amplitude scaling and optional fade-in and fade-out
+	iamp = p5
+	irise = (p7 = 0 ? .001 : p7)
+	idecay = (p8 = 0 ? .001 : p8)
+kamp expseg .005, irise, iamp, p3 - (irise + idecay), iamp, idecay, .005
+asig = kamp * asig
+ ; apply amplitude compression/expansion:
+asig  dam  asig, p9, p10, p11, p12, p13
+out asig
+endin
+   ----------------------------------------
+  < Score file used to create ex6-3 :
+i1 0  0 4;       < 4 output "notes"
+p3  3;      
+du  nu 301.63 * 3/304.;  
+p4  nu 17 * 3/16 ;  < soundin.# number
+       < 17 = /sflib/perc/sdrum1.broll , 16 = /sflib/x/voicetest
+p5  nu 1./ .005/2.4/2.4 ;  < scale input amplitude
+p6  0 ;             < optional skip time off front of soundfile
+p7  0;            < optional fade-in time
+p8  nu 0 * 3/.3;  < optional fade-out time
+< "dam" compression/expansion parameters:
+p9 nu 10000/10000/10000/8000;  < amp. threshold for compression/expansion
+p10 nu 1./.002/ 1.5/1.7/ ;  < compress/espand ratio 1 for high levels
+p11 nu 1./12./ .2/.15/;     < compress/espand ratio 2 for low levels
+
+p12 nu .1 * 3/ .03;      < gain raise time
+p13 nu .1 * 3/ .03;      < gain fall time
+end;  <<< End of ex6-3 score >>>
+
+
+
+</PRE></B></TT>
+
+<P>The four output "notes" produced by this score illustrate
+<OL>
+<LI> The original snare drum roll with no amplitude adjustments (<I>dam</I>
+has no effect)
+<LI> snare drum roll: high signal levels are attenuated, low signal levels
+are boosted, compressing the dynamic range. The result is a somewhat more
+"legato" roll, although the difference is rather subtle.
+<LI> snare drum roll: "hot" signal levels are further boosted, low level signal
+levels are "noise gated," resulting in a "drier," more "staccato" roll
+<LI> <I>voicetest</I>: as in the preceding "note," sharp noise gating
+(attenuation of amplitude levels below the threshold) is applied, exaggerating
+the difference between high and low intensity levels. Notice the resulting
+accents on vowels and an effect somewhat like rapid glottal stops.
+</OL>
+<HR>
+<H5>ex6-4 : non-twelve tone equal tempered tuning examples employing cps2pch</H5>
+
+<P>The
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Convert/cps2pch.html"><B>CPS2PCH</B></A>
+pitch converter enables us to create scales that divide the octave
+into less than, or more than, 12 equal tempered pitch classes.
+(The companion <I>cpsxpch</I> pitch converter allows us to 
+create equal tempered scales with any number of scale steps, that repeat at
+<I>any</I> interval -- not just at the octave.)
+<P>Orchestra file  <I>ex6-4</I> is designed to play in such unusual equal
+tempered tunings, which are defined by score p-fields <I>4</I> and <I>6</I>,
+and to employ multisample collections of instrumental or vocal tones
+as sound sources. For each score note, the instrument  consults score
+function tables <I>99 </I> and <I>98</I> to
+determine which multisampled soundfile is closest in pitch
+to the desired output pitch, and then, with <I>loscil</I>,
+resamples this soundfile to produce the correct frequency.
+<PRE><B><TT>
+;  #############################################################
+;  orchestra file examples ex6-4-1, 6-4-2 and 6-4-3
+; non-12 tone tuning examples
+;  #############################################################
+
+sr=44100
+kr=2205
+ksmps=20
+nchnls=1
+
+
+instr 1
+
+icps  cps2pch  p4, p6
+        ; convert pch to midi note number
+        imidinote =  int((p4) - 3) * 12
+        imidinote = int(imidinote + ((frac(p4) * (12/p6)) * 100))
+; ------------------------------------------
+
+  ; use function tables 99 & 98 to get closest multisample soundfile
+ifno	table	imidinote, 99  ;keyboard mapping to gen1 function tables 
+ibasno	table	ifno, 98        ; returns midi notes of the sonudfile samples
+ibasoct	=	ibasno/12. + 3.
+ibasepitch = cpsoct(ibasoct)
+; ------------------------------------------
+iendloop = 1 ; dummy end loop point for loscil
+                       ; csound aborts without an end loop value, even
+                       ; if no looping is specified
+
+asig	loscil	1, icps , ifno, ibasepitch , 0, 0, iendloop
+;print icps, imidinote, ifno, ibasepitch
+; ------------------------------------------
+; AMPLITUDE SCALING and OPTIONAL NEW AMPLITUDE ENVELOPE
+	iamp = p5
+	irise = (p7 = 0? .0001 : p7)
+	idec = (p8 = 0? .0001 : p8)
+kamp expseg .005, irise, iamp, p3 - (irise + idec), iamp , idec, .005
+asig = asig * kamp
+; ------------------------------------------
+out asig
+endin
+</PRE></B></TT>
+<P>Three simple score files are provided here for this instrument, each presenting
+a one octave ascending chromatic  scale:
+<UL>
+<LI><I>ex6-4-1</I> : an 11 tone scale played by pizzicato cello
+<LI><I>ex6-4-2</I> : a 13 tone scale played by a flute
+<LI><I>ex6-4-3</I> : a 19 tone scale played by a violin
+</UL>
+<PRE><B><TT>
+ < Score11 file used to create soundfile example <FONT SIZE=+3">ex6-4-1</FONT>
+ < 11 tone equal tempered chromatic chromatic scale
+< ****** CELLO PIZZ FUNCTIONS : *******
+* f1 0 262144 -1 "/sflib/string/vc.p.c2" 0 0 0 ; < dur = 3.25
+* f2 0 131072 -1 "/sflib/string/vc.p.e2" 0 0 0 ; < dur = 2.32
+* f3 0 131072 -1 "/sflib/string/vc.p.gs2" 0 0 0 ; < dur = 1.86
+* f4 0 131072 -1 "/sflib/string/vc.p.c3" 0 0 0 ; < dur = 2.29
+* f5 0 131072 -1 "/sflib/string/vc.p.e3" 0 0 0 ; < dur = 2.41
+* f6 0 65536 -1 "/sflib/string/vc.p.gs3" 0 0 0 ; < dur = 0.86
+* f7 0 131072 -1 "/sflib/string/vc.p.c4" 0 0 0 ; < dur = 1.93
+* f8 0 65536 -1 "/sflib/string/vc.p.e4" 0 0 0 ; < dur = 1.08
+* f9 0 65536 -1 "/sflib/string/vc.p.gs4" 0 0 0 ; < dur = 0.975
+* f10 0 65536 -1 "/sflib/string/vc.p.b4" 0 0 0 ; < dur = 0.882
+* f11 0 65536 -1 "/sflib/string/vc.p.d5" 0 0 0 ; < dur = 0.882
+
+ <; f99 = input soundfile function numbers & split points {in MIDI note numbers}
+*f99 0 128 -17 0 1 38 2 42  3 46 4 50 5 54 6 58 7 62 8 66
+ 9 70 10 73 11 ;	
+ <; f98 = base pitches of input soundfiles {expressed in MIDI note numbers}
+*f98 0  16  -2 0 36 40 44 48 52 56 60 64 68 71 74 ;
+<  **** End of cello pizzicato functions  *****
+
+
+i1  0 0 13;
+p3 nu .5 * 10/ .9/ .007;
+du 300.7;
+   < p4 = PITCH 
+p4 nu 7.00/ 7.01/ 7.02/ 7.03/7.04/ 7.05/ 7.06/ 7.07/
+ 7.08/7.09/7.10/ 7.11/  7.00; < ends with octave 7.11/7.00
+p6 11;       < iequal {number of tones in scale }
+
+p5  .5;  < amplitude multiplier       
+  < p7 = optional fade-in time 
+p7      
+   < p8 = optional fade-out time 
+p8 1. .35  .25;
+end;  <<< End of ### exex6-4-1 ### score >>>
+; ------------------------------------------
+ < Score11 file used to create soundfile example <FONT SIZE=+3">ex6-4-2</FONT>
+ < 13 tone equal tempered chromatic chromatic scale
+<  flute multisamples
+*f1 0 0 -1  "/sflib/wind/fl.c4"   0 0 0;  < dur = 3.472
+*f2 0 0 -1  "/sflib/wind/fl.e4"   0 0 0;  < dur = 3.479
+*f3 0 0 -1  "/sflib/wind/fl.gs4"  0 0 0;  < dur = 3.854
+*f4 0 0 -1  "/sflib/wind/fl.c5"   0 0 0;  < dur = 3.534
+*f5 0 0 -1  "/sflib/wind/fl.e5"   0 0 0;  < dur = 3.614
+*f6 0 0 -1  "/sflib/wind/fl.gs5"  0 0 0;  < dur = 4.233
+*f7 0 0 -1  "/sflib/wind/fl.c6"   0 0 0;  < dur = 3.515
+*f8 0 0 -1  "/sflib/wind/fl.e6"   0 0 0;  < dur = 3.564
+*f9 0 0 -1  "/sflib/wind/fl.gs6"  0 0 0;  < dur = 3.295
+*f10 0 0 -1  "/sflib/wind/fl.c7"  0 0 0;  < dur = 3.595
+ 
+ <; f99 = input soundfile function numbers & split points {in MIDI note numbers}
+*f99 0 128 -17 0 1 62 2 66 3 70 4 74 5 78 6 82 7 86 8 90 9 94 10;  	
+ <; f98 = base pitches of input soundfiles {expressed in MIDI note numbers}
+*f98 0  16  -2 0 60 64 68 72 76 80 84 88 92 99;
+<  -------------End of Flute gen 01 functions ---------
+
+
+i1  0 0 15;
+p3 nu .5 * 12/ .75/ .007;
+du 300.6;
+   < p4 = PITCH 
+p4 nu 8.00/ 8.01/ 8.02/ 8.03/8.04/ 8.05/ 8.06/ 8.07/
+ 8.08/8.09/8.10/ 8.11/ 8.12/ 8.13/  8.00;
+p6 13;       < iequal {number of tones in scale }
+
+p5  .5;  < amplitude multiplier       
+  < p7 = optional fade-in time 
+p7      
+   < p8 = optional fade-out time 
+p8 1. .2 .15;
+end;  <<< End of ### exex6-4-2 ### score >>>
+; ------------------------------------------
+ < Score11 file used to create soundfile example <FONT SIZE=+3">ex6-4-3</FONT>
+ < 19 tone equal tempered chromatic chromatic scale
+< **** VLN ARCO ORD. function tables ******
+ < 11 soundfile(s) sorted by pitch abbreviation:
+* f1 0 262144 -1 "/sflib/string/vln.g3" 0 0 0 ; < dur = 3.83
+* f2 0 262144 -1 "/sflib/string/vln.b3" 0 0 0 ; < dur = 3.62
+* f3 0 262144 -1 "/sflib/string/vln.ds4" 0 0 0 ; < dur = 3.63
+* f4 0 262144 -1 "/sflib/string/vln.g4" 0 0 0 ; < dur = 3.83
+* f5 0 262144 -1 "/sflib/string/vln.b4" 0 0 0 ; < dur = 3.34
+* f6 0 131072 -1 "/sflib/string/vln.ds5" 0 0 0 ; < dur = 2.88
+* f7 0 262144 -1 "/sflib/string/vln.g5" 0 0 0 ; < dur = 3.68
+* f8 0 131072 -1 "/sflib/string/vln.b5" 0 0 0 ; < dur = 2.88
+* f9 0 131072 -1 "/sflib/string/vln.ds6" 0 0 0 ; < dur = 2.93
+* f10 0 131072 -1 "/sflib/string/vln.g6" 0 0 0 ; < dur = 2.94
+* f11 0 262144 -1 "/sflib/string/vln.c7" 0 0 0 ; < dur = 3.37
+  
+ <; f99 = input soundfile function numbers & split points {in MIDI note numbers}
+*f99 0 128 -17 0 1 57 2 61 3 65 4 69 5 73 6 77 7 81 8 85 9 89 10 93 11;
+ <; f98 = base pitches of input soundfiles {expressed in MIDI note numbers}
+*f98 0  16  -2 0 55 59 63 67 71 75 79 83 87 91 96 ;< midi notes of samples
+<  -------------End of VLN Arco Ord. functions ---------
+
+i1  0 0 21;
+rd    
+p3 nu .4 * 18/ .7/ .007;
+du 300.5;
+   < p4 = PITCH 
+p4 nu 8.00/ 8.01/ 8.02/ 8.03/8.04/ 8.05/ 8.06/ 8.07/
+ 8.08/8.09/8.10/ 8.11/ 8.12/ 8.13/ 8.14/ 8.15/8.16/8.17/8.18/8.19/8.00;
+p6 19;       < iequal
+
+p5  .5;        < amplitude scalar 
+< p7 = optional fade-in time 
+p7      
+   < p8 = optional fade-out time 
+p8 1. .3  .38;
+end;  <<< End of ### exex6-4-3 ### score >>>
+</PRE></B></TT>
+<HR>
+
+<H4><A NAME="6.3">6.3. Quick pointers to some additional Csound resources</A></H4>
+<P>Obviously this tutorial has surveyed only a very limited sampling of
+the total resources of Csound. Some of the more interesting
+resources we have not touched upon but which you may wish to explore at
+this point include:
+<OL>
+<LI> <I>MIDI</I> input and output (e.g. the <A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Convert/midi.html"><B>midi converter</B></A>
+and <A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Convert/midic7.html"><B>midi controller</B></A>
+opcodes, as well as <I>loscil</I> and 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Convert/moscil.html"><B>moscil</B></A>
+)
+ECMC users can consult the Eastman Csound Library <I>midiins</I> algorithms
+for example MIDI-based Csound instruments.<BR>
+Csound version 4.0, a major update for all platforms that should become available
+early in 1999, will include many new MIDI opcodes developed by Gabriel Maldonado
+and, as of this writing, currently available only in his <I>Windows 9x/DirectX</I> version of
+Csound.
+
+<LI> sensing and processing of real-time audio and control input signals (e.g.
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Sensing/SENSE.html"><B>Sensing and Control</B></A> opcodes and the
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/In+Out/in.html"><B>IN</B></A>
+(<I>in, ins</I> and <I>inq</I>) family of audio input unit generators)
+
+<LI> analysis/resynthesis opcodes and utilities, including  
+<UL>
+<LI> <A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Utility/hetro.html">hetro </A></B> and
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/adsyn.html">adsyn</A>
+-- additive synthesis analysis and resynthesis<BR>
+<LI> <A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Utility/pvanal.html#PVANAL">pvanal </A> and
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/adsyn.html">pvoc</A>
+-- phase vocoder analysis and resynthesis<BR>
+
+<LI> <A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Utility/lpanal.html#LPANAL">lpanal </A> and
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/lpread.html">lpread/lpreson/lpfreson</A>
+-- linear prediction analysis and resynthesis<BR>
+<FONT SIZE="-1">(On the ECMC systems <I>mixviews</I> should be used in place of
+<I>lpanal</I> to perform <I>LPC</I> analysis.) </FONT><BR>
+ECMC users can consult Eastman Csound Library instrument algorithm <I>phavoc</I>
+for an example phase vocoder instrument based on <I>pvoc</I>, and algorithms
+<I>resyn</I> and <I>xsyn</I> for LPC resynthesis and cross-synthesis examples.
+<LI> The
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/convolve.html"><I>convolve</I></A>
+convolution opcode, discussed briefly in chapter 5, useful not only for
+reverberation, but also for hybridizing two source sounds.
+<LI> The
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Spectral/specaddm.html">spectral</A>
+opcodes
+<I> specaddm, specdiff, specscal, spechist</I> and <I> specfilt</I>,
+which manipulate or modify the frequency spectrum of one or more spectral
+input signals
+</UL>
+<LI> the formant-generating
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/fof.html"><B>fof </B>and <B>fof2</B></B></A> opcodes derived from the IRCAM
+<I>Chant</I> programs. An 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Tutorial/foftut.html"><I>FOF Synthesis Tutorial</I></A>
+by J. M. Clarke is included in the Csound distribution.
+<LI> opcodes designed to perform <I>granular synthesis</I>, such as
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/grain.html"><I>grain</I></A>
+and
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/granule.html"><I>granule</I></A>,
+and the related unit generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/sndwarp.html"><I>sndwarp</I></A>,
+<BR>ECMC users can consult Eastman Csound Library instrument <I>gran</I>
+for another approach to granular synthesis instrument design.
+
+<LI> Physical modeling opcodes, such as
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/wgbowed.html"><I>wgbow</I></A>,
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/wgflute.html"><I>wgflute</I></A>,
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/wgbrass.html"><I>wgbrass</I></A> and
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/marimba.html"><I>marimba/vibes</I></A>,
+and a group of "Physically Informed Stochastic Event Modeling" opcodes based
+on algorithms originally developed by Perry Cook including <i>cabasa</i> (Csound 5
+Reference manual PDF version page 247), <i>sandpaper, crunch, stix</i> and <i>sekere</i>.
+<BR>
+</OL>
+
+<H4><A NAME="_wmh4_847375151">6.4. Where to go for more help and information</A></H4>
+<P>The collective wisdom of many Csound users from many parts of the world
+is available online to assist you in understanding and applying particular
+facets of Csound. This information ranges from getting-started tutorials, like
+this present document, through advanced algorithmic design and coding techniques
+to broader topics that extend beyond the specifics of Csound to include
+new procedures of sound synthesis, audio signal processing, algorithmic
+composition and so on. Here are a few initial pointers:
+<H5>Tutorial examples bundled with Csound</H5>
+
+<P>The Csound distribution itself includes 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Tutorial/TUTORIALS.html"><I>tutorials by Barry Vercoe and Richard Boulanger</I></A>,
+and also
+a directory containing sample Csound orchestra
+and score files. Most of these <I>orc/sco</I> pairs are simple tutorial
+examples, but some are more advanced.
+To jump into this directory (<I>/usr/local/lib/csoundexamples</I> on the ECMC Linux systems), simply type the alias</P>
+<CENTER><DD ALIGN="CENTER"><I>csoundexamples</I></CENTER>
+<P>If you list the contents of this directory,
+you will find several subdirectories. The ECMC <I>README</I> file
+contains information about the contents of these subdirectories. The
+<I>testfiles</I> subdirectory contains the simplest examples, many of which
+illustrate usage of a single unit generator. The <I>other</I> subdirectory
+also includes many simple examples, as well as a few more sophisticated
+algorithms.
+Do a <I>cd </I> into one of these subdirectories, list its contents, and take a look
+at some of the orchestra and score files.
+You cannot compile these orc/sco pairs directly into a soundfile from within
+these directories because you do not have directory write permission to create
+necessary temporary files, such as <I>score.srt</I>.
+To copy one of these files into your own home Unix directory, type
+<CENTER><I>cp  filename ~ </I><BR>
+or, to change the name of the file you are copying,<BR>
+<I>cat filename > ~/newfilename</I></CENTER><BR>
+<PRE>When you are ready to return to your home Unix directory, simply type:   <I>cd</I></PRE>
+<P><B>Texts and cd-roms</B> :
+<I>The Csound Book</I>,  
+<a target="_new" HREF="http://csounds.com/book/index.html"><i>http://csounds.com/book/index.html</i></a>,
+edited by Richard Boulanger and
+published by the MIT Press, is  definitive text on Csound resources.
+The text is accompanied by two companion
+cd-rom discs containing additional Csound-related utilities and documentation,
+including an older version of this <I>Eastman Csound Tutorial</I>, that are available in room 53
+of the ECMC studios.
+
+<p><B>Internet sources:</B> The starting point for any web search of
+Csound-related information is the
+<I>Csound home page</I> at
+<A target="_new" HREF="http://www.csounds.com/"><I>http://www.csounds.com/</I></A>, which is
+maintained by Richard Boulanger and others.
+This site includes the several versions of the Csound distribution itself, downloadable for various platforms,
+URL links to the Csound Reference Manual, tutorial <I>Csound FAQ</I>s
+and many other Csound-related resources, topics and links.  The ECMC
+<A target="_new" HREF="http://ecmc.rochester.edu/ecmc/docs.html"><I>Online  Documentation</I></A>
+pages can be consulted for additional links.
+
+<p><B> Internet users' groups</B>: Active internet Csound users' groups
+exist to which expert and novice
+users post technical questions and answers, samples orchestra and score
+files, and and other discussions related to Csound, sound synthesis and
+signal processing. 
+Information on these mailing lists is available at
+<A target="_new" HREF="http://www.csounds.com/list/index.html">http://www.csounds.com/list/index.html</A>.
+
+<A NAME="END"></A>
+<HR><CENTER><FONTSIZE="-2">Eastman Csound Tutorial: End of <I>Chapter 6</I></FONT></CENTER><BR>
+<PRE>
+<H5>   <A HREF="./chapter6.html#"><FONT SIZE="+1">TOP</FONT> of this chapter</A>  --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+
+</BODY>
+</HTML>

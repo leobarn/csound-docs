@@ -1,0 +1,174 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Class Instruments from Oct 17, 2006</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>;================================
+; Instruments designed in class on Oct 17, 2006
+; MUS329J Fall 2006
+; R Pinkston &amp; students
+;================================
+
+
+sr		=	44100<br>kr		=	4410<br>ksmps		=	10<br>nchnls		=	1</pre>
+<pre>	instr 1	;port inst
+iamp	=	p4
+ioct1	= 	octpch(p6)	;previous note
+ioct2	= 	octpch(p5)	;new note
+iprate	= 	p7		;octaves/sec
+idist	=	abs(ioct2-ioct1)
+idur	=	(idist &gt; 0 ? idist/iprate : 1)	;trap zero distance
+koct	linseg	ioct1,idur,ioct2,1,ioct2	;make the portamento
+kcps	=	cpsoct(koct)
+asig	oscili	iamp,kcps,1	;function 1 has the waveshape
+asig	linen	asig,.05,p3,.1
+	out	asig
+	endin</pre>
+<pre>	instr 2	;port instr with delay
+iamp	=	p4
+ioct1	=	octpch(p6)	;previous note
+ioct2	=	octpch(p5)	;new note
+iprate	=	p7	;octaves/sec
+iportfn	=	p8	;fn with port shape
+idelay	=	p9
+idist	=	ioct2-ioct1
+idur	=	(idist != 0 ? abs(idist/iprate) : 1)	;trap zero distance
+koct	oscil1i	idelay,idist,idur,iportfn	;portamento with delay
+kcps	=	cpsoct(ioct1+koct)
+asig	oscili	iamp,kcps,1	;function 1 has the waveshape
+asig	linen	asig,.05,p3,.1
+	out	asig
+	endin</pre>
+<pre> 	instr	3	;port instr with delay and vib
+iamp	=	p4
+ioct1	=	octpch(p6)	;previous note
+ioct2	=	octpch(p5)	;new note
+iprate	=	p7	;octaves/sec
+iportfn	=	p8	;fn with port shape
+idelay	=	p9
+ivibwth	=	p10
+ivibrte	=	p11
+ivibfn	=	p12
+ivibdel	=	p13
+idist	=	ioct2-ioct1
+idur	=	(idist != 0 ? abs(idist/iprate) : 1)	;trap zero distance
+koct	oscil1i	idelay,idist,idur,iportfn	;portamento with delay
+kctrl	oscil1i	ivibdel,1,.5,iportfn	;vibrato control (with delay)
+kvib	oscili	ivibwth*kctrl,ivibrte*kctrl,ivibfn	;LFO for vibrato
+kcps	=	cpsoct(ioct1+koct+kvib)
+asig	oscili	iamp,kcps,1	;function 1 has the waveshape
+asig	linen	asig,.05,p3,.1
+	out	asig
+	endin</pre>
+<pre>	instr	4	;port inst version 2
+iamp	=	p4
+ioct1	=	octpch(p6)	;previous note
+ioct2	=	octpch(p5)	;new note
+iprate	=	p7	;octaves/sec
+ienvdur	=	p8
+iphs	=	(ienvdur &lt; 0 ? -1 : 0)
+idist	=	abs(ioct2-ioct1)
+idur	=	(idist &gt; 0 ? idist/iprate : 1)	;trap zero distance
+koct	linseg	ioct1,idur,ioct2,1,ioct2	;make the portamento
+kcps	=	cpsoct(koct)
+asig	oscili	iamp,kcps,1,iphs	;function 1 has the waveshape
+asig	linen	asig,.05,ienvdur,3
+	out	asig
+	endin</pre>
+<pre>	instr	5	;FM port instr with delay and vib
+iamp	=	p4
+ioct1	=	octpch(p6)	;previous note
+ioct2	=	octpch(p5)	;new note
+iprate	=	p7	;octaves/sec
+iportfn	=	p8	;fn with port shape
+idelay	=	p9
+ivibwth	=	p10
+ivibrte	=	p11
+ivibfn	=	p12
+ivibdel	=	p13
+icarfac	=	p14
+imodfac	=	p15
+indvar	=	p16
+index1	=	p17
+indrise	=	p18
+indec	=	p19
+idist	=	ioct2-ioct1
+idur	=	(idist != 0 ? abs(idist/iprate) : 1)	;trap zero distance
+koct	oscil1i	idelay,idist,idur,iportfn	;portamento with delay
+kctrl	oscil1i	ivibdel,1,.5,iportfn	;vibrato control (with delay)
+kvib	oscili	ivibwth*kctrl,ivibrte*kctrl,ivibfn	;LFO for vibrato
+kcps	=	cpsoct(ioct1+koct+kvib)
+kindex	linseg	index1,indrise,index1+indvar,p3-indrise-indec,index1+indvar,indec,index1
+asig	foscili	iamp,kcps,icarfac,imodfac,kindex,3
+asig	linen	asig,.05,p3,.1
+	out	asig
+	endin</pre>
+<P><HR></P>
+<pre>;oscil wave shape
+ f01	0	8192	10	1	.5
+ ;linear ramp for port
+ f02	0	8193	7	0	8193	1
+ ;pure sine
+ f03	0	8192	10	1 
+ ;	st	dur	amp	pch	prevpch	rate
+ i01	0	2	10000	8.00	8.00	1
+ i01	+	.	.	8.03	pp5
+ i01	+	.	.	8.07
+ i01	+	6	.	7.07 
+ s
+ f0	1
+ s
+ ; test instr 2
+ ;	st	dur	amp	pch	prevpch	rate	iportfn	idelay
+ i02	0	2	10000	8.00	8.00	1	2	0
+ i02	+	.	.	8.03	pp5	.	.	.5
+ i02	+	.	.	8.07	.	.	.	1
+ i02	+	6	.	7.07	.	.	.	2
+ s
+ f0	1
+ s
+ ; test instr 3
+ ;	st	dur	amp	pch	prevpch	rate	iportfn	idelay	ivibwth	ivibrte	ivibfn	ivibdel
+ i03	0	2	10000	8.00	8.00	1	2	0	.04	6.5	3	1
+ i03	+	.	.	8.03	pp5	.	.	.5
+ i03	+	.	.	8.07	.	.	.	1
+ i03	+	6	.	7.07	.	.	.	2
+ s
+ f0	1
+ s
+ ;try a legato phrase
+ ;	st	dur	amp	pch	prevpch	rate	envdur
+ i04	0	2	10000	8.00	8.00	1	12
+ i04	+	.	.	8.03	pp5	.	-1
+ i04	+	.	.	8.07
+ i04	+	6	.	7.07
+ s
+ f0	1
+ s
+ ; test instr 5
+ ;	st	dur	amp	pch	prevpch	rate	iportfn	idelay	ivibwth	ivibrte	ivibfn	ivibdel 
+ i05	0	2	10000	8.00	8.00	1	2	0	.04	6.5	3	1
+ ;	carfac	modfac	indvar	index1	indris	indec
+ 5	4	5	1	.5	1
+ i05	+	.	.	8.03	pp5	.	.	.5
+ i05	+	.	.	8.07	.	.	.	1
+ i05	+	6	.	7.07	.	.	.	2
+ </pre>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="50%" VALIGN="TOP">
+<P><A HREF="../../../dwnld/classorc/ourport.orc">Download
+    ourport.orc</A></TD>
+<TD WIDTH="50%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="../../../dwnld/classsco/ourport.sco">Download
+    ourport.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

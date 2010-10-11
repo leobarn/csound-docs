@@ -1,0 +1,117 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>cal.c</TITLE>
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* cal.c */
+/* value converters, special functions */
+
+#include &lt;math.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs, prototypes */
+
+<A NAME="getmaxmin">void getmaxmin(cplex *fplex, int np)</A>
+{
+&#9;int i;
+&#9;
+&#9;PA_XMIN=PA_XMAX=fplex[0].x;
+&#9;PA_YMIN=PA_YMAX=fplex[0].y;
+&#9;for(i=0; i&lt;np; i++) {
+&#9;&#9;PA_XMIN=(fplex[i].x&lt;PA_XMIN ? fplex[i].x : PA_XMIN);
+&#9;&#9;PA_XMAX=(fplex[i].x&gt;PA_XMAX ? fplex[i].x : PA_XMAX);
+&#9;&#9;PA_YMIN=(fplex[i].y&lt;PA_YMIN ? fplex[i].y : PA_YMIN);
+&#9;&#9;PA_YMAX=(fplex[i].y&gt;PA_YMAX ? fplex[i].y : PA_YMAX);
+&#9;}
+}
+
+<A NAME="ampdb">double ampdb(double p)</A>
+{
+&#9;return exp(p * 0.11512925);
+}
+
+<A NAME="dbamp">double dbamp(double p)</A>
+{
+&#9;return log(fabs(p) / 0.11512925);
+}
+
+<A NAME="cpsoct">double cpsoct(double p)</A>
+{
+&#9;return pow(2.,p) * 1.021975;
+}
+
+<A NAME="octcps">double octcps(double p)</A>
+{
+&#9;return log(p / 1.021975) / 0.693147;
+}
+
+<A NAME="pc">int pc(double p)</A>
+{
+&#9;double reg;
+&#9;float interm;
+&#9;interm=modf(p, &amp;reg)*PA_NPC;
+&#9;return (int)interm;
+}
+
+<A NAME="susum">int susum(int n)</A>
+{
+&#9;int ss, r;
+&#9;for (r = 1; r &lt;= n; r++)
+&#9;&#9;ss = ss + r;
+&#9;return(ss);
+}
+
+<A NAME="quant">double quant(double value, double quantum)</A>
+{
+&#9;return rint(value/quantum)*quantum;
+}
+
+<A NAME="gof">double gof(double value, double comp)</A>
+{
+&#9;return (value&gt;comp ? value : comp);
+}
+
+<A NAME="lof">double lof(double value, double comp)</A>
+{
+&#9;return (value&lt;comp ? value : comp);
+}
+
+<A NAME="betw">double betw(double value, double min, double max)</A>
+{
+&#9;return (value&gt;=min ? (value&lt;=max ? value : max) : min);
+}
+
+<A NAME="fbetw">double fbetw(double value, double min, double max)</A>
+{
+&#9;if(value==0.0) return betw(value, min, max);
+&#9;while(value&lt;min) value*=2.0;
+&#9;while(value&gt;max) value*=0.5;
+&#9;return betw(value, min, max);
+}
+
+<A NAME="avg">double avg(double val1, double val2)</A>
+{
+&#9;return (val1 + val2)/2;
+}
+
+<A NAME="linscale">double linscale(double value, double imin, double imax, double smin, double smax)</A>
+{
+&#9;double irange=imax-imin, srange=smax-smin;
+&#9;
+&#9;if(irange==0.0) return smin;
+&#9;return (((value-imin)/irange)*srange)+smin;
+}
+
+<A NAME="logscale">double logscale(double value, double imin, double imax, double smin, double smax)</A>
+{
+&#9;int range=1;
+
+&#9;while(value&lt;=10) {
+&#9;&#9;range*=10;
+&#9;&#9;value*=range;
+&#9;}
+&#9;imin*=range;
+&#9;imax*=range;
+&#9;return linscale(log(value)/log(imax), 0, imax, smin, smax);
+}</PRE></BODY>
+</HTML>

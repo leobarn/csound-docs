@@ -1,0 +1,198 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>see.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* see.c */
+/* display datafields */
+
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* general macros, typedefs, prototypes */
+
+<A NAME="display">void display(int what, FILE *fp)</A>
+{
+&#9;switch(what) {
+&#9;&#9;case PARS: show_params(fp);
+&#9;&#9;&#9;break;
+&#9;&#9;case MINSPEC: show_minspec(fp);
+&#9;&#9;&#9;break;
+&#9;&#9;case SPECPLEX: show_specplex(fp);
+&#9;&#9;&#9;break;
+&#9;&#9;case FULLPLEX: show_fullplex(fp);
+&#9;&#9;&#9;break;
+&#9;&#9;case ASCF: return;
+&#9;&#9;&#9;break;
+&#9;&#9;case FSCO: show_sco(FSCO, fp);
+&#9;&#9;&#9;break;
+&#9;&#9;case MRSCO: show_sco(MRSCO, fp);
+&#9;&#9;&#9;break;
+&#9;}
+}&#9;
+
+<A NAME="show_params">void show_params(FILE *fp)</A>
+{
+&#9;int nu=0;
+&#9;
+&#9;fprintf(fp, "\n");
+&#9;for (nu=1; nu&lt;PA_NUMPARAMS; nu++) {
+&#9;&#9;if(fp==stdout)
+&#9;&#9;&#9;if(check_pause(nu)) break;
+&#9;&#9;fprintf(fp, "; %i&gt; %s: ", nu, dpa[nu].dex);
+&#9;&#9;if(MOD==YES) fprintf(fp, "[");
+&#9;&#9;if(KIND==INT) fprintf(fp, "%i", dpa[nu].i);
+&#9;&#9;if(KIND==FLOAT) fprintf(fp, "%.2f", dpa[nu].f);
+&#9;&#9;if(KIND==FNAME) fprintf(fp, "\"%s%s\"", PA_PATH, 
+&#9;&#9;&#9;nu&gt;1 ? dpa[nu].fname : "");
+&#9;&#9;if(MOD==YES) fprintf(fp, "]");
+&#9;&#9;fprintf(fp, "\n");
+&#9;}
+&#9;fprintf(fp, "\n");
+}
+
+<A NAME="show_minspec">void show_minspec(FILE *fp)</A>
+{
+&#9;int t, u;
+
+&#9;if(PA_SPECPOI==0) {
+&#9;&#9;printf("\n; Datafield empty.\n");
+&#9;&#9;sleep(1);
+&#9;&#9;return;
+&#9;}
+
+&#9;if(PA_SPECPOI &gt; 0) {
+&#9;&#9;if(fp==stdout) {
+&#9;&#9;&#9;printf("\n; Current entries number 0 thru %i.\n; Start at (0-%i)? ", PA_SPECPOI-1, PA_SPECPOI-1);
+&#9;&#9;&#9;do scanf("%i", &amp;u);
+&#9;&#9;&#9;while (u &lt; 0 || u &gt; PA_SPECPOI-1);
+&#9;&#9;}
+&#9;}
+
+&#9;fprintf(fp, "\n;\t   x\t   y");
+&#9;fprintf(fp, "\n;\t-------\t-------\n");
+&#9;for(t=u; t&lt;PA_SPECPOI; t++) {
+&#9;&#9;if(fp==stdout)
+&#9;&#9;&#9;if(check_pause(t-u)) break;
+&#9;&#9;fprintf(fp, "\n; %i:\t%-6.0f\t%-6.0f",
+&#9;&#9;t, specxy[t].x, specxy[t].y);
+&#9;}
+
+}
+
+<A NAME="show_specplex">void show_specplex(FILE *fp)</A>
+{
+&#9;int t, u;
+
+&#9;if(PA_SPECPOI==0) {
+&#9;&#9;printf("\n; Datafield empty.\n");
+&#9;&#9;sleep(1);
+&#9;&#9;return;
+&#9;}
+
+&#9;if(PA_SPECPOI &gt; 0) {
+&#9;&#9;if(fp==stdout) {
+&#9;&#9;&#9;printf("\n; Current entries number 0 thru %i.\n; Start at (0-%i)? ", PA_SPECPOI-1, PA_SPECPOI-1);
+&#9;&#9;&#9;do scanf("%i", &amp;u);
+&#9;&#9;&#9;while (u &lt; 0 || u &gt; PA_SPECPOI-1);
+&#9;&#9;}
+&#9;}
+&#9;fprintf(fp, "\n;\t   x\t   y\t   hd\t    hr");
+&#9;fprintf(fp,&#9;"\n;\t-------\t-------\t-------\t----------\n");
+
+&#9;for(t=u; t&lt;PA_SPECPOI; t++) {
+&#9;&#9;if(fp==stdout)
+&#9;&#9;&#9;if(check_pause(t-u)) break;
+&#9;&#9;fprintf(fp,&#9;"\n; %i:\t%-7.2f\t%-7.2f\t%-7.3f\t%-10.6g",
+&#9;&#9;&#9;&#9;t, specplex[t].x, specplex[t].y,
+&#9;&#9;&#9;&#9;specplex[t].hd, specplex[t].hr);
+&#9;}
+}
+
+<A NAME="show_fullplex">void show_fullplex(FILE *fp)</A>
+{
+&#9;int t, u;
+
+&#9;if(PA_FULLPLEXPOI==0) {
+&#9;&#9;printf("\n; Datafield empty.\n");
+&#9;&#9;sleep(1);
+&#9;&#9;return;
+&#9;}
+
+&#9;if(PA_FULLPLEXPOI &gt; 0) {
+&#9;&#9;if(fp==stdout) {
+&#9;&#9;&#9;printf("\n; Current entries number 0 thru %i.\n; Start at (0-%i)? ", PA_FULLPLEXPOI-1, PA_FULLPLEXPOI-1);
+&#9;&#9;&#9;do scanf("%i", &amp;u);
+&#9;&#9;&#9;while (u &lt; 0 || u &gt; PA_SPECPOI-1);
+&#9;&#9;}
+&#9;}
+
+&#9;fprintf(fp, "\n;\t   x\t   y\t   hd\t    hr");
+&#9;fprintf(fp,&#9;"\n;\t-------\t-------\t-------\t----------\n");
+
+&#9;for(t=0; t&lt;PA_FULLPLEXPOI; t+=PA_STEP) {
+&#9;&#9;if(fp==stdout)
+&#9;&#9;&#9;if(check_pause(t/PA_STEP)) break;
+&#9;&#9;fprintf(fp,&#9;"\n; %i:\t%-7.2f\t%-7.2f\t%-7.3f\t%-10.6g",
+&#9;&#9;&#9;&#9;t, fullplex[t].x, fullplex[t].y, fullplex[t].hd, fullplex[t].hr);
+&#9;}
+}
+
+<A NAME="show_sco">void show_sco(int what, FILE *fp)</A>
+{
+&#9;int ne, j, t, np;
+&#9;float inum, rvbdur;
+&#9;char op;
+&#9;EVENT **snote;
+
+&#9;ne=lcount(f);
+&#9;snote=&amp;f-&gt;e[1];
+
+/* list general f-statements */
+
+&#9;fprintf(fp, "\n; general f-statements\n; ====================");
+
+&#9;while(ne--) {
+&#9;&#9;np=(*snote)-&gt;pcnt;
+&#9;&#9;fprintf(fp, "\nf ");
+&#9;&#9;for(j=1; j&lt;=4;  j++) fprintf(fp, "%.0f ", (*snote)-&gt;p[j]);
+&#9;&#9;for(j=5; j&lt;=np; j++) fprintf(fp, "%f ", (*snote)-&gt;p[j]);
+&#9;&#9;snote++;
+&#9;}
+
+/* list i-statements */
+
+&#9;fprintf(fp, "\n\n; i-statements\n; ============\n");
+&#9;&#9;&#9;
+&#9;ne=lcount(sco);
+&#9;snote=&amp;sco-&gt;e[ne];
+
+&#9;fprintf(fp, "\n;\t");
+&#9;for(t=2; t&lt;=MOST_PFIELDS; t++) fprintf(fp, "p%i\t",t);
+
+&#9;rvbdur = (*snote)-&gt;p[II_STA] + (*snote)-&gt;p[II_DUR] + (PA_RVBTIME * 3);
+&#9;fprintf(fp, "\ni91\t0\t%-12.6f\t%.3f", rvbdur, PA_RVBTIME);
+&#9;fprintf(fp, "\ni92\t0\t%-12.6f\t%.3f", rvbdur, PA_RVBTIME);
+&#9;fprintf(fp, "\ni94\t0\t%-12.6f\t%.3f", rvbdur, PA_RVBTIME);
+&#9;
+&#9;snote=&amp;sco-&gt;e[1];
+
+&#9;while(ne--) {
+&#9;&#9;op=(*snote)-&gt;op;
+&#9;&#9;inum=(*snote)-&gt;p[II_I];
+&#9;&#9;np=(*snote)-&gt;pcnt;
+&#9;&#9;if(fp==stdout) check_pause(t);
+&#9;&#9;fprintf(fp, "\ni %.1f\t", inum);
+&#9;&#9;if(what==FSCO)
+&#9;&#9;&#9;for(j=2; j&lt;=np; j++)
+&#9;&#9;&#9;&#9;fprintf(fp, "%-f\t", (*snote)-&gt;p[j]);
+&#9;&#9;if(what==MRSCO)
+&#9;&#9;&#9;for(j=2; j&lt;=np; j++)
+&#9;&#9;&#9;&#9;fprintf(fp, "%-7.3f\t", (*snote)-&gt;p[j]);
+&#9;snote++;
+&#9;}
+&#9;
+&#9;fprintf(fp,"\ne\n");
+}</PRE></BODY>
+</HTML>

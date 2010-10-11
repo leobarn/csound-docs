@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>nchnls</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mxadsr.html" title="mxadsr" />
+    <link rel="next" href="nestedap.html" title="nestedap" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">nchnls</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mxadsr.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="nestedap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="nchnls">
+      <a id="nchnls"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNchnls" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">nchnls</span>
+        </h2>
+        <p>nchnls — 
+      Sets the number of channels of audio output.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3419538"></a>
+        <h2>Description</h2>
+        <p> 
+      These statements are global value <a class="link" href="assign.html" title="="><em class="citetitle">assignments</em></a>, made at the beginning of an orchestra, before any instrument block is defined. Their function is to set certain <a class="link" href="OrchKvar.html#VariableTypes" title="Table 3. Types of Variables"><em class="citetitle">reserved symbol variables</em></a> that are required for performance. Once set, these reserved symbols can be used in expressions anywhere in the orchestra.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3419606"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>nchnls</strong></span> = iarg</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3419623"></a>
+        <h2>Initialization</h2>
+        <p>
+<span class="emphasis"><em>nchnls</em></span> = (optional) -- set number of channels of audio output to <span class="emphasis"><em>iarg</em></span>. (1 = mono, 2 = stereo, 4 = quadraphonic.) The default value is 1 (mono).
+    </p>
+        <p>
+      In addition, any <a class="link" href="OrchKvar.html#GlobalVariables"><em class="citetitle">global variable</em></a> can be initialized by an <span class="emphasis"><em>init-time assignment</em></span> anywhere before the first <a class="link" href="instr.html" title="instr"><em class="citetitle">instr statement</em></a>.  All of the above assignments are run as instrument 0 (i-pass only) at the start of real performance.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3419669"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="kr.html" title="kr"><em class="citetitle">kr</em></a>,
+      <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a>,
+      <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mxadsr.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="nestedap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mxadsr </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> nestedap</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

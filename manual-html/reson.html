@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>reson</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="repluck.html" title="repluck" />
+    <link rel="next" href="resonk.html" title="resonk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">reson</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="repluck.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="resonk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="reson">
+      <a id="reson"></a>
+      <div class="titlepage"></div>
+      <a id="IndexReson" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">reson</span>
+        </h2>
+        <p>reson — 
+      A second-order resonant filter.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3531282"></a>
+        <h2>Description</h2>
+        <p>
+      A second-order resonant filter.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3531293"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>reson</strong></span> asig, kcf, kbw [, iscl] [, iskip]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3531509"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iscl</em></span> (optional, default=0) -- coded scaling factor for resonators. A value of 1 signifies a peak response factor of 1, i.e. all frequencies other than kcf are attenuated in accordance with the (normalized) response curve. A value of 2 raises the response factor so that its overall RMS value equals 1. (This intended equalization of input and output power assumes all frequencies are physically present; hence it is most applicable to white noise.) A zero value signifies no scaling of the signal, leaving that to some later adjustment (see <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a>). The default value is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of internal data space. Since filtering incorporates a feedback loop of previous output, the initial status of the storage space used is significant. A zero value will clear the space; a non-zero value will allow previous information to remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3531559"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ares</em></span> -- the output signal at audio rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- the input signal at audio rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcf</em></span> -- the center frequency of the filter, or frequency position of the peak response.
+    </p>
+        <p>
+      <span class="emphasis"><em>kbw</em></span> -- bandwidth of the filter (the Hz difference between the upper and lower half-power points).
+    </p>
+        <p>
+      <span class="emphasis"><em>reson</em></span> is a second-order filter in which <span class="emphasis"><em>kcf</em></span> controls the center frequency, or frequency position of the peak response, and <span class="emphasis"><em>kbw</em></span> controls its bandwidth (the frequency difference between the upper and lower half-power points).
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3532158"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the reson opcode. It uses the file <a class="ulink" href="examples/reson.csd" target="_top"><em class="citetitle">reson.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="id3532174"></a>
+          <p class="title">
+            <b>Example 456. Example of the reson opcode.</b>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o reson.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+
+<span class="comment">; Initialize the global variables.</span>
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">kr</span> <span class="op">=</span> 4410
+<span class="ohdr">ksmps</span> <span class="op">=</span> 10
+<span class="ohdr">nchnls</span> <span class="op">=</span> 1
+
+<span class="comment">; Instrument #1.</span>
+<span class="oblock">instr</span> 1
+  <span class="comment">; Generate a sine waveform.</span>
+  asine <span class="opc">buzz</span> 15000, 440, 3, 1
+
+  <span class="comment">; Vary the cut-off frequency from 220 to 1280.</span>
+  kcf <span class="opc">line</span> 220, p3, 1320
+  kbw <span class="opc">init</span> 20
+
+  <span class="comment">; Run the sine through a resonant filter.</span>
+  ares <span class="opc">reson</span> asine, kcf, kbw
+
+  <span class="comment">; Give the filtered signal the same amplitude </span>
+  <span class="comment">; as the original signal. </span>
+  a1 <span class="opc">balance</span> ares, asine
+  <span class="opc">out</span> a1
+<span class="oblock">endin</span>
+
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+
+<span class="comment">; Table #1, an ordinary sine wave.</span>
+<span class="stamnt">f</span> 1 0 16384 10 1
+
+<span class="comment">; Play Instrument #1 for 4 seconds.</span>
+<span class="stamnt">i</span> 1 0 4
+<span class="stamnt">e</span>
+
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3532211"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="areson.html" title="areson"><em class="citetitle">areson</em></a>,
+      <a class="link" href="aresonk.html" title="aresonk"><em class="citetitle">aresonk</em></a>,
+      <a class="link" href="atone.html" title="atone"><em class="citetitle">atone</em></a>,
+      <a class="link" href="atonek.html" title="atonek"><em class="citetitle">atonek</em></a>,
+      <a class="link" href="port.html" title="port"><em class="citetitle">port</em></a>,
+      <a class="link" href="portk.html" title="portk"><em class="citetitle">portk</em></a>,
+      <a class="link" href="resonk.html" title="resonk"><em class="citetitle">resonk</em></a>,
+      <a class="link" href="tone.html" title="tone"><em class="citetitle">tone</em></a>,
+      <a class="link" href="tonek.html" title="tonek"><em class="citetitle">tonek</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3532294"></a>
+        <h2>Credits</h2>
+        <p>Example written by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="repluck.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="resonk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">repluck </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> resonk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

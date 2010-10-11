@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML VERSION="2.0">
+<HEAD>
+<TITLE>Csound Tutorial - Allan Schindler</TITLE>
+</HEAD>
+<BODY>
+<A NAME="index.html#"></A>
+<HR><CENTER><FONTSIZE="-1"><I>Eastman Csound Tutorial</I></FONT></CENTER>
+<PRE>
+<H5>   <A HREF="./index.html#END"><FONT SIZE="+1">END</FONT> of this page</A>  -- <A HREF="chapter1.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 1)</A> --   <A HREF="./index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html#">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">     APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</FONT>
+<HR></PRE>
+
+<CENTER><H1 ALIGN="CENTER">Eastman Csound Tutorial</H1>
+<BR>
+<H3><A href="../../index.html" target="_top">Eastman Computer Music Center </A></H3>
+<H4 ALIGN="CENTER">Eastman School of Music</H4>
+<H3><A href="http://www.ecmc.rochester.edu/allan/" target="content">Allan Schindler</A></H3></CENTER>
+</CENTER><CENTER><H5 ALIGN="CENTER">ABSTRACT</H5></CENTER>
+<P>This tutorial introduces some basic sound synthesis and signal
+processing operations available within <I>Csound</I>, a software audio
+processing system.
+This document is designed as a "getting started" primer on
+<UL>
+<LI> using Csound
+oscillators, function table generators (chiefly gen routines 1, 2, 5, 7, 9 and 10),
+envelope generators, filters, and a few other basic building blocks;
+<LI> constructing simple synthesis and signal
+processing algorithms; and
+<LI> finding one's way through the Csound manual.
+</UL>
+Sample orchestra and score input files are provided, most of which have been compiled
+into soundfiles within the <I>/sflib/x</I> directory on ECMC systems.
+Users of this document additionally should have at hand a current
+version of the <I>Csound 5 Reference Manual</I>, which is available online at
+<ul>
+<li> an ECMC mirror at
+<a href="../csound5_manual.pdf" target="_blank"> docs/csound5_manual.pdf </a> ;
+and at 
+<li><a href="http://www.csounds.com/manual/" target="_blank">http://www.csounds.com/manual/</a>
+</ul>
+and also in hard copy printouts in the ECMC studios. 
+
+<P>This tutorial is designed primarily for students in the 
+<A href="../../courses.html" target="_top"><I>ADVANCED COMPUTER MUSIC
+TECHNIQUES (CMP421-2)</I></A>
+course at the Eastman Computer Music Center (ECMC), and therefore includes
+some studio-specific information and examples on using Csound in conjunction
+with companion ECMC programs, utilities, macros and aliases
+designed to simplify or accelerate
+many common tasks with Csound. Score file examples, for instance, generally
+are provided here as 
+<A target="_new" HREF="score11.info.html"><I>score11</I></A> input files,
+rather than as standard Csound score (<I>.sco)</I> files.
+References to the <I>Eastman Csound Library</I> refer to
+"pre-set" instrument algorithms and companion <I>score11</I> template
+and usage example files, available to all ECMC users, and to associated
+ECMC utilities. Currently, most of these additional Csound-related
+ECMC resources are available only on ECMC
+systems. However, we plan to make many of these resources available for
+online browsing, downloading and use by interested non-ECMC users sometime
+in the near future.
+
+<P><I>Non-ECMC users</I> accessing this document by means of an internet web browser
+or a hard copy printout are welcome to use and to download any of public domain materials
+herein that they find useful. As noted above, however, such users will encounter
+information on ECMC resources that are not a part of the standard Csound
+distribution. For the benefit of non-ECMC users who do not have access to
+<I>score11</I>,
+<A target="_new" HREF="appendix.html"><I>Appendix 1</I></A>, included in the online but
+not printed version of this tutorial, provides standard
+Csound score files, which can be used in place of the <I>score11</I>
+file examples within this document.<BR>
+<BR>
+
+<FONT SIZE="-1">Document history:<BR>
+Original postscript version:
+January, 1989; revisions January 1991, January 1993 and January, 1995.<BR>
+Original HTML version prepared by James Croson, November, 1996; Revised by A.S. June-Nov. 1998 <BR>
+
+<A NAME="TOC"><H3><CENTER><B>TABLE OF CONTENTS</B></A></H3>
+
+</CENTER><H4><A HREF="Indexex.html#_wmh4_847375912">INDEX OF ORC/SCO and /sflib/x SOUNDFILE EXAMPLES </A></H4>
+<H4></H4>
+<H4><A HREF="chapter1.html#_wmh3_847373509">CHAPTER 1 : BASICS</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847373547">1. Introduction</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847373565">1.1 Orchestra and Score Files </A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847373586">1.2 Orchestra file header</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847374265">1.3 Audio, Control and Initialization Rates</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847374280">1.4 A Simple Instrument Algorithm</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847374295">1.5 oscil and oscili</A></H4>
+<H4><A HREF="chapter1.html#_wmh4_847374311">1.5.1 Interpolating and Truncating Oscillators</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847374325">1.6 Score files</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847374335">1.7 Creating Function Table Definitions</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847374343">1.8 GEN Routines: gen10</A></H4>
+<H4><A HREF="chapter1.html#_wmh3_847374355">1.8.1 gen9</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374459">CHAPTER 2 : PITCH CONVERTERS; INIT VARIABLES ; ENVELOPE GENERATORS; READING
+IN SOUNDFILES</A></H4>
+<H4><A HREF="chapter2.html#_wmh3_847374411">2.1 Pitch Converters</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374440">2.2 Initialization Values</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374472">2.3 Envelope Generators</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374480">2.4 line and expon</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374487">2.5 linseg and expseg</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374494">2.6 linen and envlpx</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374503">2.7 gen5 and gen7</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374511">2.8 Creating Envelopes with Oscillators</A></H4>
+<H4><A HREF="chapter2.html#_wmh4_847374522">2.9 Reading Soundfiles into Csound with soundin and diskin</A></H4>
+<H4><A HREF="chapter3.html#_wmh3_847374711">CHAPTER 3 : AMPLITUDE &amp; FREQUENCY MODULATION ; PROGRAMMING CONTROLS</A></H4>
+<H4><A HREF="chapter3.html#_wmh4_847374720">3.1 Amplitude Modulation</A></H4>
+<H4><A HREF="chapter3.html#_wmh4_847374726">3.1 Frequency (phase) Modulation</A></H4>
+<BLOCKQUOTE>
+<H5><A HREF="chapter3.html#_wmh4_847374739">3.2.1 foscili</A></H5>
+<H5><A HREF="chapter3.html#_wmh4_847374745">3.2.2 Carrier to Modulator Ratios</A></H5>
+<H5><A HREF="chapter3.html#_wmh4_847374752">3.2.3 Modulation Index</A></H5>
+</BLOCKQUOTE>
+<H4><A HREF="chapter3.html#_wmh4_847374767">3.3 if...else constructions</A></H4>
+<BLOCKQUOTE>
+<H5><A HREF="chapter3.html#_wmh4_847374774">3.3.1 Conditional Statements</A></H5>
+<H5><A HREF="chapter3.html#_wmh4_847374780">3.3.2 goto statements</A></H5>
+<H5><A HREF="chapter3.html#_wmh4_847374788">3.3.3 Scaling Values By Register</A></H5>
+</BLOCKQUOTE>
+<H4><A HREF="chapter3.html#PHASOR_TABLE">3.4 Reading in Soundfiles with tablei, phasor and gen1</A></H4>
+
+<H4><A HREF="chapter4.html#_wmh3_847374899">CHAPTER 4 : PULSE TRAIN GENERATORS ; RANDOM NUMBER GENERATORS</A></H4>
+<H4><A HREF="chapter4.html#_wmh4_847374904">4.1 buzz and gbuzz</A></H4>
+<H4><A HREF="chapter4.html#_wmh4_847374910">4.2 Pseudo-random Number Generators</A></H4>
+<BLOCKQUOTE>
+<H5><A HREF="chapter4.html#_wmh4_847374915">4.2.1 randh and randi</A></H5>
+<H5><A HREF="chapter4.html#_wmh4_847374921">4.2.2 Introducing Attack Chiffs</A></H5>
+<H5><A HREF="chapter4.html#_wmh4_847374927">4.2.3 Combining Periodic and Aperiodic Control Signals</A></H5>
+<H5><A HREF="chapter4.html#MORERAND">4.2.4. Additional pseudo-rando number generators</A></H5>
+</BLOCKQUOTE>
+<H4><A HREF="chapter5.html#_wmh3_847374967">CHAPTER 5 : FILTERS ; GLOBAL INSTRUMENTS</A></H4>
+<H4><A HREF="chapter5.html#_wmh4_847374974">5.1 Filters</A></H4>
+<H4><A HREF="chapter5.html#_wmh4_847374979">5.2 Low pass and High pass filters</A></H4>
+<H4><A HREF="chapter5.html#_wmh4_847374986">5.3 balance, rms and gain</A></H4>
+<H4><A HREF="chapter5.html#_wmh4_847374991">5.4 Band pass and band reject filters</A></H4>
+<BLOCKQUOTE>
+<H5><A HREF="chapter5.html#_wmh4_847374997">5.4.1 Using band-pass filters in parallel</A></H5>
+<H5><A HREF="chapter5.html#_wmh4_847375003">5.4.2 Unit generator table; gen02</A></H5>
+</BLOCKQUOTE>
+<H4><A HREF="chapter5.html#_wmh4_847375009">5.5 Comb, Alpass and Reverb Filters</A></H4>
+<H4><A HREF="chapter5.html#_wmh4_847375015">5.6 Global Instruments</A></H4>
+<H4><A HREF="chapter6.html#_wmh3_847375111">CHAPTER 6 : PROCESSING FILES WITH M4 ; FINAL EXAMPLES ; WHERE TO GO FOR HELP</A></H4>
+<H4><A HREF="chapter6.html#_wmh4_847375117">6.1 Using m4 To Prepare Orchestra and Score Files</A></H4>
+<BLOCKQUOTE>
+<H5><A HREF="chapter6.html#_wmh4_847375122">6.1.1 define statements</A></H5>
+<H5><A HREF="chapter6.html#_wmh4_847375127">6.1.2 ifelse and ifdef constructions</A></H5>
+<H5><A HREF="chapter6.html#_wmh4_847375133">6.1.3 include statements</A></H5>
+<H5><A HREF="chapter6.html#6.1.4">6.1.4 Macros recognized by Csound</A></H5>
+</BLOCKQUOTE>
+<H4><A HREF="chapter6.html#FINAL_EXAMPLES">6.2 Final orc/sco/soundfile examples</A></H4>
+<H4><A HREF="chapter6.html#6.3">6.3 Quick pointers to some additional Csound resources</A></H4>
+<H4><A HREF="chapter6.html#_wmh4_847375151">6.4 Where to go for more help and information</A></H4>
+<PRE>  --  --  --  --  --  --  --  --  --</PRE>
+
+<H4><A HREF="./appendix.html"><I>APPENDIX 1 </I>: Csound score files</A><H4>
+<H4><A HREF="./appendix2.html"><I>APPENDIX 2 </I>: Extensions to F.M. Procedures : Multiple Carrier and Modulator Algorithms</A></H4>
+<H4><A HREF="./appendix.soundin.html"><I>APPENDIX 3 </I>: Notes on soundfile inputs in the <I>orc/sco</I> examples</I></A><H4>
+
+
+<CENTER><FONTSIZE="-3">Eastman Csound Tutorial:<FONT SIZE="+1"> End of <I>Table of Contents</I></FONT></CENTER><BR>
+
+<A NAME="END"></A>
+<PRE>
+<HR><H5><A HREF="./index.html"><FONT SIZE="+1">TOP</FONT> (Abstract)</A>  --  <A HREF="./index.html#TOC">Table of Contents</A> --  <A HREF="chapter1.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 1)</A> <BR>
+<A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html#">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</H5>
+<FONT SIZE="-2"><A HREF="appendix.html">     APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+<HR></PRE>
+
+</BODY>
+</HTML>
+

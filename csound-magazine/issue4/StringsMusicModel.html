@@ -1,0 +1,1231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head> 
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+
+
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL: <a href="../index.html">Home</a> | <a href="index.html">Winter
+  2006</a> </div>
+
+
+<div id="header">
+<h2>Strings Music Model</h2>
+
+    
+<h3>Composing with Csound and Strings Formulas</h3>
+Adalberto Andres Vidal<br>
+Email: adalberto.vidal AT gmail.com
+</div>
+
+
+<div id="content">
+<h2>Introduction</h2>
+
+<p>The aim of this paper is to introduce the
+concept of “Strings Formulas” as a particular technique for algorithmic musical
+composition by describing its basic features and by showing how it can be
+applied to musical composition.</p>
+
+<p>
+Ultimately, this paper aims to present a
+set of ideas and tools that may be useful to anyone interested in the field of
+algorithmic music.
+</p>
+
+<p>
+The paper is divided in three main sections:
+</p>
+
+<ul>
+ <li><b>Strings</b>: describes the concept of strings.</span></li>
+ <li><b>Strings Formulas</b>: describes the lexicon, syntax, and semantics of formulas.</li>
+ <li><b>Strings Music</b>: analyses a musical piece entirely composed using this model.</li>
+</ul>
+
+<h2><br>
+I. Strings </h2>
+
+<p>The key concept that underlies this paper is the notion of “strings”.</p>
+
+<p>Minimally stated, strings are sequences of
+elements capable of being reduced to a single formula or algorithm; therefore,
+strings are always the result of a formula or algorithm:</p>
+
+<p><font face="Courier New" size="2">Formula = 3, 4, 7, 3, 8, 15, 2</font></p>
+
+<p>As well as generating sequences of plain
+values, algorithms are capable of generating many different types of complex
+structures such as harmonies or phrase patterns.  I decided to give the name
+"Strings" only to those algorithmic resultants that are plain sequences or
+chains of values.</p>
+
+<p>Moreover, throughout this paper the only
+type of sequences that are considered “Strings” are the ones defined by “Strings
+Formulas”, a particular type of formula that will be explained in the next
+chapter.</p>
+
+<p>The specific difference, thus, between
+strings and any other sequences is that they are non arbitrary and that they
+are one-dimensional; their structure is always the result of a formula or
+algorithm and they always constitute a single chain of values.</p>
+
+<p>Musical strings are those whose values are
+applied to musical dimensions (i.e. pitch, rhythm, dynamic, etc.), and “Strings
+Music” is a music where its elements are defined by strings.</p>
+
+<p>Strings Music can be considered as a particular instance of algorithmic music.</p>
+
+
+<br>
+<h2>II. Strings Formulas</h2>
+
+
+<h3>Overview</h3>
+
+A string formula is a particular way of
+expressing an algorithm for generating sequences of values or “Strings”.
+<pre><font face="Courier New" size="2">
+	>6_+3
+	 |
+	 -4_+5_8_2
+	    |    |
+	 +3_-1   +1
+	         |
+	         7
+</font>
+</pre>
+
+
+
+
+
+
+
+<p>
+I invented these formulas inspired by Mayan hieroglyphs which I discovered in a visit to the anthropological museum of Mexico City.
+</p>
+<p>
+The purpose of Strings Formulas is to gives us the ability of expressing complex and coherent strings by means of very simple structures in the same way as chemists and physicists can express complex relations and structures by means of simpler formulas and equations.
+</p>
+<p>
+Here is an example of a string formula that produces a string of 8 elements:
+</p>
+ 
+<pre><font face="Courier New" size="2">
+   5_4
+   |
+>0_3  =     0,3,2,5,0,3,8,4
+ |
+ 2_8
+</font>
+</pre>
+ 
+<p>
+The following one, with the same constituents but a different structure, outputs a string of 24 elements:
+</p>
+ 
+<pre><font face="Courier New" size="2">
+>0_3  =     0,3,2,5,8,3,0,4,2,3,8,5,0,3,2,4,8,3,0,5,2,3,8,4
+ | |
+ 2 5_4
+ |
+ 8
+</font>
+</pre>
+ 
+<p>
+This one, with just 10 elements outputs a string of 192 values:
+</p>
+
+<pre><font face="Courier New" size="2">
+      >0_1  =     0 1 2 3 5 1 0 4 2 1 6 3 0 1 2 7 5 1 0 3 2 1 6 4 0 1 
+       | |        2 3 5 1 0 8 2 1 6 3 0 1 2 4 5 1 0 3 2 1 6 7 0 1 2 3 
+       2 3_4      5 1 0 4 2 1 6 3 0 1 2 9 5 1 0 3 2 1 6 4 0 1 2 3 5 1 
+       |   |      0 7 2 1 6 3 0 1 2 4 5 1 0 3 2 1 6 8 0 1 2 3 5 1 0 4 
+       5_6 7_8    2 1 6 3 0 1 2 7 5 1 0 3 2 1 6 4 0 1 2 3 5 1 0 9 2 1 
+             |    6 3 0 1 2 4 5 1 0 3 2 1 6 7 0 1 2 3 5 1 0 4 2 1 6 3 
+             9    0 1 2 8 5 1 0 3 2 1 6 4 0 1 2 3 5 1 0 7 2 1 6 3 0 1 
+                  2 4 5 1 0 3 2 1 6 9
+</font></pre>
+ 
+
+<p>
+All values in the above string are the same as the values in the formulas.
+</p>
+<p>
+Variety in the resulting strings can be achieved by using relative values in formulas.
+</p>
+<p>
+The following example is a formula with the same structure as the previous one, but all of its values are relative, generating a much more interesting string:
+</p>
+ 
+<pre><font face="Courier New" size="2">
+      >+7_-5            7 2 6 7 15 10 17 8 12 7 0 1 8 3 7 9 17 12 19 
+       |  |             20 24 19 12 3 10 5 9 10 18 13 20 12 16 11 4 5 
+       +4 +1_-9         12 7 11 2 10 5 12 13 17 12 5 7 14 9 13 14 22 
+       |     |          17 24 15 19 14 7 8 15 10 14 9 17 12 19 20 24 
+       +8_-7 +2_-8      19 12 3 10 5 9 10 18 13 20 22 26 21 14 15 22 
+                |       17 21 12 20 15 22 23 27 22 15 7 14 9 13 14 22 
+                -5      17 24 15 19 14 7 8 15 10 14 16 24 19 26 27 31 
+                        26 19 10 17 12 16 17 25 20 27 22 26 21 14 15 
+                        22 17 21 12 20 15 22 23 27 22 15 17 24 19 23 
+                        24 32 27 34 25 29 24 17 18 25 20 24 16 24 19 
+                        26 27 31 26 19 10 17 12 16 17 25 20 27 29 33 
+                        28 21 22 29 24 28 19 27 22 29 30 34 29 22 17
+</font></pre>
+ 
+
+<p>
+Strings formulas are able to describe large and complex strings by just structuring a few elements.  This feature can be interesting for granular synthesis or algorithmic composition as will be described in the last section of this paper.
+</p>
+ 
+<p>
+I have developed a computer program that reads formulas described in a simple text document and generates the corresponding strings.  This compiler is very useful for dealing with formulas that generate big strings of values.
+<br>
+Also, I developed an extension to that application in order to use string formulas for generating Csound scores.
+</p>
+<p>
+Both the compiler and the module for Csound score generation are described in the appendix of this paper.
+</p>
+<p>
+To understand fully the strings formulas we need to analyse them as a language by focusing on their particular lexicon, syntax, and semantics.
+</p>
+
+
+
+
+
+
+
+
+
+<br>
+<h3>Lexicon</h3>
+
+
+
+<p>Strings Formulas make use of a small number of characters to describe strings.
+<br>
+As positions of characters are essential for the meaning of a formula, it is necessary to use a fixed character size font like “Courier”
+</p>
+
+<p>The following is the list of symbols that can be used by a formula to express a string:</p>
+
+<table border="1" cellpadding="3">
+	<tr>
+		<td><b>Character</b></td>
+		<td><b>Name</b></td>
+		<td><b>Meaning</b></td>
+	</tr>
+	<tr>
+		<td><font face="Courier New" size="2"><b>&gt;</b></font></td>
+		<td>Starting mark</td>
+		<td>Specifies the starting value of a string formula.</td>
+	</tr>
+	<tr>
+		<td><font face="Courier New" size="2"><b>0 - 9</b></font></td>
+		<td>Absolute values</td>
+		<td>Absolute values to be sequenced into a string.</td>
+	</tr>
+	<tr>
+		<td><font face="Courier New" size="2"><b>_</b></font></td>
+		<td>Horizontal connector</td>
+		<td>Joins two values in a row.</td>
+	</tr>
+	<tr>
+		<td><font face="Courier New" size="2"><b>+, -, *, /</b></font></td>
+		<td>Operators</td>
+		<td>Turn values to be relative</td>
+	</tr>
+	<tr>
+		<td><font face="Courier New" size="2"><b>(, )</b></font></td>
+		<td>Groupers</td>
+		<td>Enclose sub-strings</td>
+	</tr>
+</table>
+
+
+<h3>Syntax</h3>
+
+<p>
+Next, there is a list of simple syntactical rules which must be followed in order to produce well-formed Strings Formulas.  Each rule is accompanied by examples of pertaining valid and invalid formulas.
+</p>
+
+<p>List of Syntactical rules:</p>
+
+<ul>
+
+<li>Each formula must contain only one starting mark.<br><br>
+
+<ul><li>Valid formulas:
+<pre><font face="Courier New" size="2">
+        >1_2        2_5
+         |          |
+         3          >4
+</font></pre>
+</li><li>Invalid formulas:
+<pre><font face="Courier New" size="2">
+      1_2         >1_2_3      >>0_3_4
+        |            |              |
+        3           >3_7            7
+</font></pre>
+
+</li></ul></li>
+
+<li>
+No character must be placed immediately before a starting mark.<br><br>
+
+<ul><li>Valid formulas:
+<pre><font face="Courier New" size="2">
+      1 >2        0__5
+      |  |        |  |
+      6__3        3 >8_7
+</font></pre>
+</li>
+<li>
+Invalid formulas:
+<pre><font face="Courier New" size="2">
+      1>2         1_>2
+      | |            |
+      6_3            3
+</font></pre>
+
+</li></ul></li>
+<li>
+A starting mark must be followed by an absolute or relative value.<br><br>
+
+<ul><li>Valid formulas:
+<pre><font face="Courier New" size="2">
+      >1_3_5      >+6_9
+       |   |      |
+       2   -2_3   8_+3
+</font></pre>
+</li><li>Invalid formulas:
+<pre><font face="Courier New" size="2">
+      >_4_5       >|
+        |         5_3
+        2
+</font></pre>
+</li>
+</ul>
+</li>
+<li>
+Each formula must contain at least one value.<br><br>
+<ul><li>Valid formulas:
+<pre><font face="Courier New" size="2">
+     >1          >+1
+</font></pre>
+</li><li>Invalid formulas:
+<pre><font face="Courier New" size="2">
+     >           >_          >+
+</font></pre>
+
+
+</li></ul></li>
+<li>
+All values in a formula must be connected.  If the value is relative - i.e. has an operator to the left – then vertical connectors must point to the operators.
+<br><br>
+<ul><li>Valid formula:
+<pre><font face="Courier New" size="2">
+            +6_1
+            |
+      >+1_4_-7_9_+2
+          |    |
+       -7_4  3_+2
+             |
+           7_-1
+</font></pre>
+</li><li>Invalid formulas:
+<pre><font face="Courier New" size="2">
+      >-1 _2      >1_+2       >1_+2
+           |                      |
+           3        +3           3
+</font></pre>
+</li></ul></li>
+
+<li>
+Values can have only one operator.<br><br>
+
+<ul><li>Invalid formulas:
+<pre><font face="Courier New" size="2">
+      >+1-_2      >1_+-2
+           |          |
+           3          +3
+</font></pre>
+
+</li></ul></li>
+
+<li>
+Operators must be placed before values.<br><br>
+
+<ul><li>Invalid formulas:
+<pre><font face="Courier New" size="2">
+    >1-_2         >1_2+
+        |             |
+        3             +3
+</font></pre>
+</li></ul></li>
+<li>
+Connectors must always connect absolute or relative values.<br><br>
+
+<ul><li>Invalid formulas:
+<pre><font face="Courier New" size="2">
+      >+1_        >1_+2_
+       |               |
+       3               +3
+</font></pre>
+
+</li></ul></li>
+</ul>
+
+
+
+
+
+
+<h3>Semantics</h3>
+
+<p>
+This section describes the semantics of
+string formulas by showing how strings are originated from formulas.
+</p>
+<p>
+How is it that a certain formula outputs a
+particular string?
+</p>
+
+<pre><font face="Courier New" size="2">
+	>1_2 = 1 2 1 3
+	   |
+	   3
+</font></pre>
+
+<p>
+Strings Formulas use a mechanism that might
+be called “exhaustive looping process”, meaning that they loop values in concatenated
+rows and columns until all the formula’s values are expressed in a string.
+</p>
+
+<p>
+Loops in a formula can be linked horizontally
+and vertically by means of connectors.
+</p>
+
+<p>
+The following table describes the steps that
+occur in the process of string generation from a formula:
+</p>
+
+<table border="1" cellpadding="3">
+ <tr>
+  <td><b>Step</b></td>
+  <td><b>Formula</b></td>
+  <td><b>String</b></td>
+  <td><b>Comments</b></td>
+ </tr>
+ 
+ <tr>
+  <td>
+1
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;<font color="red"><b>1</b></font>_2
+   |
+   3
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+<font color="red"><b>1</b></font>
+</font></pre>
+  </td>
+  <td>
+The formula starts with the value designated by the starting mark (&gt;)
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+2
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;1_<font color="red"><b>2</b></font>
+   |
+   3
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+1,<font color="red"><b>2</b></font>
+</font></pre>
+  </td>
+  <td>
+The next value in the row is returned, which at the same time is the first value of the next column (second loop)
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+3
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;<font color="red"><b>1</b></font>_2
+   |
+   3
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+1,2,<font color="red"><b>1</b></font>
+</font></pre>
+  </td>
+  <td>
+As the end of the first loop (first row) has been reached, and as there is no vertical loop in the first column, the first value of the row is returned again.
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+4
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;1_2
+   |
+   <font color="red"><b>3</b></font>
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+1,2,1,<font color="red"><b>3</b></font>
+</font></pre>
+  </td>
+  <td>
+Now, the second value of the second loop (right column) is returned.  Here the string ends, since continuation will imply repletion of the same pattern for ever.
+  </td>
+ </tr>
+
+</table>
+
+
+
+<p>The next one describes the steps for a
+different formula containing some relative values:
+</p>
+
+<table border="1" cellpadding="3">
+ <tr>
+  <td><b>Step</b></td>
+  <td><b>Formula</b></td>
+  <td><b>String</b></td>
+  <td><b>Comments</b></td>
+ </tr>
+ 
+ <tr>
+  <td>
+1
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;<font color="red"><b>5</b></font>_+3
+ | |
+ 6 2
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+<font color="red"><b>5</b></font>
+</font></pre>
+  </td>
+  <td>&nbsp;
+
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+2
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_<font color="red"><b>+3</b></font>
+ | |
+ 6 2
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,<font color="red"><b>8</b></font>
+</font></pre>
+  </td>
+  <td>
+The resulting value is a sum of the previous string value and the current value.
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+3
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_+3
+ | |
+ <font color="red"><b>6</b></font> 2
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,<font color="red"><b>6</b></font>
+</font></pre>
+  </td>
+  <td>&nbsp;
+
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+4
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_+3
+ | |
+ 6 <font color="red"><b>2</b></font>
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,<font color="red"><b>2</b></font>
+</font></pre>
+  </td>
+  <td>&nbsp;
+
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+5
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;<font color="red"><b>5</b></font>_+3
+ | |
+ 6 2
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,2,<font color="red"><b>5</b></font>
+</font></pre>
+  </td>
+  <td>&nbsp;
+
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+6
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_+3
+ | |
+ 6 2
+   |
+   <font color="red"><b>-4</b></font>
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,2,5,<font color="red"><b>1</b></font>
+</font></pre>
+  </td>
+  <td>
+Now the resulting value is the subtraction of the two last values (5 – 4)
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+7
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_+3
+ | |
+ <font color="red"><b>6</b></font> 2
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,2,5,1,<font color="red"><b>6</b></font>
+</font></pre>
+  </td>
+  <td>&nbsp;
+
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+8
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_<font color="red"><b>+3</b></font>
+ | |
+ 6 2
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,2,5,1,6,<font color="red"><b>9</b></font>
+</font></pre>
+  </td>
+  <td>
+Again, the sum of the two values (6 + 3)
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+9
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;<font color="red"><b>5</b></font>_+3
+ | |
+ 6 2
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,2,5,1,6,9,<font color="red"><b>5</b></font>
+</font></pre>
+  </td>
+  <td>&nbsp;
+
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+10
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_+3
+ | |
+ 6 <font color="red"><b>2</b></font>
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,2,5,1,6,9,5,<font color="red"><b>2</b></font>
+</font></pre>
+  </td>
+  <td>&nbsp;
+
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+11
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_+3
+ | |
+ <font color="red"><b>6</b></font> 2
+   |
+   -4
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,2,5,1,6,9,5,2,<font color="red"><b>6</b></font>
+</font></pre>
+  </td>
+  <td>&nbsp;
+
+  </td>
+ </tr>
+
+ <tr>
+  <td>
+12
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+&gt;5_+3
+ | |
+ 6 2
+   |
+   <font color="red"><b>-4</b></font>
+</font></pre>
+  </td>
+  <td>
+<pre><font face="Courier New" size="2">
+5,8,6,2,5,1,6,9,5,2,6,<font color="red"><b>2</b></font>
+</font></pre>
+  </td>
+  <td>
+(6 -4)
+  </td>
+ </tr>
+
+</table>
+<p>
+Notice again that the use of relative values enriches the variation of the elements contained by output strings.  Also notice that all values in a formula can be relative.
+</p>
+ 
+<p>
+Once understood, the mechanics of String Formulas appear as very clear and straightforward.  Most formulas’ results (strings) can be deduced within a minute.
+</p>
+ 
+<p>
+The computer program that I have developed is very helpful to calculate in seconds strings from complex formulas that otherwise will take too much time to resolve.
+</p>
+
+
+
+
+
+<br>
+<h2>IV. Strings Formulas Applied to Music</h2>
+
+<p>
+The aim of this chapter is to show how strings can be used in musical composition by analysing an electro-acoustical piece composed using this technique.
+</p>
+<p>
+The piece that we are going to briefly analyze consists in 3,145,632 notes arranged in 3:15 minutes.  All pitches, dynamics, and spatial locations of notes are defined by strings.
+</p>
+<p>
+The sound material used throughout the piece consists in a simple string sound (in the traditional meaning of the word) generated by Csound’s pluck opcode which uses the Karplus & Strong algorithm.  An envelope is applied to the pluck sound in order to soften its attack.
+</p>
+<p>
+My Strings formulas compiler was used to generate all Csound scores from the specified formulas described in text files.
+</p>
+<p>
+All sound synthesis, sequencing, and mixing were done using Csound without any help from third party software or tools.
+</p>
+<p>
+Everything was composed using a standard laptop computer running Windows, Java, and Csound.
+</p>
+
+
+<h3>Material</h3>
+
+<p>
+This piece uses 8 formulas which output 8 strings of 96 values each.
+<br>
+The resulting strings are used to define all pitches, dynamics, and spatial location values of the piece.
+</p>
+ 
+<p>
+Here is the list of the 8 formulas and their resulting strings.
+</p>
+
+<table border="1" cellpadding="3">
+	<tr>
+		<td>&nbsp;</td>
+		<td><b>Formula</b></td>
+		<td><b>String</b></td>
+	</tr>
+
+	<tr>
+		<td><font face="Courier New" size="2"><b>A</b></font></td>
+		<td>
+<pre><font face="Courier New" size="2">
+&gt;(0_2)_(0_4_9)_(0_2)_(0_4_9)
+  | |   |       | |       |
+  4 5_7 2_5   9_4 5     5_2
+  |       |       |     |
+  9       7       7     7
+</font></pre>
+		</td>
+		<td>
+<font face="Courier New" size="2">
+0 2 4 5 9 2 0 7 4 2 9 5 0 2 4 7 9 2 0 5 4 2 9 7 0 4 9 2 4 9 0 4 9 5 4 9 0 4 9 2 4 9 0 4 9 7 4 9 0 2 4 5 0 7 9 2 0 5 4 7 0 2 9 5 0 7 4 2 0 5 9 7 0 4 9 0 4 2 0 4 9 0 4 5 0 4 9 0 4 2 0 4 9 0 4 7
+</font>
+		</td>
+	</tr>
+
+	<tr>
+		<td><font face="Courier New" size="2"><b>B</b></font></td>
+		<td>
+<pre><font face="Courier New" size="2">
+&gt;(0_-4_+9)__(0__+2)_(0_-4_+9)_(0__+2)
+       |     |  |    |         |  |
+    +5_+2 -9_-4 +5   -2_-5     -4 +5_+7
+    |           |       |      |
+    +7          +7      -7     -9
+</font></pre>
+		</td>
+		<td>
+<font face="Courier New" size="2">
+0 -4 5 0 -4 -2 0 -4 5 0 -4 1 0 -4 5 0 -4 -2 0 -4 5 0 -4 3 0 2 -2 3 0 7 -2 0 0 5 1 8 0 2 -7 -2 0 7 3 5 0 5 -4 3 0 -4 5 3 -1 8 0 -4 5 0 -4 5 0 -4 5 3 -1 8 0 -4 5 -2 -6 3 0 2 -2 3 -6 -4 0 7 3 5 -4 1 0 2 -2 5 -4 -2 0 5 1 3 -6 1
+</font>
+		</td>
+	</tr>
+
+	<tr>
+		<td><font face="Courier New" size="2"><b>C</b></font></td>
+		<td>
+<pre><font face="Courier New" size="2">
+&gt;(9_7)_(9_5_0)_(9_7)_(9_5_0)
+  | |   |       | |       |
+  5 4_2 7_4   0_5 4     4_7
+  |       |       |     |
+  0       2       2     2
+</font></pre>
+		</td>
+		<td>
+<font face="Courier New" size="2">
+9 7 5 4 0 7 9 2 5 7 0 4 9 7 5 2 0 7 9 4 5 7 0 2 9 5 0 7 5 0 9 5 0 4 5 0 9 5 0 7 5 0 9 5 0 2 5 0 9 7 5 4 9 2 0 7 9 4 5 2 9 7 0 4 9 2 5 7 9 4 0 2 9 5 0 9 5 7 9 5 0 9 5 4 9 5 0 9 5 7 9 5 0 9 5 2
+</font>
+		</td>
+	</tr>
+
+	<tr>
+		<td><font face="Courier New" size="2"><b>D</b></font></td>
+		<td>
+<pre><font face="Courier New" size="2">
+&gt;(9_-5_-0)__(9__-7)_(9_-5_-0)_(9__-7)
+       |     |  |    |         |  |
+    -4_-7 -0_-5 -4   -7_-4     -5 -4_-2
+    |           |       |      |
+    -2          -2      -2     -0
+</font></pre>
+		</td>
+		<td>
+<font face="Courier New" size="2">
+9 4 4 9 4 -3 9 4 4 9 4 0 9 4 4 9 4 -3 9 4 4 9 4 2 9 2 -3 -7 9 7 7 0 9 5 0 -2 9 2 2 -2 9 7 2 -5 9 5 5 3 9 4 4 -3 -8 -8 9 4 4 0 -5 -5 9 4 4 -3 -8 -8 9 4 4 2 -3 -3 9 2 -3 -7 -7 -14 9 7 2 -5 -5 -9 9 2 -3 -5 -5 -12 9 5 0 -7 -7 -9
+</font>
+		</td>
+	</tr>
+
+	<tr>
+		<td><font face="Courier New" size="2"><b>E</b></font></td>
+		<td>
+<pre><font face="Courier New" size="2">
+&gt;(0__-2)__(0_-4_-9)_(0__-2)_(0_-4_-9)
+  |  |     |         |  |         |
+  -4 -5_-7 -2_-5  -9_-4 -5     -5_-2
+  |           |         |      |
+  -9          -7        -7     -7
+</font></pre>
+		</td>
+		<td>
+<font face="Courier New" size="2">
+0 -2 -6 -11 -20 -22 0 -7 -11 -13 -22 -27 0 -2 -6 -13 -22 -24 0 -5 -9 -11 -20 -27 0 -4 -13 -15 -19 -28 0 -4 -13 -18 -22 -31 0 -4 -13 -15 -19 -28 0 -4 -13 -20 -24 -33 0 -2 -6 -11 0 -7 -16 -18 0 -5 -9 -16 0 -2 -11 -16 0 -7 -11 -13 0 -5 -14 -21 0 -4 -13 0 -4 -6 0 -4 -13 0 -4 -9 0 -4 -13 0 -4 -6 0 -4 -13 0 -4 -11
+</font>
+		</td>
+	</tr>
+
+	<tr>
+		<td><font face="Courier New" size="2"><b>F</b></font></td>
+		<td>
+<pre><font face="Courier New" size="2">
+&gt;(0_+4_-9)__(0__-2)_(0_+4_-9)_(0__-2)
+       |     |  |    |         |  |
+    -5_-2 +9_+4 -5   +2_+5     +4 -5_-7
+    |           |       |      |
+    -7          -7      +7     +9
+</font></pre>
+		</td>
+		<td>
+<font face="Courier New" size="2">
+0 4 -5 0 4 2 0 4 -5 0 4 -1 0 4 -5 0 4 2 0 4 -5 0 4 -3 0 -2 2 -3 0 -7 2 0 0 -5 -1 -8 0 -2 7 2 0 -7 -3 -5 0 -5 4 -3 0 4 -5 -3 1 -8 0 4 -5 0 4 -5 0 4 -5 -3 1 -8 0 4 -5 2 6 -3 0 -2 2 -3 6 4 0 -7 -3 -5 4 -1 0 -2 2 -5 4 2 0 -5 -1 -3 6 -1
+</font>
+		</td>
+	</tr>
+
+	<tr>
+		<td><font face="Courier New" size="2"><b>G</b></font></td>
+		<td>
+<pre><font face="Courier New" size="2">
+&gt;(9__-7)__(9_-5_-0)_(9__-7)_(9_-5_-0)
+  |  |     |         |  |         |
+  -5 -4_-2 -7_-4  -0_-5 -4     -4_-7
+  |           |         |      |
+  -0          -2        -2     -2
+</font></pre>
+		</td>
+		<td>
+<font face="Courier New" size="2">
+9 2 -3 -7 -7 -14 9 7 2 -5 -5 -9 9 2 -3 -5 -5 -12 9 5 0 -7 -7 -9 9 4 4 -3 -8 -8 9 4 4 0 -5 -5 9 4 4 -3 -8 -8 9 4 4 2 -3 -3 9 2 -3 -7 9 7 7 0 9 5 0 -2 9 2 2 -2 9 7 2 -5 9 5 5 3 9 4 4 9 4 -3 9 4 4 9 4 0 9 4 4 9 4 -3 9 4 4 9 4 2
+</font>
+		</td>
+	</tr>
+
+	<tr>
+		<td><font face="Courier New" size="2"><b>H</b></font></td>
+		<td>
+<pre><font face="Courier New" size="2">
+&gt;(9_+5_+0)__(9__+7)_(9_+5_+0)_(9__+7)
+       |     |  |    |         |  |
+    +4_+7 +0_+5 +4   +7_+4     +5 +4_+2
+    |           |       |      |
+    +2          +2      +2     +0
+</font></pre>
+		</td>
+		<td>
+<font face="Courier New" size="2">
+9 14 14 9 14 21 9 14 14 9 14 18 9 14 14 9 14 21 9 14 14 9 14 16 9 16 21 25 9 11 11 18 9 13 18 20 9 16 16 20 9 11 16 23 9 13 13 15 9 14 14 21 26 26 9 14 14 18 23 23 9 14 14 21 26 26 9 14 14 16 21 21 9 16 21 25 25 32 9 11 16 23 23 27 9 16 21 23 23 30 9 13 18 25 25 27
+</font>
+		</td>
+	</tr>
+
+</table>
+
+<p>
+Click <a href="http://people.pwf.cam.ac.uk/aav23/StringsMusicModel_files/strings.mp3">here<a> to listen to a sequence of sounds whose pitches, dynamics, and panning values are defined by the 8 strings appearing sequentially (<font face="Courier New" size="2"><b>ABCDEFGH</b></font>) separated by a second of silence.  All rhythmic values are equally set to 0.1 seconds.
+</p>
+
+
+
+<h3>Structure and Form</h3>
+
+
+<p>A layer, in this piece, consists in two superposed sequences of 6144 notes with all pitches, dynamics and spatial locations defined by the values of the 8 strings.  Those long resulting sequences can be considered themselves as huge strings.
+<br>
+Both sequences use 8 times each of the 8 strings arranged as follows:
+</p>
+ 
+<p>
+<font face="Courier New" size="2">
+1: <b>AAAAAAAABBBBBBBBCCCCCCCCDDDDDDDDEEEEEEEEFFFFFFFFGGGGGGGGHHHHHHHH</b>
+<br>
+2: <b>ABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGH</b>
+</font>
+</p>
+ 
+<p>
+Each letter represents one of the 8 previously described strings containing each of them 96 elements or notes.  The concatenation of each individual string constitutes a large string.
+</p>
+ 
+<p>
+Rhythmic values have been arranged in a way so that each repetition of a string in a sequence is altered in its rhythmic values in an exponential proportion.
+<br>
+In the following graph, each segment represents a string.  The duration of the strings is represented by the length of the segments.  Each colour represents one of the strings defined in the previous table.
+</p>
+
+<img src="images/StringsMusicModel/image001.jpg">
+
+<p>
+As each segment has the same amount of notes, the difference of rhythmic values among different segments can be considered also as a difference in the density of notes over time.  Shorter segments in the above graph have a greater density of notes than longer ones.
+</p>
+ 
+<p>
+As densities of notes across the piece change in an exponential proportion between segments, this graph shows the notes density over time for the two layers’ sequences using exponential envelopes.
+</p>
+ 
+<p>
+Graph of densities over time for sequence 1
+</p>
+
+<img src="images/StringsMusicModel/image002.jpg">
+
+
+<p>
+Graph of densities over time for sequence 2
+</p>
+
+<img src="images/StringsMusicModel/image003.jpg">
+
+<p>
+Graph of densities for one layer (sequence 1 and 2 combined)
+</p>
+
+<img src="images/StringsMusicModel/image004.jpg">
+
+<p>
+Click <a href="http://people.pwf.cam.ac.uk/aav23/StringsMusicModel_files/layer.mp3">here</a> to listen to an audio sample of a single layer.
+</p>
+
+<p>
+The layer described above constitutes the main or central layer of the piece.
+<br>
+The piece contains a total of 15 layers that sound simultaneously.
+<br>
+Each layer has the same structure and they are differentiated only by their overall pitch, intensity and velocity.
+</p>
+ 
+<p>
+The central layer is in the middle of the fifteen layers, so we will call it layer 8.  This layer is the only one that is played once.
+<br>
+Layers above layer 8 are repeated in an exponential proportion.  Layer 9 two times, layer 10 4 times, and so on.
+<br>
+Layers below layer 8 are played partially also in an exponential ratio.  Layer 7 0.5 times, layer 6 0.25, and so on.
+</p>
+ 
+<p>
+Here is a table that describes how layers are arranged around the central layer.
+</p>
+
+<table border="1" cellpadding="3">
+<tr>
+<td><b>Layer</b></td>
+<td><b>Times</b></td>
+<td><b>Pitch<b/></td>
+<td><b>Volume<b/></td>
+<td><b>Notes</b></td>
+</tr><tr>
+<td>15</td>
+<td>128</td>
+<td>128</td>
+<td>0.0078125</td>
+<td>1572864</td>
+</tr><tr>
+<td>14</td>
+<td>64</td>
+<td>64</td>
+<td>0.015625</td>
+<td>786432</td>
+</tr><tr>
+<td>13</td>
+<td>32</td>
+<td>32</td>
+<td>0.03125</td>
+<td>393216</td>
+</tr><tr>
+<td>12</td>
+<td>16</td>
+<td>16</td>
+<td>0.0625</td>
+<td>196608</td>
+</tr><tr>
+<td>11</td>
+<td>8</td>
+<td>8</td>
+<td>0.125</td>
+<td>98304</td>
+</tr><tr>
+<td>10</td>
+<td>4</td>
+<td>4</td>
+<td>0.25</td>
+<td>49152</td>
+</tr><tr>
+<td>9</td>
+<td>2</td>
+<td>2</td>
+<td>0.5</td>
+<td>24576</td>
+</tr><tr>
+<td>8</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>12288</td>
+</tr><tr>
+<td>7</td>
+<td>0.5</td>
+<td>0.5</td>
+<td>0.5</td>
+<td>6144</td>
+</tr><tr>
+<td>6</td>
+<td>0.25</td>
+<td>0.25</td>
+<td>0.25</td>
+<td>3072</td>
+</tr><tr>
+<td>5</td>
+<td>0.125</td>
+<td>0.125</td>
+<td>0.125</td>
+<td>1536</td>
+</tr><tr>
+<td>4</td>
+<td>0.0625</td>
+<td>0.0625</td>
+<td>0.0625</td>
+<td>768</td>
+</tr><tr>
+<td>3</td>
+<td>0.03125</td>
+<td>0.03125</td>
+<td>0.03125</td>
+<td>384</td>
+</tr><tr>
+<td>2</td>
+<td>0.015625</td>
+<td>0.015625</td>
+<td>0.015625</td>
+<td>192</td>
+</tr><tr>
+<td>1</td>
+<td>0.0078125</td>
+<td>0.0078125</td>
+<td>0.0078125</td>
+<td>96</td>
+</tr>
+</table>
+
+<p>
+The following graph intends to give a picture of the densities of the 15 layers sounding simultaneously.
+<br>
+This picture represents the formal structure of the piece.
+</p>
+
+<img src="images/StringsMusicModel/image005.jpg">
+
+<p>
+Click <a href="http://people.pwf.cam.ac.uk/aav23/StringsMusicModel_files/eternal-strings1.mp3">here</a> to listen to the first movement of the entire piece.
+</p>
+
+<p>
+As can be seen on the previous graph, the formal structure of the piece can be understood as different layers of compressions and rarefactions which produce a kaleidoscopic effect of separated elements which sometimes reveal their individuality and sometimes join with other layers producing “explosion” effects.
+<br>
+Those moments, where different layers reach their maximum compression state at the same moment, can be thought as nodes.  Layers can also be thought as different strings of a musical instrument which vibrate at different frequencies and the piece itself can be considered as the instrument where those strings vibrate.
+</p>
+<p>&nbsp;</p>
+<h2>Links</h2>
+
+<p>Please check my academic <a href="http://people.pwf.cam.ac.uk/aav23">web page</a> for updates and further information about the Strings Formulas software that I am developing.
+  </p>
+<p>&nbsp; </p>
+<h2>Acknowledgements</h2>
+I would like to thank Dr Pablo Cetta for introducing me to the world of Csound and electro-acoustic music and Dr Jeremy Thurlow for his support on this paper.
+</div>
+
+
+</div>
+
+
+</body>
+</html>

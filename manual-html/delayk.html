@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>delayk</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="delay1.html" title="delay1" />
+    <link rel="next" href="delayr.html" title="delayr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">delayk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="delay1.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="delayr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="delayk">
+      <a id="delayk"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDelayk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">delayk</span>
+        </h2>
+        <p>delayk — 
+      Delays an input signal by some time interval.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3203174"></a>
+        <h2>Description</h2>
+        <p>
+      k-rate delay opcodes
+   </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3203191"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kr <span class="command"><strong>delayk </strong></span>  ksig, idel[, imode]</pre>
+        <pre class="synopsis">kr <span class="command"><strong>vdel_k </strong></span>  ksig, kdel, imdel[, imode]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3203221"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idel</em></span> -- delay time (in seconds) for
+    delayk. It is rounded to the nearest integer multiple of a k-cycle
+    (i.e. 1/kr). 
+    </p>
+        <p>
+      <span class="emphasis"><em>imode</em></span> -- sum of 1 for skipping initialization
+      (e.g. in tied notes) and 2 for holding the first input value during the
+      initial delay, instead of outputting zero. This is mainly of use
+      when delaying envelopes that do not start at zero.
+    </p>
+        <p>
+      </p>
+        <div class="mediaobject">
+          <img src="images/delayk.png" />
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>imdel</em></span> -- maximum delay time for vdel_k, in seconds.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3203272"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kr</em></span> -- the output signal. Note: neither of the
+    opcodes interpolate the output.
+        </p>
+        <p>
+      <span class="emphasis"><em>ksig</em></span> -- the input signal.
+        </p>
+        <p>
+      <span class="emphasis"><em>kdel</em></span> -- delay time (in seconds) for
+   vdel_k. It is rounded to the nearest integer multiple of a k-cycle
+   (i.e. 1/kr).
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3204132"></a>
+        <h2>Credits</h2>
+        <p>Istvan Varga.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="delay1.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="delayr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">delay1 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> delayr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

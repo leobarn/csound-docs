@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>oscil1i</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="oscil1.html" title="oscil1" />
+    <link rel="next" href="oscil3.html" title="oscil3" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">oscil1i</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="oscil1.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="oscil3.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="oscil1i">
+      <a id="oscil1i"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOscil1i" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">oscil1i</span>
+        </h2>
+        <p>oscil1i — 
+      Accesses table values by incremental sampling with linear interpolation.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3437863"></a>
+        <h2>Description</h2>
+        <p>
+      Accesses table values by incremental sampling with linear interpolation.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3437874"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>oscil1i</strong></span> idel, kamp, idur, ifn</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3437892"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idel</em></span> -- delay in seconds before <span class="emphasis"><em>oscil1i</em></span> incremental sampling begins.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur</em></span> -- duration in seconds to sample through the <span class="emphasis"><em>oscil1i</em></span> table just once. A zero or negative value will cause all initialization to be skipped.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- function table number. <span class="emphasis"><em>oscil1i</em></span> requires the extended guard point.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3438676"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude factor
+    </p>
+        <p>
+      <span class="emphasis"><em>oscil1i</em></span> is an interpolating unit in which the fractional part of index is used to interpolate between adjacent table entries. The smoothness gained by interpolation is at some small cost in execution time (see also <a class="link" href="oscili.html" title="oscili"><em class="citetitle">oscili</em></a>, etc.), but the interpolating and non-interpolating units are otherwise interchangeable. 
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3438710"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a>,
+      <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>,
+      <a class="link" href="table3.html" title="table3"><em class="citetitle">table3</em></a>,
+      <a class="link" href="oscil1.html" title="oscil1"><em class="citetitle">oscil1</em></a>,
+      <a class="link" href="osciln.html" title="osciln"><em class="citetitle">osciln</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="oscil1.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="oscil3.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">oscil1 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> oscil3</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

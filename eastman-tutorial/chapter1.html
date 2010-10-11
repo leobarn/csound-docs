@@ -1,0 +1,902 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML VERSION="2.0">
+<HEAD>
+<!-- WEBMAGIC VERSION NUMBER="2.0.1" -->
+<!-- WEBMAGIC TRANSLATION NAME="ServerRoot" SRC="/var/www/htdocs/" DST="/" -->
+<!-- WEBMAGIC TRANSLATION NAME="ProjectRoot" SRC="./" DST="" -->
+<TITLE>chapter1.html</TITLE>
+</HEAD>
+<BODY>
+<A NAME="chapter1.html#"></A>
+<HR><CENTER><FONTSIZE="-1"><I>Eastman Csound Tutorial</I></FONT></CENTER>
+<PRE>
+<H5>   <A HREF="./chapter1.html#END"><FONT SIZE="+1">END</FONT> of this chapter</A>  -- <A HREF="chapter2.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 2)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</H5><HR></PRE>
+
+<H2><A NAME="_wmh3_847373509">Chapter 1: Basics</A></H2>
+<H3><A NAME="_wmh3_847373547">1. Introduction</A></H3>
+<P>This tutorial provides an introduction to <B><FONT SIZE="3">Csound.</FONT></B>
+While reading this tutorial you should have handy access to an online or hardcopy
+printout of the
+<I>Csound 5 Reference
+Manual,</I> and should consult the pertinent sections [indicated
+within square brackets] of this manual while reading
+the tutorial material covered here.</P>
+<P>This tutorial covers only a small fraction of the audio signal generating
+and processing resources that are available within <I>Csound</I>.
+However, the resources we will discuss are among the most fundamental
+elements of computer music generation. Additionally, they are quite powerful
+and extensible (you can get a lot of mileage out of these things), and
+also will be used to illustrate the logic and syntactical conventions
+of <I>Csound</I>. An understanding of these conventions
+will enable you to begin constructing your own instrument
+algorithms, and to figure out how to use the myriad of resources in
+<I>Csound</I> that are not covered here.</P>
+
+<P>Distributions of Csound periodically are updated by a volunteer
+team of Csound users currently led by John ffitch,
+and we install new versions at Eastman as they become available. New
+versions often contain a few bugs. ECMC users should check the helpfile <I>csound</I> for a list of known bugs in our current version of <I>Csound</I>, and
+advise one of our staff members if you stumble across any new ones. </P>
+<P>Computer systems make music by computing <I>samples</I> (numbers that represent the amplitude of a sound at evenly spaced time
+intervals). In hardware-based MIDI systems, MIDI controllers and/or a general purpose microcomputer
+send out control signals to special-purpose hardware circuits (oscillators,
+envelope generators, and the like), each optimized to perform one task as
+efficiently as possible. These sound generating and processing hardware
+circuits may exist in an external box -- a synthesizer or sampler (it's
+hard to tell the two apart these days) or "effects box,"
+such as the aging <I>K2000</I> or <I>PCM70</I> in the ECMC
+MIDI studio) -- or else in a sound card attached to the computer buss.</P>
+<P>In <I>software</I> (or &quot;<I>direct</I>&quot;) <I>synthesis systems,</I> by
+contrast, a computer CPU itself, running a program loaded
+into RAM, computes and processes the sound samples. If the computer is fast
+enough, and the signal generating algorithm is simple enough, and the score
+is not too complex, this can be done in real time, and the samples can be
+passed directly to digital-to-analog converters for immediate audition.
+However, software synthesis is inherently slower than hardware synthesis,
+and often the time required to compute the samples exceeds the duration
+of the sounds. Most often, therefore, the samples are first computed and
+written to a disk file, which can be played at the completion of the compile
+job.</P>
+<P>Some hybrid sound synthesis systems, such as 
+<I>Kyma</I> (a fpowerful system marketed by <I>Symbolic Sound
+Corporation</I> for Windows and Mac platforms)
+attempt to combine the flexibility of software procedures
+with the speed of hardware synthesis. The user interface allows greater
+flexibility in connecting processing devices than
+is generally available in fixed architecure hardware-based systems,
+and the system uses additional
+DSP or sound card hardware to relieve the CPU of repetitive operations and
+to compute the samples. For some types of operations such systems work quite
+well. However, they tend to offer less flexibility than fully software-based
+systems, and less speed than hardware systems, or else
+(as with the <I>Kyma</I> system) are quite expensive.</P>
+<P>With fully software-based music programs, such as <I>Csound</I>, 
+<I>SuperCollider 3</I>
+and commercial programs such as <I>Reaktor</I>,
+the synthesis or sound processing architecture is not fixed. One is not
+limited, for exam- ple, to a particular number of simultaneous polyphonic
+&quot;voices,&quot; or to only types of certain processing algorithms.
+Rather, users can construct
+and implement their own signal generating, processing and &quot;effects&quot; algorithms
+by &quot;patching together&quot; various procedures from a library of available utility
+programs and sub-routines, called <B>unit generators</B> (or
+<B>opcodes</B>) in <I>Csound</I>, using only those procedures that are needed, and calling as many as will
+fit in computer memory at once. Thus, if we want a hundred oscillators or
+filters for some application, and our computer has sufficient RAM,
+we can create them with a hundred calls to
+an oscillator or filter unit generator. The values we supply to these oscillators
+or filters can be arbitrarily complex, involving a mixture of many simultaneous
+control signals created by other unit generators.</P>
+<P>Currently, <I>Csound</I> is perhaps the most widely used software synthesis system. 
+GPL source code and pre-compiled binaries are available for all of the
+major computer operating system platforms -- Linux and Unix, Windows
+Mac OS X and OS9, and even a few legacy platforms,
+and can be downloaded at no cost at
+<A target="_new" HREF="http://csounds.com"><I>http://csounds.com</I></A>
+as well as at several mirror sites.
+<I>Csound</I> thus provides us with an avenue to study and put to
+creative use music synthesis and sound processing
+procedures apart from the limitations of particular hardware and
+software systems. Often,
+the knowledge gained from this process is directly applicable to other types
+of computer music systems as well.
+<P>In this tutorial, then, our primary goal
+will be not to transform you into <I>Csound</I> wizzards, but rather to use the
+tools of <I>Csound</I>
+to examine various types of computer music resources and procedures.
+Those already familiar with various MIDI synthesis
+techniques will find many familiar concepts within this tutorial and within <I>Csound</I>. Many of the unit generators in <I>Csound</I> have hardware counterparts in synthesizers, samplers, mixing consoles,
+and outboard gear. However, the implementation of these procedures presented
+here will likely be new, and may at times seem more complicated.</P>
+<H3><A NAME="_wmh3_847373565">1.1. Orchestra and Score Files</A></H3>
+<P>Csound requires that the user supply two input files - an <I>orchestra</I> file and a
+<I>score</I> file - which, together, define a signal processing algorithm and all of
+the data needed for the compilation of output samples.</P>
+<P>A <I>Csound</I> <B>orchestra</B> file is a user-written computer program, written according to the syntactical
+conventions of the Csound &quot;language,&quot; that defines one or more <B>instruments</B> - audio signal processing algorithms. This program provides the Csound
+compiler with a step-by-step series of instructions, and some of the necessary
+argument values, required for the computation of each output sample. Designing
+an <I>instrument algorithm</I> bears certain similarities to patch editing on a MIDI synth, except that
+we usually begin with a &quot;blank page&quot; (or from an &quot;init&quot; state), rather than
+with certain pre-defined operations determined by the hardware architecture
+of the synth.</P>
+<P>Some <I>instrument algorithms</I> or <I>modules</I> (sub-routines within
+an algorithm) generate audio signals from scratch, by sampling a synthetic waveform,
+such as a sinusoid, or else a digitized acoustic sound, such as a violin tone.
+Other instrument algorithms or modules process such signals. Eastman
+Csound Library instruments <I>sf, rev </I>and<I> delays</I>, which some of
+you may already have used, are examples of
+Csound instrument algorithms that produce no sound themselves,
+but rather process audio signals from other sources, adding reverberation,
+echos, spectral modifications (EQ) or other types of sound modifications.
+<P>A <B>score</B> file provides values (such as pitch and duration) that vary from note to
+note. These argument variables for each note are specified in the form of <I>parameter fields</I> (<I>p1, p2, p3</I> and so on). Additionally, the score file provides any
+required <B>function</B> definitions, from which Csound creates tables of numbers
+used to generate or process sounds.
+The numbers within a function table may represent an audio waveshape, such as a sinusoid or
+a sawtooth wave, or a digitized acoustic sound. Other types of tables are 
+used to represent "control" or "performance" elements, such as the amplitude
+envelope, or the time varying vibrato shape or width, within a tone.
+In still other cases a function table merely provides
+us with a convenient way to input a complete series of numbers in a single
+operation. We will return to score parameter fields and function definitions
+shortly.</P>
+<P>Up to this point, ECMC users have been using the Eastman Csound Library instruments,
+for which <I>score11</I> score templates have been provided. Throughout this tutorial, we will continue
+to use the <I>score11</I> preprocessor to simplify the creation of our actual Csound score files.
+(Non-ECMC users can refer to the online <A target="_new" HREF="appendix.html"><I>Appendix</I></A>,
+which includes Csound score file compilations for all of the <I>score11</I>
+examples in this tutorial.)
+These Csound score files (called <I>sout,</I> short for &quot;<B>s</B><I>core</I> <B>out</B><I>put</I>&quot; file, by <I>score11</I>) look much like the MIDI controller event list files produced by MIDI sequencers
+such as <I>Logic, Cubase, Performer, Cakewalk </I>or<I> Vision.</I> When creating simple one or two note test score files for a new instrument
+algorithm, however, you might wish to bypass <I>score11</I> and type in your Csound score file directly.</P>
+<P>Csound also provides alternative ways to generate score files. With certain
+unit generators one can use standard type 0 MIDI files created with a sequencer
+program, or with an interactive program such as MAX, or use real-time MIDI controller input,
+to make music with <I>Csound</I>, and only a skeletal score file is required.
+The ECMC <I>midiins</I> algorithms illustrate this type of MIDI inplementation.)
+Advanced users may wish to explore the resources of the <I>SCOT</I> score translator, or the <I>CSCORE</I> score generating program, both of which are documented in the Csound reference
+manual. Other advanced users write their own score generating programs,
+or employ spreadsheet programs for particular applications.</P>
+<H3><A NAME="_wmh3_847373586">1.2. Orchestra file headers</A></H3>
+<P>[ See the discussions of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/gener.html"><B>SYNTAX OF THE ORCHESTRA</B></A>,
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/statem.html"><B>ORCHESTRA STATEMENT TYPES</B></A>
+and
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/orches.html"><B>ORCHESTRA HEADER STATEMENTS></B></A>
+in the Csound reference manual ]</P>
+<P>Every Csound orchestra must begin with a <B>header</B>, which establishes certain <I>global</I> values that are used by all instruments within the orchestra. Here is a
+sample Csound header: </P>
+<DD><I>sr=44100</I> 
+<DD><I>kr=2205</I> 
+<DD><I>ksmps=20</I> 
+<DD><I>nchnls=1</I> 
+<P>1) The <B>sr</B> variable fixes the <B>sampling rate</B> (also called the <I>audio-rate,</I> or <I>a-rate,</I> in Csound). This determines how many samples per second will be calculated
+for each channel to represent sounds.</P>
+<P>In the ECMC studios we currently use 44100 as a "universal," device-compatible,
+high quality sampling rate on all of our digital audio systems, from source
+recordings of acoustic sounds all the way through compact disc production.
+(However, we may be upgrading one or more of our systems in the near future
+to a 96 k <I>sr</I>, 24/32 bit format.)
+<P>For initial tests with Csound, however, lower sampling rates, such as 32000
+or 22050, will compute more quickly and require only half
+as much disk space for output soundfiles. And if we run Csound in real time,
+sending the samples directly to the system DACs rather than writing them to a
+soundfile (by means of the ECMC <I>csoundplay</I> command, or its alias <I>csp</I>),
+lower sampling rates can enable us to employ more complex signal processing
+procedures, and to play more simultaneous "polyphonic" notes, before reaching
+the system throughput limitations.
+<P>Remember, however, that the highest frequency that can be represented digitally
+is one half the sampling rate, which is called the <I>Nyquist frequency</I>. If we attempt to create a sound that includes partial frequencies higher
+than the Nyquist, these higher frequencies will alias, or &quot;fold over,&quot; according
+to the formula : </P>
+<CENTER><P ALIGN="CENTER"><I>sr - freq</I></P>
+</CENTER><P><FONT SIZE="2">Thus, with the sampling rate set to 22050, a frequency of 12000 herz will
+actually be heard at 10050 Herz. And if we attempted to create a sine wave glissando
+between 20 Hz. and 22kHz., the resulting pitch would rise from 20 herz up
+to 11025 herz, but would then glissando back down to 50 herz. </FONT></P>
+<P><FONT SIZE="2">Remember, too, that the &quot;smoothing&quot; filters built into all DACs, as well
+as the &quot;anti-aliasing&quot; low pass filters within ADCs, also serve to attenuate
+frequencies above approximately 38 of the sampling rate, reaching &quot;total&quot;
+attenuation (-60 dB) at around, or slightly below, the Nyquist frequency. With
+cheap converters, the rolloff is even less steep.</FONT></P>
+<P>2) <B>kr</B> specifies a <B>control rate</B>. There are many types of subaudio control signals, such as vibrato and
+tremolo patterns, that do not need to be computed at the sampling rate to
+achieve a satisfactory resolution. To do so would waste processor (and user)
+time. For such operations our orchestra header above specifies a control
+rate of 2205 updates per second, a value we gen- erally recommend. Control
+rates typically vary between about 500 and 5000. However, the<I> k-rate</I> must divide evenly into the <I>s-rate.</I></P>
+<P>3) <B>ksmps</B>, an irksome but required part of Csound headers, is the ratio between the <I>s-rate</I> and the <I>k-rate.</I> Thus, in our example above, the ratio is 20 sample calculations for each
+calculation of control signals. In other words, every value computed at
+the control rate will be used for 20 successive audio samples, then updated
+(recomputed).</P>
+<P>4) The final header variable, <B>nchnls</B>, determines the number of output audio channels. Use 1 for mono, and 2
+for stereo.</P>
+<P>The Eastman Csound Library macro <B>SETUP</B> presents the same information on a single line of code :</P>
+<CENTER><P ALIGN="CENTER">SETUP(44100,22050,1)</P>
+</CENTER><P>Note that if you use this macro format, the value of <I>ksmps</I> is calculated and filled in automatically. The three arguments to the <I>SETUP</I> macro specify the sampling rate, the control rate, and the number of output
+channels. When using this macro format, make sure that the word <I>SETUP</I> is capitalized, and that there are no spaces between any of the characters.
+An orchestra file that uses any of the Eastman Csound Library macros,
+such as <I>SETUP</I>, must be processed by the Eastman utility <B>m4orch</B> (which can be abbreviated <B>m4o</B>). <I>m4orch</I> expands such macros into Csound code, and writes its output to a file named <B>orch.orc</B> (which can be abbreviated <B>orc</B>). This file should be used as your orchestra file input to Csound.</P>
+<H3><A NAME="_wmh3_847374265">1.3. Audio, Control and Initialization Rates</A></H3>
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/const.html"><B>CONSTANTS AND VARIABLES</B></A>
+in the Csound reference
+manual, but do not worry about Global variables yet. ]</P>
+<P>Csound instrument algorithms are constructed by patching together various <B>unit generators, </B>each of which performs a particular type of mathematical operation. The
+Csound reference manual describes these unit generators and other features
+of the compiler in a manner designed for quick reference by experienced
+users. It is unlikely that you will want to take this manual along to the
+beach for a relaxing read. The manual groups unit generators together by
+family and function. In this tutorial, we will look at the more commonly
+used operations. This will mean a lot of skipping around in the manual.</P>
+<P>Before we examine these unit generators, we need to clarify a few basic
+things about the syntax with which one writes lines of Csound code. Reprinted
+below are the definitions for four Csound unit generators as they appear
+in the reference manual. The first two unit generators <I>(oscil)</I> create basic oscillators. The two concluding lines <I>(rand)</I> create white noise generators.</P>
+<PRE>
+<I><FONT SIZE="3">  output    unit generator  required arguments  optional arguments</FONT></I>
+<I><FONT SIZE="3">(&quot;result&quot;)  (&quot;opcode&quot;)</FONT></I>
+__________________________________________________________________
+   kr       oscil           kamp , kcps , ifn   [, iphs]
+   ar       oscil           xamp , kcps , ifn   [, iphs]
+   kr       rand            kamp [, iseed]
+   ar       rand            xamp [, iseed]
+</PRE>
+<UL>
+<LI>The signal output produced by the operation is specified at the far left,
+separated by one or more spaces from 
+<LI>the name (&quot;opcode,&quot; or &quot;operation code&quot;) of the <I>unit generator,</I> followed by 
+<LI>the <I>required arguments</I> to the operation, separated by commas, and finally by 
+<LI>any <I>optional arguments</I> we wish to include. 
+<P><FONT SIZE="2">Optional arguments are indicated by square brackets in the Csound reference
+manual, but these brackets are <U>not</U> included in one's actual Csound code.</FONT></P>
+</UL>
+<P>An oscillator or white noise generator can run either at the audio rate,
+if this signal will be heard as a sound, or else at the control rate, if
+the signal will instead control (modify) some characteristic of an audio
+signal created by some other unit generator. We determine the output rate
+by the output name (or &quot;result&quot;) we supply. If this name begins with a <B>k</B>, the unit generator will run at the control rate; if the name begins with
+an <B>a</B>, the operation will be computed at the audio rate. We can choose any name
+we wish for these output names, so long as they begin with a <I>k</I> or an <I>a.</I></P>
+<P>If our oscillator will be producing a vibrato signal that modifies the pitch
+produced by another oscillator, for example, we might call the result <I>kvibrato,</I> or perhaps <I>kvib,</I> or <I>k1,</I> or, perversely, <I>kKxg6w.</I> If our white noise generator is producing audible noise, we might call
+the output<I> anoise, </I>or<I> asignal, </I>or<I> asig, </I>or<I> a2.</I></P>
+<P>To the right of the unit generator name, the arguments (input values) that
+it needs to perform its computations are listed. Each argument is separated
+by a comma. Blank spaces or tabs may be included between arguments for ease
+of reading.</P>
+<P>Any argument beginning with an <B>i</B> is one for which a value will be established at the <I>initialization</I> (onset) of the note, and will not change during the note's duration. Any
+argument starting with a <B>k</B> can change values either at the control <I>(k)</I> rate, or else at the i rate. An argument that begins with an <B>a</B> is updated at the audio-rate. Finally, an argument beginning with
+an <B>x</B> can be given at the <I>a-rate,</I> at the <I>k-rate,</I> or as an <I>initialization</I> value. In other words, inputs to various mathematical operations may be
+specified only once per note, or change at either the control or audio rate.
+Some arguments <U>must</U> be specified at a certain rate, while with other arguments it is up to
+the user to select the appropriate update rate.</P>
+<P>The <I>oscil</I> unit generator has three required arguments - an <I>amplitude (amp)</I> value, a <I>frequency (cps)</I> value, and a function number<I> (fn).</I> It is also possible, if we wish, to include a fourth argument<I> (phs),</I> which specifies <I>where</I> in the function table the oscillator should begin reading (more on this
+later).</P>
+<P>If the oscillator is running at the control rate, the amplitude and frequency
+arguments can be either constant<I> (i-rate)</I> values, or else <I>k-rate</I> control signals, previously created by other unit generators. The function
+number argument is fixed (an <I>i-rate</I> value) for the duration of each note. (Normally, we cannot change waveshapes
+in the middle of a note.) However, the function table number <U>can</U> change from one note to the next. If the oscillator is running at the audio
+rate, its amplitude argument can be updated at any rate.</P>
+<P>The white noise unit generator <I>rand</I> has only one required argument, which determines the amplitude of the noise
+band. If we run <I>rand</I> at the audio rate, we can update this amplitude value every sample <I>(a-rate),</I> every control period cycle <I>(k-rate),</I> or only once per note <I>(i-rate).</I> If rand is running at the <I>k rate,</I> audio rate amplitude updates are not possible.</P>
+<H3><A NAME="_wmh3_847374280">1.4. A Simple Instrument Algorithm</A></H3>
+<P>See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/instr.html"><B>INSTRUMENT BLOCK STATEMENTS</B></A>
+in the Csound reference manual ]</P>
+<P>We are now ready to start making some music, or at least some sound. So,
+without further ado, we present our first orchestra, which we would type
+into a file with a text editor such as<I> vi.</I> We will call this file <I>first.orc:</I></P>
+<DD><I>sr= 44100</I> 
+<DD><I>kr= 2205</I> 
+<DD><I>ksmps= 20</I> 
+<DD><I>nchnls= 1</I> 
+<DD>
+<DD><I>instr 1</I> 
+<DD><I>asound oscili 15000, 440, 1</I> 
+<DD><I>out asound</I> 
+<DD><I>endin</I> 
+<P>This is about as simple an orchestra as we could design. Savor it. In a
+couple of weeks, as you ponder the intricacies on lines 47 through 63 of
+some distant descendent of this little fellow, you may look back on these
+few pristine lines with almost unbearable nostalgia. But perhaps not. This
+orchestra also is so limited that it is highly unlikely you would ever want
+to use it, or to listen to its output for more than a couple of seconds.</P>
+<P>Our orchestra includes a single<B> instrument block</B>, or algorithm. An instrument block consists of three things: A line identifying
+the number of the instrument block; the body of the instrument; and finally,
+the word<I> endin, </I>which signifies the end of this instrument block.</P>
+<P>Here, we have given the instrument the auspicious number &quot;1.&quot; Any number
+between 1 and 200 will do, but every instrument block within an orchestra
+must have a unique number.</P>
+<P>The two line body of this instrument. can be translated as follows: Create
+an interpolating oscillator (<I>oscili,</I> a cousin of the basic <I>oscil</I> unit generator discussed above). Run this oscillator at the audio-rate,
+and write the results of its operations into a RAM memory location we will
+call <I>asound</I>. Give the oscillator a fixed amplitude of 15000 (on a scale of 0 to 32767).
+Make it sample a waveshape defined in our score by function table number
+1. Set the output frequency to 440 herz. Then<I> (out asound)</I> write the output of RAM memory location <I>asound</I> to the output soundfile.</P>
+<H3><A NAME="_wmh3_847374295">1.5. Oscil and Oscili</A></H3>
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/oscil.html"><B>OSCIL and OSCILI</B></A>
+in the Csound reference manual
+]</P>
+
+<P>The <I>oscili</I> unit generator in the example above requires a closer look, since oscillators
+are the most important components of many instruments. An oscillator is
+a signal generator, which often (but not always), it is used to create a <I>periodic</I> signal, in which some pattern is repeated many times. As noted earlier,
+Csound oscillators have three required input arguments - <I>amplitude, frequency </I>and<I> function number</I> - and an optional fourth argument (not used in the example above) specifying
+a <I>starting phase</I> at which the function is to be read.</P>
+<P><I>Function Number</I> (3rd oscillator argument) :</P>
+<P>Digital oscillators cycle through a table of numbers (called a <I>function,</I> in Csound), which often represents one cycle of some waveform or shape.
+Practically any shape can be defined in a function definition, as we will
+see later, but a particularly common common waveshape is the sine wave.
+Functions are defined and numbered in the score. The third argument to <I>oscil </I>or<I> oscili</I> specifies the number of the score function to be read by the oscillator.
+Functions are created and loaded into memory at the beginning of a Csound
+soundfile compilation job, and unless one employs the <B>-d</B> option of the csound command, all functions within the score file are displayed
+near the beginning of the the <I>sterr</I> (standard error message) output of the Csound compilation job.</P>
+<P><I>Starting Phase</I> (optional 4th oscillator argument)</P>
+<P>The optional fourth argument [iphs] specifies <U>where</U> the oscillator should begin reading within the table. The default, when
+the argument is left blank, is to begin at the beginning of the table. Valid
+arguments range between 0 and 1. . A value of .5 would cause the oscillator
+to begin reading half way (180 degrees) through the table; a value of .333
+would cause reading to begin 1/3 of the way (120 degrees) into the table.</P>
+<P>For a repetitive sine wave audio signal of, say, 440 herz, the starting
+phase makes no audible difference, and the argument can be omitted. However,
+if a control oscillator is creating a subaudio, five herz sine-wave vibrato
+sig- nal, beginning at a starting phase of .5 (half-way through the sine
+wave) would cause the resulting pitch first to be lowered, then raised,
+rather than the reverse.</P>
+<P>The partials produced by most acoustic instruments are often not in phase,
+but these phase differences seem to make little audible difference. (This
+point has been studied and debated for many decades, however.) Phase differences
+DO become significant when mixing signals of the same or nearly same frequency
+(e.g. doubling a note between instruments, or combining direct and delayed
+signals).</P>
+<P><I>Frequency</I> (2nd oscillator argument) :</P>
+<P>The second argument to an oscillator specifies the rate at which it must
+read through the function table. A value of 440, as in the example above,
+will cause the oscillator to read through the table (&quot;wrap around&quot;) 440
+times for each second of sound created.</P>
+<P>An oscillator will almost never read every number within a single cycle
+function table in continuous succession. Rather, since both the sampling
+rate and the size of the function table are fixed, the oscillator will need
+to <I>skip</I> over several numbers within the table before taking each new sample reading
+in order to produce the correct frequency. This &quot;skip&quot; value is called the <I>sampling increment.</I></P>
+<P>In our example, with a sampling rate of 44100 and a requested frequency
+of 440 Herz, the oscillator will need to spit out 100.22727 samples to represent
+each cycle : </P>
+<DD><I>100.22727 samples per cycle * 440 cycles = 44100 samples per second</I> 
+<P>Csound function table sizes generally must be a power of two (exceptions
+are noted later), and a table size of
+1 k (1024 numbers) is a typical length. To figure out the correct sampling
+increment, the oscillator employs the formula</P>
+<PRE>
+                           <U>table length   *   frequency</U>
+    sampling increment  =         sampling rate
+</PRE>
+<P>or, in our example,</P>
+<PRE>
+                            <U>1024  * 440</U>
+    sampling increment   =     44100       =  10.21678
+
+</PRE>
+<P>This means that our oscillator will read in the first number from the table,
+using it to compute the first output sample value, then skip the next ten
+numbers within the table, using the eleventh number to compute output sample
+2, the 21st table number to compute output sample 3, and so on. On approximately
+every fifth output sample, the oscillator will skip eleven rather than ten
+numbers within the table.</P>
+<P>Every frequency requires a unique sampling increment. However, none of this
+mathematical unpleasantness need concern the user; the oscillator takes
+care of all of this automatically.</P>
+<A NAME="INTERP_TRUNC"></A>
+<H4><A NAME="_wmh4_847374311">1.5.1. Interpolating and Truncating Oscillators</A></H4>
+<P>This brings us to the difference between <I>interpolating</I> oscillators, such as the Csound <I>oscili,</I> and <I>truncating (non-interpolating) </I>oscillators, like<I> oscil.</I> With a sampling increment of 10.21678, the oscillator should find values
+at the following points in the table :</P>
+<DD>0 10.21678 20.43356 and so on 
+<P>Obviously, there is no value at location 10.21678 in the table - only values
+at locations 10 and 11. Truncating oscillators <I>(oscil)</I> keep accurate track of the cumulative sampling increment, but, in the example
+above, return the values of table locations 0, 10, 20, 30 and so on. The
+interpolating <I>oscili,</I> by contrast, will take the time to compute the difference between the numbers
+in table locations 10 and 11, multiply this difference by .21678, and add
+the result to the number in table location 10. By interpolating between
+adjacent table locations for each input sample in this fashion, <I>oscili</I> will provide better resolution (representation) of the waveform, with less
+round-off error and thus less harmonic distortion. The price? Greater computation
+time for this particular unit generator, by at least a factor of two.</P>
+<P>If our orchestra contains a single oscillator, the difference in computation
+time between <I>oscil</I> and <I>oscili</I> might be trivial. But if our orchestra includes several interpolating oscillators,
+and our score requires that many notes be computed simultaneously, the computation
+time difference becomes more substantial. For non-real-time synthesis of <I>audio</I> signals, <I>oscili</I> is often the better, or at least the safer, choice. For control signals,
+such as a 5 herz vibrato pattern, however, it is unlikely that the higher
+resolution would make much audible difference. We would probably use the
+faster <I>oscil</I> to create this signal, and would run this oscillator at the control rate
+rather than at the audio rate.</P>
+<P>Note that by using very large table sizes - say, 4096 or 8192 points,
+rather than 1024 - to represent a waveform, round-off error can be reduced
+when truncating oscillators are used. This is the solution often employed
+in higher quality commercial digital synthesizers, and one we also employ
+when running Csound in real time.
+However, larger tables require more RAM.
+Such tradeoffs between computation time, memory space and signal resolution
+are encountered frequently in digital synthesis. The harsh, nasal timbres
+produced by many cheaper hardware synthesizers result from such factors:
+low sampling rates, and round-off errors produced when truncating oscillators
+read waveshapes stored in comparatively small tables. </P>
+<P><I>Amplitude</I> (1st oscillator argument) :</P>
+<P>The tables of numbers for most sine wave and other synthetic audio functions
+are floating point values that range between -1. to +1. The <I>amplitude</I> argument to an oscillator specifies a multiplier for each number read in
+from the function table. On a 16-bit integer system, the output integer
+samples are scaled between 0 to +/- 32767. Thus, the number 15000 used in
+our example merely denotes a value within the acceptable range. It is impossible
+to say whether this value will be perceived as mezzo-piano, forte, or whatever.
+(Recall that timbre is often a more important factor in our perception of
+loudness than ampitude.)</P>
+<P>In general, we try to create source signals at fairly hot levels, with a
+maximum amplitude peak somewhere between 15000 and 32000 for 16 bit
+signals, in order to take
+advantage of the full 16 bit signal resolution. Level and balance adjustments
+between different signals within a mix generally are accomplished during
+mixing operations, in the same manner that one users faders on a mixing
+console (or vitural faders in a sequencing or audio mixing program)
+when bouncing multiple tracks down to a stereo master.
+In creating source soundfiles, however, one must take care not to
+exceed a maximum amplitude of 32767 (for 16 bit samples) at any given point, or else severe distortion
+will result. The Csound <I>sterr</I> terminal output provides the error message &quot;samples out of range&quot; whenever
+the amplitude of a sample exceeds 32767. If several copies of an instrument
+are playing simultaneously (for example, a chord, or overlapping sustaining
+notes), be conservative in your initial amplitude arguments. These can always
+be increased on subsequent runs of the job if you find that the resulting
+total amplitude values are low.</P>
+<P>In sum, we can paraphrase the three required arguments to an oscillator
+as three questions. These are:</P>
+<P>(1) What is the intensity level of the signal? (amplitude); </P>
+<P>(2) How many times per second, or at what rate, is the waveshape
+being produced? (frequency); and </P>
+<P>(3) What is the time-varying waveshape of the signal? (function number, which
+points to a table of numbers that has been compiled and stored in RAM.)</P>
+<H3>Output statements: out, outs, outs1 and outs2</H3>
+<P>[ See the discussion of unit generators 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/In+Out/in.html"><B>OUT and OUTS</B></A>
+in the Csound reference manual ]</P>
+<P>The statement <I>out asound</I> on the penultimate line of our sample orchestra file is called a 'standard
+out' statement. The <I>out</I> unit generator sends the current value of the RAM memory location we have
+called <I>asound</I> to an output buffer. Here it is added to any value (from other notes being
+played simultaneously by this instrument, or by other instruments within
+the orchestra) already in the buffer. Eventually, a group of a thousand
+or so samples within the buffer are written as successive samples to the
+disk soundfile, or, if Csound is being run in real time, toe system DACs.</P>
+<P>Since our orchestra is monophonic, we don't have to worry about spatial
+localization. However, if we change our orchestra to stereo (by setting
+the header <I>nchnls</I> argument to 2), we must use unit generator <I>outs</I> (or else <I>outs1</I> and <I>outs2</I>), rather than <I>out,</I> in order to specify stereo localization. The standard out statement might
+look like this: </P>
+<CENTER><DD ALIGN="CENTER"><I>outs a1, a1</I> 
+</CENTER><P>This would send the signal at full amplitude to both output channels. If
+the standard out statement looked like this:</P>
+<CENTER><DD ALIGN="CENTER"><I>outs (.7*a1), (.3*a1)</I> 
+</CENTER><P>or else like this :</P>
+<CENTER><DD ALIGN="CENTER"><I>outs1 .7*a1</I> 
+</CENTER><CENTER><DD ALIGN="CENTER"><I>outs2 .3*a1</I> 
+</CENTER><P>70 % of the signal would be sent to the left channel, and 30 would be sent
+to the right.</P>
+<H3><A NAME="_wmh3_847374325">1.6. Score files</A></H3>
+<P>[ Read  the discussions of
+   <A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/NumScore/scsynt.html"><B>THE STANDARD NUMERIC SCORE</B></A> and of<BR>
+   <A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/NumScore/i-stat.html"><B>I STATEMENT </B><I>(INSTRUMENT or NOTE STATEMENT)</I></A>
+in the Csound reference manual ]</P>
+<P>Our <I>first.orc</I> file provides a working, if trivial, instrument algorithm. Now we must
+tell this algorithm how many notes to play, what the durations of the notes
+should be, and what waveform the oscillator should read. We could create
+a <I>score11</I> file like the following to create a sine wave table (<I>f1,</I> where the <I>1</I> corresponds to the function number we have told our oscillator to use),
+and then to specify a single note lasting three seconds: </P>
+<P><I>Score11</I> input file:</P>
+<PRE>
+<I>  *f1 0 1024 10 1; &lt;this line defines function number 1, a sine wave</I>
+<I>  i1 0 0 1;        &lt; instrument number 1 plays one note</I>
+<I>  p3  3;           &lt; the duration of this note is 3 beats</I>
+<I>  end;</I>
+</PRE>
+<P>The resulting <I>score11</I> output file <I>sout</I>, a Csound format score
+file, would look like this:</P>
+<PRE>
+<I>  f1 0 1024 10 1</I>
+<I>  i1 0.000 3.000</I>
+<I>  e</I>
+</PRE>
+<P>We are now ready to compile our soundfile with Csound :</P>
+<PRE><I>   csound  first.orc  sout </I> <FONT SIZE="-1">or, on ECMC systems:</FONT><I>    cs  first.orc  sout </I></PRE>
+<P>Alternatively, since our Csound score is so simple, we might find <I>score11</I> superfluous, and instead type the three lines of the Csound score directly
+into a file. In this case, we might include Csound comments, which begin
+with a ; (rather than with a &lt;):</P>
+<PRE>
+
+<I>  f1 0 1024 10 1  ; this line defines function number 1, a sine wave</I>
+<I>  i1 0.000 3.000  ; instrument number 1 plays 1 note lasting 3 seconds</I>
+<I>  e</I>
+</PRE>
+<P>We need not call this Csound score file &quot;sout.&quot; Perhaps <I>first.sco,</I> or - yes! - <I>evocative.sco</I> would be more descriptive.</P>
+<P>Note that the single<I> I Statement</I> line in our score has three parameters: p1<I> (i1)</I> specifies which instrument within the orchestra file is to play this note;
+p2 <I>(0.000)</I> specifies the starting time of the note; and p3 <I>(3.000)</I> specifies the duration of the note.</P>
+<H3><A NAME="_wmh3_847374335">1.7. Creating Function Table Definitions</A></H3>
+
+<P>[ See the discussion of
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/NumScore/f-stat.html"><B>F (FUNCTION TABLE) STATEMENT</B></A>
+in the Csound reference manual ]</P>
+<P>Our next major topic concerns function table definitions, which must be
+included in our score file whenever we employ one or more oscillators within
+our orchestra. Like<I> I (note)</I> statements, <I>F (function)</I> statements consist of a series of parameters (variables):</P>
+<PRE>
+
+<I>(p1) (p2) (p3) (p4) (p5)</I>
+ f1   0   1024  10   1  ; Csound score file function definition
+ *f1  0   1024  10   1 ;  <<I>score11</I> input file definition of the same function
+</PRE>
+Note that in <I>score11</I> input files, the f must be preceded by
+an asterisk, a flag that tells <I>score11</I> simply 
+to reproduce the line as is, and must conclude with a semicolon.
+<P>The first parameter field <I>(f1), </I>specifies the number of the function, in this case <I>1</I>, although <I>10, 125</I> or <I>1000</I> would do just as well.
+One cannot have two different functions
+within a score with the same number active at the same time. However, two
+or more oscillators can read simultaneously from the same function table.</P>
+<P>The second p-field determines at what time the function will be created.
+In this case, the function is created at time '0,' that is, before the computation
+of samples begins.</P>
+<DD><FONT SIZE="2">If we were creating a long, complex soundfile, say, 40 seconds or so, and
+didn't need this particular function until halfway through, we could give
+it a starting time of 20. The table then would not be created until 20 beats
+into the soundfile. This might be elegant, but is rarely required, unless
+we don't have enough computer RAM to squeeze in everything that happens
+in the first 20 seconds. With today's computers, this is rarely a problem.</FONT> 
+<P>The third parameter (1024) determines how many numbers will be used to outline
+the desired shape. As discussed earlier, the higher the number, the greater
+of resolution, but the more memory space required to store the table. The
+table size <U>must</U> be either a power of 2, (2, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, 8192 etc.)
+or else a power of two- plus-one (3, 5, 9, 17, 33, 65, 129, etc.).</P>
+<DD>=&gt; If the function is going to read <I>repetitively</I> by an oscillator, then a <I>power of two</I> should be used. 
+<DD>=&gt; If the function will be read only <U>once</U> per note, a <I>power of two plus one</I> is better. Examples of the latter case will be discussed in the section
+on envelopes. 
+<P>The fourth p-field in the function definition statement is a call to a particular
+function generating program, which will actually calculate the numbers of
+the table and load them into RAM. These programs are called <B>gen routines</B> in Csound (and in many other music compilers as well, since they are all
+derived from programs of the same name originally written at Bell Labs in
+the 1960s). Our function table definition invokes <I>gen10.</I></P>
+<H3><A NAME="_wmh3_847374343">1.8. GEN Routines : gen10</A></H3>
+<P>[ See the discussion of
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Function/gen09.html"><B>GEN10</B></A>
+in the Csound reference manual. ]</P>
+<P><B>gen10</B> creates a table that represents one cycle of an audio waveform consisting
+entirely of harmonic partials. By<I> harmonic,</I> we mean that every frequency component is an integer ratio - exactly twice
+the fundamental frequency, three times the fundamental, and so on. The relative
+amplitude of each harmonic is indicated, successively, in the remaining
+p-fields of the function definition. In our example sine wave function definition,
+only one additional p-field is included, specifying a value of <I>1.</I> This means that the first partial (the fundamental) has a relative strength
+of 1, while the remaining harmonics all have a relative strength of 0. This
+will produce a sine wave.</P>
+<P>Suppose we want to create a wave that consists of only odd numbered harmonics,
+all of equal intensity. Our function definition might now look something
+like this:</P>
+<PRE>
+<FONT SIZE="2">     function definition:</FONT> <I>*f1 0 1024 10 1 0 1 0 1 0 1 0 1 0 1;</I>
+<FONT SIZE="2">              harmonics:                        1  2  3  4  5  6  7  8  9 10 11</FONT>
+<FONT SIZE="2">               p-fields:    1    2    3     4   5  6  7  8  9 10 11 12 13 14 15</FONT>
+
+</PRE>
+<P>Here, harmonics 1,3,5,7,9 and 11 all have the same relative strength, while
+all even numbered partials are suppressed.</P>
+<P>Of course, this likely would produce a rather unnatural timbre. It would
+be much more likely for the various harmonics to have different relative
+strengths :</P>
+<PRE><CENTER>*f1 0 512 10  1  0  .33  0  .2  0  .14  0  .11  0  .09; </PRE>
+</CENTER><P>This makes the fundamental stronger, and the higher odd partials progressively
+weaker. In fact, the function above would approximate a square wave, though
+with sloped sides, because the waveshape is band-limited in frequency. We have specified
+only odd harmonics 1, 3, 5, 7, 9 and 11. Additional, higher odd-numbered
+harmonics would be necessary to produce the right angles of a true square
+wave. As of this writing, function definitions, as well as Csound
+orchestra and score files, can include up to 150 p-fields (a limit that may
+soon be raised), so we could add
+many more harmonics if we so desired. However, we would have to be careful
+about using such a function to create high-pitched tones, especially at
+lower sampling rates, since the highest harmonics might exceed the Nyquist
+frequency and alias.</P>
+Example: With a sampling rate of 22050 and a pitch of 1000 Herz, any harmonic
+above number 11 would fold over. <BR>
+<BR>
+<FONT SIZE=-1>(Although not required, it is generally good practice to give a value of
+1 to the strongest partial -- which will not always be the fundamental -- and
+to scale the others accordingly, as numbers between 0 and 1.)</FONT>
+<P>The time has
+finally come to put to use what we have learned so far, to experiment with
+some audio function definitions, and to create a couple of soundfiles which
+are available for your listening and dancing pleasure in the sflib/x directory.
+To do this, however, we must first upgrade our orchestra file, replacing
+some of constant values with score p-field variables, so that we can vary
+the oscillator's amplitude, frequency and function number arguments from
+note to note. Our revised orchestra file now looks like this:</P>
+<PRE>
+<B>;  #############################################################</B>
+<B>; Soundfile examples  &quot;ex1-1&quot;  and  &quot;ex1-2&quot;</B>
+<B>;  #############################################################</B>
+
+<B>Orchestra file used to create these two soundfiles:</B>
+<B>-------------------------------------------------------------------------</B>
+<B>   sr= 44100</B>
+<B>   kr = 2205</B>
+<B>   ksmps = 20</B>
+<B>   nchnls = 1</B>
+
+<B>   instr 1</B>
+<B>   asound  oscili  p5, p4 , p6</B>
+<B>   out asound</B>
+<B>   endin</B>
+-------------------------------------------------------------------------
+</PRE>
+<P>Soundfile example <B>ex1-1</B> in <I>/sflib/x</I> was created by means of the orchestra file above, and the following <I>score11</I> file:</P>
+<PRE>
+-------------------------------------------------------------------------
+<B>&lt; Score11 file used to create soundfile example ex1-1 :</B>
+<B>*f1 0 1024 10 1.;    &lt; sine wave</B>
+<B>*f2 0 1024 10 1. 0 .33 0 .2 0 .14 0 .11 0 .09; &lt; odd harmonics</B>
+<B>*f3 0 1024 10 0 .2 0 .4 0 .6 0 .8 0 1. 0 .8 0 .6 0 .4 0 .2 ; &lt; even harmonics</B>
+<B> &lt; function 4 includes harmonics 11 through 20</B>
+<B>*f4 0 1024 10 0 0 0 0 0 0 0 0 0 0 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. ;</B>
+<B> &lt; f5 = harmonics 1, 6, 11, 16, 21 , 26 , 31 ,36</B>
+<B>*f5 0 1024 10 1 0 0 0 0   .8 0 0 0 0   .7 0 0 0 0   .6 0 0 0 0   .5 0 0 0 0</B>
+<B> .35 0 0 0 0   .2 0 0 0 0   .1;</B>
+
+<B>i1 0 0 10;  &lt; play 10 notes</B>
+<B>p3 4;</B>
+<B>du .95;</B>
+<B>p4 nu 220 * 5 / 27.5 * 5 ;   &lt; frequency :</B>
+<B>                             &lt;  5 notes at 220 hz, then 5 notes at 27.5 hz</B>
+<B>p5 15000;  &lt; amplitude (constant here for all notes)</B>
+<B>p6 nu 1 / 2 / 3 / 4 / 5;</B>
+<B>end;</B>
+-------------------------------------------------------------------------
+</PRE>
+<P>The Csound score file<I> (&quot;sout&quot;)</I> produced by the above <I>score11</I> file looks like this:</P>
+<PRE>
+<B>f1 0 1024 10 1.</B>
+<B>f2 0 1024 10 1. 0 .33 0 .2 0 .14 0 .11 0 .09</B>
+<B>f3 0 1024 10 0 .2 0 .4 0 .6 0 .8 0 1. 0 .8 0 .6 0 .4 0 .2</B>
+<B>f4 0 1024 10 0 0 0 0 0 0 0 0 0 0 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.</B>
+<B>f5 0 1024 10 1 0 0 0 0 .8 0 0 0 0 .7 0 0 0 0 .6 0 0 0 0 .5 0 0 0 0 .35 0 0 0 0 .2 0 0 0 0 .1</B>
+<B>  i1 0.000 3.800 220 15000 1</B>
+<B>  i1 4.000 3.800 220 15000 2</B>
+<B>  i1 8.000 3.800 220 15000 3</B>
+<B>  i1 12.000 3.800 220 15000 4</B>
+<B>  i1 16.000 3.800 220 15000 5</B>
+<B>  i1 20.000 3.800 27.500 15000 1</B>
+<B>  i1 24.000 3.800 27.500 15000 2</B>
+<B>  i1 28.000 3.800 27.500 15000 3</B>
+<B>  i1 32.000 3.800 27.500 15000 4</B>
+<B>  i1 36.000 3.800 27.500 15000 5</B>
+<B>end of score</B>
+
+
+</PRE>
+<P>Some questions to ponder on this example:</P>
+<UL>
+<LI>Note that although the physical amplitude of all 10 notes is identical,
+the perceived loudness of these notes varies considerably. Why? 
+<LI>Most of the notes begin and end with a pop? Why? 
+<LI>Why does the third note sound an octave higher than the first two notes? 
+</UL>
+<P>After experimenting with some isolated test tones in this fashion, we often
+can isolate some material that can be used to create a more intriguing musical
+gesture. Listen to and study the following example, which makes considerable
+use of random selection procedures. Three audio waveshape functions similar
+to <I>f4</I> in the previous example are employed. The fundamental frequencies at the
+very end of the example are subaudio (see <I>p4</I> below).</P>
+<PRE>
+-------------------------------------------------------------------------
+<B>; Score11 file used to create soundfile example  ex1-2  :</B>
+<B> &lt; function 1 includes harmonics 11 through 20 :</B>
+<B>*f1 0 1024 10 0 0 0 0 0 0 0 0 0 0 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. ;</B>
+<B>*f2 0 1024 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1. 1. 1. 1. 1.</B>
+<B>  1. 1. 1.  ; &lt; harmonics 21 thru 28</B>
+<B>*f3 0 1024 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</B>
+<B>   1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. ; &lt; harmonics 30 thru 41</B>
+
+<B>i1 0 8.5 ;  &lt; play for 8.5 beats</B>
+<B>p3 mo 4. .6 .15/  4.5 .15 .6;</B>
+<B>du mx 8.5  301. 302. 304.;</B>
+<B>rs 444;   &lt; this reseed value produced better results than some others I tried</B>
+<B>p4  mx 1. 20 50  72/ 6. 72 50  800  500 / 1.5 6. 8. 5.;</B>
+<B>     &lt; frequency : pitch gradually rises</B>
+<B>p5 mx 4. 2000 4000 6000 8000/4.5 6000 8000 4000;  &lt; amplitude</B>
+<B>p6  se 8.5 1 2 3;  &lt; audio function number : randomly selected here</B>
+<B>end;</B>
+-------------------------------------------------------------------------
+</PRE>
+<P align=right
+<FONT SIZE=-1>
+<A target="_new" HREF="appendix.html#Chapter1"><I>Appendix Csound score file examples : Chapter 1</I></A></FONT SIZE></P>
+
+Note that our long <I>score11</I> function definition for <I>f3</I> in the
+example above extends over two physical lines, but that these two line
+comprise only a single line of code (a <I>score11</I> line does not end
+until a semicolon is reached). In Csound orchestra and score files, however,
+a newline character (produced by a carriage return) terminates a line of code,
+unless the newline is preceded by the backslash character <FONT SIZE=+1><B>\</B></FONT>
+<H3><A NAME="_wmh3_847374355">1.8.1. gen9</A></H3>
+
+<P>[ See the discussion of
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Function/gen09.html"><B>GEN09</B></A>
+in the Csound reference manual ]</P>
+
+<P>Function generator <I>gen10,</I> while relatively easy to use, is also somewhat limited. Its cousin, <I>gen9,</I> though more complicated to use, provides greater flexibility, enabling
+us to specify</P>
+<DD>(1) only the partials we want ; 
+<DD><FONT SIZE="2">(These partials can be either harmonic or inhar- monic, but the use of inharmonic
+partials requires a little trickery, discussed below.)</FONT> 
+<DD>(2) the relative strength of each of these partials; and, 
+<DD>(3) the starting phase of each partial. 
+<P>Each partial, then, requires three p-field arguments within the function
+table definition. Here is an example:</P>
+<PRE>
+        <B><FONT SIZE="3">f1 0 1024 9</FONT></B><FONT SIZE="3"> <I>1 .5 0</I> <B>5. 1. 90</B> <I>7. .35 180</I> <B>11. .2 270;</B></FONT>
+<FONT SIZE="2">(p-fields): 1    2    3    4  5   6   7  <B>8   9    10</B>  11    12    13   <B>14    15   16</B></FONT>
+</PRE>
+<P>Here, we place a <I>9 </I>in<I> p4 </I>to summon <I>gen9</I> to create the table. The remaining p-fields can be roped off in groups
+of threes (p5-7, p8-10, p11-13 and p14-16). (Alternating italic and bold
+type are used above to differentiate these groups.) Within each of these
+groups, the first number is the frequency of the partial (as a multiplier
+of the fundamental) ; the second number is the relative amplitude strength
+; and the third is the initial phase, expressed in degrees (0 to 360). Thus,
+this function will create a waveform that consists of harmonics 1, 5, 7
+and 11, with relative amplitude intensities of .5, 1., .35 and .2. The fifth
+harmonic will be 90 degrees out of phase with the fundamental, the 7th partial
+180 degrees out of phase, and the 11th partial 270 degrees out of phase.</P>
+<DD><FONT SIZE="2">It is unlikely that these phase relationships will make much, if any, audible
+difference. Note, too, that within <I>gen9,</I> the starting phase of individual partials is expressed in degrees - 0 to
+360. By contrast , the optional phase argument to oscillators within an
+orchestra file, which specifies where the oscillator is to begin reading
+within the table, must be specified as a fraction between 0 and 1. It is
+easy to become confused over these two quite different usages of the word
+&quot;phase.&quot; If no one in class asks for clarification on this point, we'll
+know that you didn't read this section.</FONT> 
+<P>One need not specify <I>harmonic</I> partials. <I>Inharmonic</I> frequency ratios are also possible, as in the following function:</P>
+<DD><I>*f1 0 1024 9 </I><B>1.</B><I> 1. 0 </I><B>2.7</B><I> .5 0 </I><B>5.4</B><I> .33 0 </I><B>8.1</B><I> .12 0;</I> 
+<P>Here we create four partials, with frequencies (shown here in bold type)
+that will be, respectively, 1, 2.7, 5.4 and 8.1 times the base frequency
+we supply to the oscillator.</P>
+<P>This looks fine on paper, but it will not give us the audible result we
+expect. Additional high frequency artifacts will be present, and the timbre
+will be buzzy rather than &quot;pure.&quot; Why? Within the function table, which
+represents one cycle of this waveform, only the first partial (1) will be
+symmetrical, beginning and ending at the same phase point. The second partial
+will contain 2.7 cycles of a sine wave, the third partial 5.4 cycles, and
+the fourth partial 8.1 cycles. The fractional (.7, .4 and .1) cycle components
+at the ends of these three partials will result in a discontinuity between
+the end of the table and the beginning. Each time the oscillator wraps around
+the table, high frequency artifacts, or &quot;clicks,&quot; will result from this
+asymmetric discontinuity.</P>
+<P>This does not prevent us from creating inharmonic partials, but it does
+require some slight-of-hand within our function table definition and in
+the frequency input to our oscillator. Consider the orchestra and <I>score11</I> files, reproduced below, used to create soundfile example <I>ex1-3.</I> The orchestra file is identical to our previous orchestra except for the
+oscillator frequency argument (shown here in boldface). Within the <I>score11</I> file, the partial frequencies for both audio functions also are shown here
+in bold type.</P>
+<PRE>
+<B>;  #############################################################</B>
+<B>; Soundfile example  ex1-3</B>
+<B>;  #############################################################</B>
+
+<B>Orchestra file used to create this soundfile:</B>
+<B>-------------------------------------------------------------------------</B>
+
+     sr= 22050
+     kr = 2205
+     ksmps = 10
+     nchnls = 1
+
+     instr 1
+     asound  oscili  p5, <B>.1 * p4</B> , p6
+     out asound
+     endin
+-------------------------------------------------------------------------
+</PRE>
+<P><I>score11</I> file used to create this soundfile:</P>
+<PRE>
+*f1 0 2048 9 <B>10</B> .8 0  <B>27</B> 1. 0 <B> 54</B>  .4 0  <B>81</B>  .2  0;  &lt;  partials 1, 2.7 , 5.4 &amp; 8.1
+ &lt; function 2 includes partials at approximately  2,  3,  9, 10, 16 and 17 times
+ &lt; the fundamental {which is missing}
+*f2 0 2048 9 <B>21</B> .4 0  <B>29</B> .5 0  <B>91</B> 1. 0  <B>100</B> .7 0  <B>161</B>  .2  0 <B>170</B> .15 0;
+
+i1 0 0 4;  &lt; play 4 notes
+p3  3.;
+du .95;
+p4  nu 55 / 261.6 ;   &lt;  frequency : alternate between a1  &amp;
+c4 {middle c}
+p5 nu 12000 / 7000;         &lt; amplitude
+p6 nu 1 // 2// ;  &lt; audio function number
+end;
+-------------------------------------------------------------------------
+</PRE>
+<P>Within the function definition of <I>f1,</I> we specify partial frequencies of 10, 27, 54 and 81. Within the orchestra
+file, we have modified the oscillator frequency argument, directing it to
+wrap around function tables at a rate <I>one tenth</I> the value specified in<I> p4.</I> Thus, for the first note in our score, where the oscillator frequency is
+set to 55 herz in <I>p4,</I> the oscillator actually will wrap around the table at a rate of only 5.5
+cycles per second. The frequencies of the waveform will be 10, 27, 54 and
+81 times this 5.5 herz base, or, respectively, 55, 148.5, 297 and 445.5
+herz. The audible result, of course, will be identical to that produced
+by an oscillator wrapping around a table at 55 herz, with partial frequencies
+of 1., 2.7, 5.4 and 8.1, except that we have eliminated the discontinuity
+in the waveform.</P>
+<P>The second function in our score, used for notes 3 and 4, specifies partial
+frequencies of 21, 29, 91, 100, 161 and 170, which actually become frequency
+ratios of 2.1 , 2.9 , 9.1, 10., 16.1 and 17. These partials are <U>almost</U>, but not quite, harmonic. Therefore, even with no fundamental specified,
+this spectrum will produce a clearly defined pitch at the phantom fundamental
+frequency, but with amplitude beating resulting from the slight inharmonicity.</P>
+<P>Note, too, that because these two tables produce very complex waveshapes
+(since they include so many cycles of each partial), we have increased the
+table sizes from the customary 1024 to 2048. 4096 might produce even better
+audio quality.</P>
+
+<H4>Obtaining copies of the orchestra and score files examples</H4>
+<P>ECMC users can obtain copies of the orchestra and companion score
+files for all of the examples within this tutorial (such as <I>ex1-1, ex1-2</I>
+and <I>ex1-3</I> above)
+in either of two ways:
+<OL>
+<LI>If you are working in a shell window on one of the SGI systems:
+<UL>
+<LI> To obtain a listing of available orchestra ("instrument") files from
+this tutorial, type: <I>lsins</I>
+<LI> To copy one or more of these orchestra files into a file called <I>orch.orc</I>
+(which can be abbreviated simply as <I>orc</I>) within your current working Unix directory,
+use the ECMC <I>mko</I> ("<B>m</B>a<B>k</B>e <B>o</B>rchestra file") command:
+<CENTER><PRE><I>mko   filename(s)</I>
+Example:  <I>mko ex1-1</I></PRE></CENTER>
+<LI> To obtain a listing of available <I>score11</I> input files for the tutorial
+examples, type: <I>lsex</I>
+<LI> To display one or more of these <I>score11</I> input files, type
+<CENTER><PRE><I>getex   filename(s)</I>
+Example:  <I>getex  ex1-1</I></PRE></CENTER>
+<LI> To copy one or more of these <I>score11</I> input files into a file of your own,
+redirect the output:
+<CENTER><I>getex   filename(s) >  myfile</I></CENTER>
+For example, typing
+<CENTER><I>getex   ex1-1  ex1-2 ex1-3 >  chap1scores</I></CENTER>
+will copy the <I>score11</I> input files for tutorial examples <I>ex1-1, ex1-2</I> and
+<I>ex1-3</I> into a file called <I>chap1scores</I> within your current working Unix
+directory.
+</UL>
+<LI> If you are using <I>cecilia</I> to run <I>Csound</I> you can access orchestra
+and Csound (not <I>score11</I>) score files for all of the examples in this tutorial,
+as well as for <I>Eastman Csound Library</I> algorithms, by selecting
+<CENTER><I>File > New > ESMTutorial</I></CENTER>
+and then selecting the desired <I>orc/sco</I> module. Please consult the ECMC <I>help</I>
+file <I>cecilia</I> for details on setting up your <I>cecilia</I> environment
+to include these ECMC tutorial modules, as well as modules from the <I>Eastman
+Csound Library</I>, such as <I>marimba, samp</I> and <I>gran</I>.
+</OL>
+
+<HR>
+<H5>Assignment </H5>
+<P>1) Study and review the material in this chapter, and in the corresponding
+pages of the csound manual. Jot down any questions you have (before you
+forget them) and bring up these questions in the next class. Do this each
+week. </P>
+<P>2) Using the examples within this chapter as initial models, create two or three
+simple Csound orchestra files, and a few brief scores for these orchestras to
+play. Your scores should include functions using gen9 and gen10. Compile
+soundfiles from these orchestra and score files and play these soundfiles (or
+else run Csound in real-time mode)
+and make sure that you are getting what you expect. Be adventurous. </P>
+
+<CENTER><FONTSIZE="-2">Eastman Csound Tutorial: End of <I>Chapter 1</I></FONT></CENTER><BR>
+<A NAME="END"></A>
+<PRE>
+<HR><H5><A HREF="./chapter1.html"><FONT SIZE="+1">TOP</FONT> of this chapter</A>  -- <A HREF="chapter2.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 2)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</H5><HR></PRE>
+
+
+
+</BODY>
+</HTML>
+

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>delay1</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="delay.html" title="delay" />
+    <link rel="next" href="delayk.html" title="delayk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">delay1</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="delay.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="delayk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="delay1">
+      <a id="delay1"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDelay1" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">delay1</span>
+        </h2>
+        <p>delay1 — 
+      Delays an input signal by one sample.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3202984"></a>
+        <h2>Description</h2>
+        <p>
+      Delays an input signal by one sample.
+   </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3203705"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>delay1</strong></span> asig [, iskip]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3203724"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of delay-loop data space (see <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>). The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3203747"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>delay1</em></span> is a special form of delay that serves to delay the audio signal <span class="emphasis"><em>asig</em></span> by just one sample. It is thus functionally equivalent to the <a class="link" href="delay.html" title="delay"><em class="citetitle">delay</em></a> opcode but is more efficient in both time and space. This unit is particularly useful in the fabrication of generalized non-recursive filters.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3203777"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="delay.html" title="delay"><em class="citetitle">delay</em></a>,
+      <a class="link" href="delayr.html" title="delayr"><em class="citetitle">delayr</em></a>,
+      <a class="link" href="delayw.html" title="delayw"><em class="citetitle">delayw</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="delay.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="delayk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">delay </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> delayk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

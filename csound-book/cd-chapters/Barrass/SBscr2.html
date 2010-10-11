@@ -1,0 +1,109 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="GoLive CyberStudio 3">
+		<title>Underwaterlove</title>
+	</head>
+
+	<body bgcolor="white">
+		<font color="black">;///////////////////////////////////////////////////////////////////////////
+		<br>
+		;// stephen barrass<br>
+		;// bathtub.orc<br>
+		;// june 1997<br>
+		;//<br>
+		;//<br>
+		sr = 44100<br>
+		kr = 44100<br>
+		ksmps = 1<br>
+		nchnls = 1<br>
+		<br>
+		;///////////////////////////////////////////////////////////////////////////
+		<br>
+		; bubbles<br>
+		;<br>
+		<br>
+		instr 1<br>
+		<br>
+		; initialise ------------<br>
+		<br>
+		iamp = ampdb(p4)<br>
+		ihz = p5<br>
+		ihzlo = 0.8*ihz<br>
+		ibw = p6<br>
+		ibwlo = 0.8*ibw<br>
+		<br>
+		; control rate ------------<br>
+		kamp linseg 0, 0.003, 0, 0.007, iamp, p3-0.02, iamp, 0.01, 0<br>
+		; declick <br>
+		khz linseg ihzlo, p3, ihz<br>
+		kbw linseg ibwlo, p3, ibw<br>
+		<br>
+		; audio rate ------------<br>
+		ao0 randi khz, kbw, 0 ; noise source<br>
+		ao1 oscil kamp, ao0, 1<br>
+		<br>
+		; send it out<br>
+		out ao1<br>
+		<br>
+		endin<br>
+		<br>
+		;///////////////////////////////////////////////////////////////////////////
+		<br>
+		; ping<br>
+		;<br>
+		<br>
+		instr 2<br>
+		iamp = ampdb(p4)<br>
+		ihz = p5<br>
+		ihzlo = 0.8*ihz<br>
+		ibw = p6<br>
+		ibwlo = 0.5*ibw<br>
+		<br>
+		; control rate ------------<br>
+		kamp linseg 0, 0.01, iamp, 0.9, 0; declick <br>
+		khz linseg ihzlo, p3, ihz<br>
+		kbw linseg ibw, p3, ibwlo<br>
+		<br>
+		; audio rate ------------<br>
+		ao0 randi 80, kbw, 0 ; noise source<br>
+		ao1 oscil kamp, khz+ao0, 1<br>
+		<br>
+		; send it out<br>
+		out ao1<br>
+		<br>
+		endin<br>
+		<br>
+		;///////////////////////////////////////////////////////////////////////////
+		<br>
+		; calling<br>
+		;<br>
+		<br>
+		instr 3<br>
+		iamp = ampdb(p4)<br>
+		ihz = p5<br>
+		ihzlo = 0.5*ihz<br>
+		ibw = p6<br>
+		ibwlo = 0.5*ibw<br>
+		<br>
+		; control rate ------------<br>
+		kamp expseg 1, 0.01, iamp, p3-0.01, 1; declick <br>
+		khz expseg 100, 0.1, ihz, p3-0.1, ihzlo<br>
+		kbw linseg ibwlo, p3, ibw<br>
+		<br>
+		; audio rate ------------<br>
+		ao0 rand kbw ; noise source<br>
+		ao1 oscili kamp, khz+ao0, 1<br>
+		ao2 reverb ao1, 0.3, 1<br>
+		ao3 delay ao2*0.9, 0.05, 0 <br>
+		ao4 delay ao3*0.6, 0.9, 0 <br>
+		ao5 delay ao3*0.4, 1.8, 0 <br>
+		; send it out<br>
+		out ao2+ao3+ao4+ao5<br>
+		<br>
+		endin<br>
+		</font> 
+	</body>
+
+</html>

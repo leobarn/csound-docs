@@ -1,0 +1,126 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:p="urn:schemas-microsoft-com:office:powerpoint"
+xmlns:oa="urn:schemas-microsoft-com:office:activation"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=PowerPoint.Slide>
+<meta name=Generator content="Microsoft PowerPoint 11">
+<link id=Main-File rel=Main-File href="../The%20Csound%20Utilities.htm">
+<link rel=Preview href=preview.wmf>
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+p\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+v\:textbox {display:none;}
+</style>
+<![endif]-->
+<title>Two-step Processing in Csound</title>
+<meta name=Description content="11/19/2006: Syntax of convolve">
+<link rel=Stylesheet href="master08_stylesheet.css">
+<![if !ppt]>
+<style media=print>
+<!--.sld
+	{left:0px !important;
+	width:6.0in !important;
+	height:4.5in !important;
+	font-size:107% !important;}
+-->
+</style>
+<script src=script.js></script><script><!--
+if( !IsNts() ) Redirect( "PPTSld" );
+//--></script><!--[if vml]><script>g_vml = 1;
+</script><![endif]--><![endif]><o:shapelayout v:ext="edit">
+ <o:idmap v:ext="edit" data="48"/>
+</o:shapelayout>
+</head>
+
+<body lang=EN-US style='margin:0px;background-color:black'
+onclick="DocumentOnClick()" onresize="_RSW()" onload="LoadSld()"
+onkeypress="_KPH()">
+
+<div id=SlideObj class=sld style='position:absolute;top:0px;left:0px;
+width:534px;height:400px;font-size:16px;background-color:white;clip:rect(0%, 101%, 101%, 0%);
+visibility:hidden'><p:slide coordsize="720,540"
+ colors="#ffffff,#003366,#003366,#006666,#99cc99,#33cccc,#666699,#cc99ff"
+ masterhref="master08.xml">
+ <p:shaperange href="master08.xml#_x0000_s1025"/><![if !ppt]><p:shaperange
+  href="master08.xml#_x0000_s1046"/><![if !vml]><img border=0
+ v:shapes="_x0000_s1046,_x0000_s1027,_x0000_s1028,_x0000_s1029"
+ src="master08_image001.gif" style='position:absolute;top:0%;left:0%;
+ width:64.41%;height:100.5%'><![endif]><p:shaperange
+  href="master08.xml#_x0000_s1037"/><p:shaperange
+  href="master08.xml#_x0000_s1038"/><p:shaperange
+  href="master08.xml#_x0000_s1045"/><![if !vml]><img border=0
+ v:shapes="_x0000_s1045,_x0000_s1036,_x0000_s1044" src="master08_image002.gif"
+ style='position:absolute;top:29.0%;left:2.43%;width:81.08%;height:5.0%'><![endif]><![endif]><p:shaperange
+  href="master08.xml#_x0000_m1031"/><v:shape id="_x0000_s49154" type="#_x0000_m1031"
+  style='position:absolute;left:1in;top:60pt;width:630pt;height:90pt'
+  o:userdrawn="f">
+  <v:fill o:detectmouseclick="f"/>
+  <v:stroke o:forcedash="f"/>
+  <o:lock v:ext="edit" text="f"/>
+  <p:placeholder type="title"/></v:shape><p:shaperange
+  href="master08.xml#_x0000_m1032"/><v:shape id="_x0000_s49155" type="#_x0000_m1032"
+  style='position:absolute;left:1in;top:258pt;width:630pt;height:234pt'
+  o:userdrawn="f">
+  <v:fill o:detectmouseclick="f"/>
+  <v:stroke o:forcedash="f"/>
+  <o:lock v:ext="edit" text="f"/>
+  <p:placeholder type="body" position="1"/></v:shape><v:shapetype id="_x0000_t202"
+  coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe">
+  <v:stroke joinstyle="miter"/>
+  <v:path gradientshapeok="t" o:connecttype="rect"/>
+ </v:shapetype><v:shape id="_x0000_s49156" type="#_x0000_t202" style='position:absolute;
+  left:78pt;top:210pt;width:525.125pt;height:36pt;mso-wrap-style:none;
+  mso-wrap-distance-left:0;mso-wrap-distance-right:0;v-text-anchor:top-baseline'
+  filled="f" fillcolor="#9c9 [4]" stroked="f" strokecolor="#036 [1]">
+  <v:fill color2="white [0]"/>
+  <v:shadow color="#036 [2]"/>
+  <v:textbox style='mso-fit-shape-to-text:t'/>
+ </v:shape>
+ <div v:shape="_x0000_s49154" class=T style='position:absolute;top:19.75%;
+ left:11.04%;width:85.58%;height:7.75%'>Syntax of <b><i>convolve</i></b><span
+ style='mso-special-format:lastCR;display:none'>&#13;</span></div>
+ <div v:shape="_x0000_s49155" class=B>
+ <div style='position:absolute;top:48.75%;left:11.04%;width:85.58%;height:5.25%'><span
+ style='position:absolute;top:0%;left:4.37%;width:95.62%;height:100.0%'><span
+ style='font-size:86%'><span class=BB style='position:absolute;left:-4.57%;
+ top:.3em'>l</span></span><span style='font-size:86%'>ain = input (e</span><span
+ style='font-size:86%'><i>xcitation</i></span><span style='font-size:86%'>)
+ signal&#13;</span></span></div>
+ <div style='position:absolute;top:55.0%;left:11.04%;width:85.58%;height:5.25%'><span
+ style='position:absolute;top:0%;left:4.37%;width:95.62%;height:100.0%'><span
+ style='font-size:86%'><span class=BB style='position:absolute;left:-4.57%;
+ top:.3em'>l</span></span><span style='font-size:86%'>ifilcod = convolve.#<span
+ style='mso-spacerun:yes'>  </span>or “filename”&#13;</span></span></div>
+ <div style='position:absolute;top:61.5%;left:11.04%;width:85.58%;height:5.25%'><span
+ style='position:absolute;top:0%;left:4.37%;width:95.62%;height:100.0%'><span
+ style='font-size:86%'><span class=BB style='position:absolute;left:-4.57%;
+ top:.3em'>l</span></span><span style='font-size:86%'>ichannel = optional
+ channel specifier&#13;</span></span></div>
+ <div style='position:absolute;top:68.0%;left:11.04%;width:96.06%;height:5.25%'><span
+ style='position:absolute;top:0%;left:3.89%;width:96.1%;height:100.0%'><span
+ style='font-size:86%'><span class=BB style='position:absolute;left:-4.05%;
+ top:.3em'>l</span></span><span style='font-size:86%'>Note: output will be
+ delayed by length of impulse file&#13;</span></span></div>
+ <span style='position:absolute;top:74.25%;left:14.79%;width:94.75%;height:
+ 5.25%'><span style='font-size:86%'><span class=BB style='position:absolute;
+ left:-3.95%;top:.3em'>l</span></span><span style='font-size:86%'>Delay the
+ input “dry” signal by this amount if you wish </span></span><span
+ style='position:absolute;top:79.5%;left:14.79%;width:81.83%;height:5.25%'><span
+ style='font-size:86%'>to align it with the “wet” signal from convolve</span></span></div>
+ <div v:shape="_x0000_s49156" class=O style='position:absolute;top:39.75%;
+ left:11.79%;width:92.13%;height:5.25%'><span style='font-family:"Arial Unicode MS";
+ color:black'>ar1[, ar2[, ar3[, ar4]]] </span><span style='font-family:"Arial Unicode MS";
+ color:black'><b>convolve</b></span><span style='font-family:"Arial Unicode MS";
+ color:black'> ain, ifilcod, ichannel </span></div>
+</p:slide></div>
+
+</body>
+
+</html>

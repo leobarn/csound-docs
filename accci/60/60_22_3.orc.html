@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>60_22_3.orc.html</title>
+<meta name="FORMATTER" content="Microsoft FrontPage 2.0">
+</head>
+
+<body stylesrc="../admin/adporc.html"
+background="../admin/AccciDefaultBackground.gif"
+bgcolor="#FFFFFF">
+
+<pre>; ************************************************************************
+; ACCCI:      60_22_3.ORC
+; synthesis:  phase vocoder(60)
+;             ktimpnt variable(22)
+;             pointer control by LFO, santur1.pv1(3)
+; coded:      jpg 12/93
+
+
+sr = 44100
+kr  =  441
+ksmps= 100
+nchnls = 1
+
+
+instr 1; *****************************************************************
+idur    = p3
+ifildur = 5   ; original audio file length
+
+   ktimpnt   oscil  ifildur/20, .25, 1, .75
+   ktimpnt   =      ktimpnt + ifildur/2
+   aout      pvoc   ktimpnt, 1.0, &quot;santur1.pv1&quot;
+             out    aout
+endin
+</pre>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>partikkelsync</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="partikkel.html" title="partikkel" />
+    <link rel="next" href="passign.html" title="passign" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">partikkelsync</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="partikkel.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="passign.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="partikkelsync">
+      <a id="partikkelsync"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPartikkelsync" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">partikkelsync</span>
+        </h2>
+        <p>partikkelsync —  Outputs <span class="emphasis"><em>partikkel</em></span>'s grain
+      scheduler clock pulse and phase to synchronize several instances of the <span class="emphasis"><em>partikkel</em></span>
+      opcode to the same clock source.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3463465"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>partikkelsync</em></span> is an opcode for outputting <a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a>'s grain scheduler clock pulse and phase. <span class="emphasis"><em>partikkelsync</em></span>'s output can be used to synchronize other instances of the <a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a> opcode to the same clock.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3464109"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">async [,aphase] <span class="command"><strong>partikkelsync</strong></span> iopcode_id</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3464127"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iopcode_id</em></span> -- the opcode id, linking an
+      instance of <a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a> to an instance of <span class="emphasis"><em>partikkelsync</em></span>. 
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3464154"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>async</em></span> -- trigger pulse signal. 
+      Outputs trigger pulses synchronized to a <span class="emphasis"><em>partikkel</em></span> opcode's grain scheduler clock. 
+      One trigger pulse is generated for each grain started in the <span class="emphasis"><em>partikkel</em></span> opcode with the same <span class="emphasis"><em>opcode_id</em></span>.
+      The normal usage would be to send this signal to another <span class="emphasis"><em>partikkel</em></span> opcode's <span class="emphasis"><em>async</em></span> input to 
+      synchronize several instances of <span class="emphasis"><em>partikkel</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>aphase</em></span> -- clock phase. 
+      Outputs a linear ramping phase signal. Can be used e.g. for softsynchronization, or just as a phase generator ala <span class="emphasis"><em>phasor</em></span>.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3464208"></a>
+        <h2>See Also</h2>
+        <p><a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3464225"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Thom Johansen</td>
+          </tr>
+          <tr>
+            <td>Author: Torgeir Strand Henriksen</td>
+          </tr>
+          <tr>
+            <td>Author: Øyvind Brandtsegg</td>
+          </tr>
+          <tr>
+            <td>April 2007</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.06</p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="partikkel.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="passign.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">partikkel </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> passign</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

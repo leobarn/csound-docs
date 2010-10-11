@@ -1,0 +1,35 @@
+<xml xmlns:v="urn:schemas-microsoft-com:vml"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:p="urn:schemas-microsoft-com:office:powerpoint">
+ <p:presentation>
+  <p:master id="4" type="main" href="master04.htm" xmlhref="master04.xml"
+   template="Blue Diagonal" layout="title_body"
+   slots="title,body,dateTime,footer,slideNumber">
+   <p:schemes>
+    <p:colorscheme
+     colors="#0066FF,#FFFFFF,#000000,#FFFF00,#00CCCC,#FF33CC,#FF4568,#CCECFF"/>
+    <p:colorscheme
+     colors="#9999FF,#000000,#FFFFFF,#6600FF,#CCCCFF,#FF99FF,#00CC66,#CCECFF"/>
+    <p:colorscheme
+     colors="#FFFFFF,#000000,#CBCBCB,#000000,#DDDDDD,#B2B2B2,#4D4D4D,#777777"/>
+    <p:colorscheme
+     colors="#990066,#FFFFFF,#000000,#FFFF00,#996633,#CC6600,#999933,#CCCCFF"/>
+   </p:schemes>
+  </p:master>
+  <p:master id="5" type="title" href="master05.htm" xmlhref="master05.xml"
+   layout="title_subtitle"
+   slots="centerTitle,subTitle,dateTime,footer,slideNumber"/>
+  <p:slide id="1" href="slide0001.htm" layout="title_body" slots="title,body"/>
+  <p:slide id="2" href="slide0002.htm" layout="title_body" slots="title,body"/>
+  <p:slide id="3" href="slide0003.htm" layout="title_body" slots="title,body"/>
+  <p:slide id="4" href="slide0004.htm" layout="title_body" slots="title,body"/>
+  <p:viewstate type="slideView" slidehref="slide0002.htm"/>
+  <p:font name="Times New Roman" charset="0" type="4"/>
+  <p:font name="Wingdings" charset="2" type="4" family="2"/>
+  <p:headersfooters noheader="t"/>
+  <p:pptdocumentsettings framecolors="WhiteTextOnBlack" hideslideanimation="t"/>
+ </p:presentation>
+ <o:shapedefaults v:ext="edit" spidmax="30722" style='mso-wrap-style:none'>
+  <v:stroke startarrowwidth="narrow" startarrowlength="short" endarrowwidth="narrow"
+   endarrowlength="short" color2="none [0]" weight="1pt" endcap="square"/>
+ </o:shapedefaults></xml>

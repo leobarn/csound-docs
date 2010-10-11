@@ -1,0 +1,193 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>sar.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* sar.c */
+/* store and retrieve datafields */
+
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/param.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs */
+
+<A NAME="load">void load(int what)</A>
+{
+&#9;FILE *fp;
+&#9;int i, np=PA_NUMPARAMS, spp=PA_SPECPOI, tpp=PA_FULLPLEXPOI;
+&#9;char filename[MAX_PATHLEN+MAX_FNLEN], *fn;
+&#9;
+&#9;if(what&gt;=ASCF) {
+&#9;&#9;printf("\n; This program doesn't load that type of datafield.\n");
+&#9;&#9;getack();
+&#9;&#9;return;
+&#9;}
+&#9;strcpy(filename, PA_PATH);
+&#9;strcat(filename, get_filename(what, BIN));
+&#9;fn=filename;
+&#9;&#9;
+&#9;if((fp=tryopen(fp, fn, "rb"))==NULL) return;
+
+&#9;init(what, 0);
+&#9;init(PARS, ALL);
+
+&#9;if(what==MINSPEC)
+&#9;&#9;if(wh("Does file have alternate number of parameters in header (y/[n])", "ny")==2) {
+&#9;&#9;&#9;printf("; How many? ");
+&#9;&#9;&#9;scanf("%i", &amp;np);
+&#9;&#9;}
+
+&#9;for(i=0; i&lt;np; i++) {
+&#9;&#9;if(fread(&amp;dpa[i], sizeof(pars), 1, fp)!=1) {
+&#9;&#9;&#9;if(feof(fp)) break;
+&#9;&#9;&#9;printf("\n; error reading parameters for %s\n", filename);
+&#9;&#9;&#9;getack();
+&#9;&#9;&#9;return;
+&#9;&#9;}
+&#9;}
+&#9;
+&#9;PA_NUMPARAMS=dpa[0].i;
+&#9;PA_SPECPOI=spp;
+&#9;PA_FULLPLEXPOI=tpp;
+&#9;&#9;&#9;&#9;&#9;&#9;
+&#9;if(what==MINSPEC) {
+&#9;&#9;if((PA_SPECPOI=np=readlist(fp, fn, specxy, 0, MAX_POI))==0) return;
+&#9;&#9;GOT_MINSPEC=YES;
+&#9;&#9;copy_specxy();
+&#9;}
+
+&#9;if(what==SPECPLEX) {
+&#9;&#9;if((PA_SPECPOI=np=readplex(fp, fn, specplex, 0, MAX_POI))==0) return;
+&#9;&#9;GOT_SPECPLEX=YES;
+&#9;}
+&#9;&#9;&#9;
+&#9;if(what==FULLPLEX) {
+&#9;&#9;if((PA_FULLPLEXPOI=np=readplex(fp, fn, fullplex, 0, MAX_POI))==0) return;
+&#9;&#9;GOT_FULLPLEX=YES;
+&#9;}
+
+&#9;fclose(fp);
+&#9;printf("\n; Successfully loaded %s.\n", fn);
+&#9;if(PA_FULLPLEXPOI&gt;0) getmaxmin(fullplex, PA_FULLPLEXPOI);
+&#9;else getmaxmin(specplex, PA_SPECPOI);
+&#9;if(what!=PARS)
+&#9;&#9;printf("; (%i points: xmax=%.2f, xmin=%.2f, ymax=%.2f, ymin=%.2f)\n",
+&#9;&#9;np, PA_XMAX, PA_XMIN, PA_YMAX, PA_YMIN);
+}
+
+<A NAME="write">void write(int what, int which)</A>
+{
+&#9;FILE *fp;
+&#9;int i, np;
+&#9;char filename[MAX_PATHLEN+MAX_FNLEN], *fn;
+&#9;
+&#9;if(what&gt;MRSCO) return;
+&#9;strcpy(filename, PA_PATH);
+&#9;strcat(filename, get_filename(what, which));
+&#9;fn=filename;
+&#9;
+&#9;printf("\n; Writing datafield...\n");
+&#9;
+&#9;if(what==ASCF) return;
+&#9;
+&#9;if(which==TXT) {
+&#9;&#9;if((fp=tryopen(fp, fn, "w"))==NULL) return;
+&#9;&#9;display(PARS, fp);
+&#9;&#9;if(what!=PARS) display(what, fp);
+&#9;}
+
+&#9;else {
+&#9;&#9;
+&#9;&#9;if((fp=tryopen(fp, fn, "wb"))==NULL) return;
+&#9;&#9;for(i=0; i&lt;PA_NUMPARAMS; i++)
+&#9;&#9;&#9;if(fwrite(&amp;dpa[i], sizeof(pars), 1, fp)!=1) {
+&#9;&#9;&#9;&#9;printf("\n; error writing %s\n", filename);
+&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;&#9;return;
+&#9;&#9;&#9;}
+
+&#9;&#9;if(what==MINSPEC)
+&#9;&#9;&#9;if(writelist(fp, fn, specxy, 0, PA_SPECPOI)==0) {
+&#9;&#9;&#9;&#9;printf("\n; error in loading file");
+&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;&#9;return;
+&#9;&#9;&#9;}
+&#9;&#9;if(what==SPECPLEX)
+&#9;&#9;&#9;if(writeplex(fp, fn, specplex, 0, PA_SPECPOI)==0){
+&#9;&#9;&#9;&#9;printf("\n; error in loading file");
+&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;&#9;return;
+&#9;&#9;&#9;}
+&#9;&#9;if(what==FULLPLEX)
+&#9;&#9;&#9;if(writeplex(fp, fn, fullplex, 0, PA_FULLPLEXPOI)==0){
+&#9;&#9;&#9;&#9;printf("\n; error in loading file");
+&#9;&#9;&#9;&#9;getack();
+&#9;&#9;&#9;&#9;return;
+&#9;&#9;&#9;}
+&#9;}
+
+&#9;printf("...done.\n");
+&#9;fclose(fp);
+}
+
+<A NAME="tryopen">FILE *tryopen(FILE *fp, char *filename, char *mode)</A>
+{
+&#9;if((fp=fopen(filename, mode))==NULL) {
+&#9;&#9;printf("; cannot open %s\n", filename);
+&#9;&#9;getack();
+&#9;}
+&#9;return fp;
+}
+
+<A NAME="readlist">int readlist(FILE *fp, char *name, clist *fld, int beg, int end)</A>
+{
+&#9;int np;
+&#9;for(np=beg; np&lt;end; np++)
+&#9;&#9;if(fread(&amp;fld[np], sizeof(clist), 1, fp)!=1) {
+&#9;&#9;&#9;if(feof(fp)) break;
+&#9;&#9;&#9;printf("\n; error reading %s\n", name);
+&#9;&#9;&#9;getack();
+&#9;&#9;&#9;return 0;
+&#9;&#9;}
+&#9;return np;
+}
+
+<A NAME="readplex">int readplex(FILE *fp, char *name, cplex *fld, int beg, int end)</A>
+{
+&#9;int np;
+&#9;for(np=beg; np&lt;end; np++)
+&#9;&#9;if(fread(&amp;fld[np], sizeof(cplex), 1, fp)!=1) {
+&#9;&#9;&#9;if(feof(fp)) break;
+&#9;&#9;&#9;printf("\n; error reading %s\n", name);
+&#9;&#9;&#9;getack();
+&#9;&#9;&#9;return 0;
+&#9;&#9;}
+&#9;return np;
+}
+
+<A NAME="writelist">int writelist(FILE *fp, char *name, clist *fld, int beg, int end)</A>
+{
+&#9;int i;
+&#9;for(i=beg; i&lt;end; i++)
+&#9;&#9;if(fwrite(&amp;fld[i], sizeof(clist), 1, fp)!=1) {
+&#9;&#9;&#9;printf("\n; error writing %s\n", name);
+&#9;&#9;&#9;getack();
+&#9;&#9;&#9;return 0;
+&#9;&#9;}
+&#9;return 1;
+}
+
+<A NAME="writeplex">int writeplex(FILE *fp, char *name, cplex *fld, int beg, int end)</A>
+{
+&#9;int i;
+&#9;for(i=beg; i&lt;end; i++)
+&#9;&#9;if(fwrite(&amp;fld[i], sizeof(cplex), 1, fp)!=1) {
+&#9;&#9;&#9;printf("\n; error writing %s\n", name);
+&#9;&#9;&#9;getack();
+&#9;&#9;&#9;return 0;
+&#9;&#9;}
+&#9;return 1;
+}</PRE></BODY>
+</HTML>

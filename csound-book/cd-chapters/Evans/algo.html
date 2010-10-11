@@ -1,0 +1,172 @@
+<html>
+
+	<head>
+		<title>Hearing the Mandelbrot Set (fractal music with Csound)</title>
+	</head>
+
+	<body bgcolor="#ffffff">
+		<table width="600" border="0" cellspacing="0" cellpadding="0">
+			<td width="175" align="RIGHT"><img src="space.gif" vspace="49"><br>
+				<font size="2"><b>contents</b></td>
+			<td width="20"><img src="space.gif"></td>
+			<td width="405" align="LEFT"><font size="5">Hearing the Mandelbrot Set<br>
+				(fractal music with Csound) <font size="2"><br>
+				<img src="space.gif" vspace="6"><br>
+				<a href="bio.html">Brian Evans</a><br>
+				<a href="http://www.lightspace.com">lightspace Studios</a><br>
+				<a href="mailto:brian@lightspace.com">brian@lightspace.com</a><br>
+				<img src="space.gif" vspace="8"><font size="3"></td>
+		</table>
+		<table width="600" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="195" valign="TOP">
+					<table width="175" border="0" align="LEFT" cellspacing="0" cellpadding="0">
+						<tr align="RIGHT">
+							<td><a href="intro.html">Introduction</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><font size="4"><b>The Basic Algorithm</b><font size="3"></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="calcscore.html">Calculating a Score</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><font size="2">(sonic line vs image plane)<img src="space.gif" hspace="5"><font size="3"></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="mapping.html">Simple Mapping with Csound</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="range.html">Pitch Range and Event Length</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="thoughts.html">Final Thoughts</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="refs.html">References</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><img src="space.gif" vspace="5"></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="sources.html">Code/Sound Examples</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="calcscript.html">Create a Score!</a></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><img src="space.gif" vspace="5"></td>
+						</tr>
+						<tr align="RIGHT">
+							<td><a href="images.html">Misc. Images</a></td>
+						</tr>
+					</table>
+				</td>
+				<td width="405">
+					<table width="405" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td width="405" align="LEFT" valign="TOP">The Mandelbrot Set exists in the abstract world of the complex number plane. This plane can be thought of as a two-dimensional grid that can be easily graphed on the Cartesian coordinate plane. Complex numbers have two parts, notated in the form <i>x</i>+<i>yi</i> with <i>x</i> being a real number component and <i>yi</i> being imaginary. The real number component can be placed on the real number line and so plotted on the horizontal x-axis of the a two-dimensional (2D) graph.
+								<p>Imaginary numbers come from the equation
+								<p>
+								<center>
+									<i>i</i>^2=-1 or <i>i</i> = sqrt(-1)</center>
+								<p>When a real number is squared it always gives a positive result thus there is no real number whose square root is -1. So i does not exist on the real number line and is called imaginary. Imaginary numbers are usually denoted as the product of a real number and <i>i</i> in the form <i>iy</i> or <i>yi</i>. For example
+								<p>
+								<center>
+									sqrt(-4) = sqrt(4) * sqrt(-1) = 2<i>i</i></center>
+								<p>The imaginary part of a complex number is plotted along the vertical y-axis of a 2D graph. The complex number <i>x</i>+<i>yi</i> can be then represented as the ordered pair (<i>x</i>,<i>y</i>) and plotted on a 2D graph representing the complex plane.
+								<p>Given a complex number <i>z</i> such that
+								<p>
+								<center>
+									<i>z</i>= <i>x</i>+<i>yi</i></center>
+								<p>the magnitude of <i>z</i>, written |<i>z</i>|, is defined as
+								<p>
+								<center>
+									|<i>z</i>| = sqrt(<i>x</i>^2+<i>y</i>^2)</center>
+								<p>This is an application of the Pythagorean theorem and describes the length of the line plotted from the origin of the graph (0,0) to (<i>x</i>,<i>y</i>). See Figure 1.
+								<blockquote>
+									<center>
+										<img src="figure1.gif"></center>
+									<font size="2"><b>Figure 1:</b> A plot of the complex number <i>z</i> represented as <i>x</i>+<i>yi</i> (<i>x</i>,<i>y</i>) on the complex plane. The magnitude of <i>z</i> (|<i>z</i>|=sqrt(<i>x</i>^2+<i>y</i>^2) is also shown.<font size="3"></blockquote>
+								The Mandelbrot set is defined by the simple recursive formula
+								<p>
+								<center>
+									<i>z</i>[<code>n+1</code>] = <i>z</i>[<code>n</code>]^2 + <img src="lambda.gif"></center>
+								<p>Where <i>z</i> is set initially to zero (0+0<i>i</i>) and <img src="lambda.gif"> is a complex number (in the form <i>x</i>+<i>iy</i> as the ordered pair (<i>x</i>,<i>y</i>) defining the point on the complex plane that is under investigation. The variable <code>n</code> is the counter in a recursive loop that determines the number of times this formula is repeated, starting with <code>n</code>=0 and ending at a maximum count value we will specify.
+								<p>Using this function we find that there are points on the plane that exert a gravitational pull of sorts on the points around them. By using the above formula we can continually test to see if the point under investigation ever &quot;escapes&quot; from all of the points of attraction, and if so the counter value <code>n</code> tells us when. By testing for the magnitude of <i>z</i> (|<i>z</i>|) in each pass through the loop we determine that a point escapes when the magnitude reaches two or greater. (As this is a self-squaring process once a number reaches two it will run out quickly to infinity.) We choose a maximum count for <code>n</code> and assume that if the point under investigation has not reached two and escaped after <code>n</code> iterations then it probably never will.
+								<p>The basic algorithm, with <img src="lambda.gif"> equal to the point under investigation is
+								<blockquote>
+									<pre>
+
+
+
+	let n = zero (the iteration count begins at 0)
+	let z = 0
+	let MAX = max iteration count (how long do we loop?)
+	begin loop
+	    z[n+1] = z[n]^2 + <img src="lambda.gif">
+	    n=n+1
+	continue until n&gt;MAX or |z|&gt;=2
+	return n
+</pre>
+								</blockquote>
+								If <code>n</code> becomes greater than the maximum iteration count specified then the point under consideration did not escape. If the loop is exited before the maximum iteration count then <code>n</code> represents the time in the process when the point escaped. It is these values of <code>n</code> for points on the complex plane, when mapped into color, that create the images of the <a href="images.html">Mandelbrot set</a> with which we are familiar. These <code>n</code> values can also used to create music by mapping the numbers into musical dimensions.
+								<p>To choose a window on the complex plane to investigate we define the parameters of the window as its midpoint <code>(xMid, yMid)</code> and the window size <code>(WindowSize)</code>. The pseudo code for the program that generated the image in <a href="images/figure2.html">Figure 2</a> is seen below.
+								<p>
+								<blockquote>
+									<pre>
+
+
+
+define xMid = .3515
+define yMid = .4204
+define WindowSize = .001
+define MaxIteration = 255
+
+define xResolution = 320
+define yResolution = 320
+
+xStart = xMid-.5*WindowSize
+yStart = yMid-.5*WindowSize
+xIncrement = WindowSize/xResolution
+yIncrement = WindowSize/yResolution
+
+for (yCounter=0; yCounter &lt; yResolution; ++yCounter){
+    LamdaImag = yStart + yIncrement*yCount
+
+    for (xCounter=0; xCounter&lt; xResolution; ++xCounter){
+        LamdaReal=xStart + xIncrement*xCounter
+        x = 0.0
+        y = 0.0
+
+        for (n=0; n &lt; MaxInteration; ++n){
+            /** 
+            (x +iy)^2 is calcated and the real
+            and imaginary parts separated
+            **/
+            xNew = x^2 - y^2 + LamdaReal
+            yNew = 2*x*y + LamdaImag
+            x=xNew
+            y=yNex
+
+            /**
+            testing for 4 instead of 2 here saves a                 
+            square root calculation
+            **/
+            if ((x^2+y^2)&gt;= 4) break;
+        }
+        plot(n)
+    }
+}
+</pre>
+								</blockquote>
+								<p>It is beyond the scope of this article to give more than a cursory discussion of the Mandelbrot Set. For a more detailed discussion of fractals and the Mandelbrot Set see [<a href="refs.html#ref4">4</a>] [<a href="refs.html#ref5">5</a>] [<a href="refs.html#ref6">6</a>].</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<br>
+	</body>
+
+</html>

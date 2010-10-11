@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ftmorf</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ftlptim.html" title="ftlptim" />
+    <link rel="next" href="ftsave.html" title="ftsave" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ftmorf</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ftlptim.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ftsave.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="ftmorf">
+      <a id="ftmorf"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFtmorf" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ftmorf</span>
+        </h2>
+        <p>ftmorf — 
+       Morphs between multiple ftables as specified in a list.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3311832"></a>
+        <h2>Description</h2>
+        <p>
+      Uses an index into a table of ftable numbers to morph between adjacent tables in the list.This morphed function is written into the table referenced by <span class="emphasis"><em>iresfn</em></span> on every k-cycle.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3312720"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>ftmorf</strong></span> kftndx, iftfn, iresfn</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3312736"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iftfn</em></span> -- The ftable function. The list of values are expected to be pre-existing ftable numbers.
+    </p>
+        <p>
+      <span class="emphasis"><em>iresfn</em></span> -- Table number of the morphed function
+    </p>
+        <p>
+      The length of all the tables in <span class="emphasis"><em>iftfn</em></span> must equal the length of <span class="emphasis"><em>iresfn</em></span>.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3312774"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kftndx</em></span> -- the index into the <span class="emphasis"><em>iftfn</em></span> table.
+    </p>
+        <p>
+      If <span class="emphasis"><em>iftfn</em></span> contains (6, 4, 6, 8, 7, 4):
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" type="disc">
+            <li class="listitem">
+              <p>
+            <span class="emphasis"><em>kftndx=4</em></span> will write the contents of f7 into <span class="emphasis"><em>iresfn</em></span>.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            <span class="emphasis"><em>kftndx=4.5</em></span> will write the average of the contents of f7 and f4 into <span class="emphasis"><em>iresfn</em></span>.
+          </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3312833"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ftmorf opcode. It uses the file <a class="ulink" href="examples/ftmorf.csd" target="_top"><em class="citetitle">ftmorf.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="id3312850"></a>
+          <p class="title">
+            <b>Example 220. Example of the ftmorf opcode.</b>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in</span>
+-odac           -iadc    <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o ftmorf.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">kr</span> <span class="op">=</span> 4410
+<span class="ohdr">ksmps</span> <span class="op">=</span> 10
+<span class="ohdr">nchnls</span> <span class="op">=</span> 1
+
+<span class="oblock">instr</span> 1
+kndx    <span class="opc">line</span>    0, p3, 7
+        <span class="opc">ftmorf</span>  kndx, 1, 2
+asig    <span class="opc">oscili</span>  30000, 440, 2
+        <span class="opc">out</span>     asig
+<span class="oblock">endin</span>
+
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+
+<span class="stamnt">f</span>1 0 8 -2 3 4 5 6 7 8 9 10
+<span class="stamnt">f</span>2 0 1024 10 1 /*contents o<span class="stamnt">f</span> <span class="stamnt">f</span>2 dont matter */
+<span class="stamnt">f</span>3 0 1024 10 1
+<span class="stamnt">f</span>4 0 1024 10 0 1
+<span class="stamnt">f</span>5 0 1024 10 0 0 1
+<span class="stamnt">f</span>6 0 1024 10 0 0 0 1
+<span class="stamnt">f</span>7 0 1024 10 0 0 0 0 1
+<span class="stamnt">f</span>8 0 1024 10 0 0 0 0 0 1
+<span class="stamnt">f</span>9 0 1024 10 0 0 0 0 0 0 1
+<span class="stamnt">f</span>10 0 1024 10 1 1 1 1 1 1 1
+
+<span class="stamnt">i</span>1 0 10
+<span class="stamnt">e</span>
+
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3312888"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: William <span class="quote">“<span class="quote">Pete</span>”</span> Moss</td>
+          </tr>
+          <tr>
+            <td>University of Texas at Austin</td>
+          </tr>
+          <tr>
+            <td>Austin, Texas USA</td>
+          </tr>
+          <tr>
+            <td>Jan. 2002</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 4.18</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ftlptim.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ftsave.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ftlptim </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ftsave</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

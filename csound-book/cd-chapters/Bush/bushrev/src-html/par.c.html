@@ -1,0 +1,151 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>par.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* par.c */
+/* initializations */
+
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs, prototypes */
+
+<A NAME="init">void init(int what, int which)</A>
+{
+&#9;int nu=0;
+&#9;
+&#9;if(what==PARS) {
+&#9;
+&#9;&#9;DEX("(number of parameters)");
+&#9;&#9;&#9;MOKI=INT+NO;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("working path");
+&#9;&#9;&#9;MOKI=FNAME+YES;
+&#9;&#9;&#9;ONLY_ON_ALL NAME_IS(DEF_PATH);
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("working parameters filename");
+&#9;&#9;&#9;MOKI=FNAME+YES;
+&#9;&#9;&#9;ONLY_ON_ALL NAME_IS(DEF_PARSFILE);
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("minspec filename");
+&#9;&#9;&#9;MOKI=FNAME+YES;
+&#9;&#9;&#9;ONLY_ON_ALL NAME_IS(DEF_MINSPECFILE);
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("specplex filename");
+&#9;&#9;&#9;MOKI=FNAME+YES;
+&#9;&#9;&#9;ONLY_ON_ALL NAME_IS(DEF_SPECPLEXFILE);
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("fullplex filename");
+&#9;&#9;&#9;MOKI=FNAME+YES;
+&#9;&#9;&#9;ONLY_ON_ALL NAME_IS(DEF_FULLPLEXFILE);
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("adsyn control filename");
+&#9;&#9;&#9;MOKI=FNAME+YES;
+&#9;&#9;&#9;ONLY_ON_ALL NAME_IS(DEF_ASCFFILE);
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("full sco filename");
+&#9;&#9;&#9;MOKI=FNAME+YES;
+&#9;&#9;&#9;ONLY_ON_ALL NAME_IS(DEF_FSCOFILE);
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("mr-sco filename");
+&#9;&#9;&#9;MOKI=FNAME+YES;
+&#9;&#9;&#9;if(which==ALL) NAME_IS(DEF_MRSCOFILE);
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("number of points in spec");
+&#9;&#9;&#9;MOKI=INT+NO;
+&#9;&#9;&#9;ONLY_ON_ALL PA_SPECPOI=0;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("number of points in fullplex");
+&#9;&#9;&#9;MOKI=INT+NO;
+&#9;&#9;&#9;ONLY_ON_ALL PA_FULLPLEXPOI=0;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("maximum x-value in spec/fullplex");
+&#9;&#9;&#9;MOKI=FLOAT+NO;
+&#9;&#9;&#9;ONLY_ON_ALL PA_XMAX=1000.00;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("minimum x-value in spec/fullplex");
+&#9;&#9;&#9;MOKI=FLOAT+NO;
+&#9;&#9;&#9;ONLY_ON_ALL PA_XMIN=0.00;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("maximum y-value in spec/fullplex");
+&#9;&#9;&#9;MOKI=FLOAT+NO;
+&#9;&#9;&#9;ONLY_ON_ALL PA_YMAX=1000.00;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("minimum y-value in spec/fullplex");
+&#9;&#9;&#9;MOKI=FLOAT+NO;
+&#9;&#9;&#9;ONLY_ON_ALL PA_YMIN=0.00;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("step increment thru fullplex (positive integer)");
+&#9;&#9;&#9;MOKI=INT+YES;
+&#9;&#9;&#9;PA_STEP=100;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("durational unit (in beats)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_DURUNIT=1.66;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("max./min. duration multiple/fraction (positive integer)");
+&#9;&#9;&#9;MOKI=INT+YES;
+&#9;&#9;&#9;PA_DURMF=6;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("maximum loudness (in dB)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_MAXDB=60;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("minimum loudness (in dB)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_MINDB=40;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("minimum [R] pitch (in register.decimal)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_MINPCH=5.50;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("maximum [R] pitch (in register.decimal)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_MAXPCH=11.00;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("maximum pitch wobble (in percent of pitch value: between 0 and 1)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_MAXWOB=.06;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("number of pitch-classes");
+&#9;&#9;&#9;MOKI=INT+YES;
+&#9;&#9;&#9;PA_NPC=12;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("minimum distance of sound events (in meters)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_MINDIST=2;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("maximum distance of sound events (in meters)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_MAXDIST=50;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("average reverb time (in seconds)");
+&#9;&#9;&#9;MOKI=FLOAT+YES;
+&#9;&#9;&#9;PA_RVBTIME=0.60;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;DEX("number of lines on terminal screen");
+&#9;&#9;&#9;MOKI=INT+YES;
+&#9;&#9;&#9;PA_TERMLINES=40;
+&#9;&#9;&#9;NEXT;
+&#9;&#9;SET_NUMPARAMS;&#9;
+&#9;}
+&#9;
+&#9;if(what==MINSPEC) {
+&#9;&#9;for(nu=0; nu&lt;MAX_POI; nu++) specxy[nu].x = specxy[nu].y = -1;
+&#9;&#9;PA_SPECPOI=0;
+&#9;}
+&#9;
+&#9;if(what==SPECPLEX) {
+&#9;&#9;for(nu=0; nu&lt;MAX_POI; nu++) specplex[nu].x = specplex[nu].y =
+&#9;&#9;  specplex[nu].hr = specplex[nu].hd = -1;
+&#9;&#9;PA_SPECPOI=0;
+&#9;}
+&#9;
+&#9;if(what==FULLPLEX) {
+&#9;&#9;for(nu=0; nu&lt;MAX_POI; nu++) fullplex[nu].x = fullplex[nu].y =
+&#9;&#9;  fullplex[nu].hr = fullplex[nu].hd = -1;
+&#9;&#9;PA_FULLPLEXPOI=0;
+&#9;}
+&#9;if(what==FSCO || what==MRSCO) printf("\n; No need to bother.");
+}</PRE></BODY>
+</HTML>

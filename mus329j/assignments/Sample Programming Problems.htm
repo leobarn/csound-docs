@@ -1,0 +1,231 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./Sample%20Programming%20Problems_files/filelist.xml">
+<title>Sample Programming Problems</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Russell Pinkston</o:Author>
+  <o:LastAuthor>Russell Pinkston</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>111</o:TotalTime>
+  <o:Created>2006-10-15T22:10:00Z</o:Created>
+  <o:LastSaved>2006-10-15T22:10:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>337</o:Words>
+  <o:Characters>1922</o:Characters>
+  <o:Company>Pink, Inc.</o:Company>
+  <o:Lines>16</o:Lines>
+  <o:Paragraphs>3</o:Paragraphs>
+  <o:CharactersWithSpaces>2360</o:CharactersWithSpaces>
+  <o:Version>9.6926</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:888882373;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1920297980 902572084 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l0:level1
+	{mso-level-text:"%1\)";
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;
+font-family:"Courier New"'>Sample Programming Problems<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;
+font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:.25in;
+margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo1;tab-stops:list .5in'><![if !supportLists]><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>1)<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span><![endif]><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>Make
+a simple <b>oscil</b> instrument that plays a 3-note chord for every note you
+specify in the score. Use p4 for the peak amplitude of the chord and p5 for the
+base pitch in PCH. Use p6 and p7 to specify an integer number of semitones
+above or below the base pitch that the 2<sup>nd</sup> and 3<sup>rd</sup> notes
+of the chord should play. (For example, to play a C major chord, which has the
+pitches C, E, G, p5 might be 8.00, p6 would be 4, and p7 would be 7.) Use the
+following score to test your instrument:<o:p></o:p></span></p>
+
+<pre class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>;oscil wave shape<o:p></o:p></span></pre>
+
+<pre class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>f01<span style='mso-tab-count:
+1'>     </span>0.000 <span style='mso-tab-count:1'>     </span>512<span
+style='mso-tab-count:1'>     </span>10<span style='mso-tab-count:1'>     </span>1000<span
+style='mso-tab-count:1'>     </span>250<span style='mso-tab-count:1'>     </span>111<span
+style='mso-tab-count:1'>     </span>63<span style='mso-tab-count:1'>     </span>40<span
+style='mso-tab-count:1'>     </span>27<o:p></o:p></span></pre>
+
+<pre class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span style='mso-tab-count:
+1'>        </span>20<span style='mso-tab-count:1'>         </span>15<span
+style='mso-tab-count:1'>      </span>12<span style='mso-tab-count:1'>     </span>10<span
+style='mso-tab-count:1'>       </span>8<span style='mso-tab-count:1'>       </span>7<span
+style='mso-tab-count:1'>       </span>6 <span style='mso-tab-count:1'>     </span>5<span
+style='mso-tab-count:1'>     </span> 4<o:p></o:p></span></pre>
+
+<pre class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>;<span style='mso-tab-count:
+1'>      </span>st<span style='mso-tab-count:1'>     </span>dur<span
+style='mso-tab-count:1'>   </span>amp<span style='mso-tab-count:1'>   </span>pch<span
+style='mso-tab-count:1'>      </span>sem1<span style='mso-tab-count:1'>  </span>sem2<o:p></o:p></span></pre>
+
+<pre class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>i01<span style='mso-tab-count:
+1'>     </span>0<span style='mso-tab-count:1'>     </span>2<span
+style='mso-tab-count:1'>     </span>15000<span style='mso-tab-count:1'> </span>7.07<span
+style='mso-tab-count:1'>     </span>7<span style='mso-tab-count:1'>     </span>15<o:p></o:p></span></pre>
+
+<pre class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>i01<span style='mso-tab-count:
+1'>     </span>+<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>     </span>.<span style='mso-tab-count:1'>     </span>8.02<span
+style='mso-tab-count:1'>     </span>-4<span style='mso-tab-count:1'>     </span>5<o:p></o:p></span></pre>
+
+<pre class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>i01<span style='mso-tab-count:
+1'>     </span>+<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>     </span>.<span style='mso-tab-count:1'>     </span>8.03<span
+style='mso-tab-count:1'>     </span>-3<span style='mso-tab-count:1'>     </span>4<o:p></o:p></span></pre>
+
+<pre class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>i01<span style='mso-tab-count:
+1'>     </span>+<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>     </span>.<span style='mso-tab-count:1'>     </span>8.02<span
+style='mso-tab-count:1'>     </span>-2<span style='mso-tab-count:1'>     </span>4<o:p></o:p></span></pre>
+
+<pre class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:.25in;
+margin-left:.5in'><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;
+font-family:"Courier New"'>i01<span style='mso-tab-count:1'>     </span>+<span
+style='mso-tab-count:1'>     </span>4<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>     </span>8.02<span style='mso-tab-count:1'>     </span>-4<span
+style='mso-tab-count:1'>     </span>5 <o:p></o:p></span></pre>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>2)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
+</span></span><![endif]><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;
+font-family:"Courier New"'>Make a monophonic FM instrument using <b>foscil</b>
+that maps the index of modulation to the peak amplitude, specified in dB in p4
+of the score. Assume that the amplitude range is from 10 dB to 90 dB, and make
+the index of modulation vary linearly from 1 to 5 over that range of
+amplitudes. The instrument should be able to play the following score:<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;
+font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>;single sine wave cycle
+for foscil<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>f01<span style='mso-tab-count:
+1'>     </span>0<span style='mso-tab-count:1'>     </span>10<span
+style='mso-tab-count:1'>     </span>1<span style='mso-tab-count:1'>    </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>;<span style='mso-tab-count:
+1'>     </span> st<span style='mso-tab-count:1'>     </span>dur<span
+style='mso-tab-count:1'>    </span>dbamp<span style='mso-tab-count:1'>  </span>pch<span
+style='mso-tab-count:1'>     </span>modfac carfac envrise envdec<span
+style='mso-tab-count:1'>    </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>i02<span style='mso-tab-count:
+1'>     </span>0<span style='mso-tab-count:1'>     </span>2<span
+style='mso-tab-count:1'>     </span>10<span style='mso-tab-count:1'>     </span>7.00<span
+style='mso-tab-count:1'>    </span>1<span style='mso-tab-count:1'>    </span><span
+style="mso-spacerun: yes">  </span>1<span style='mso-tab-count:1'>    </span><span
+style="mso-spacerun: yes">   </span>.25<span style='mso-tab-count:1'>  </span>
+.5<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>i02<span style='mso-tab-count:
+1'>     </span>+<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>     </span>30<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>i02<span style='mso-tab-count:
+1'>     </span>+<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>     </span>50<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'>i02<span style='mso-tab-count:
+1'>     </span>+<span style='mso-tab-count:1'>     </span>.<span
+style='mso-tab-count:1'>     </span>70<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:.25in;
+margin-left:.5in'><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;
+font-family:"Courier New"'>i02<span style='mso-tab-count:1'>     </span>+<span
+style='mso-tab-count:1'>     </span>.<span style='mso-tab-count:1'>     </span>90<span
+style='mso-tab-count:1'>   </span> <span style='mso-tab-count:1'>     </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:.25in;
+margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo1;tab-stops:list .5in'><![if !supportLists]>3)<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><![endif]>Make
+a stereo version of the Chord Instrument (Example 1, above) that uses an LFO to
+pan the signal smoothly back and forth between the left and right speakers at a
+rate in CPS specified in a p-field of the score. (For the LFO, just use an
+oscili with a simple sine wave for the panning control function.) Modify the
+score to add the panning frequency in p8, and try various values.</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]>4)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Make a subtractive synthesis instrument, using either buzz or
+gbuzz, that has a Butterworth low-pass filter and a cutoff frequency that
+sweeps smoothly from the fundamental of the note to a frequency 4 octaves
+higher and back over the course of p3. The cutoff should move linearly, in
+terms of octaves, so that halfway through the rise, it is exactly two octaves
+above the fundamental. (Hint: use linseg to control the cutoff in terms of
+linear octaves, then use cpsoct to convert from OCT to CPS at the k-rate.) Use
+p4 for amplitude and p5 to specify the fundamental in PCH, and make a simple
+test score that plays 4-second notes on your instrument at the pitches 7.00, 7.07,
+8.00, 8.07, and 9.00. </p>
+
+</div>
+
+</body>
+
+</html>

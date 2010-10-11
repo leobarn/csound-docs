@@ -1,0 +1,103 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>pvoc1</TITLE>
+<META NAME="Template" CONTENT="C:\Program Files\Microsoft Office\Office\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<PRE>&#9;sr&#9;=&#9;44100
+&#9;kr&#9;=&#9;4410
+&#9;ksmps&#9;=&#9;10
+&#9;nchnls&#9;=&#9;1
+
+;======================================================================;
+;Simple pvoc playback instrument for time scaling with pitch shift.
+;Uses oscil1i to read the control function for the time pointer.
+;Specify amount of pitch shift in p7 as a value in semitones.
+;RP
+;======================================================================;
+&#9;instr&#9;1
+idur&#9;=&#9;p3&#9;&#9;
+ipvfn&#9;=&#9;p4&#9;&#9;;the pvanal output file pvoc.nnn
+ilength&#9;=&#9;p5&#9;&#9;;length of original sound file
+itpfn&#9;=&#9;p6&#9;&#9;;time pointer control function
+ipshft&#9;=&#9;p7&#9;&#9;;n semitones of pitch shift
+ispcwrp&#9;=&#9;p8
+ifmod&#9;=&#9;exp(ipshft/12*log(2))&#9;;convert to a freq multiplier
+ktimpnt&#9;oscil1i&#9;0,ilength,idur,itpfn
+aout&#9;pvoc&#9;ktimpnt, ifmod, ipvfn, ispcwrp
+&#9;out&#9;aout
+&#9;endin&#9;</PRE>
+<P><HR></P>
+<PRE>;======================================================================;
+; Example score for pvoc1.orc. Demonstrates differences in quality 
+; between various analysis frame sizes, forward and reverse playback,
+; time stretching and compression, pitch shifting by semitones, and 
+; the use of a hand drawn control function for the timeptr control.
+; RP
+;======================================================================;
+f01&#9;0&#9;513&#9;7&#9;0&#9;513&#9;1
+f02&#9;0&#9;513&#9;7&#9;1&#9;513&#9;0
+f03&#9;0&#9;513&#9;1&#9;"pvoctest.fun"&#9;0&#9;4&#9;0
+;Use pvoc.901 (thewind.wav, dur=1.67)
+;Analysis frame size = 256, overlap = 4
+;nn&#9;st&#9;dur&#9;.nnn&#9;length&#9;tpfn&#9;ipshift&#9;ispecwarp
+i1&#9;0&#9;1.67&#9;901&#9;1.67&#9;1&#9;0&#9;0
+i1&#9;2&#9;1.67&#9;.&#9;.&#9;2&#9;
+i1&#9;4&#9;3.33&#9;.&#9;.&#9;1&#9;
+i1&#9;7.5&#9;.8
+f0&#9;9.0
+s
+;Use pvoc.902 (thewind.wav, dur=1.67)
+;Analysis frame size = 32, overlap = 4
+;Note poor quality with this frame size
+;nn&#9;st&#9;dur&#9;.nnn&#9;length&#9;tpfn&#9;ipshift&#9;ispecwarp
+i1&#9;0&#9;1.67&#9;902&#9;1.67&#9;1&#9;0&#9;0
+i1&#9;2&#9;1.67&#9;.&#9;.&#9;2
+i1&#9;4&#9;3.33&#9;.&#9;.&#9;1
+i1&#9;7.5&#9;.8
+f0&#9;9.0
+s
+;Use pvoc.903 (thewind.wav, dur=1.67)
+;Analysis frame size = 1024, overlap = 4
+;Much better quality here.
+;Also demonstrate pitch shifting.
+;nn&#9;st&#9;dur&#9;.nnn&#9;length&#9;tpfn&#9;ipshift&#9;ispecwarp
+i1&#9;0&#9;1.67&#9;903&#9;1.67&#9;1&#9;3&#9;1
+i1&#9;2&#9;1.67&#9;.&#9;.&#9;2&#9;-3
+i1&#9;4&#9;3.33&#9;.&#9;.&#9;1&#9;0&#9;0
+i1&#9;7.5&#9;.8
+i1&#9;9&#9;10&#9;.&#9;.&#9;3
+f0&#9;20.0
+s
+;Use pvoc.904 (thewind.wav, dur=1.67)
+;Analysis frame size = 1024, overlap = 8
+;nn&#9;st&#9;dur&#9;.nnn&#9;length&#9;tpfn&#9;ipshift&#9;ispecwarp
+i1&#9;0&#9;1.67&#9;904&#9;1.67&#9;1&#9;3&#9;1
+i1&#9;2&#9;1.67&#9;.&#9;.&#9;2&#9;-3
+i1&#9;4&#9;3.33&#9;.&#9;.&#9;1&#9;0
+i1&#9;7.5&#9;.8
+i1&#9;9&#9;10&#9;.&#9;.&#9;3
+f0&#9;20.0
+s
+;Use pvoc.907 (fire1M44.wav)
+;Analysis frame size = 1024, overlap = 4
+;nn&#9;st&#9;dur&#9;.nnn&#9;length&#9;tpfn&#9;ipshift&#9;ispecwarp
+i1&#9;0&#9;60&#9;907&#9;12.585&#9;3&#9;0&#9;0
+e</PRE>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="32%" VALIGN="TOP">
+<P><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvoc1.orc">Download pvoc1.orc</A></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<P ALIGN="CENTER"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvfiles1.zip">Download analysis files</A></TD>
+<TD WIDTH="31%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/pvoc1.sco">Download pvoc1.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

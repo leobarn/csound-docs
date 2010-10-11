@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>MixerSetLevel</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mirror.html" title="mirror" />
+    <link rel="next" href="MixerSetLevel_i.html" title="MixerSetLevel_i" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">MixerSetLevel</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mirror.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="MixerSetLevel_i.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="MixerSetLevel">
+      <a id="MixerSetLevel"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMixerSetLevel" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">MixerSetLevel</span>
+        </h2>
+        <p>MixerSetLevel — 
+      Sets the level of a send to a buss.
+           </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3409715"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>MixerSetLevel</strong></span> isend, ibuss, kgain</pre>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3409732"></a>
+        <h2>Description</h2>
+        <p>Sets the level at which signals from the send are added to the buss. The actual sending of the signal to the buss 
+is performed by the <a class="link" href="MixerSend.html" title="MixerSend"><em class="citetitle">MixerSend</em></a> opcode. 
+    </p>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3410659"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>isend</em></span> -- The number of the send, for example the number of the instrument sending the signal (but any integer can be used).</p>
+        <p><span class="emphasis"><em>ibuss</em></span> -- The number of the buss, for example the number of the instrument receiving the signal (but any integer can be used).</p>
+        <p>Setting the gain for a buss also creates the buss.</p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3410685"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>kgain</em></span> -- The level (any real number) at which the signal from the send will be mixed onto the buss. The default is 0.</p>
+        <p>
+Use of the mixer requires that instruments setting gains have smaller numbers than instruments sending signals, 
+and that instruments sending signals have smaller numbers than instruments receiving those signals. 
+However, an instrument may have any number of sends or receives. After the final signal is received, 
+<a class="link" href="MixerClear.html" title="MixerClear"><em class="citetitle">MixerClear</em></a> must be invoked to reset the busses before the next kperiod.
+</p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3410717"></a>
+        <h2>Examples</h2>
+        <p>In the orchestra, define an instrument to control mixer levels:</p>
+        <pre class="programlisting">
+instr 1
+	MixerSetLevel		p4, p5, p6
+endin
+</pre>
+        <p>In the score, use that instrument to set mixer levels:</p>
+        <pre class="programlisting">
+; SoundFonts
+; to Chorus
+i 1  0  0 100  200  0.9
+; to Reverb
+i 1  0  0  100  210  0.7
+; to Output
+i 1  0  0  100  220  0.3
+
+; Kelley Harpsichord
+; to Chorus
+i 1  0  0  3  200  0.30
+; to Reverb
+i 1  0  0  3  210  0.9
+; to Output
+i 1  0  0  3  220  0.1
+
+; Chorus to Reverb
+i 1  0  0  200  210  0.5
+; Chorus to Output
+i 1  0  0  200  220  0.5
+; Reverb to Output
+i 1  0  0  210  220  0.2
+</pre>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3410751"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot com).</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mirror.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="MixerSetLevel_i.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mirror </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> MixerSetLevel_i</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

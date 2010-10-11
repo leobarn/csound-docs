@@ -1,0 +1,1284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Csound Journal</title>
+<link href="csoundJournal.css" rel="stylesheet" type="text/css">
+<style>
+td {
+	vertical-align:top;
+
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="navigation">CSOUND JOURNAL: <a href="../index.html">Home</a> | <a href="index.html">Spring 2006</a> </div>
+  <center>
+    <div id="header">
+      <h2>Meet the Csound 5 Developers</h2>
+      Edited by Anthony Kozar<br/>
+      anthonykozar AT sbcglobal.net </div>
+  </center>
+  <div id="content">
+ 
+ 
+<p>The creation of Csound 5 was a three-year-long project that was only 
+accomplished by the collaborative efforts of many individuals from around 
+the world.  Perhaps you have wondered who these people are, where they
+live, and what they enjoy doing other than working on Csound in their spare time?</p>
+
+<p>Below are the personal profiles of everyone  who 
+directly worked on making Csound 5 a reality. You can read (in their own words)
+about where they were born and grew up, how they use Csound and how they 
+contributed to Csound 5, what their hobbies are, etc.  You can even get a glimpse
+of what the future of Csound may look like by reading their &quot;vision statements.&quot;</p>
+
+<p>At the bottom of the page is a list of many of the individuals who 
+indirectly contributed to Csound 5 development by writing opcodes and discussing 
+its design.  These people are responsible for many of the cool new toys that are
+now available!</p>
+
+<p>Finally, while I could not compile a complete list of everyone who helped,
+we want to thank those members of the Csound community who contributed a lot of their 
+time by testing and providing feedback before Csound 5 was finished.</p>
+
+<h2><br>
+  The Csound 5 Development Team</h2>
+<ul>
+<li><a href="#0.1_ffitch">John ffitch</a> (Project Lead)</li>
+<li><a href="#0.1_Cabrera">Andres Cabrera</a></li>
+<li><a href="#0.1_Gogins">Michael Gogins</a></li>
+<li><a href="#0.1_Lazzarini">Victor Lazzarini</a></li>
+
+<li><a href="#0.1_Kozar">Anthony Kozar</a></li>
+<li><a href="#0.1_Ramsdell">John Ramsdell</a></li>
+<li><a href="#0.1_Varga">Istvan Varga</a></li>
+<li><a href="#0.1_Yi">Steven Yi</a></li>
+<li><a href="#0.1_other">Other Contributors</a></li>
+</ul>
+
+
+<p>&nbsp;</p>
+<p><a name="0.1_ffitch"></a>
+</p>
+<table border="0">
+<tr>
+ <td colspan="2" rowspan="1">
+
+<h2>John ffitch</h2>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Birthdate:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+After WWII -- really after WWII 
+ </td>
+</tr>
+
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Age:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+(OK, I am 60)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+ <h4>Location:</h4>
+
+</td>
+ <td colspan="1" rowspan="1">
+Bath, UK
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Grew up in:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+ Born in Barnsley, Yorkshire, but grew up by the coast on the edge
+    of the New Forest, Hampshire
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Education:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+ Read for the Mathematics Tripos (Cambridge that is, BA; MA).  PhD
+    (Cantab) on Algebra Systems.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Occupation:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+University Professor, of Computer Science.  Never worked outside
+    education/research except 1 week as a van driver for an
+    off-licence in the 1960s.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Uses Csound for:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+Composition
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>How long a user/developer:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+ Since ~1990
+ </td>
+</tr>
+<tr>
+
+ <td colspan="1" rowspan="1">
+<h4>Favorite opcodes:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Prepared Piano opcode (OK that is a cheat as I only wrote it last
+    week and not yet in sources).  No real answer
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Commandline or GUI:</h4>
+ </td>
+
+ <td colspan="1" rowspan="1">
+Command line of course!
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Contributions to Csound 5:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<p>Not sure -- perhaps forcing a release?  I think OSC is important.</p>
+
+<p>[<i>Editor's note:</i> John is being modest here.  John provided organization and
+direction for the project including setting up the Sourceforge site.  He moved many of the
+opcodes from Csound 4 into separate loadable modules.  John revised Csound's audio file
+reading/writing code and real-time code to use the libsndfile, PortAudio, and PortMidi libraries.
+He also did a fair amount of work paving the way for multiple-instantiation and reentrancy in the
+Csound library.  John added commandline options for new file formats and for setting orchestra
+and score macros.  A new &quot;software bus&quot; for communications between hosts and Csound was designed
+and implemented by John.  He wrote opcodes for the software bus, OSC, and a few others.  He 
+worked with Erik de Castro Lopo to get looping support into libsndfile.  He provided support for
+#ifdef in orchestra code and for dynamically loaded GEN routines.  John wrote an installer for
+Linux systems and provides pre-compiled Linux packages for both 32-bit and 64-bit CPUs.
+Finally, John did major work on writing a new orchestra parser for Csound that will be 
+incorporated once it is finished.]</p>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound compositions:</h4>
+ </td>
+
+ <td colspan="1" rowspan="1">
+See <a href="http://www.cs.bath.ac.uk/jpff/MyMusic.html" target="_blank">http://www.cs.bath.ac.uk/jpff<WBR>/MyMusic.html</a>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound-related software:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+The import/export utilities, dnoise, envext, mixer, scale, srconv,
+    xtrct.  Personal algorithmic composition code.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Websites:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<a href="http://www.bath.ac.uk/~masjpf/" target="_blank">http://www.bath.ac.uk/~masjpf/</a> <br>
+<a href="http://www.cs.bath.ac.uk/jpff/" target="_blank">http://www.cs.bath.ac.uk/jpff/</a>
+
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Hobbies:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Listening to Music, Computing, Cycling, Theatre, T'ai Chi (Lee
+    Family Style)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Research interests:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Research in symbolic mathematics, cosmology, solar system
+    astronomy, and then LISP, parallelism and event simulation.
+    Compilers, software, and increasingly audio (physical models,
+    algorithmic composition, composer systems).
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Favorite Composers:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+J.S. Bach, I. Xenakis, J. Haydn, Wagner, Tippett, Birtwhistle, Janacek, R. Strauss, Dowland ...
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Vision for Csound:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Continuing!  Lots of possibilities -- all it needs is time.
+ </td>
+</tr>
+</table>
+
+
+<p>&nbsp;</p>
+<p><a name="0.1_Cabrera"></a>
+</p>
+<table border="0">
+<tr>
+ <td colspan="2" rowspan="1">
+<h2>Andres Cabrera</h2>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Age:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+31
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+ <h4>Location:</h4>
+</td>
+ <td colspan="1" rowspan="1">
+Bogotá, Colombia
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Occupation:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Sound Engineer, Lecturer
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Uses Csound for:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+Fun, live playing, and research
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>How long a user/developer:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+2.5 years, but first contact was on 1997
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Favorite opcodes:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Very variable... =)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Commandline or GUI:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+blue!!
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Contributions to Csound 5:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+vst4cs, dssi4cs, manual work [<i>Editor's note:</i> Andres also converted many CsoundAV opcodes to Csound 5.]
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound compositions:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<i>Mariposas</i> (for CsoundAV) and <i>01-radio reloj</i> (a live work which also
+involved pd)
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Websites:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<a href="http://www.geminiflux.com/" target="_blank">www.geminiflux.com</a>
+ </td>
+</tr>
+</table>
+
+
+<p>&nbsp;</p>
+<p><a name="0.1_Gogins"></a>
+</p>
+<table border="0">
+<tr>
+ <td colspan="2" rowspan="1">
+<h2>Michael Gogins</h2>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Birthdate:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+July 6, 1950
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+ <h4>Location:</h4>
+</td>
+ <td colspan="1" rowspan="1">
+Manhattan, New York City, New York, USA
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Grew up in:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+I was born in Salt Lake City, Utah. I lived there until I was 23, then lived in 
+Minneapolis, Los Angeles, Seattle, Salt Lake again, and New York City.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Occupation:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+My day job is software engineer for trading systems, my vocation is composer. I 
+pretty much do only algorithmic composition, as I seem to be much better at that 
+than other kinds of composition.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Uses Csound for:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+I use Csound mainly for rendering algorithmic compositions.
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Favorite opcode/utility:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+My favorite Csound utility is the Python API, which I developed.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Commandline or GUI:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+I use either a source code editor or CsoundVST as a frontend for Csound through the 
+Python interface. Sometimes I monkey around with notation in Cubase using CsoundVST.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Contributions to Csound 5:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+I have contributed the Csound 5 SCons build system, the first version of the plugin
+opcode system, the Csound API (the C, C++, Python, Java, Lua, and LISP interfaces 
+are all by me with much help from others, and there is now also a Tcl interface by 
+Victor Lazzarini), the CsoundVST plugin and front end, the Mixer opcodes, the MIDI 
+interop opcodes, the STK C++ opcodes, the Windows installers, and the Silence system 
+of algorithmic composition classes based on music graphs in the CsoundVST library. 
+I also maintain the Loris opcodes in Csound 5. I helped Andres Cabrera develop his 
+vst4cs opcodes. I wrote a first version of the fluid SoundFont opcodes, which has 
+been replaced by an improved version by Steven Yi. I also contributed two chapters 
+(on the CD-ROM) to Richard Boulanger's &quot;The Csound Book&quot;.
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound compositions:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+I have produced two CDs of Csound compositions, <b>Garden of Algorithms</b> and 
+<b>Semblance</b>. A few of the pieces are available as MP3s on 
+<a href="http://www.ruccas.org/index.php?Michael%20Gogins" target="_blank">www.ruccas.org</a>. 
+Some of my writings on composition or Csound are also available there.
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Vision for Csound:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<p>My vision for the future of Csound is: everyone will standardize on version 5,
+Csound 5 will become a normal part of Linux distributions, people will begin
+distributing plugin opcodes independently of Csound, someone will develop a set
+of GigaSampler opcodes, someone will develop a clustering system for Csound
+using the API that will enable massive speedups in offline rendering, people
+will settle on a standard set of pfields to enable the exchange of instrument
+definitions, someone will implement OSC on Windows, someone will do a Rewire
+interface for Csound using the API... in general, I hope and expect that Csound
+will become integrated into more and more studio environments, and be used not
+just by computer music specialists but by film composers, commercial producers,
+and others.</p>
+
+<p>In the long run I would like to see one well-known PROGRAMMABLE software
+synthesizer with the same kind of power as Csound become a standard part of
+commercial notation and sequencing software, either as a plugin or as a
+builtin. I do not really care if it is Csound, SuperCollider, or something new.
+But it needs to be both flexible and standard so that the language becomes, in
+essence, a new form of music notation understood by most musicians. This will
+apply both to synthesis methods and to composition methods.</p>
+ </td>
+
+</tr>
+</table>
+
+
+
+<p>&nbsp;</p>
+<p><a name="0.1_Lazzarini"></a>
+</p>
+<table border="0">
+<tr>
+ <td colspan="2" rowspan="1">
+<h2>Victor Lazzarini</h2>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Birthdate:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Sept. 18, 1969
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Age:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+36
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+ <h4>Location:</h4>
+</td>
+ <td colspan="1" rowspan="1">
+I live in Killucan, Westmeath, Ireland, but work in Maynooth, Kildare.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Born in:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+I was born in Londrina, Parana, Brazil.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Education:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+BMus in composition and a Doctorate in composition
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Occupation:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+University lecturer
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Uses Csound for:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+For composition and teaching, as well as research. I have
+lately also been using it as my 'live-electronics' sound engine.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>How long a user/developer:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+I first used Csound in 93 on an Atari ST, under the
+Composer's Desktop Project. At the time. I also built
+Csound from the MIT sources in several Unix machines,
+which I also used, mostly for learning the language.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Favorite opcodes:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+oscil
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Commandline or GUI:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+commandline
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Contributions to Csound 5:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+Some opcodes [<i>Editor: including most of the new streaming phase vocoder opcodes,
+moogladder, statevar, fofilter, sndloop, flooper, and syncgrain</i>], some fixes in Csound5, the
+streaming spectral tracks signal framework, building and
+fixing the OS X system, some frontends (csoundapi~,
+tclcsound and the basic Csound 5 GUI for OS X)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound compositions:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<i>Unreal City</i> (1993-4)<br>
+
+<i>The Chantwheel</i> (1995, csound &amp; CDP software)<br>
+<i>Voices Inside</i> (1996)<br>
+<i>Nova Dialetica</i> (1997, csound &amp; CDP software)<br>
+<i>Novissima Dialetica</i> (1998, csound &amp; custom software)<br>
+
+<i>Intonation</i> (2001, csound realtime processing &amp; Irish Harp)<br>
+<i>Mouvements</i> (2003)<br>
+<i>Timelines Ia</i> (2004, csound realtime processing &amp; guitar)<br>
+<i>And Through the Rhythm of Moving Slowly</i> (2005, csound realtime processing &amp; 
+
+ensemble)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound-related software:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+csoundapi~, TclCsound, and the basic Csound 5 GUI for OS X
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Websites:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<a href="http://music.nuim.ie/vlazzarini/main.shtml" target="_blank">http://music.nuim.ie/vlazzarini<WBR>/main.shtml</a>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Hobbies:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+Like many other musicians, I don't really have a hobby, as music
+generally also fills my spare time. But because I have a young family,
+I don't really have a lot of spare time at the moment.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Other facts of interest:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+I just want to add that my background is music. I have a BMus
+in composition and a doctorate in composition. In fact, early on I
+used to regard computers with suspicion, being a pen and paper
+person myself. But then with electroacoustic music, it seemed the
+way to go and I started to enjoy the scientific/technical side of it
+Coding is something  I picked up along the way and maths I have
+mostly taught myself (although I did a lot at high-school). Reading
+John ffitch's and Istvan Varga's code (among others)
+also taught me a lot. Getting involved in Csound development has
+been very good for my own education. Although I had good experience
+on the signal processing side, as well as C++, from developing the
+SndObj library, I learned considerably from watching others do things.
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Vision for Csound:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+I really want to see the full separation of engine and language,
+which is not that far, so that the system becomes even more open.
+New languages (also interpreted) can be used to control the engine,
+as an alternative to the original 'assembler'-like orchestra language..
+ </td>
+</tr>
+</table>
+
+
+
+<p>&nbsp;</p>
+<p><a name="0.1_Kozar"></a>
+</p>
+<table border="0">
+<tr>
+ <td colspan="2" rowspan="1">
+<h2>Anthony Kozar</h2>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Birthdate:</h4>
+ </td>
+
+ <td colspan="1" rowspan="1">
+Sept. 1, 1975
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Age:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+30
+ </td>
+</tr>
+
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Location:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Columbus, Ohio, USA
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Grew up in:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+Massillon, Ohio, USA
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Education:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Bachelor's in Humanities (Music &amp; Math) and<br>
+
+Master's in Computer Science from University of Toledo, Toledo, Ohio (USA)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Occupation:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Organist and choir director
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Uses Csound for:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Composing and testing synthesis/tuning ideas.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>How long a user/developer:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+I've been using Csound since 2001 and helping with development since 2003.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Favorite opcodes:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+pvshift, ATS opcodes, vcella
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Favorite instr:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Sean Costello's string ensemble
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Commandline or GUI:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+GUI
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Contributions to Csound 5:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Maintained MacOS port &amp; GUI, added Cscore to API
+ </td>
+</tr>
+
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound compositions:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<i>Dorian Gray</i> (2001)<br>
+<i>Changes no. 2</i> (2004)<br>
+
+<i>Whales</i> (2006)<br>
+<i>FMscape no. 1</i> (in progress)<br>
+<i>Septieme</i> (in progress)<br>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Csound-related software:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Score Changer (MacOS 9)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Websites:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+
+<a href="http://www.ruccas.org/index.php?Anthony%20Kozar" target="_blank">http://www.ruccas.org/index<WBR>.php?Anthony%20Kozar</a>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Hobbies:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Porting open-source software, table-top games, programmer games (e.g. Grobots)
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Research interests:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Algorithmic composition, machine creativity, game design, human-computer interfaces
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Vision for Csound:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+Integrating Csound and other computer music software with scripting languages and a graphical &quot;make-like&quot; build system for automating the multi-step rendering of complex compositions.
+ </td>
+</tr>
+</table>
+
+
+
+<p>&nbsp;</p>
+<p><a name="0.1_Ramsdell"></a>
+</p>
+<table border="0">
+<tr>
+
+ <td colspan="2" rowspan="1">
+<h2>John Ramsdell</h2>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+ <h4>Location:</h4>
+</td>
+ <td colspan="1" rowspan="1">
+Boston area, Massachusetts, USA
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Occupation:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Computer Scientist focusing on information assurance and distributed
+computing.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Uses Csound for:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+Personal enjoyment
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>How long a user/developer:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Since it was released under an open source license.
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Commandline or GUI:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Command line, indirectly via a Makefile.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Contributions to Csound 5:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+Implemented Csound 5's first build system using GNU Autotools (it was later 
+replaced by Scons).  Helped to solve FLTK threading issues.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound compositions:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<i>You Know I Know</i>
+
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound-related software:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Scheme Score, a preprocessor for scores that provides the full power
+of Scheme to score generation.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Websites:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Scheme Score: <a href="http://www.ccs.neu.edu/home/ramsdell/tools" target="_blank">http://www.ccs.neu.edu/home<WBR>/ramsdell/tools</a> <br>
+<i>You Know I Know:</i> <a href="http://www.ccs.neu.edu/home/ramsdell/papers" target="_blank">http://www.ccs.neu.edu/home<WBR>/ramsdell/papers</a>
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Hobbies:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Hiking, soccer, and lately I've been bitten by the Suduku bug.
+ </td>
+</tr>
+</table>
+
+
+
+<p>&nbsp;</p>
+<p><a name="0.1_Varga"></a>
+</p>
+<table border="0">
+<tr>
+ <td colspan="2" rowspan="1">
+<h2>Istvan Varga</h2>
+<p>[<i>Editor's note: Istvan did not send me a profile, so the following is my own summary
+of his contributions to Csound 5.  It is likely incomplete due to the enormous number of
+improvements that he made.</i>]</p>
+ </td>
+</tr>
+
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Contributions to Csound 5:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Istvan overhauled and refined the Csound API, adding many new functions and pruning
+where necessary.  He added a more flexible interface for loadable modules, implemented
+dynamic loading of real-time audio modules, Midi modules, and utilities.  Istvan moved
+all of the existing utilties to a library and fixed most of them to work with Csound 5.
+He wrote optional real-time modules for directly using operating system-specific
+libraries such as ALSA, MME, and Jack, allowing the lowest possible latencies.
+Istvan made improvements to the rtpa and pmidi modules and reimplemented Midi file
+reading with many improvements.  Istvan wrote many new opcodes including freeverb,
+reverbsc, string manipulation opcodes, loop opcodes, chnset and chnget, ftconv, and diskin2.
+He made improvements to the software bus and OSC opcodes.  Much of the final work towards 
+multiple-instantiation and reentrancy, including weeding out static variables, was done by
+Istvan.  He added the --expression-opt flag, new message formats, timing code, new random 
+code, modular FFT support, an improved --sched option, improved FLTK threading, a 
+cross-platform means of setting environment variables, and a utility for making CSDs.
+Istvan added a string variable type and global f-variables to the orchestra language.  
+He also added a new localization system and new code for locating and opening files.
+Istvan provides the RPM packages for Linux users and Zip packages for Windows users.
+Finally, Istvan has made countless bug fixes to Csound 5 and provided many useful
+examples and much support to its users!
+ </td>
+</tr>
+
+</table>
+
+
+
+<p>&nbsp;</p>
+<p><a name="0.1_Yi"></a>
+</p>
+<table border="0">
+<tr>
+
+ <td colspan="2" rowspan="1">
+<h2>Steven Yi</h2>
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Age:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+27
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+ <h4>Location:</h4>
+</td>
+ <td colspan="1" rowspan="1">
+San Francisco, California, USA
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Born in:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+USA
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Occupation:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Programmer
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Uses Csound for:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Composing music
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>How long a user/developer:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+7 years
+ (Since 1999) </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Favorite opcodes:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+vco2, moogladder, oscil3, linseg, reverbsc
+ </td>
+
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Commandline or GUI:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+blue with commandline csound! =)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Contributions to Csound 5:</h4>
+
+ </td>
+ <td colspan="1" rowspan="1">
+<p>When Csound 5 first got started it was a bit of a rough transition.
+Most of my efforts then were to try to ask good questions that would
+help clarify what everyone was working on.  I spent a great deal of my
+time at the beginning compiling Csound 5 on the platforms I had
+available to me (which was primarily Linux and Windows and occasionally
+OS X) and reporting any issues I had, whether it was the build system,
+broken opcodes, or any other bugs and differing behavior that Csound 5
+had compared to Csound 4.  I view my contributions to Csound 5  as being
+mostly in the department of testing and trying to ask good questions
+of the developers as well as helping others who were getting into
+Csound 5 themselves.</p>
+
+<p>In terms of opcodes, I did have a hand in the current set of opcodes
+based on fluidsynth. They were originally created by Michael Gogins
+but I had a different use case so I modified them to produce a second
+wrapping; we eventually managed to merge our efforts to what exists
+now.  I also played a small part in a few other opcodes which were
+mostly implemented by Istvan Varga (string-indexed software bus,
+ftgentmp), but my role there was mostly as a user making requests and
+discussing implementation details.</p>
+
+<p>I also helped a little bit with the transition to using Sourceforge
+for Csound and did work on the build system. Also, when Kevin Conder
+moved on from maintaining the Alternative Csound Reference Manual,
+with a little help from him at the start, I continued on with that
+work and did the transition from Docbook SGML to Docbook XML and
+worked out the new toolchain to use for building the manual. This
+seemed to help the manual efforts a great deal as others had better
+luck setting up an XML toolchain than they did an SGML toolchain, so
+others were more inclined to get involved with working on the manual.
+I continue to do builds and releases of the manual as well as help
+others when they contribute to it.</p>
+
+<p>[<i>Editor's Note:</i> Steven also did some work on modularizing the
+opcodes and eliminating globals.]</p>
+
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound compositions:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<i>On the Sensations of Tone</i> <br>
+<i>Etude</i>
+
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Csound-related software:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+blue; I also often use python a great deal in my musical work
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Websites:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Personal homepage: <a href="http://www.kunstmusik.com" target="_blank">http://www.kunstmusik.com</a> <br>
+Csound homepage: <a href="http://www.csounds.com/stevenyi" target="_blank">http://www.csounds.com/stevenyi</a> <br>
+blue homepage: <a href="http://www.csounds.com/stevenyi/blue" target="_blank">http://www.csounds.com/stevenyi<WBR>/blue</a>
+
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+<h4>Hobbies:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+Tai-Chi, composing, blue
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+<h4>Vision for Csound:</h4>
+ </td>
+ <td colspan="1" rowspan="1">
+<p>I think Csound as a program is now in as great a shape as its ever
+been.  Looking forward,  I'd like to see support for multiple
+processors and eventually multiple computers for rendering Csound
+projects. As efficient a tool as Csound is (and it *is* a very
+efficient program), due to the things I'm working on musically with my
+Orchestral Composition library and blue, I find that I'm bumping into
+limits of what my CPU can do in realtime which affects my music-making
+experience.  Multicore CPU's are becoming more affordable and widely
+available and I'd love to be able to take advantage of that.</p>
+
+<p>Csound is a very mature and rich tool for making music.  I've been
+very satisfied in working with it and think that the future is very
+bright for Csound.  I'm looking forward to making music with the tool
+for years and years to come.</p>
+ </td>
+</tr>
+</table>
+
+<p>&nbsp;</p>
+<p><a name="0.1_other"></a>
+  
+</p>
+<h2>Other Contributors</h2>
+
+<p>The following individuals had either their code or ideas incorporated
+into Csound 5 by the development team.  We are grateful for their
+contributions.</p>
+
+<table border="0">
+<tr>
+ <td colspan="1" rowspan="1">
+Stefan Bilbao (U.K.)
+ </td>
+ <td colspan="1" rowspan="1">
+barmodel opcode
+ </td>
+</tr>
+
+<tr>
+ <td colspan="1" rowspan="1">
+Richard Dobson (U.K.)
+ </td>
+ <td colspan="1" rowspan="1">
+Early design discussions
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+Samuel Groner (Switzerland)
+ </td>
+ <td colspan="1" rowspan="1">
+
+Ambisonic opcodes (bformenc and bformdec)
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+matt ingalls (California, USA)
+ </td>
+ <td colspan="1" rowspan="1">
+pconvolve opcode, API design, and bug fixes
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+Gabriel Maldonado (Italy)
+ </td>
+
+ <td colspan="1" rowspan="1">
+Many opcodes from Gab's CsoundAV were added to Csound 5.
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+Alex Norman (USA)
+ </td>
+ <td colspan="1" rowspan="1">
+ATS opcodes
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+
+Maurizio Umberto Puxeddo (Italy)
+ </td>
+ <td colspan="1" rowspan="1">
+Python opcodes
+ </td>
+</tr>
+<tr>
+ <td colspan="1" rowspan="1">
+Gerard van Dongen (Netherlands)
+ </td>
+ <td colspan="1" rowspan="1">
+Jack client code for Csound 4 and Jack testing for Csound 5
+ </td>
+</tr>
+
+</table>
+
+<p><i>Gerard van Dongen passed away on March 4th, 2006.  His participation
+in the Csound community will be missed.</i></p>
+
+  </div>
+</div>
+</body>
+</html>

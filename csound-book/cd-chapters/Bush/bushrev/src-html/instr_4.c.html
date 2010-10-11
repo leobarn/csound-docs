@@ -1,0 +1,140 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>instr_4.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* instr_4.c */
+/* instrument 4 ("P"-stage) */
+
+#include &lt;math.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs, prototypes */
+
+int instr_4(int bat);
+
+<A NAME="instr_4">int instr_4(int bat)</A>
+{
+&#9;int pc1, pc2, tally1[PA_NPC], tally2[PA_NPC],
+&#9;  numnotes=lcount(rsco)-1, numpevs=abs(bat),
+&#9;  beg=lcount(sco)+1, evnum, reach, dir,
+&#9;  p, q, r, s, j, nl=(bat&gt;0);
+&#9;float tdur, durf, pchdiff1, pchdiff2, pcsize=(float)1/PA_NPC,
+&#9;  notetime,
+&#9;  absmindur=0.025, absminatk=0.007, absmindec=0.014,
+&#9;  minatk, maxatk, mindec1, mindec2, maxdec1, maxdec2,
+&#9;  absminpch=gof(PA_MINPCH-2,octcps(ABS_MINFREQ)),
+&#9;  absmaxpch=lof(PA_MAXPCH+2,octcps(ABS_MAXFREQ));
+&#9;  
+&#9;for(q=0; q&lt;PA_NPC; q++) tally1[q]=tally2[q]=0;  
+
+&#9;i4ev=&amp;sco-&gt;e[beg];
+&#9;i1ev=&amp;rsco-&gt;e[1];
+&#9;
+&#9;if(nl) {
+&#9;&#9;printf("\n\n; \"P\"-stage, instr 4:\n\n\t");
+&#9;&#9;for(j=1; j&lt;=NUM_I4PFIELDS; j++) printf("\t%-7s", i4pf[j]);
+&#9;}
+&#9;&#9;
+&#9;for(evnum=beg, q=0; q&lt;numnotes; q++, i1ev++) {
+&#9;&#9;do {
+&#9;&#9;&#9;reach=(*i1ev)-&gt;p[I1_RCH];
+&#9;&#9;&#9;p=(q*PA_STEP)+2;
+&#9;&#9;&#9;if(reach&lt;0 &amp;&amp; abs(reach)&gt;q) {
+&#9;&#9;&#9;&#9;numpevs-=(abs(reach)-q);
+&#9;&#9;&#9;&#9;reach=(-q);
+&#9;&#9;&#9;}
+&#9;&#9;&#9;if(reach&gt;0 &amp;&amp; q+reach&gt;numnotes) {
+&#9;&#9;&#9;&#9;numpevs-=(abs(reach)-(numnotes-q));
+&#9;&#9;&#9;&#9;reach=numnotes-q;
+&#9;&#9;&#9;}
+&#9;&#9;&#9;if(reach==0) q++, i1ev++;
+&#9;&#9;} while(reach==0);
+&#9;&#9;
+&#9;&#9;pchdiff1=
+&#9;&#9;&#9;((*i1ev)-&gt;p[I1_PCH1])-((*(i1ev+reach))-&gt;p[I1_PCH1]);
+&#9;&#9;pchdiff2=
+&#9;&#9;&#9;((*i1ev)-&gt;p[I1_PCH2])-((*(i1ev+reach))-&gt;p[I1_PCH2]);
+&#9;&#9;dir=SIGN(reach);
+&#9;&#9;notetime=tdur=0;
+&#9;&#9;for(r=0; abs(r)&lt;abs(reach); r+=dir) tdur+=(*(i1ev+r))-&gt;p[II_DUR];
+&#9;&#9;durf=((*i1ev)-&gt;p[II_DUR])/(tdur);
+&#9;&#9;for(r=0; abs(r)&lt;abs(reach); r+=dir, evnum++, i4ev++) {
+&#9;&#9;&#9;(*i4ev)=createv(NUM_I4PFIELDS);
+&#9;&#9;&#9;(*i4ev)-&gt;op='i';
+&#9;&#9;&#9;(*i4ev)-&gt;p[II_I]=4;
+&#9;&#9;&#9;(*i4ev)-&gt;p[II_STA]=(*i1ev)-&gt;p[II_STA]+notetime+
+&#9;&#9;&#9;&#9;(.5*(PA_DURUNIT/(reach+dir)))+(.5*(PA_DURUNIT/(r+dir)));
+&#9;&#9;&#9;(*i4ev)-&gt;p[II_DUR]=gof(((*(i1ev+r))-&gt;p[II_DUR])*durf,absmindur);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_WOB1]=(*(i1ev+r))-&gt;p[I1_WOB2];
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_WOB2]=(*(i1ev+r))-&gt;p[I1_WOB1];
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_WID1]=(*(i1ev+r))-&gt;p[I1_WID2];
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_WID2]=(*(i1ev+r))-&gt;p[I1_WID1];
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_PCH1]=quant(fbetw(
+&#9;&#9;&#9;&#9;((*(i1ev+r))-&gt;p[I1_PCH1])+pchdiff2,
+&#9;&#9;&#9;&#9;absminpch,absmaxpch),pcsize);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_PCH2]=quant(fbetw(
+&#9;&#9;&#9;&#9;((*(i1ev+r))-&gt;p[I1_PCH2])+pchdiff1,
+&#9;&#9;&#9;&#9;absminpch,absmaxpch),pcsize);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_PC1]=pc1=pc((*i4ev)-&gt;p[I4_PCH2]);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_PC2]=pc2=pc((*i4ev)-&gt;p[I4_PCH1]);
+&#9;&#9;&#9;notetime+=(20/(pc1+pc2+2))*((*i4ev)-&gt;p[II_DUR]);
+&#9;&#9;&#9;tally1[pc1]++;
+&#9;&#9;&#9;tally2[pc2]++;
+
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_PDF1]=(*(i1ev+r))-&gt;p[I1_PDF1];
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_PDF2]=(*(i1ev+r))-&gt;p[I1_PDF2];
+
+&#9;&#9;&#9;minatk=gof(absminatk, 0.1*((*i4ev)-&gt;p[II_DUR]));
+&#9;&#9;&#9;maxatk=5*minatk;
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_ATK1]=linscale(tally1[pc1],
+&#9;&#9;&#9;&#9;tally1[talmax(tally1)],tally1[talmin(tally1)],
+&#9;&#9;&#9;&#9;absminatk,maxatk);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_ATK2]=linscale(tally2[pc2],
+&#9;&#9;&#9;&#9;tally2[talmax(tally2)],tally2[talmin(tally2)],
+&#9;&#9;&#9;&#9;absminatk,maxatk);
+
+&#9;&#9;&#9;mindec1=gof(absmindec,
+&#9;&#9;&#9;&#9;0.3*(((*i4ev)-&gt;p[II_DUR])-((*i4ev)-&gt;p[I4_ATK1])));
+&#9;&#9;&#9;mindec2=gof(absmindec,
+&#9;&#9;&#9;&#9;0.3*(((*i4ev)-&gt;p[II_DUR])-((*i4ev)-&gt;p[I4_ATK2])));
+&#9;&#9;&#9;maxdec1=(0.99*((*i4ev)-&gt;p[II_DUR]))-((*i4ev)-&gt;p[I4_ATK1])-mindec1;
+&#9;&#9;&#9;maxdec2=(0.99*((*i4ev)-&gt;p[II_DUR]))-((*i4ev)-&gt;p[I4_ATK2])-mindec2;
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_DEC1]=linscale(tally2[pc2],
+&#9;&#9;&#9;&#9;tally2[talmax(tally2)],tally2[talmin(tally2)],
+&#9;&#9;&#9;&#9;mindec1,maxdec1);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_DEC2]=linscale(tally1[pc1],
+&#9;&#9;&#9;&#9;tally1[talmax(tally1)],tally1[talmin(tally1)],
+&#9;&#9;&#9;&#9;mindec2,maxdec2);
+
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_PDB1]=linscale(tally1[pc1],
+&#9;&#9;&#9;&#9;tally1[talmin(tally1)],tally1[talmax(tally1)],
+&#9;&#9;&#9;&#9;PA_MINDB,PA_MAXDB);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_PDB2]=linscale(tally2[pc2],
+&#9;&#9;&#9;&#9;tally2[talmin(tally2)],tally2[talmax(tally2)],
+&#9;&#9;&#9;&#9;PA_MINDB,PA_MAXDB);
+&#9;&#9;&#9;&#9;
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_AZI1]=((fullplex[p].hr&gt;0)*3.1416)-
+&#9;&#9;&#9;&#9;linscale(tally1[pc1],tally1[talmin(tally1)],
+&#9;&#9;&#9;&#9;tally1[talmax(tally1)],DEG300,DEG210);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_AZI2]=((fullplex[p].hr&gt;0)*3.1416)-
+&#9;&#9;&#9;&#9;linscale(tally2[pc2],tally2[talmax(tally2)],
+&#9;&#9;&#9;&#9;tally2[talmin(tally2)],DEG60,DEG150);
+&#9;&#9;&#9;&#9;
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_DIST1]=linscale(pc1,0,PA_NPC,PA_MINDIST,PA_MAXDIST);
+&#9;&#9;&#9;(*i4ev)-&gt;p[I4_DIST2]=linscale(pc2,0,PA_NPC,PA_MINDIST,PA_MAXDIST);
+
+&#9;&#9;&#9;
+&#9;&#9;&#9;if(nl) {
+&#9;&#9;&#9;&#9;printf("\nP %i/%i:\ti%.1f", evnum, numpevs, (*i4ev)-&gt;p[II_I]);
+&#9;&#9;&#9;&#9;for(j=2; j&lt;=NUM_I4PFIELDS; j++)
+&#9;&#9;&#9;&#9;&#9;printf("\t%7.3f", (*i4ev)-&gt;p[j]); 
+&#9;&#9;&#9;}
+&#9;&#9;}
+&#9;}
+&#9;printf("\n; instr 4 finished\n; -- end of \"P\"-stage --\n");
+&#9;printf(";\n");
+
+&#9;return nl;
+}</PRE></BODY>
+</HTML>

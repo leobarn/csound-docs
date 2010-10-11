@@ -1,0 +1,1180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+<div id="wrap">
+
+<div id="navigation"> CSOUND JOURNAL: <a href="../index.html">Home</a>
+|&nbsp;<a href="index.html">Issue 9</a> </div>
+
+
+<div id="header">
+<h2>Python at the Control Rate: athenaCL Generators as Csound Signals</h2>
+Christopher Ariza<br>
+ariza AT flexatone.net
+</div>
+
+<div id="content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2><br>
+I. Introduction<br>
+</h2>
+
+<P>The expansion of Python scripting into the Csound orchestra (<a href="#AEN175">Cabrera 2007</a>) provides new opportunities for instrument control in Csound. Operating as k-rate control signals, Python objects can replace and extend some Csound opcodes and GEN routines. Python&rsquo;s flexibility and readability offer a new interface for Csound instrument design, and at the same time offer new and flexible programming approaches. By integrating Python in Csound orchestras, Csound&rsquo;s syntactical complexity can be mitigated while Csound&rsquo;s signal processing power can be retained. 
+    </P><P>The athenaCL system offers an interactive command-line interface for specifying and manipulating multi-dimensional algorithmic generators called Textures and multi-dimensional algorithmic transformers called Clones (<a href="#AEN157">Ariza 2005a, p. 204</a>). Textures are configured with numerous one-dimensional Generator ParameterObjects. The athenaCL system consists of a large library of Generators, offering a variety of approaches to generating dynamic value streams. While providing powerful input control for Textures, Generator ParameterObjects can be used independently of the athenaCL user interface. This article demonstrates the use of athenaCL Generator ParameterObjects within the Csound orchestra. As an open-source, cross-platform Python system with no software dependencies, athenaCL integrates well within Csound and offers a diversity of tools for computer-aided algorithmic composition. 
+      </P><P>The athenaCL system provides support for numerous output formats, including Csound and MIDI. An internal library of Csound instruments is provided, permitting athenaCL to handle all aspects of orchestra and score generation and function as a Csound front-end. While Generators can be freely applied to exposed Csound instrument parameters, Csound instrument design, in this context, is fixed. Using athenaCL Generators inside the Csound orchestra, as an alternative approach, permits the exploration and development of instruments with flexible and dynamic controls. 
+      </P><P>While numerous athenaCL Generators offer original designs, not all Generators offer fundamentally new types of control. Nonetheless, athenaCL Generators offer new interfaces that, in some cases, offer greater flexibility and readability. For example, periodic Generators, such as WaveSine, offer a seconds per cycle argument rather than a cycles per second argument, and have minimum and maximum range arguments that can be dynamically controlled with independent embedded ParameterObjects. While applicable to signal processing, these Generator interfaces are specialized for compositional tasks. 
+      </P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>II. Using Generators at the Control Rate <br>
+</h2>
+
+
+
+
+<P>In the following examples, discrete value streams created from athenaCL Generators are called by Csound at the control rate. The basic procedure uses a single score-defined event; within this event any number of signals or dynamic, polyphonic events may occur. While greater complexity may be obtained with multiple events, single event design is used here to focus exclusively on the diversity of control rate signal applications. 
+    </P><P>A small selection of the many Python opcodes are required to employ athenaCL Generators within Csound. Within the Csound orchestra, the <CODE
+CLASS="FUNCTION"
+>pyinit</CODE
+> opcode must be called. Next, the <CODE
+CLASS="FUNCTION"
+>pyruni</CODE
+> block is used to define and instantiate at initialization time any number of athenaCL Generator ParameterObjects. These objects are created using the <CODE
+CLASS="FUNCTION"
+>factory()</CODE
+> function of the <CODE
+CLASS="FUNCTION"
+>parameter</CODE
+> module. ParameterObject arguments are provided to the <CODE
+CLASS="FUNCTION"
+>factory()</CODE
+> function as a list of Python objects. Documentation, argument specifications, and examples of all athenaCL generators are provided in 
+
+<A
+HREF="http://www.flexatone.net/athenaDocs/www/ax03.htm"
+>Appendix C.1</A
+> 
+ of the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>athenaCL Tutorial Manual</I
+></SPAN
+> (<a href="#AEN160">Ariza 2005b</a>).       </P><P>As a text-based system, athenaCL employs flexible and compact text representations. Automatic acronym expansion, for example, is available for all string arguments in athenaCL (<a href="#AEN157">2005a, p. 206</a>). For example, the arguments <CODE
+CLASS="FUNCTION"
+>['waveSine', 'time', 2, 0, 100, 400]</CODE
+>, when used with automatic acronym expansion, can be provided to athenaCL as <CODE
+CLASS="FUNCTION"
+>['ws', 't', 2, 0, 100, 400]</CODE
+>. In the examples below, full string arguments are provided for readability. 
+      </P><P>Within the Csound instrument definition, the <CODE
+CLASS="FUNCTION"
+>pycall1</CODE
+> opcode calls the previously-instantiated Python objects with a single argument. Depending on the number of values returned by the instantiated Python function or object method, different <CODE
+CLASS="FUNCTION"
+>pycall</CODE
+> opcodes must be used. As athenaCL Generators return a single value, only the <CODE
+CLASS="FUNCTION"
+>pycall1</CODE
+> opcode is needed. Instantiated athenaCL Generators require a single argument; this argument is treated as a time value or ignored, depending on the context of the Generator. Within Csound, this argument may represent intra-event time or absolute score time. In the examples below, values for this argument are provided by a control rate <CODE
+CLASS="FUNCTION"
+>line</CODE
+> signal that ramps from either zero to the duration of the event, or absolute event start time to absolute event end time.
+      </P><P>The Csound <CODE
+CLASS="FUNCTION"
+>pycall</CODE
+> opcodes require the Python function or object method to return a floating-point value. This is a potential problem for athenaCL Generators that return integers or strings. For Generators that return integers, this problem can be avoided by embedding the Generator within a dynamic break-point function Generator (e.g. BreakGraphFlat, BreakGraphHalfCosine, BreakGraphLinear, BreakGraphPower) or the SampleAndHold Generator.
+      </P><P>As stated above, the single argument required by athenaCL Generators is, in some cases, interpreted as a time value within a continuous function. Other athenaCL generators, however, ignore this argument and interpret each call as an event, returning the next-generated value. Some athenaCL Generators, such as periodic Generators (e.g. WaveSine, WavePulse, WavePowerUp, WaveSawDown) and break-point Generators (e.g. BreakPointLinear, BreakGraphPower) can be configured with the <SPAN
+CLASS="QUOTE"
+>"stepString"</SPAN
+> argument to perform based on either time or event counts. Generators that only offer event-based value generations, such as ValueSieve (<a href="#AEN163">Ariza 2005c</a>), require special handling when used as k-rate signals. Similar to handling Generators that return integers, options include embedding the Generator within another athenaCL generator, such as dynamic break-point function generators, or employing the <CODE
+CLASS="FUNCTION"
+>pycall1t</CODE
+> opcode.
+      </P><P>As an interpreted language, Python is limited in speed. Operating at the control rate, athenaCL Generators are called at the frequency specified by the number of samples in a control period, or the <CODE
+CLASS="FUNCTION"
+>ksmps</CODE
+> header statement. As <CODE
+CLASS="FUNCTION"
+>ksmps</CODE
+> decreases, more calls to the Generator are made and audio file rendering takes greater time. As demonstrated in <A
+HREF="#EX01"
+>Figure 1</A
+>, below, a control rate of 441 Hz (where <CODE
+CLASS="FUNCTION"
+>ksmps</CODE
+> is equal to 100) is sufficient to smoothly modulate an oscillator&rsquo;s frequency without noticeable sonic artifacts. 
+      </P><P><A
+HREF="#EX01"
+>Figure 1</A
+> demonstrates a minimal use of athenaCL Generators within Csound. Here, a sine wave frequency is oscillated over the duration of the event with the athenaCL WaveSine ParameterObject. Note that the WaveSine ParameterObject is set to oscillate according to an input value interpreted as time, at a rate of two seconds per cycle (not cycles per second), and between a minimum and maximum of 100 and 400. The Generator input value is provided by "kPhaseEv", for event phase. An alternative line segment, "kPhaseRt", for real time phase, provides a phase value within the absolute time range of the event.
+      </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EX01"
+></A
+><PRE
+CLASS="SCREEN"
+>&lt;CsoundSynthesizer&gt;  
+
+&lt;CsInstruments&gt; 
+sr     = 44100  
+ksmps  = 100        
+nchnls = 1 
+
+pyinit  
+pyruni {{ 
+from athenaCL.libATH.libPmtr import parameter 
+fq = parameter.factory(["waveSine", "time", 2, 0, 100, 400]) 
+}}  
+
+instr 100 
+   iStart = p2 
+   iDur = p3 
+   iAmp = ampdbfs(p4) 
+
+   kPhaseRt    line      iStart, iDur, iStart+iDur 
+   kPhaseEv    line      0, iDur, iDur               
+
+   kFq         pycall1   "fq", kPhaseEv 
+   aSig        oscili    iAmp, kFq, 1 
+               out       aSig 
+endin 
+&lt;/CsInstruments&gt;  
+
+&lt;CsScore&gt;  
+f1    0 16384 10 1     
+i100  0 10 -18 
+&lt;/CsScore&gt;  
+&lt;/CsoundSynthesizer&gt;  </PRE
+></DIV>
+
+<P align="center"><strong>Figure 1.</strong> Controlling the Frequency of a Sine Wave</P>
+
+<P>As above, all examples are presented as CSD files. These CSD files and rendered audio examples are available for download at the following URL: <A
+HREF="http://www.flexatone.net/docs/pcragcs.zip"
+TARGET="_top"
+>http://www.flexatone.net/docs/pcragcs.zip</A
+>. Users must install Csound version 5 or later, Python, and athenaCL version 1.4.8 or later to render these examples. The athenaCL directory must be within Python&rsquo;s search directory or, alternatively, installed within the Python site-packages directory. Consult Python and athenaCL documentation for more information on installing Python modules.
+    </P><P>The athenaCL interactive command line provides quick access to ParameterObject documentation and graphing. For example, the documentation for the WaveSine ParameterObject can be accessed within athenaCL with the TPv command, for TextureParameter View: 
+      </P><DIV
+CLASS="FIGURE"
+><A
+NAME="ATH-HELP"
+></A
+><PRE
+CLASS="SCREEN"
+>:: TPv wavesine      
+Generator ParameterObject
+{name,documentation}
+WaveSine            waveSine, stepString, parameterObject, phase, min, max
+                    Description: Provides sinusoid oscillation between 0 and 1
+                    at a rate given in either time or events per period. This
+                    value is scaled within the range designated by min and max;
+                    min and max may be specified with ParameterObjects.
+                    Depending on the stepString argument, the period rate
+                    (frequency) may be specified in spc (seconds per cycle) or
+                    eps (events per cycle). The phase argument is specified as a
+                    value between 0 and 1. Note: conventional cycles per second
+                    (cps or Hz) are not used for frequency. Arguments: (1) name,
+                    (2) stepString {<SPAN
+CLASS="QUOTE"
+>"event"</SPAN
+>, <SPAN
+CLASS="QUOTE"
+>"time"</SPAN
+>}, (3) parameterObject
+                    {secPerCycle}, (4) phase, (5) min, (6) max</PRE
+></DIV
+>
+
+<P align="center"><strong>Figure 2.</strong> Accessing Generator Documentation from within athenaCL</P>
+
+<P>The athenaCL TPmap command, for TextureParameter Map, permits graphing output of a ParameterObject within an event domain graph. <A
+HREF="#EXPO-0"
+>Figure 3</A
+> provides a graph of 120 values from the WaveSine Generator used in <A
+HREF="#EX01"
+>Figure 1</A
+>. As event domain graphs show only integer steps on the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>x</I
+></SPAN
+> axis, the seconds per cycle parameter is here increased from 2 to 20.  
+    </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EXPO-0"
+></A
+><P align="center"><IMG
+SRC="images/exPo-0.png"></P>
+
+
+<PRE CLASS="SCREEN">waveSine, time, (constant, 20), 0, (constant, 100), (constant, 400)</PRE></DIV>
+
+<P align="center"><strong>Figure 3.</strong> TPmap Display</p>
+
+
+
+<h2>III. Using Multiple Generators <br>
+</h2>
+
+
+
+
+
+
+<P>Any number of independent athenaCL Generators may be created in the Csound orchestra. <A
+HREF="#EX02"
+>Figure 4</A
+> demonstrates creating a stream of sonic events within a single Csound score event. Here, multiple athenaCL generators are used to control all essential parameters of a filtered noise instrument.
+    </P><P>Amplitude is controlled with the EnvelopeGeneratorAdsr ParameterObject. This ParameterObject, along with EnvelopeGeneratorTrapezoid and EnvelopeGeneratorUnit, permit creating envelope contours between dynamic minimum and maximum values, where all envelope parameters are supplied by embedded ParameterObjects and can be treated either as absolute or proportional values. Envelope durations are selected by the BasketGen Generator, creating random permutations of three durations. Maximum envelope amplitude is controlled by a RandomBeta Generator producing values between .5 and 1. 
+      </P><P>For timbral variation the WaveSine Generator is used to create dynamic cutoff frequency and resonance values for the <CODE
+CLASS="FUNCTION"
+>lowpass2</CODE
+> opcode.
+      </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EX02"
+></A
+><PRE
+CLASS="SCREEN"
+>&lt;CsoundSynthesizer&gt;  
+
+&lt;CsInstruments&gt; 
+sr     = 44100  
+ksmps  = 100 
+nchnls = 1 
+
+pyinit  
+pyruni {{ 
+from athenaCL.libATH.libPmtr import parameter 
+
+fq = parameter.factory(["waveSine", "time", 6, 0, 600, 12000]) 
+q = parameter.factory(["waveSine", "time", 7, .5, .6, 4]) 
+envl = parameter.factory([ 
+   "envelopeGeneratorAdsr", 
+   "proportional",  
+   "loop", 
+   120, 
+   ("basketGen","randomPermutate",(.20,.40,.80)),  
+   ("randomUniform", 1, 10),  
+   ("randomUniform", 10, 30),  
+   ("randomUniform", 20, 30),  
+   ("randomUniform", 2, 10),  
+   ("randomUniform", 0, .5),  
+   0,  
+   ("randomBeta", .2, .2, .5, 1)]) 
+}}  
+
+instr 100 
+   iStart = p2 
+   iDur = p3 
+   iAmp  = ampdbfs(p4) 
+
+   kPhaseRt    line      iStart, iDur, iStart+iDur 
+   kPhaseEv    line      0, iDur, iDur               
+
+   kEnvl       pycall1    "envl", kPhaseEv 
+   kCf         pycall1   "fq", kPhaseEv 
+   kq          pycall1    "q", kPhaseEv 
+
+   aSig        random    -iAmp, iAmp 
+   aSig        lowpass2  aSig, kCf, kq 
+   aSig        = aSig * kEnvl 
+               out       aSig 
+endin  
+&lt;/CsInstruments&gt;  
+
+&lt;CsScore&gt;  
+i100  0  30  -18  
+&lt;/CsScore&gt;  
+
+&lt;/CsoundSynthesizer&gt;  </PRE
+></DIV>
+
+<P align="center"><strong>Figure 4.</strong> Filtered Noise with Dynamic Envelopes</P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>IV. Employing Additional Python Processing<br>
+</h2>
+
+
+
+
+
+
+
+<P>Additional Python processing inside the Csound orchestra, beyond instantiating Generators, may be used to pre-process and configure Generator arguments. To provide an easily-recognizable demonstration, this example employs the pitch values from the theme of Mozart&rsquo;s Symphony 40. These pitch values, encoded as MIDI note numbers, are used as a source for Markov-based analysis and generation with dynamic orders of 0, 1, and 2. Data for analysis could, alternatively, be read by Python from a file or translated from an alternative representation. 
+    </P><P>The athenaCL Markov object provides tools for analyzing and regenerating sequences at dynamic orders. Rather than conventional transition tables, analysis data can be stored and input as transition strings (<a href="#AEN167">Ariza 2006</a>). In the example provided here, a Transition object is created; this object&rsquo;s <CODE
+CLASS="FUNCTION"
+>loadList()</CODE
+> method receives the list of MIDI note numbers and an argument for maximum Markov analysis order. This object is then used to provide a string representation of all transitions to the athenaCL MarkovValue ParameterObject. This MarkovValue Generator is deployed with dynamic orders; the order is controlled by an embedded MarkovValue Generator with a transition string specifying a zero-order Markov chain. First order generation is mixed with occasional second and zeroth order generation.
+      </P><P>As the MarkovValue Generator, configured with MIDI note numbers, returns integers for each event call, this ParameterObject must be embedded within a ParameterObject that provides time-based, floating-point value output. The athenaCL dynamic break-point function generators (e.g BreakGraphFlat, BreakGraphHalfCosine, BreakGraphLinear, BreakGraphPower) permit creating break-point segments with embedded Generators for <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>x</I
+></SPAN
+> and <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>y</I
+></SPAN
+> axis points. In this example, time (<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>x</I
+></SPAN
+> axis) values are generated with an Accumulator Generator producing a constant .10 second increment; pitch axis (<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>y</I
+></SPAN
+> axis) values are generated with the MarkovValue Generator.
+      </P><P>Within the Csound instrument block, MIDI note values are modulated by a WaveSine Generator for subtle pitch fluctuation, are shifted down two octaves, and are converted to frequency values with the <CODE
+CLASS="FUNCTION"
+>cpsmidinn</CODE
+> opcode. This frequency drives the <CODE
+CLASS="FUNCTION"
+>vco</CODE
+> opcode set for a square wave. The pulse width of this square wave is modulated by a WaveSine Generator. This signal is then filtered by the <CODE
+CLASS="FUNCTION"
+>lowpass2</CODE
+> opcode with dynamic cutoff frequency and Q values also provided by WaveSine Generators.
+      </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EX03"
+></A
+><PRE
+CLASS="SCREEN"
+>&lt;CsoundSynthesizer&gt;  
+
+&lt;CsInstruments&gt; 
+sr     = 44100  
+ksmps  = 100        
+nchnls = 1 
+
+pyinit  
+pyruni {{ 
+
+from athenaCL.libATH import markov 
+from athenaCL.libATH.libPmtr import parameter 
+
+pitchSequence = [75, 74, 74, 75, 74, 74, 75, 74, 74, 82, 82, 81, 79, 79, 77, 75, 
+75, 74, 72, 72, 74, 72, 72, 74, 72, 72, 74, 72, 72, 81, 81, 79, 78, 78, 75, 74, 
+74, 72, 70, 70, 82, 81, 81, 84, 78, 81, 79, 74, 82, 81, 81, 84, 78, 81, 79, 82, 
+81, 79, 77, 75, 74, 73, 74, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 
+62, 62] 
+
+events = 300 
+order = 2 
+mkPitch = markov.Transition() 
+mkPitch.loadList(pitchSequence, order)  
+
+fq = parameter.factory([ 
+   "breakGraphFlat",  
+   "time",  
+   "loop",  
+   ("accumulator", 0, ("constant",.10)), 
+   ("markovValue", str(mkPitch),  
+      ("markovValue","a{1}b{2}c{0}:{a=10|b=2|c=1}",("constant",0)) 
+      ),  
+]) 
+
+pitchBend = parameter.factory(["waveSine", "time", 9, 0, -.10, .10]) 
+fqCutoff = parameter.factory(["waveSine", "time", 5, .5, 1500, 4000]) 
+pulseWidth = parameter.factory(["waveSine", "time", 13, .5, 0.1, 0.9]) 
+
+}}  
+
+instr 100 
+   iStart = p2 
+   iDur = p3 
+   iAmp  = ampdbfs(p4) 
+
+   kPhaseRt    line      iStart, iDur, iStart+iDur  ; abs time 
+   kPhaseEv    line      0, iDur, iDur              ; time w/n event 
+
+   kPitchBend  pycall1   "pitchBend", kPhaseEv 
+   kFq         pycall1   "fq", kPhaseEv 
+   kFq         = cpsmidinn(kFq + kPitchBend - 24)   
+
+   kFqCutoff   pycall1   "fqCutoff", kPhaseRt 
+   kPulseWidth pycall1   "pulseWidth", kPhaseRt 
+
+   aSig        vco        iAmp, kFq, 2, kPulseWidth       
+   aSig        lowpass2   aSig, kFqCutoff, .8 
+               out        aSig 
+endin  
+&lt;/CsInstruments&gt;  
+
+&lt;CsScore&gt;  
+f 1  0 16384 10  1                       
+i100  0  30  -12  
+&lt;/CsScore&gt;  
+
+&lt;/CsoundSynthesizer&gt;  </PRE
+></DIV>
+
+
+
+<P align="center"><strong>Figure 5.</strong> Melodic Markov Analysis and Generation after Mozart</P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>V. Filtering an Audio File<br>
+</h2>
+
+
+
+
+
+
+<P><A
+HREF="#EX04"
+>Figure 7</A
+> employs multiple independent athenaCL Generators, configured with the same parameters, to control band pass filter center frequencies applied to an audio file. These filter frequencies are produced with a dynamic break point function, here using the BreakGraphHalfCosine generator. Time (<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>x</I
+></SPAN
+> axis) values are produced with the an Accumulator Generator, where increments are produced by an imbedded RandomBeta Generator set to produce values between 4 and 6 seconds. Frequency (<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>y</I
+></SPAN
+> axis) values are produced by selecting values from a Xenakis sieve (<a href="#AEN179">Xenakis 1990</a>; <a href="#AEN163">Ariza 2005c</a>) mapped between 120 and 1200 Hertz. Values are selected randomly without replacement using the <SPAN
+CLASS="QUOTE"
+>"randomPermutate"</SPAN
+> selector.
+    </P><P>The event domain graph provided in <A
+HREF="#EXPO-1"
+>Figure 6</A
+> illustrates sample values produced by a similarly configured BreakGraphHalfCosine Generator. 
+      </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EXPO-1"
+></A
+><P align="center"><IMG
+SRC="images/exPo-1.png"></P><PRE
+CLASS="SCREEN"
+>breakGraphHalfCosine, time, loop, (accumulator, 0, (randomBeta, 0.2, 0.2
+, (constant, 4), (constant, 6))), (valueSieve, 9@0|11@5|21@3|23@2, 30, (constant
+, 200), (constant, 1600), randomPermutate), 200</PRE
+></DIV
+>
+
+<P align="center"><strong>Figure 6.</strong> Half Cosine Interpolation between Sieve-Derived Values</P>
+
+
+
+<P>As configured, each of the four frequency-controlling Generators will produce unique yet related value streams. These center frequencies control four <CODE
+CLASS="FUNCTION"
+>butterbp</CODE
+> filters. Input to these filters is provided by four signals from <CODE
+CLASS="FUNCTION"
+>diskin</CODE
+> opcodes set to playback an audio file at .90 speed, start at staggered times, and loop.
+    </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EX04"
+></A
+><PRE
+CLASS="SCREEN"
+>&lt;CsoundSynthesizer&gt;  
+
+&lt;CsInstruments&gt; 
+sr     = 44100  
+ksmps  = 100        
+nchnls = 1 
+
+pyinit  
+pyruni {{ 
+from athenaCL.libATH.libPmtr import parameter 
+
+args = [ 
+   "breakGraphHalfCosine",  
+   "time",  
+   "loop",  
+   ("accumulator", 0, ("randomBeta", .2, .2, 4, 6)), 
+   ("valueSieve", "9@0|11@5|21@3|23@2", 30, 200, 1600, "randomPermutate"),  
+   200 
+] 
+
+fq1 = parameter.factory(args) 
+fq2 = parameter.factory(args) 
+fq3 = parameter.factory(args) 
+fq4 = parameter.factory(args) 
+
+}}  
+
+instr 100 
+   iStart = p2 
+   iDur = p3 
+   iAmp  = ampdbfs(p4) 
+   iQ = 20 
+   iAmpScale = 2 
+
+   kPhaseRt    line      iStart, iDur, iStart+iDur 
+   kPhaseEv    line      0, iDur, iDur             
+
+   aSrc1       diskin    "sax.aif", .90, 5, 1 
+   aSrc2       diskin    "sax.aif", .90, 10, 1 
+   aSrc3       diskin    "sax.aif", .90, 15, 1 
+   aSrc4       diskin    "sax.aif", .90, 20, 1 
+
+   kFq1        pycall1   "fq1", kPhaseEv 
+   kFq2        pycall1   "fq2", kPhaseEv 
+   kFq3        pycall1   "fq3", kPhaseEv 
+   kFq4        pycall1   "fq4", kPhaseEv 
+
+   aSig1       butterbp  aSrc1, kFq1, iQ 
+   aSig2       butterbp  aSrc2, kFq2, iQ 
+   aSig3       butterbp  aSrc3, kFq3, iQ 
+   aSig4       butterbp  aSrc4, kFq4, iQ 
+
+               out       (aSig1 + aSig2 + aSig3 + aSig4) * iAmpScale 
+endin  
+&lt;/CsInstruments&gt;  
+
+&lt;CsScore&gt;  
+f 1  0 16384 10  1                       
+i100  0  30  -12  
+&lt;/CsScore&gt;  
+
+&lt;/CsoundSynthesizer&gt;  </PRE
+></DIV>
+
+
+<P align="center"><strong>Figure 7</strong>. Band-Pass Filtered Audio File with Parallel Sieve-Controlled Center Frequencies</P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>VI. Waveform Design with Control Signals<br>
+</h2>
+
+
+
+
+
+
+
+
+<P>Control-rate Generators can be used to directly specify waveforms, permitting a range of conventional and non-standard synthesis techniques. While Python&rsquo;s speed inhibits complete flexibility with this approach, alternative interfaces for specifying waveforms, independent of Csound GEN routines, become possible. As stated above, decreasing <CODE
+CLASS="FUNCTION"
+>ksmps</CODE
+> improves resolution but increases processing time.
+    </P><P><A
+HREF="#EX05"
+>Figure 8</A
+> provides an example of using control-rate signals to create a frequency-modulated waveform. Here, the carrier wave cycles between -1 and 1; the seconds per cycle of the carrier is controlled by an embedded WaveSine Generator, which in turn has its seconds per cycle and minimum amplitude values controlled by embedded WaveSine Generators.
+      </P><P>The signal configured above, as a control rate signal in Csound, is used to scale a constant value of one and is assigned to an audio rate signal. As this signal is operating at one-tenth the sampling rate, low pass filtering can be used to remove some aliasing noise.
+      </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EX05"
+></A
+><PRE
+CLASS="SCREEN"
+>&lt;CsoundSynthesizer&gt;  
+
+&lt;CsInstruments&gt; 
+sr     = 44100  
+ksmps  = 10 
+nchnls = 1 
+
+pyinit  
+pyruni {{ 
+from athenaCL.libATH.libPmtr import parameter 
+
+modulatorArgs = [ 
+   "waveSine",  
+   "time",  
+   ("waveSine", "time", 3, 0, 6, 12),  
+   0, 
+   ("waveSine", "time", 5, 0, .0005, .0015),  
+   .0025 
+] 
+
+carrier = parameter.factory(["waveSine", "time", modulatorArgs, 0, -1, 1]) 
+
+}}  
+
+instr 100 
+   iStart = p2 
+   iDur = p3 
+   iAmp  = ampdbfs(p4) 
+   iQ = 20 
+   iAmpScale = 4 
+
+   kPhaseRt    line      iStart, iDur, iStart+iDur  ; abs time 
+   kPhaseEv    line      0, iDur, iDur              ; time w/n event 
+
+   kCarrier    pycall1   "carrier", kPhaseEv 
+   aWave = iAmp * kCarrier 
+
+   aWave       lowpass2  aWave, 6000, 0.8  
+               out       aWave 
+endin  
+&lt;/CsInstruments&gt;  
+
+&lt;CsScore&gt;  
+f 1  0 16384 10  1                                          ; sine wave 
+i100  0  20  -12  
+&lt;/CsScore&gt;  
+
+&lt;/CsoundSynthesizer&gt;  </PRE
+></DIV
+>
+
+<P align="center"><strong>Figure 8.</strong> Using a Control-Rate Signal to Produce a Frequency Modulated Waveform</P>
+
+
+
+
+
+<P>While <A
+HREF="#EX05"
+>Figure 8</A
+> provides a basic example, alternative approaches, including those employing stochastic or non-standard synthesis, may be explored. Significant processing time and aliasing noise, however, are a potential weakness of this approach. 
+    </P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>VII. Creating Pulse Sequences<br>
+</h2>
+
+
+
+
+<P><A
+HREF="#EX06"
+>Figure 10</A
+> creates two parallel pulse streams of audio file fragments, where pulse accent patterns are controlled by a bent one-dimensional cellular automaton (<a href="#AEN171">Ariza 2007</a>) and audio file playback speed is varied with half-cosine interpolated values produced by zero-order Markov chains. 
+    </P><P>Pulse envelopes are created with the EnvelopeGeneratorTrapezoid Generator, employing MarkovValue controlled duration and dynamic envelope segment specifications. Envelope minimum values are set to zero. Maximum values are controlled by the CaValue Generator. Employing summed rows from an extracted table of a bent one-dimensional CA, dynamic accent values are produced. <A
+HREF="#EXPO-2"
+>Figure 9</A
+> illustrates the extracted table of the rule 109 CA with .003 mutation. Each row is summed and then scaled within 0 and 1 to produce stepped accent values.
+      </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EXPO-2"
+></A
+>
+
+
+<P align="center"><IMG SRC="images/exPo-2b.jpg"></P>
+
+
+<PRE
+CLASS="SCREEN"
+>f{s}k{2}r{1}i{center}x{81}y{80}w{4}c{10}s{0}</PRE
+></DIV
+>
+
+<P align="center"><strong>Figure 9.</strong> An Extracted Table from a Bent Cellular Automaton</P>
+
+
+<P>Frequency values, used to control audio file playback, are derived from a dynamically constructed half-cosine interpolated break point graph. Time (<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>x</I
+></SPAN
+> axis) values are produced with Accumulator Generators incremented by MarkovValue based selection or RandomBeta generation. Frequency (<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>y</I
+></SPAN
+> axis) values are produced with MarkovValue Generators set to select weighted random values between four and six, with occasional output of two. 
+    </P><P>Control rate signals are created for two accent signals and two frequency signals. Frequency signals are applied to <CODE
+CLASS="FUNCTION"
+>diskin</CODE
+> playback speed, and the resulting signal is scaled by the accent control signals.  
+      </P><DIV
+CLASS="FIGURE"
+><A
+NAME="EX06"
+></A
+><PRE
+CLASS="SCREEN"
+>&lt;CsoundSynthesizer&gt;  
+
+&lt;CsInstruments&gt; 
+sr     = 44100  
+ksmps  = 100        
+nchnls = 1 
+
+pyinit  
+pyruni {{ 
+from athenaCL.libATH.libPmtr import parameter 
+
+accent1 = parameter.factory([ 
+   "envelopeGeneratorTrapezoid", 
+   "proportional", 
+   "loop",  
+   200, 
+   ("markovValue", "a{0.075}b{.150}c{.600}:{a=40|b=2|c=1}", ("constant", 0)), 
+   ("randomUniform",1,2), 
+   ("randomUniform",2,6), 
+   ("constant",2), 
+   ("constant",4), 
+   0,  
+   ("caValue", 
+      "f{s}x{81}y{80}k{2}r{1}w{4}c{-10}", 
+      ("constant",109), 
+      ("constant",.003), 
+      "sumRow", 
+      0, 1, "orderedCyclic" 
+      ) 
+]) 
+
+accent2 = parameter.factory([ 
+   "envelopeGeneratorTrapezoid", 
+   "proportional", 
+   "loop",  
+   200, 
+   ("c",0.150), 
+   ("randomUniform",1,2), 
+   ("randomUniform",2,6), 
+   ("constant",2), 
+   ("constant",4), 
+   0,  
+   ("caValue", 
+      "f{s}x{81}y{80}k{2}r{1}w{4}c{10}", 
+      ("constant",109), 
+      ("constant",.003), 
+      "sumRow", 
+      0, 1, "orderedCyclic" 
+      ) 
+]) 
+
+fq1 = parameter.factory([ 
+   "breakGraphHalfCosine",  
+   "time",  
+   "loop",  
+   ("accumulator", 0, ("markovValue",  
+                       "a{.075}b{.150}:{a=20|b=5}",  
+                      ("constant", 0)) 
+      ), 
+   ("markovValue", "a{4}b{6}c{2}:{a=50|b=20|c=1}", ("constant", 0)),  
+   200 
+]) 
+
+fq2 = parameter.factory([ 
+   "breakGraphHalfCosine",  
+   "time",  
+   "loop",  
+   ("accumulator", 0, ("randomBeta", .2, .2, 4, 8)), 
+   ("operatorAdd",  
+      ("markovValue", "a{4}b{6}:{a=4|b=1}", ("constant", 0)), 
+      ("waveSine", "event", 12, 0, -.05, .05) 
+   ),  
+   200 
+]) 
+
+}}  
+
+instr 100 
+   iStart = p2 
+   iDur = p3 
+   iAmp  = ampdbfs(p4) 
+   iQ = 20 
+   iAmpScale = 4 
+
+   kPhaseRt    line      iStart, iDur, iStart+iDur 
+   kPhaseEv    line      0, iDur, iDur               
+
+   kAccent1    pycall1   "accent1", kPhaseEv 
+   kAccent2    pycall1   "accent2", kPhaseEv 
+
+   kFq1        pycall1   "fq1", kPhaseEv 
+   kFq2        pycall1   "fq2", kPhaseEv 
+
+   aSrc1       diskin    "sax.aif", kFq1, 20, 1 
+   aSrc2       diskin    "sax.aif", kFq2, 10, 1 
+
+               out       (aSrc1 * kAccent1) + (aSrc2 * kAccent2) 
+endin  
+&lt;/CsInstruments&gt;  
+
+&lt;CsScore&gt;  
+f 1  0 16384 10  1  
+i100  0  30  -12  
+&lt;/CsScore&gt;  
+
+&lt;/CsoundSynthesizer&gt;  </PRE
+></DIV>
+
+
+<P align="center"><strong>Figure 10.</strong> Cellular Automata Based Pulse Sequences</P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>VIII. Future Work<br>
+</h2>
+
+
+
+
+<P>The use of athenaCL generators at the control rate permits applying diverse algorithmic generators within Csound instruments. Such an approach offers excellent opportunities for creative sonic design while producing readable and maintainable code. This approach is only recently made possible with the Csound Python opcodes. It is a credit to the continued innovation of Csound that the athenaCL system, originally designed as an outer wrapper of Csound functionality, can now operate as an internal resource.
+    </P><P>Future improvements and expansions to the athenaCL system will offer additional resources for employing Generators within the Csound orchestra. The <CODE
+CLASS="FUNCTION"
+>parameter</CODE
+> module <CODE
+CLASS="FUNCTION"
+>factory()</CODE
+> function, used to instantiate Generators, at this time only accepts data objects (strings, lists, numbers) as arguments. This interface might be improved by supporting the use of instantiated Generators as arguments to the <CODE
+CLASS="FUNCTION"
+>factory()</CODE
+> function. In some cases this may offer greater readability and control.
+      </P><P>The athenaCL system is frequently expanded with the addition of new TextureModules and ParameterObjects. Demonstrating ParameterObject functionality within Csound instruments provides an alternative to more conventional score event examples. Additionally, further work with Generators inside Csound instruments will likely inspire new Generator designs. 
+      </P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>Acknowledgements<br>
+</h2>
+
+<P>Random, break point, and periodic signal generators in athenaCL are based in part on the Object-oriented Music Definition Environment (OMDE/pmask) by Maurizio Umberto Puxemdu.
+    </P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>References<br>
+</h2>
+
+
+<DIV
+CLASS="BIBLIOMIXED"
+><A
+NAME="AEN157"
+></A
+><P
+CLASS="BIBLIOMIXED"
+>Ariza, C. 2005a. <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>An Open Design for Computer-Aided Algorithmic Music Composition: athenaCL</I
+></SPAN
+>. Ph.D. Dissertation, New York University.</P></DIV
+><DIV
+CLASS="BIBLIOMIXED"
+><A
+NAME="AEN160"
+></A
+><P
+CLASS="BIBLIOMIXED"
+>Ariza, C. 2005b. <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>athenaCL Tutorial Manual</I
+></SPAN
+>. 2nd ed.  Internet: <A
+HREF="http://www.flexatone.net/athenaDocs"
+TARGET="_top"
+>http://www.flexatone.net/athenaDocs</A
+>.
+
+</P></DIV
+><DIV
+CLASS="BIBLIOMIXED"
+><A
+NAME="AEN163"
+></A
+><P
+CLASS="BIBLIOMIXED"
+>Ariza, C. 2005c. <SPAN
+CLASS="QUOTE"
+>"The Xenakis Sieve as Object: A New Model and a Complete Implementation."</SPAN
+> <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Computer Music Journal</I
+></SPAN
+> 29(2): 40-60.</P></DIV
+><DIV
+CLASS="BIBLIOMIXED"
+><A
+NAME="AEN167"
+></A
+><P
+CLASS="BIBLIOMIXED"
+>Ariza, C. 2006. <SPAN
+CLASS="QUOTE"
+>"Beyond the Transition Matrix: A Language-Independent, String-Based Input Notation for Incomplete, Multiple-Order, Static Markov Transition Values."</SPAN
+> Internet: <A
+HREF="http://www.flexatone.net/docs/btmimosmtv.pdf"
+TARGET="_top"
+>http://www.flexatone.net/docs/btmimosmtv.pdf</A
+>.</P></DIV
+><DIV
+CLASS="BIBLIOMIXED"
+><A
+NAME="AEN171"
+></A
+><P
+CLASS="BIBLIOMIXED"
+>Ariza, C. 2007. <SPAN
+CLASS="QUOTE"
+>"Automata Bending: Applications of Dynamic Mutation and Dynamic Rules in Modular One-Dimensional Cellular Automata."</SPAN
+> <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Computer Music Journal</I
+></SPAN
+> 31(1): 29-49.</P></DIV
+><DIV
+CLASS="BIBLIOMIXED"
+><A
+NAME="AEN175"
+></A
+><P
+CLASS="BIBLIOMIXED"
+>Cabrera, A. 2007. <SPAN
+CLASS="QUOTE"
+>"Using Python Inside Csound."</SPAN
+> <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Csound Journal</I
+></SPAN
+> 1(6).</P></DIV
+>
+
+<A
+NAME="AEN179"
+></A
+><P
+CLASS="BIBLIOMIXED"
+>Xenakis, I. 1990. <SPAN
+CLASS="QUOTE"
+>"Sieves."</SPAN
+> <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Perspectives of New Music</I
+></SPAN
+> 28(1): 58-78.</P>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+</div>
+
+
+</body>
+</html>

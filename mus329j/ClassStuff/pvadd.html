@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Example PVInterp Instrument</TITLE>
+<META NAME="Template" CONTENT="C:\Program Files\Microsoft Office\Office\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>;==============================================<br>; Example pvadd instruments built in class<br>;<br>; Instr 1 is a simple implementation, with<br>;    p-fields for n bins, offset, and incr<br>; Instr 2 uses 2 pvadd opcodes, with independent<br>;    time pointers and envelopes, allowing the<br>;    mixing of different portions of the spectra<br>;    from two different sounds.<br>; RP<br>;===============================================<br>	sr     = 44100<br>	kr     = 4410<br>	ksmps  = 10<br>	nchnls = 1</pre>
+<pre>	instr	1
+isine	=	1
+ilength	=	p4
+igain	=	ampdb(p5)
+ishift	=	p6
+ifile	=	p7
+inbins	=	p8
+ibin1	=	p9
+incr	=	p10
+ktime	line	0, p3, ilength
+asig	pvadd	ktime, ishift, ifile, isine, inbins, ibin1, incr
+asig	linen	asig,.01,p3,.1
+	out	asig*igain
+	endin</pre>
+<pre>	instr	2	;mix two pvadds
+isine	=	1
+ilen1	=	p4
+idur1	=	(p5 == 0 ? p3 : p5)
+itime1	=	(p6 == 0 ? ilen1 : p6)
+igain1	=	ampdb(p7)
+ishift1	=	p8
+ifile1	=	p9
+inbins1	=	p10
+i1bin1	=	p11
+incr1	=	p12
+ilen2	=	p13
+idur2	=	(p14 == 0 ? p3 : p14)
+itime2	=	(p15 == 0 ? ilen2 : p15)
+igain2	=	ampdb(p16)
+ishift2	=	p17
+ifile2	=	p18
+inbins2	=	p19
+i1bin2	=	p20
+incr2	=	p21
+ienv1	=	p22
+ienv2	=	p23
+ktime1	linseg	0, idur1, itime1, p3-idur1, ilen1
+ktime2	linseg	0, idur2, itime2, p3-idur2, ilen2
+asig1	pvadd	ktime1, ishift1, ifile1, isine, inbins1, i1bin1, incr1
+kgate1	oscil1i	0,igain1,p3,ienv1
+asig1	=	asig1*kgate1
+asig2	pvadd	ktime2, ishift2, ifile2, isine, inbins2, i1bin2, incr2
+kgate2	oscil1i	0,igain2,p3,ienv2
+asig2	=	asig2*kgate2
+asig	linen	asig1+asig2,.01,p3,.1
+	out	asig
+	endin</pre>
+<P><HR>
+<pre>f01	0	8192	10	1
+ ;pvoc.903 is gong2.aif analyzed with -n1024 -w8
+ ;pvoc.904 is kalimba low.aif analyzed with -n1024 -w8
+ ;	st	dur	ilength	gaindb	ishift	file	nbins	bin1	incr
+ i01	0	10	2.5	0	1	903	100	1	1
+ i01	10	.	.	18	.	.	.	30
+ i01	20	.	.	.	.	.	25	30
+ s
+ i01	0	10	2.5	18	.5	903	10	25	1
+ i01	10	.	.	10	.	.	.	20
+ s
+ ;	st	dur	len	gaindb	ishift	file	nbins	bin1	incr
+ i01	0	10	2.5	12	.5	903	50	10	2
+ i01	+	.	.	12	.	.	.	.	5
+ i01	+	.	.	16	.	.	.	.	10
+ i01	+	.	.	20	.	.	.	.	15
+ s
+ f0	2
+ s
+ f02	0	1025	9	.25	1	0
+ f03	0	1025	9	.25	1	90
+ ;	st	dur	len1	dur1	time1	gain1	ishift1	file1	nbins1	1bin1	incr1
+ i02	0	10	2.5	0	0	6	.5	903	50	10	2
+ ;	len2	dur2	time2	gain2	ishift2	file2	nbins2	1bin2	incr2	env1	env2
+ 1.5	.1	.1	-1	1	904	50	1	1	2	3
+ e </pre>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="32%" VALIGN="TOP">
+<P><A HREF="../../../dwnld/classorc/pvadd.orc">Download
+    pvadd.orc</A></TD>
+<TD WIDTH="37%" VALIGN="TOP">
+<P ALIGN="CENTER"><A HREF="../../../dwnld/arc/pvaddsnd.zip">Download
+    pvaddsnd.zip </A></TD>
+<TD WIDTH="31%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="../../../dwnld/classsco/pvadd.sco">Download
+    pvadd.sco</A></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

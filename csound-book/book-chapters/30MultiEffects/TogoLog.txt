@@ -1,0 +1,41 @@
+------------------------------  Web Buddy: to go trace log------------------------------Page Title   : A Csound Multi-Effects ProcessoPage URL     : http://reality.sgi.com/hpm_cfdevsun/multifx/Start time   : -1305182145Finish time  : -1305181704Elapsed time : 7 minutes 21 secondsDisk space   : 56 KB Persistence  : 3Levels       : Base page + 1 level deepSummary: - Links resolved : 1 of 1 - Graphics resolved : 15 of 15----------------------------------------
+ 47722  - 0 - Begin Session Update: time = -1305182145 - 
+ 47722  - 0 - Begin Main Loop - 
+ 47722  - 31180724 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/
+ 67905  - 31180724 -  - Resolve Complete
+ 67906  - 0 - Parsing file - http://reality.sgi.com/hpm_cfdevsun/multifx/
+ 67908  - 0 - Fetch Graphics - 
+ 67908  - 31043744 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx1.gif
+ 67909  - 31180844 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx2.gif
+ 67910  - 31180804 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx3.gif
+ 67911  - 31180716 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx4.gif
+ 69181  - 31180716 -  - Resolve Complete
+ 69182  - 31180792 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx5.gif
+ 69707  - 31180792 -  - Resolve Complete
+ 69708  - 31180412 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx6.gif
+ 70037  - 31180804 -  - Resolve Complete
+ 70038  - 31179848 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx7.gif
+ 70764  - 31180412 -  - Resolve Complete
+ 70765  - 31179836 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx8.gif
+ 71152  - 31180844 -  - Resolve Complete
+ 71153  - 31180568 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx9.gif
+ 71313  - 31179836 -  - Resolve Complete
+ 71313  - 31180776 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx10.gif
+ 71532  - 31179848 -  - Resolve Complete
+ 71533  - 31180356 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx11.gif
+ 71778  - 31180568 -  - Resolve Complete
+ 71779  - 31043728 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx12.gif
+ 72045  - 31180356 -  - Resolve Complete
+ 72045  - 31180480 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx13.gif
+ 72123  - 31180776 -  - Resolve Complete
+ 72124  - 31043696 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx14.gif
+ 72889  - 31043744 -  - Resolve Complete
+ 72890  - 31180836 -  - Resolve File , http://reality.sgi.com/hpm_cfdevsun/multifx/mltfx15.gif
+ 73586  - 31043728 -  - Resolve Complete
+ 73885  - 31180480 -  - Resolve Complete
+ 74206  - 31180836 -  - Resolve Complete
+ 74254  - 31043696 -  - Resolve Complete
+ 74254  - 0 - Begin Main Loop - 
+ 74254  - 0 - Begin Main Loop - 
+ 74254  - 0 - Update links - 
+ 74309  - 0 - Session Update Complete: time = -1305181704 - 

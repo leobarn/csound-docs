@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pan2</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pan.html" title="pan" />
+    <link rel="next" href="pareq.html" title="pareq" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pan2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pan.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pareq.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="pan2">
+      <a id="pan2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPan2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pan2</span>
+        </h2>
+        <p>pan2 — 
+      Distribute an audio signal across two channels.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3459802"></a>
+        <h2>Description</h2>
+        <p>
+      Distribute an audio signal across two channels with a choice of methods.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3459813"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>pan2</strong></span> asig, xp [, imode]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3460030"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imode</em></span> (optional) -- mode of the stereo
+      positioning algorithm. 0 signifies equal power (harmonic)
+      panning, 1 means the square root method, 2 means simple linear
+      and 3 means an alternative equal-power pan (based on an UDO). The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3460048"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>pan2</em></span> takes an input
+      signal <span class="emphasis"><em>asig</em></span> and distributes it across two
+      outputs (essentially stereo speakers) according to the
+      control <span class="emphasis"><em>xp</em></span> which can be k- or a-rate.  A
+      zero value for <span class="emphasis"><em>xp</em></span> indicates hard left, and
+      a 1 is hard right.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3460076"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="oblock">instr</span>     1
+  kline  <span class="opc">line</span>    0, p3, 1      <span class="comment">; straight line</span>
+  ain    <span class="opc">oscili</span>  10000,440, 1  <span class="comment">; audio signal..</span>
+  a1,a2  <span class="opc">pan2</span>    ain, kline    <span class="comment">; sent across image</span>
+                                 
+         <span class="opc">outs</span>   a1, a2
+<span class="oblock">endin</span>
+        </pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3460702"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>September 2007</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.07</p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pan.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pareq.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pan </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pareq</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

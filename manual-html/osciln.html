@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>osciln</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="oscilikts.html" title="oscilikts" />
+    <link rel="next" href="oscils.html" title="oscils" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">osciln</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="oscilikts.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="oscils.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="osciln">
+      <a id="osciln"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOsciln" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">osciln</span>
+        </h2>
+        <p>osciln — 
+      Accesses table values at a user-defined frequency.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3441113"></a>
+        <h2>Description</h2>
+        <p>
+      Accesses table values at a user-defined frequency. This opcode can also be written as <a class="link" href="oscilx.html" title="oscilx"><em class="citetitle">oscilx</em></a>.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3441329"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>osciln</strong></span> kamp, ifrq, ifn, itimes</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3441347"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifrq, itimes</em></span> -- rate and number of times through the stored table.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- function table number. 
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3441369"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude factor
+    </p>
+        <p>
+      <span class="emphasis"><em>osciln</em></span> will sample several times through the stored table at a rate of <span class="emphasis"><em>ifrq</em></span> times per second, after which it will output zeros. Generates audio signals only, with output values scaled by <span class="emphasis"><em>kamp.</em></span>
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3441970"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a>,
+      <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>,
+      <a class="link" href="table3.html" title="table3"><em class="citetitle">table3</em></a>,
+      <a class="link" href="oscil1.html" title="oscil1"><em class="citetitle">oscil1</em></a>,
+      <a class="link" href="oscil1i.html" title="oscil1i"><em class="citetitle">oscil1i</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="oscilikts.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="oscils.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">oscilikts </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> oscils</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+------------------------------  Web Buddy: to go trace log------------------------------Page Title   : Csound Terrain MappingPage URL     : http://www.werewolf.net/~hljmm/csound/terrain/Start time   : -1305182292Finish time  : -1305181335Elapsed time : 15 minutes 57 secondsDisk space   : 734 KB Persistence  : 3Levels       : Base page + 1 level deepSummary: - Links resolved : 5 of 5 - Graphics resolved : 31 of 31----------------------------------------
+ 38826  - 0 - Begin Session Update: time = -1305182292 - 
+ 38826  - 0 - Begin Main Loop - 
+ 38827  - 31180544 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/
+ 39849  - 31180544 -  - Resolve Complete
+ 39850  - 0 - Parsing file - http://www.werewolf.net/~hljmm/csound/terrain/
+ 39853  - 31043200 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/terrain.orc
+ 39854  - 31043264 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/terrain.sco
+ 39865  - 31043212 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/povplot.pl
+ 39866  - 31043216 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/rose.lgo
+ 40234  - 31043212 -  - Resolve Complete, non-html
+ 40237  - 31043216 -  - Resolve Complete, non-html
+ 40706  - 31043200 -  - Resolve Complete, non-html
+ 41091  - 31043264 -  - Resolve Complete, non-html
+ 41091  - 0 - Fetch Graphics - 
+ 41094  - 31043932 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image44.gif
+ 41094  - 31043808 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image45.gif
+ 41095  - 31043800 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image36.gif
+ 41103  - 31043828 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image65.gif
+ 41174  - 31043932 -  - Resolve Complete
+ 41174  - 31043948 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image37.gif
+ 41189  - 31043808 -  - Resolve Complete
+ 41190  - 31180460 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image38.gif
+ 41236  - 31043828 -  - Resolve Complete
+ 41237  - 31180452 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image39.gif
+ 41445  - 31043948 -  - Resolve Complete
+ 41446  - 31043232 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image66.gif
+ 41781  - 31043232 -  - Resolve Complete
+ 41782  - 31043188 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image67.gif
+ 41892  - 31180452 -  - Resolve Complete
+ 41893  - 31180324 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image40.gif
+ 42104  - 31043188 -  - Resolve Complete
+ 42104  - 31043224 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image49.gif
+ 42552  - 31043224 -  - Resolve Complete
+ 42553  - 31180372 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image41.gif
+ 44874  - 31180460 -  - Resolve Complete
+ 44875  - 31179896 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image42.gif
+ 49638  - 31179896 -  - Resolve Complete
+ 49639  - 31179892 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image50.gif
+ 50014  - 31179892 -  - Resolve Complete
+ 50016  - 31043788 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image43.gif
+ 55576  - 31043800 -  - Resolve Complete
+ 55576  - 31180384 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image51.gif
+ 57172  - 31180384 -  - Resolve Complete
+ 57173  - 31180784 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image52.gif
+ 57663  - 31180784 -  - Resolve Complete
+ 57664  - 31179812 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image53.gif
+ 58077  - 31179812 -  - Resolve Complete
+ 58079  - 31043720 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image54.gif
+ 58521  - 31043720 -  - Resolve Complete
+ 58522  - 31180380 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image55.gif
+ 60397  - 31180372 -  - Resolve Complete
+ 60398  - 31043236 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image56.gif
+ 60773  - 31043236 -  - Resolve Complete
+ 60774  - 31043712 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image57.gif
+ 62482  - 31180380 -  - Resolve Complete
+ 62482  - 31043724 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image58.gif
+ 62834  - 31043724 -  - Resolve Complete
+ 62835  - 31043900 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image59.gif
+ 63223  - 31043712 -  - Resolve Complete
+ 63224  - 31043824 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image60.gif
+ 64882  - 31043824 -  - Resolve Complete
+ 64883  - 31179808 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image61.gif
+ 65706  - 31179808 -  - Resolve Complete
+ 65708  - 31043312 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image62.gif
+ 66219  - 31043900 -  - Resolve Complete
+ 66220  - 31180812 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image34.gif
+ 66848  - 31180812 -  - Resolve Complete
+ 66848  - 31180800 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image63.gif
+ 67268  - 31043312 -  - Resolve Complete
+ 67269  - 31043384 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image35.gif
+ 68339  - 31180800 -  - Resolve Complete
+ 68340  - 31180732 -  - Resolve File , http://www.werewolf.net/~hljmm/csound/terrain/Image64.gif
+ 68936  - 31180732 -  - Resolve Complete
+ 85587  - 31043384 -  - Resolve Complete
+ 96266  - 31180324 -  - Resolve Complete
+ 96555  - 31043788 -  - Resolve Complete
+ 96555  - 0 - Begin Main Loop - 
+ 96555  - 0 - Begin Main Loop - 
+ 96555  - 0 - Update links - 
+ 96641  - 0 - Session Update Complete: time = -1305181335 - 

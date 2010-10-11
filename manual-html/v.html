@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>v Statement</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="t.html" title="t Statement (Tempo Statement)" />
+    <link rel="next" href="x.html" title="x Statement" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">v Statement</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="t.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="x.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="v Statement">
+      <a id="v"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVStatement" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">v Statement</span>
+        </h2>
+        <p>v — 
+      Provides for locally variable time warping of score events.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id4056232"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>v statement</em></span> provides for locally variable time warping of score events.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id4056255"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>v</strong></span> p1</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id4056272"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="command"><strong>p1</strong></span> -- Time warp factor (must be positive).
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id4056288"></a>
+        <h2>Performance</h2>
+        <p>
+      The <span class="emphasis"><em>v statement</em></span> takes effect with the following <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a>, and remains in effect until the next <a class="link" href="v.html" title="v Statement"><em class="citetitle">v statement</em></a>, <a class="link" href="s.html" title="s Statement"><em class="citetitle">s statement</em></a>, or <a class="link" href="e.html" title="e Statement"><em class="citetitle">e statement</em></a>.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id4057203"></a>
+        <h2>Examples</h2>
+        <p>
+      The value of p1 is used as a multiplier for the start times (p2) of subsequent <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statements</em></a>.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">i</span>1   0 1  <span class="comment">; note1</span>
+<span class="stamnt">v</span>2
+<span class="stamnt">i</span>1   1 1  <span class="comment">; note2</span></pre>
+        </div>
+        <p>
+
+      In this example, the second note occurs two beats after the first note, and is twice as long.
+    </p>
+        <p>
+      Although the <span class="emphasis"><em>v statement</em></span> is similar to the <a class="link" href="t.html" title="t Statement (Tempo Statement)"><em class="citetitle">t statement</em></a>, the <span class="emphasis"><em>v statement</em></span> is local in operation. That is, <span class="emphasis"><em>v</em></span> affects only the following notes, and its effect may be cancelled or changed by another <span class="emphasis"><em>v statement</em></span>.
+    </p>
+        <p>
+      Carried values are unaffected by the <span class="emphasis"><em>v statement</em></span> (see <a class="link" href="ScoreTop.html#ScoreCarry" title="Carry"><em class="citetitle">Carry</em></a>).
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">i</span>1   0 1  <span class="comment">; note1</span>
+<span class="stamnt">v</span>2
+<span class="stamnt">i</span>1   1 .  <span class="comment">; note2</span>
+<span class="stamnt">i</span>1   2 .  <span class="comment">; note3</span>
+<span class="stamnt">v</span>1
+<span class="stamnt">i</span>1   3 .  <span class="comment">; note4</span>
+<span class="stamnt">i</span>1   4 .  <span class="comment">; note5</span>
+<span class="stamnt">e</span></pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      In this example, note3 and note5 occur simultaneously, while note4 actually occurs before note3, that is, at its original place. Durations are unaffected.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">i</span>1   0 1
+<span class="stamnt">v</span>2
+<span class="stamnt">i</span>.   + .
+<span class="stamnt">i</span>.   . .</pre>
+        </div>
+        <p>
+
+      In this example, the <span class="emphasis"><em>v statement</em></span> has no effect.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="t.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="x.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">t Statement (Tempo Statement) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> x Statement</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

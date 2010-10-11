@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>dssictls</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="dssiaudio.html" title="dssiaudio" />
+    <link rel="next" href="dssiinit.html" title="dssiinit" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">dssictls</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="dssiaudio.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="dssiinit.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="dssictls">
+      <a id="dssictls"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDssictls" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">dssictls</span>
+        </h2>
+        <p>dssictls — Send control information to a LADSPA or DSSI plugin.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3219223"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>dssictls</strong></span> ihandle, iport, kvalue, ktrigger </pre>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3219247"></a>
+        <h2>Description</h2>
+        <p><span class="emphasis"><em>dssictls</em></span> sends control values to a plugin's control port</p>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3219260"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span>  - handle for the plugin returned by <a class="link" href="dssiinit.html" title="dssiinit"><em class="citetitle">dssiinit</em></a>
+    </p>
+        <p>
+      <span class="emphasis"><em>iport</em></span>  - control port number
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3219289"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kvalue</em></span> - value to be assigned to the port
+    </p>
+        <p>
+      <span class="emphasis"><em>ktrigger</em></span> - determines whether the control information will be sent (ktrigger = 1) or not. This is useful for thinning control information, generating ktrigger with <a class="link" href="metro.html" title="metro"><em class="citetitle">metro</em></a>
+    </p>
+        <p>
+      <span class="emphasis"><em>dssictls</em></span> sends control information to a LADSPA or DSSI plugin's control port. The valid control ports and ranges are given by <a class="link" href="dssiinit.html" title="dssiinit"><em class="citetitle">dssiinit</em></a> . Using values outside the ranges may produce unspecified behaviour.
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3220145"></a>
+        <h2>Credits</h2>
+        <p>2005</p>
+        <p>By: Andrés Cabrera</p>
+        <p>Uses code from Richard Furse's LADSPA sdk.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="dssiaudio.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="dssiinit.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">dssiaudio </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> dssiinit</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

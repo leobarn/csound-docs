@@ -1,0 +1,194 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="GoLive CyberStudio 3">
+		<title></title>
+		<meta name="Author">
+	</head>
+
+	<body bgcolor="white">
+		<pre>
+
+
+
+&lt; <font size="5"><b>LUX HOMINUM   Arthur B. Hunkins   1995</b></font>
+&lt;   programmed in Csound
+&lt;   for preprocessing with <a href="SCORE11.HTM">Score11</a>; randomly variable start times
+&lt;   use output with <a href="LUX11ORC.HTM">lux11.orc</a>
+*f1 0 2048 10 1;
+&lt; hi-res sine
+*f2 0 2048 9 1 1 0 3 .111 180 5 .004 0;
+&lt; hi-res pseudo-triangle
+*f3 0 2048 -8 -1 1 -.995 511 1 511 -.995 1 -1;
+&lt; single peak hi-res sine
+*f4 0 2048 -8 -1 1 -.995 511 1 511 -.995 1 -1 1 -.995 511 1 511 -.995 1 -1;
+&lt; double peak hi-res sine
+*f5 0 512 -8 0 256 .3 256 1 256 3.33 256 11;
+&lt; loudness curve (quasi-sone) conversion table
+*f6 0 16 -2 .5 1 2 3 4 5 6 7 8 9 10 12;
+&lt; mod freq mult fac
+*f7 0 32 -2 .5 1.05 2 1.35 1 1.05 .5 .75 2 .95 1 .9 .5 1.15 2 1.25 1 1.3 .5 
+ 1.3 2 1.45 1 1.15;
+&lt; carrier freq mult fac 1
+*f8 0 32 -2  1 1.3 .5 .95 2 1 1 .85 .5 .9 2 1.2 1 1.4 .5 1.1 2 1.1 1 1.25
+ .5 1.4 2 1.45;
+&lt; carrier freq mult fac 2
+*f9 0 32 -2  2 .9 1 1.05 .5 .95 2 .9 1 .95 .5 1.1 2 1.1 1 1.2 .5 1.25 2 1.2
+ 1 1.15 .5 1.15;
+&lt; carrier freq mult fac 3
+*f10 0 32 -2  .5 .85 2 .95 1 1.3 .5 .8 2 1.05 1 .85 .5 .8 2 1.15 1 1.2 .5 
+ 1.15 2 1.2 1 1.3;
+&lt; carrier freq mult fac 1--triangle
+*f11 0 32 -2  1 1 .5 1.15 2 .9 1 1 .5 .8 2 .95 1 1 .5 .95 2 1 1 1.15 
+ .5 1.05 2 1.15;
+&lt; carrier freq mult fac 2--triangle
+*f12 0 32 -2  2 1.05 1 1.1 .5 1.1 2 .85 1 .9 .5 .95 2 1.1 1 1.15 .5 1.2 2 
+ 1.25 1 1.1 .5 1.2;
+&lt; carrier freq mult fac 3--triangle
+*f13 0 8193 -9 .25 1 0;
+&lt; first quad sin
+                                      
+&lt; the tempo indicated below (60) may be changed to any speed between 40-66
+*t0 60;
+&lt; for a different set of random start times choose any rseed from 
+&lt;   1-2147483647
+rseed 2;
+
+*i1 1 56 12 12;
+
+i2 21 0 2;
+p3 rl 0 -4./99;
+p4 12;
+p5 0;
+end;
+
+&lt; modify p4 (tone color) values for paired i3 and i4 lines below as follows:
+&lt;  if 1-6, any other integer between 1-6 (i3 pairs)
+&lt;  if 7-12, any other integer between 7-12 (i4 pairs)
+&lt;  use each integer ONCE ONLY, the same integer for each PAIR of lines
+
+i3 57 0 2;
+p3 rl 0 -8./99;
+p4 1; &lt; exchange 1 for exclusive integer 1-6; pair with i3 line below
+p5 12;
+p6 0;
+end;
+
+*i2 61 36 0 12;
+*i3 101 36 1 0 12; &lt; exchange 1 (p4) for integer 1-6 as in i3 list above
+
+i4 97 0 2;
+p3 rl 0 -8./99;
+p4 7; &lt; exchange 7 for exclusive integer 7-12; pair with i4 line below
+p5 12;
+p6 0;
+end;
+
+i3 137 0 2;
+p3 rl 0 -8./99;
+p4 2; &lt; exchange 2 for exclusive integer 1-6; pair with i3 line below
+p5 12;
+p6 0;
+end;
+
+*i4 141 36 7 0 12; &lt; exchange 7 (p4) for integer 7-12 as in i4 list above
+*i3 181 36 2 0 12; &lt; exchange 2 (p4) for integer 1-6 as in i3 list above
+
+i4 177 0 2;
+p3 rl 0 -8./99;
+p4 8; &lt; exchange 8 for exclusive integer 7-12; pair with i4 line below
+p5 12;
+p6 0;
+end;
+
+i3 217 0 2;
+p3 rl 0 -8./99;
+p4 3; &lt; exchange 3 for exclusive integer 1-6; pair with i3 line below
+p5 12;
+p6 0;
+end;
+
+*i4 221 36 8 0 12; &lt; exchange 8 (p4) for integer 7-12 as in i4 list above
+*i3 261 36 3 0 12; &lt; exchange 3 (p4) for integer 1-6 as in i3 list above
+
+i4 257 0 2;
+p3 rl 0 -8./99;
+p4 9; &lt; exchange 9 for exclusive integer 7-12; pair with i4 line below
+p5 12;
+p6 0;
+end;
+
+i3 297 0 2;
+p3 rl 0 -8./99;
+p4 4; &lt; exchange 4 for exclusive integer 1-6; pair with i3 line below
+p5 12;
+p6 0;
+end;
+
+*i4 301 36 9 0 12; &lt; exchange 9 (p4) for integer 7-12 as in i4 list above
+*i3 341 36 4 0 12; &lt; exchange 4 (p4) for integer 1-6 as in i3 list above
+
+i4 337 0 2;
+p3 rl 0 -8./99;
+p4 10; &lt; exchange 10 for exclusive integer 7-12; pair with i4 line below
+p5 12;
+p6 0;
+end;
+
+i3 377 0 2;
+p3 rl 0 -8./99;
+p4 5; &lt; exchange 5 for exclusive integer 1-6; pair with i3 line below
+p5 12;
+p6 0;
+end;
+
+*i4 381 36 10 0 12; &lt; exchange 10 (p4) for integer 7-12 as in i4 list above
+*i3 421 36 5 0 12; &lt; exchange 5 (p4) for integer 1-6 as in i3 list above
+
+i4 417 0 2;
+p3 rl 0 -8./99;
+p4 11; &lt; exchange 11 for exclusive integer 7-12; pair with i4 line below
+p5 12;
+p6 0;
+end;
+
+i3 457 0 2;
+p3 rl 0 -8./99;
+p4 6; &lt; exchange 6 for exclusive integer 1-6; pair with i3 line below
+p5 12;
+p6 0;
+end;
+
+*i4 461 36 11 0 12; &lt; exchange 11 (p4) for integer 7-12 as in i4 list above
+*i3 501 36 6 0 12; &lt; exchange 6 (p4) for integer 1-6 as in i3 list above
+
+i4 497 0 2;
+p3 rl 0 -8./99;
+p4 12; &lt; exchange 12 for exclusive integer 7-12; pair with i4 line below
+p5 12;
+p6 0;
+end;
+
+i15 537 0 2;
+p3 rl 0 -8./99;
+p4 12;
+p5 0;
+end;
+
+*i4 541 36 12 0 12; &lt; exchange 12 (p4) for integer 7-12 as in i4 list above
+*i15 581 36 0 12;
+
+i16 577 0 2;
+p3 rl 0 -8./99;
+p4 12;
+p5 0;
+end;
+
+*i16 621 18 0 12;
+*f0 640;
+*e;
+end;</pre>
+	</body>
+
+</html>

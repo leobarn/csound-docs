@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>43_21_1.orc.html</title>
+<meta name="FORMATTER" content="Microsoft FrontPage 2.0">
+</head>
+
+<body stylesrc="../admin/adporc.html"
+background="../admin/AccciDefaultBackground.gif"
+bgcolor="#FFFFFF">
+
+<pre>; ************************************************************************
+; ACCCI:        43_21_1.ORC
+; timbre:       various controlled noise spectra
+; synthesis:    (g)buzz(43)
+;               kratio envelope(21)
+;               LINEN envelope(1)
+; coded:        jpg 10/93
+
+
+sr = 44100
+kr  =  441
+ksmps= 100
+nchnls = 1
+
+instr 1; *****************************************************************
+idur  = p3
+iamp  = p4
+ifqc  = p5
+inh   = int(sr/2/ifqc)
+ilh   = 1
+ifn   = 5    ; stored cosine function
+
+   aenv    linen   iamp, .2, idur, .2                    ; amp envelope
+   kratio  linseg  1, idur/2, 0, idur/4, 0.8, idur/4, 0.6; kratio envelope
+
+   asrc    gbuzz   aenv,ifqc,inh,ilh,kratio,ifn
+           out     asrc
+
+endin</pre>
+</body>
+</html>

@@ -1,0 +1,1421 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Csound Journal</title>
+
+
+  <meta name="description" content="dseq is a text-based drum machine language" />
+
+  <meta name="keywords" content="dseq, csound, language, score, instruments, rhythms, drum, drum machines, notation, synthesizers, interpreter, thumbuki" />
+
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css" />
+
+
+</head>
+
+
+<body>
+
+<div id="wrap">
+<div id="navigation"> CSOUND JOURNAL: <a href="../index.html">Home</a>
+|&nbsp;<a href="index.html">Issue 8</a> </div>
+
+<div id="header">
+<h1>dseq</h1>
+
+<h1 class="subtitle">A Drum Machine Micro-Language</h1>
+
+<p class="center"><img src="dseq/coverArt.jpg" alt="Cover Art" height="283" width="400" /></p>
+
+<p class="center">Jacob Joaquin<br />
+
+jacobjoaquin [at] gmail.com<br />
+
+www.thumbuki.com</p>
+
+</div>
+
+<div id="content">
+<div id="toc">
+<h2>Contents</h2>
+
+<ul>
+
+  <li><a href="#Introduction">Introduction</a></li>
+
+  <li>
+    <ul>
+
+      <li><a href="#TheFormOfTheArticle">The Form of
+the Article</a></li>
+
+      <li><a href="#ANoteAboutMacros">A Note about
+Macros</a></li>
+
+    </ul>
+
+  </li>
+
+  <li><a href="#MakingMusicWithDseq">Making Music
+with dseq</a></li>
+
+  <li>
+    <ul>
+
+      <li><a href="#QuickStart">Quick Start</a></li>
+
+      <li><a href="#TheDseqLanguage">The dseq
+Language</a></li>
+
+      <li>
+        <ul>
+
+          <li><a href="#Phrase">Phrase</a></li>
+
+          <li><a href="#Space">Space</a></li>
+
+          <li><a href="#NoteTrigger">Note Trigger</a></li>
+
+          <li><a href="#Rest">Rest</a></li>
+
+          <li><a href="#Resolution">Resolution</a></li>
+
+        </ul>
+
+      </li>
+
+      <li><a href="#RhythmNotation">Rhythm Notation</a></li>
+
+      <li><a href="#VerticalVsHorizontal">Vertical
+vs. Horizontal</a></li>
+
+      <li><a href="#TheScoreInterface">The Score
+Interface</a></li>
+
+      <li><a href="#SynthInstruments">Synth
+Instruments</a></li>
+
+      <li><a href="#ErrorMessagingSystem">Error
+Messaging System</a></li>
+
+    </ul>
+
+  </li>
+
+  <li><a href="#DesigningDseqSynthesizers">Designing
+dseq Synthesizers</a></li>
+
+  <li>
+    <ul>
+
+      <li><a href="#SynthEngineInterface">Synth
+Engine Interface</a></li>
+
+      <li><a href="#Value">Value</a></li>
+
+      <li>
+        <ul>
+
+          <li><a href="#Amplitude">Amplitude</a></li>
+
+          <li><a href="#Pitch">Pitch</a></li>
+
+        </ul>
+
+      </li>
+
+      <li><a href="#UserDefinedParameters">User-Defined
+Parameters</a></li>
+
+      <li>
+        <ul>
+
+          <li><a href="#StandardParameters">Standard
+Parameters</a></li>
+
+          <li><a href="#GlobalParameters">Global
+Parameters</a></li>
+
+          <li><a href="#TableParameters">Table
+Parameters</a></li>
+
+        </ul>
+
+      </li>
+
+      <li><a href="#TimeAndDuration">Time and
+Duration</a></li>
+
+      <li>
+        <ul>
+
+          <li><a href="#AbsoluteTime">Absolute Time</a></li>
+
+          <li><a href="#BeatTime">Beat Time</a></li>
+
+          <li><a href="#NoteDivision">Note Division</a></li>
+
+        </ul>
+
+      </li>
+
+    </ul>
+
+  </li>
+
+  <li><a href="#TheCsoundDseqInterpreter">The Csound
+dseq Interpreter</a></li>
+
+  <li>
+    <ul>
+
+      <li><a href="#HostLanguageImplementation">Host
+Language Implementation</a></li>
+
+      <li><a href="#WhereDoesDseqStartAndEnd">Where
+Does dseq Start and End?</a></li>
+
+      <li><a href="#InterpreterInternals">Interpreter
+Internals</a></li>
+
+      <li><a href="#ControlFlow">Control Flow</a></li>
+
+      <li><a href="#InterpreterMap">Interpreter Map</a></li>
+
+    </ul>
+
+  </li>
+
+  <li><a href="#AndBeyond">And Beyond...</a></li>
+
+  <li><a href="#Acknowledgments">Acknowledgments</a></li>
+
+  <li><a href="#References">References</a></li>
+
+</ul>
+
+</div>
+
+<h4><a href="dseq/dseq.zip">Download Examples</a></h4>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<h2 id="Introduction">Introduction</h2>
+
+<p>Max V. Mathews, the father of computer music, once wrote
+"...all composers should be as lazy as possible when writing scores"
+(Mathews 1981). How can one achieve true score laziness? With the dseq
+drum machine micro-language.</p>
+
+<p>Much work is required when writing a Csound score. As a
+general rule, one line of score code equals one note. A section of
+music is often cryptic and encompasses a significant chunk of code.
+Composing rhythms can be especially tedious as even a single-measure
+classic rock beat may have twelve score events, and thus, twelve lines
+of code. Making modifications to this single-measure is hard enough,
+let alone a full length piece of music.</p>
+
+<p>This is where dseq comes into play. The dseq language is a
+text-based system of notation designed specifically for writing
+rhythms. The name dseq is derived from "<strong>d</strong>rum
+<strong>seq</strong>uencer." Dseq is designed to be simple,
+quick, and human-readable. The design of the language incorporates
+concepts from sources such as vintage drum machines, Triton's <a href="http://en.wikipedia.org/wiki/FastTracker_2">Fast
+Tracker II</a>, grid-based MIDI editors, and the <a href="http://www.csounds.com/mathews/papers/ICMC1997.pdf">Radio-Baton
+Conductor Program</a> (Wikipedia; Boulanger and Mathews 1997).
+The end result is a streamlined grammar that allows you to get your
+groove on with far fewer key presses.</p>
+
+<p>Instead of following the traditional score method of one
+instrument event per line, musicians can write a horizontal dseq phrase
+consisting of several note triggers. Writing a dseq phrase is akin to
+creating drum patterns on a grid. Instead of using numbers to tell when
+a note begins, a note is played based on where in the phrase a trigger
+is placed. This is because a dseq phrase is a programmable grid.</p>
+
+<h3 id="TheFormOfTheArticle">The Form of the Article</h3>
+
+<p>The grammar and usage of dseq is simple. With this simplicity
+comes great complexity. This article covers the basics of dseq, many of
+the fine subtleties of the languages, and how the dseq language is
+implemented in Csound. There are three parts: <em><a href="#MakingMusicWithDseq">Making Music with dseq</a></em>,
+<em><a href="#DesigningDseqSynthesizers">Designing
+dseq Synthesizers</a></em> and <em><a href="#TheCsoundDseqInterpreter">The Csound dseq Interpreter</a></em>.
+This article is written with the hopes that there is something here for
+everyone across all levels of experience.</p>
+
+<p><em>Making Music with dseq</em> focuses on issues
+that relate to the score. The syntax of the language is described in
+detail, along with examples of dseq phrases translated into <a href="http://en.wikipedia.org/wiki/Slash_notation#Rhythmic_notation">rhythm
+notation</a> (Wikipedia). The score interface to the dseq
+interpreter is presented along with an introduction to a small library
+of pre-built synthesizers so that you can start making music right away.</p>
+
+<p>In <em>Designing dseq Synthesizers</em>, users
+will learn the ins and outs of dseq compatible synth engines. This
+section will equip you with the knowledge to modify existing dseq
+synths, convert existing instruments, and build new instruments from
+the ground up.</p>
+
+<p><em>The Csound dseq Interpreter</em> section
+outlines the basics of how a dseq phrase is translated into music.</p>
+
+<h3 id="ANoteAboutMacros">A Note about Macros</h3>
+
+<p>The figures and code examples associated with this article
+makes heavy use of Csound's macro <a href="http://en.wikipedia.org/wiki/Preprocessor">preprocessor</a>
+(Wikipedia). Named macros are used in place of instrument numbers.
+Macros are created with the <code>define</code> statement. In
+figure 1, macros <code>$dseq</code> and <code>$kick</code>
+are replaced with the numbers 1 and 2 when Csound runs the code. The
+two i-statements are identical in Figure 1.</p>
+
+<pre id="figure1">
+# define dseq # 1 #
+# define kick # 2 #
+...
+i $dseq 0 1 $kick 0.5 0 0 0 0 "f... f... f... f..." 
+i 1     0 1 2     0.5 0 0 0 0 "f... f... f... f..."
+</pre>
+
+<p class="figure"><span><strong>Figure 1</strong>
+Macros are replaced with numbers. These two i-statements are equivalent.</span></p>
+
+<p>The dseq interpreter is also kept in a separate file called <a href="dseq/dseq.csinstr">dseq.csinstr</a>. The
+instrument is loaded into the score with the <code>include</code>,
+as shown in Figure 2.</p>
+
+<pre id="figure2">
+#include "./dseq.csinstr"
+</pre>
+
+<p class="figure"><span><strong>Figure 2</strong>
+The macro includes the dseq interpreter located in the file <a href="dseq/dseq.csinstr">dseq.csinstr</a>.</span></p>
+
+<p>Macros will not be discussed in this article. For further
+information, read <q><a href="http://www.thumbuki.com/csound/files/thumbuki20070420.csd">A
+Micro Intro to Macros</a></q> at <em><a href="http://www.thumbuki.com/csound/blog/">The Csound Blog</a></em>
+and John ffitch's chapter <q>Using Csound's Macro Language
+Extensions</q> in <em>The Csound Book</em> (Joaquin
+2007; ffitch 2000).</p>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<h2 id="MakingMusicWithDseq">Making Music with dseq</h2>
+
+<p>In this section, we'll explore the dseq language from the
+perspective of the Csound score. The dseq language, score interface,
+syntax and library of pre-built instruments will be covered in great
+detail.</p>
+
+<h3 id="QuickStart">Quick Start</h3>
+
+<p>Since this article is quite long, this section is provided so
+you can begin composing with the dseq language with little fuss. This
+brief overview will quickly have you creating drum patterns using the
+pre-built dseq instruments that are included with the <a href="dseq/dseq.zip">supplemental download</a>.</p>
+
+<p>The file <a href="dseq/dseqQuickStart.csd">dseqQuickStart.csd</a>
+is a simplified dseq example in action designed specifically for you to
+start manipulating dseq phrases. Within the score, you'll see four
+groupings of i-events, each representing a single measure of four bars
+of music. Three percussion instruments are used: kick, snare and hihat.
+The quoted portions in pfield 10 are dseq phrases. These phrases are
+translated into drum patterns as they are read from left to right by
+the dseq interpreter, <code>instr $dseq</code>.</p>
+
+<pre id="figure3">
+i $dseq 0 1 $hihat 0.5 0 0 0 0 "8.8.8.8.8.8.8.8." 
+i $dseq 0 1 $snare 0.5 0 0 0 0 "....f.......f..." 
+i $dseq 0 1 $kick  0.5 0 0 0 0 "f.......f......." 
+
+i $dseq 4 1 $hihat 0.5 0 0 0 0 "8.8.8.8.8.8.8.8." 
+i $dseq 4 1 $snare 0.5 0 0 0 0 "....f.......f..." 
+i $dseq 4 1 $kick  0.5 0 0 0 0 "f.......f.8....." 
+
+i $dseq 8 1 $hihat 0.5 0 0 0 0 "8.8.8.8.8.8.8.8." 
+i $dseq 8 1 $snare 0.5 0 0 0 0 "....f.......f..." 
+i $dseq 8 1 $kick  0.5 0 0 0 0 "f.......f......." 
+
+i $dseq 12 1 $hihat 0.5 0 0 0 0 "8.8.8.8.8.8.8.8." 
+i $dseq 12 1 $snare 0.5 0 0 0 0 "....f.......f..." 
+i $dseq 12 1 $kick  0.5 0 0 0 0 "f.......f.8....." 
+</pre>
+
+<p class="figure"><span><strong>Figure 3</strong>
+Classic 4/4 rock beat with eighth note hi-hats. See <a href="dseq/dseqQuickStart.csd">dseqQuickStart.csd</a>.</span></p>
+
+<p>Notes are triggered when the dseq interpreter reads a
+hexadecimal character between 0 and F. The higher the hexadecimal
+character, the louder the triggered note will sound. A rest occurs when
+the interpreter reads a period. Each note trigger and rest has a note
+division equal to that of a sixteenth note. Each individual phrase in
+this example has sixteen notes and rests, equal to a single bar of
+music. Think of each phrase as a grid-based step-sequencer.</p>
+
+<p>When you play <a href="dseq/dseqQuickStart.csd">dseqQuickStart.csd</a>,
+try following the score while listening to the audio. The example is
+that of a classic 4/4 rock beat with eighth note hi-hats. Next,
+manipulate the dseq phrases by changing periods into hexadecimal
+characters and vice versa. Listen to the results. If you enter an
+invalid character, the dseq interpreter will print a message to the
+terminal window showing you where the error was encountered, and it
+will also inform you of which characters are valid at this point in the
+phrase.</p>
+
+<p>This example only uses the default note division of a
+sixteenth note, and does not demonstrate how to change the note
+division. For examples on how to do this, render and study the file <a href="dseq/dseqRhythms.csd">dseqRhythms.csd</a>.</p>
+
+<h3 id="TheDseqLanguage">The dseq Language</h3>
+
+<p>The dseq language is a <a href="http://en.wikipedia.org/wiki/Domain-specific_programming_language">domain-specific
+language</a> as it is <q>designed for, and intended to be
+useful for, a specific kind of task (Wikipedia).</q> With dseq,
+one can easily create rhythms quickly, efficiently, and in many cases,
+human-readable. The trade off is that there are obvious limitations.</p>
+
+<p>Users can program a dseq phrase that does a combination of
+four simple tasks: do nothing, trigger a note, rest, or change the
+resolution (division) of notes and rests. These correspond to the four
+dseq token-types:</p>
+
+<ul>
+
+  <li>Space</li>
+
+  <li>Note Trigger</li>
+
+  <li>Rest</li>
+
+  <li>Resolution</li>
+
+</ul>
+
+<p>The dseq language also comes with a very compact list of valid
+characters. There are only 20, case-insensitive glyphs: <code>"
+.0123456789abcdeftr".</code></p>
+
+<h4 id="Phrase">Phrase</h4>
+
+<p>A phrase is a combination of none, some or all token-types and
+glyphs. The shortest phrase possible is an empty string. Phrases are
+not required to have a particular length, or represent a specific
+number of beats or measures. The length of a string is restricted to
+Csound's own limitations.</p>
+
+<h4 id="Space">Space</h4>
+
+<p>A space character in the dseq language refers to the character
+associated with the space bar, and nothing else. A tab is not a valid
+glyph in the dseq language. Though a space does nothing, functionally
+speaking, it is useful for programming phrases that are more
+human-readable. Figure 4 shows a phrase where each quarter note is
+separated by two spaces.</p>
+
+<pre id="figure4">
+"f...  8...  f...  8..."
+</pre>
+
+<p class="figure"><span><strong>Figure 4</strong>
+Proper use of space can make a phrase easier to read.</span></p>
+
+<h4 id="NoteTrigger">Note Trigger</h4>
+
+<p>When the dseq interpreter reads a <a href="http://en.wikipedia.org/wiki/Hexadecimal">hexadecimal</a>
+character between 0 and F, an event to a synth instrument is scheduled
+(Wikipedia). The value of the note trigger is passed along to the
+synth, along with other information such as the tempo in seconds per
+beat, as well as the resolution of the note.</p>
+
+<pre id="figure5">
+Hex     Dec
+-----------
+0   =   0
+1   =   1
+2   =   2
+3   =   3
+4   =   4
+5   =   5
+6   =   6
+7   =   7
+8   =   8
+9   =   9
+A   =   10
+B   =   11
+C   =   12
+D   =   13
+E   =   14
+F   =   15
+</pre>
+
+<p class="figure"><span><strong>Figure 5</strong>
+Hexadecimal to decimal conversion chart.</span></p>
+
+<p>The dseq interpreter is equipped with its own internal clock
+that keeps track of time by accumulating the division of every
+triggered note and rest. The internal clock always begins at 0 with
+every phrase. When an event is about to be generated, the internal
+clock's native beat-time is converted into time-in-seconds, and the
+event is scheduled in the future by this value.</p>
+
+<h4 id="Rest">Rest</h4>
+
+<p>A rest is represented by the period character in the dseq
+language. When the dseq interpreter encounters a period, the
+interpreter's internal clock is advanced by the current note
+resolution. For example, if the resolution is set to a quarter note,
+then the clock is advanced by one beat.</p>
+
+<h4 id="Resolution">Resolution</h4>
+
+<p>The dseq interpreter has an internal variable that stores the
+resolution of note triggers and rests. This value defaults to a
+sixteenth note for every new dseq phrase. A user can change the
+resolution variable by calling the resolution function. Unlike note
+triggers, valid integers are in decimal notation, as opposed to
+hexadecimal.</p>
+
+<p>The resolution function comes in three different varieties:</p>
+
+<pre id="figure6">
+standard:     r(x)
+triplet:      r(x)t
+subdivision:  r(x)d(y)
+</pre>
+
+<p class="figure"><span><strong>Figure 6</strong>
+The three varieties of the resolution function.</span></p>
+
+<p>The standard version of the resolution function accepts an
+integer value. A value of 4 will set the resolution to a quarter note,
+while a value of 8 sets the resolution to an eighth note. The standard
+resolution equation is: <code>r(x) = 4 / x</code>. It is
+worth pointing out that a quarter note equals one beat, explaining why
+the numerator is set to 4.</p>
+
+<p>The triplet version, as you would expect, transforms the
+division into a triplet. For example, <code>r8t</code>
+sets the resolution to eighth note triplets. The triplet equation is: <code>r(x)t
+= 8 / 3x</code>.</p>
+
+<p>The subdivision version is different than the other two as it
+takes two arguments. The first argument that directly proceeds the <code>r</code>
+works in a similar fashion to the standard version. The second argument
+further subdivides the division. The the first half of the function
+call <code>r4d4</code> sets the division to a quarter
+note. The second half, <code>d4</code>, divides the
+quarter note division by four, setting the final division to a
+sixteenth note. The subdivision equation is: <code>r(x)d(y) = (
+4 / xy )</code>.</p>
+
+<p>The syntax is a bit odd compared to how functions are written
+in other languages. There can be no spaces within a function call and a
+space character must be appended to the end of each resolution
+function. The parenthesis in figure 6 show where integers are plugged
+into the resolution function, but <em>are not</em> part of
+the resolution function's syntax. The value of the integers must also
+be greater than the value of 0.</p>
+
+<pre id="figure7">
+"r4 "       ; Valid.
+"r12 "      ; Valid.
+"r8t "      ; Valid.
+"r4d3 "     ; Valid.
+"r13d313 "  ; Valid.
+"r4"        ; Invalid.  Functions must be appended with a space.
+"r8tf..."   ; Invalid.  Functions must be appended with a space.
+"r0d3 "     ; Invalid.  Values must be greater than zero.
+"r4d0 "     ; Invalid.  Values must be greater than zero.
+"r(4)t "    ; Invalid.  Parenthesis not allowed.
+"rf "       ; Invalid.  Hexadecimal characters not allowed.
+"r4 d3 "    ; Valid?    Is "d" supposed to be a trigger or a divide?
+</pre>
+
+<p class="figure"><span><strong>Figure 7</strong>
+Valid and invalid uses of the resolution function.</span></p>
+
+<h3 id="RhythmNotation">Rhythm Notation</h3>
+
+<p>Working with text-based notation can seem daunting, as at
+first glance it may seem completely non-intuitive. To help illustrate
+dseq notation, the five figures in this section compare dseq phrases
+against rhythm notation, with rhythms notated directly above the
+corresponding dseq note triggers. When the resolution function is used,
+you will see that the rhythm notation also reflects the note division
+change. You can hear each of these examples by rendering <a href="dseq/dseqRhythmNotation.csd">dseqRhythmNotation.csd</a>.</p>
+
+<p>In these examples, the notation assumes that values of note
+triggers are mapped to velocity. Only two velocities are used, 8 and F.
+The velocity of 8 is considered average velocity, while F is considered
+an accented trigger. Accent glyphs are placed above slashes where the
+dseq trigger is an F.</p>
+
+<p>The phrase <code>"f... 8... f... 8..."</code> in
+figure 8 shows a four-beat measure. Since the default resolution for a
+dseq phrase is a sixteenth note, each trigger is displayed as a
+sixteenth note rhythm. A grouping of three periods in the dseq notation
+is translated into a dotted eighth rest. Notice the accent glyphs above
+the slashes at beats one and three. These correspond to the F in the
+dseq phrase.</p>
+
+<p class="figimg" id="figure8">
+<img src="dseq/rhythmExample1.gif" alt="A dseq phrase translated into rhythm notation." height="121" width="366" /></p>
+
+<p class="figure"><span><strong>Figure 8</strong>
+A dseq phrase translated into rhythm notation.</span></p>
+
+<p>The default resolution of a sixteenth note is reprogrammed to
+equal a quarter note at the beginning of the phrase <code>"r4 f
+8 f 8"</code> in figure 9. The proceeding triggers are
+represented by quarter notes in the rhythm notation.</p>
+
+<p class="figimg" id="figure9">
+<img src="dseq/rhythmExample2.gif" alt="The division of the note is changed to a quarter note with the resolution function" height="118" width="193" /></p>
+
+<p class="figure"><span><strong>Figure 9</strong>
+The division of the note is changed to a quarter note with the
+resolution function.</span></p>
+
+<p>The triplet version of the resolution function changes the
+note division to eighth note triplets in the phrase <code>"r8t
+f88 f88 f88 f88"</code>. The rhythm notation in figure 10 shows
+four eighth note triplet groupings that correspond to dseq notation.</p>
+
+<p class="figimg" id="figure10">
+<img src="dseq/rhythmExample3.gif" alt="The division is set to eighth note triples." height="131" width="331" /></p>
+
+<p class="figure"><span><strong>Figure 10</strong>
+The division is set to eighth note triples.</span></p>
+
+<p>The phrase <code>"r4d5 f8888 f8888 f8888 f8888"</code>
+in figure 11 demonstrates an irrational rhythm with the equation <code>r(x)d(y)</code>.
+The four groupings of quintuplets in figure 11 is possible with dseq
+because a quarter note can be divided into five equal parts using the
+subdivision function.</p>
+
+<p class="figimg" id="figure11">
+<img src="dseq/rhythmExample4.gif" alt="A quarter note is subdivided into five equal parts." height="131" width="463" /></p>
+
+<p class="figure"><span><strong>Figure 11</strong>
+A quarter note is subdivided into five equal parts.</span></p>
+
+<p>The final rhythm notation example in figure 12 shows how
+multiple calls to the three variations of the resolution function can
+be mixed and matched within a single dseq phrase. In the phrase <code>"f...
+r4 8 r8t f88 r8 8."</code>, the note division starts with the
+default sixteenth note division, and then changes into a quarter with <code>r4</code>,
+an eighth note triplet with <code>r8t</code>, and finally
+an eighth note with <code>r8</code>.</p>
+
+<p class="figimg" id="figure12">
+<img src="dseq/rhythmExample5.gif" alt="Four different resolutions are used in a single phrase." height="131" width="428" /></p>
+
+<p class="figure"><span><strong>Figure 12</strong>
+Four different resolutions are used in a single phrase.</span></p>
+
+<h3 id="VerticalVsHorizontal">Vertical vs. Horizontal</h3>
+
+<p>One of the benefits of composing with dseq phrases, as opposed
+to conventional Csound score notation, is that these phrases are often
+much more human-readable at a glance. Examine the score code in figure
+13 and try to reconstruct the drum pattern in your head.</p>
+
+<pre id="figure13">
+i $kick  0   0.35 0.26 
+i $hihat 0   0.07 0.4  
+i $hihat 0.5 0.07 0.2  
+i $snare 1   1    0.26 
+i $hihat 1   0.07 0.33 
+i $hihat 1.5 0.07 0.2  
+i $kick  2   0.35 0.4  
+i $hihat 2   0.07 0.4  
+i $kick  2.5 0.35 0.33 
+i $hihat 2.5 0.07 0.2  
+i $hihat 3   0.07 0.33 
+i $snare 3   1    0.26 
+i $hihat 3.5 0.07 0.2  
+</pre>
+
+<p class="figure"><span><strong>Figure 13</strong>
+Classic rock drum pattern written in conventional score code.</span></p>
+
+<p>Though it isn't impossible to decipher, it does require a bit
+of time and concentration to dissect the pattern. Now take a look at
+figure 14 and once again try to reconstruct the drum pattern in your
+head.</p>
+
+<pre id="figure14">
+i $dseq 0 1 $hihat 0.5 0 0 0 0 "c.6.  a.6.  c.6.  a.6." 
+i $dseq 0 1 $snare 0.5 0 0 0 0 "....  8...  ....  8..." 
+i $dseq 0 1 $kick  0.5 0 0 0 0 "8...  ....  c.a.  ...." 
+</pre>
+
+<p class="figure"><span><strong>Figure 14</strong>
+Classic rock drum pattern written horizontally with dseq syntax.</span></p>
+
+<p>At this point, it should become apparent that placing drum
+triggers on a horizontal grid is easier to read than the traditional
+score code equivalent. Once you become more familiar with the syntax of
+the dseq language, you will be able to read a grouping of dseq phrases
+as quickly as you would be able to read a pattern in a GUI grid editor.</p>
+
+<p>Another advantage of the dseq language is that it can also
+significantly reduce the amount of typing when composing. The
+traditional score code requires thirteen lines of code. The dseq
+translation requires only 3 lines of code. Imagine composing percussion
+for 32 bars of music for each system.</p>
+
+<p>Though dseq phrases, as a general rule, require less code,
+there are drawbacks. In the traditional model, every note can have a
+unique value for each parameter, where parameters in dseq are fixed for
+each phrase. The resolution for dseq trigger values is only 16 steps,
+while the traditional approach can utilize full precision.</p>
+
+<h3 id="TheScoreInterface">The Score Interface</h3>
+
+<p>A dseq phrase is only one component of a multi-component score
+interface. The dseq interpreter, <code>instr $dseq</code>,
+must also accept the targeted synth instrument number, five specially
+designated user-defined parameters, and the current tempo of the score.
+The dseq interpreter expects to receive ten parameters. In this
+section, we'll break down the score interface and discuss the
+responsibility of each pfield.</p>
+
+<pre id="figure15">
+i dseq start 1 instr param1 param2 param3 param4 param5 "...." 
+</pre>
+
+<p class="figure"><span><strong>Figure 15</strong>
+The dseq score interface.</span></p>
+
+<p>Figure 16 displays a table for each pfield in the dseq score
+interface, accompanied by a brief description.</p>
+
+<table id="figure16">
+	<tr>
+		<td><em>i</em></td>
+		<td>A Csound score i-event.</td>
+	</tr>
+	<tr>
+		<td><em>dseq</em></td>
+		<td>Instrument number of the dseq interpreter.</td>
+	</tr>
+	<tr>
+		<td><em>start</em></td>
+		<td>Start time of dseq phrase.</td>
+	</tr>
+	<tr>
+		<td><em>1</em></td>
+		<td>P-field 3 should always be set to one.</td>
+	</tr>
+	<tr>
+		<td><em>instr</em></td>
+		<td>The instrument number of the target synth instrument.</td>
+	</tr>
+	<tr>
+		<td><em>param1</em></td>
+		<td>User-defined parameter 1 passed to synth instrument.</td>
+	</tr>
+	<tr>
+		<td><em>param2</em></td>
+		<td>User-defined parameter 2 passed to synth instrument.</td>
+	</tr>
+	<tr>
+		<td><em>param3</em></td>
+		<td>User-defined parameter 3 passed to synth instrument.</td>
+	</tr>
+	<tr>
+		<td><em>param4</em></td>
+		<td>User-defined parameter 4 passed to synth instrument.</td>
+	</tr>
+	<tr>
+		<td><em>param5</em></td>
+		<td>User-defined parameter 5 passed to synth instrument.</td>
+	</tr>
+	<tr>
+		<td><em>"...."</em></td>
+		<td>A dseq phrase of music.</td>
+	</tr>
+</table>
+
+<p class="figure"><span><strong>Figure 16</strong>
+Description of each pfield of the score interface.</span></p>
+
+<p>Starting the dseq interpreter is just like turning on any
+other instrument in the score, by specifying the letter i in pfield 0,
+indicating an instrument event. Pfield 1 is the instrument number of
+the dseq interpreter. Remember that macros are translated into numbers,
+so that <code>$dseq</code> is equivalent to <code>1</code>. Pfield 2 is the start time of the event in beats.</p>
+
+<p>Pfield&nbsp;3 is a peculiar case. From a user's perspective, all
+you need to know is that you should always specify the value 1 when
+calling the dseq interpreter. Learning why will give you a
+greater understanding about how time and tempo works in Csound.
+Normally, pfield 3 is used to specify the duration of an instrument
+event. However, the dseq interpreter uses pfield 3 for a different
+purpose: passing the current tempo of the score, in seconds-per-beat,
+to the dseq interpreter. This is achieved by specifying the value 1 in pfield 3.</p>
+
+<p>Though score durations are specified in beats, Csound's
+fundamental time unit is in seconds. The beat-time value specified in
+pfield 3 is translated into seconds before the i-event begins. When
+the tempo of the score is 60 beats-per-minute (BPM), durations are not
+translated as one beat equals one second. When the tempo is 120 BPM,
+one beat is translated into 0.5 seconds, as the tempo is twice as fast.
+Specifying the duration as 1 has a secondary purpose, as the translated
+value happens to be the tempo in seconds-per-beat.</p>
+
+<p>The number of the targeted synth instrument is specified in pfield
+4. Macros are used in the code examples in favor over numbers,
+making the code easier to read.</p>
+
+<p>Pfields 5 through 9 are designated for user-defined
+parameters. When the dseq interpreter generates an i-event for the
+target synth instrument, the values specified in pfields 5 through 9
+are passed unmodified to the target instruments. The synth instrument
+assigns purpose to the parameters, with these purposes varying, often
+dramatically, between different synths. If a particular parameter is
+not utilized by the target instrument, a value must still be entered in
+the score. The common practice is to enter 0 for null parameters.</p>
+
+<p>The last field, pfield 10, is where the user composes a dseq
+phrase. The phrase must be entered in as a string, surrounded by quotes.</p>
+
+<h3 id="SynthInstruments">Synth Instruments</h3>
+
+<p>The dseq interpreter is purely a text-based sequencer and does
+not generate any sounds of its own. In order to generate sounds using
+dseq, a compatible synth engine is required. A synth engine exists as
+its own Csound instrument, with its own set of user-defined parameters.</p>
+
+<p>From the perspective of the dseq interpreter score interface,
+users need to be aware of the nature of the five user-defined
+parameters for the synths they target. A properly documented synth
+instrument will describe each user-defined parameter in the instrument
+header. Use the knowledge found in the header to pick useful values.</p>
+
+<p>The only tricky thing about user-defined parameters is that
+the range of the pfields for the score interface is different than the
+interface of a synth engine. In the score, user-defined parameters are
+specified between pfields 5 and 9. The synth engines, however, receive
+these values in pfields 7 through 11.</p>
+
+<p>The <a href="dseq/dseq.zip">supplemental download</a>
+comes with a pre-packaged library of instruments in the file <a href="dseq/dseqLibrary.csd">dseqLibrary.csd</a>.
+Figure 17 shows the library's quick guide, listed in the score.</p>
+
+<pre id="figure17">
+/*
+i $dseq start 1 $sineKick   amp freq    freqr  decay trans   "." 
+i $dseq start 1 $kick       amp -       -      -     -       "." 
+i $dseq start 1 $snare      amp -       -      -     -       "." 
+i $dseq start 1 $hihat      amp decay   -      -     -       "." 
+i $dseq start 1 $gaussBurst amp sus     pan    -     -       "." 
+i $dseq start 1 $triKick    amp freq    freqr  time  pan     "." 
+i $dseq start 1 $lofiSnare  amp time    snap   pan   -       "." 
+i $dseq start 1 $fugwhump   amp time    punch  tune  subtune "." 
+i $dseq start 1 $fmBumper   amp table   -      -     -       "." 
+i $dseq start 1 $clapper    amp pchr    tight  snap  pan     "." 
+i $dseq start 1 $simpleRez  amp basepch -      -     -       "." 
+i $dseq start 1 $blue       amp freq    lfo    nharm pan     "." 
+i $dseq start 1 $black      amp freq    start  end   bw      "." 
+i $dseq start 1 $copper     amp lfo     start  end   bw      "." 
+i $dseq start 1 $psyKick    amp freq    reverb -     -       "." 
+i $dseq start 1 $psyBass    amp basepch reverb -     -       "." 
+i $dseq start 1 $fofVoice   amp basepch att    sus   decay   "." 
+*/ 
+</pre>
+
+<p class="figure"><span><strong>Figure 17</strong>
+Quick guide in <a href="dseq/dseqLibrary.csd">dseqLibrary.csd</a>.</span></p>
+
+<p>Synth engines may have other quirks to them than just the
+user-defined parameters. The dseq interpreter, in addition to the
+parameters, passes information about the tempo, values of triggered
+notes, and the resolution of triggered notes. Depending on the design,
+these extra bits of information may influence the behavior of the synth
+in ways which are non-obvious. Though dseq was designed as a drum
+machine language, synth engines can produce sounds that are beyond
+percussion-styled instruments.</p>
+
+<h3 id="ErrorMessagingSystem">Error Messaging System</h3>
+
+<p>The dseq interpreter is equipped with an error messaging
+system. When the interpreter encounters an unexpected character or
+invalid value, a message about the error is printed to the console or
+terminal window. The interpreter then terminates itself, ignoring the
+rest of the phrase.</p>
+
+<p>The message provides useful information about the error. The
+entire phrase is printed to the screen. Underneath the phrase, the
+carat (^) points to the precise character or value in the phrase that
+caused the error. The error messaging system additionally prints a list
+of valid token-types for this point in the phrase. The messaging system
+only reports the first bug encountered.</p>
+
+<pre id="figure18">
+dseq error.  Invalid character detected:
+        f.f. r8t f88 r16f.8. f.8. 
+                        ^
+        Expects ' ', t or d here.
+        Interpreter terminated.
+</pre>
+
+<p class="figure"><span><strong>Figure 18</strong>
+An example of an error message.</span></p>
+
+<p>By default, the error messaging system is turned on. If you
+would like to disable these messages, set the variable <code>imessages</code>
+to 0 near the top of the dseq interpreter.</p>
+
+<p>For more examples of the error messaging system, render and
+study <a href="dseq/dseqErrors.csd">dseqErrors.csd</a>.</p>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<h2 id="DesigningDseqSynthesizers">Designing dseq
+Synthesizers</h2>
+
+<p>Designing an instrument compatible with the dseq language is
+similar to designing a typical Csound instrument, except with a few
+extra quirks and a pre-defined interface. An instrument may be built by
+modifying an existing dseq synth, adapting an instrument, or from
+scratch, using the dseq template instrument found in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>. These
+synths may or may not utilize data generated and passed from the dseq
+interpreter, including the tempo, resolution of triggers, and the
+values of triggers.</p>
+
+<h3 id="SynthEngineInterface">Synth Engine Interface</h3>
+
+<p>A compatible dseq synth engine receives its input from the
+dseq interpreter. Some of the data being received from the interpreter
+was passed to the interpreter in the score. A compatible dseq engine is
+required to receive the duration of one k-frame, the tempo, the
+resolution of the triggered note, the value of the triggered note, and
+five user-defined parameters. This is true whether or not the
+instrument utilizes every input. Each of these pieces of data must be
+received on pre-defined pfields, as demonstrated in figure 19.</p>
+
+<pre id="figure19">
+ikf    = p3   ; One k-frame in seconds
+ispb   = p4   ; Seconds per beat
+ires   = p5   ; The resolution of the beat.  One beat = 1
+ivalue = p6   ; Numeric value of the note trigger
+iudp1  = p7   ; User-defined parameter 1
+iudp2  = p8   ; User-defined parameter 2
+iudp3  = p9   ; User-defined parameter 3
+iudp4  = p10  ; User-defined parameter 4
+iudp5  = p11  ; User-defined parameter 5
+</pre>
+
+<p class="figure"><span><strong>Figure 19</strong>
+The dseq template instrument header. See <code>instr
+$dseqTemplate</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<p>One parameter that is almost always present in an instrument
+is the duration of the note. The duration is a special case that must
+be handled with care by the instrument designer, and can be implemented
+in multiple ways. You will read about this in the section <em><a href="#TimeAndDuration">Time and Duration</a></em>.</p>
+
+<p>When designing instruments, more often than not, you will find
+that not all available pfields are necessary. When a pfield is not
+used, you should still set it to a variable to avoid warning messages
+in the console or terminal window. The standard practice is to assign
+an unused value to the variable <code>inull</code>. Not
+only will this eliminate a warning, but it gives a clear message to
+those using the instrument that this particular parameter does nothing.</p>
+
+<h3 id="Value">Value</h3>
+
+<p>When a note is triggered, the value of the hexadecimal integer
+is passed to the synth. The dseq interpreter only sends integers
+between 0 and 15. Synth instruments are responsible for translating
+this range into what ever makes sense for the synth.</p>
+
+<h4 id="Amplitude">Amplitude</h4>
+
+<p>The common use for a triggered note value is applying it to
+amplitude. The range of 0 to 15 is arbitrary, and must be scaled or
+biased before assuming a meaningful amplitude value. For example, let's
+say we wanted to scale this range so that it is between 0 to 32768. One
+approach would be to divide the value received at pfield 6 by 15. The
+range would now be normalized between 0 and 1. Assuming Csound is
+rendering at 16-bit, multiplying the new value by <code>0dbfs</code>
+will scale the range to 0 to 32768. However, there would still only be
+16 points of possible resolutions.</p>
+
+<pre id="figure20">
+ivalue = p6
+...
+iamp = ( ivalue / 15 ) * 0dbfs
+</pre>
+
+<p class="figure"><span><strong>Figure 20</strong>
+See <code>instr $valueAmp</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<h4 id="Pitch">Pitch</h4>
+
+<p>Though trigger values are designed with amplitude in mind,
+they are treated as generic numbers without a purpose. Their purpose is
+defined by the synth instruments that receive them. This allows trigger
+note values to be applied to other synth parameters, such as panning,
+sample selection, or even pitch.</p>
+
+<p>Figure 21 demonstrates how to apply values to pitch. A
+user-defined parameter is designated as the base pitch. The trigger
+note value is multiplied by 0.01 and added to the base pitch. The <code>cpspch</code>
+opcode then translates this number into a frequency.</p>
+
+<pre id="figure21">
+ibasepch = p8  ; Base Pitch
+...
+ipch = cpspch( ibasepch + ( 0.01 * ivalue ) )
+</pre>
+
+<p class="figure"><span><strong>Figure 21</strong>
+See <code>instr $valuePitch</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<h3 id="UserDefinedParameters">User-Defined Parameters</h3>
+
+<p>A set of user-defined parameters in a dseq synth is
+specifically tailored for that synth. They serve no purpose until a
+purpose is assigned to them. The standard dseq interpreter allows up to
+five parameters to be passed as pfields. Though there are ways to pass
+even more without modifying the dseq interpreter. Solutions include
+storing parameters in an ftable, in global variables, or in a software
+bus such as zak or chn.</p>
+
+<h4 id="StandardParameters">Standard Parameters</h4>
+
+<p>Synth instruments receive user-defined parameters in pfields
+7 through 11. These same parameters are originally mapped to the dseq
+interpreter score interface as pfields 5 through 9. An instrument can
+be designed to use up to five pfield parameters. When parameters are
+not used, the best practice is to assign them to the variable <code>inull</code>
+to avoid warnings from the console or terminal window and to inform
+users that these parameters do nothing.</p>
+
+<pre id="figure22">
+iamp   = p7  ; Amplitude
+ipitch = p8  ; Pitch
+ipan   = p9  ; Pan
+inull  = p10
+inull  = p11
+</pre>
+
+<p class="figure"><span><strong>Figure 22</strong>
+See <code>instr $paramStandard</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<h4 id="GlobalParameters">Global Parameters</h4>
+
+<p>A synth engine is not limited to the five user-defined pfield
+values. Users can design an engine to read global variables as
+displayed in figure 23.</p>
+
+<pre id="figure23">
+; Below the orchestra header
+giamp   = 0.5
+gipitch = 9.00
+gipan   = 0.9
+
+...
+
+; In the synth Engine
+iamp   = giamp
+ipitch = gipitch
+ipan   = gipan
+</pre>
+
+<p class="figure"><span><strong>Figure 23</strong>
+See <code>instr $paramGlobal</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<h4 id="TableParameters">Table Parameters</h4>
+
+<p>Using ftables to store more than five parameters is perhaps
+the most practical approach. Not only do tables allow for more than
+five parameters, but they allow an extremely large number of parameters.</p>
+
+<pre id="figure24">
+itable = p8  ; Table storing parameters
+...
+ipitch   table 0, itable  ; Pitch
+iwave    table 1, itable  ; Wave shape
+ivibfreq table 2, itable  ; Vibrato frequency
+ivibamt  table 3, itable  ; Vibrato amount, in half steps
+ivibwave table 4, itable  ; Vibrato wave shape
+iatt     table 5, itable  ; Attack of envelope
+ipan     table 6, itable  ; Pan
+</pre>
+
+<p class="figure"><span><strong>Figure 24</strong>
+See <code>instr $paramTable</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<h3 id="TimeAndDuration">Time and Duration</h3>
+
+<p>The duration of a dseq synth instrument can be specified or
+derived in many ways. Duration maybe be absolute, relative, fixed,
+follow the division of the note trigger, or a combination of all of the
+above. When the dseq interpreter generates an event, information about
+the tempo of the score and the resolution of the triggered note is
+passed to the targeted instrument. These two bits of information, or
+any additional information hardwired into the synth or passed as a
+parameter, ultimately defines the duration of a triggered note event.</p>
+
+<pre id="figure25">
+ispb = p4   ; Seconds per beat
+ires = p5   ; The resolution of the beat.  One beat = 1
+</pre>
+
+<p class="figure"><span><strong>Figure 25</strong> Tempo and note division information received from the dseq interpreter.</span></p>
+
+<h4 id="AbsoluteTime">Absolute Time</h4>
+
+<p>A synth that works in absolute-time (time-in-seconds)
+disregards any information about the tempo and resolution. In the case
+where a fixed duration is desired, designers can hardwire a value
+directly into the synth. In figure 26, the duration is fixed to a value
+of 1 second. The variable <code>ikf</code> receives the
+duration of one k-frame. In order to extend the duration longer than
+one k-frame, the opcode <code>xtratim</code> is used. This
+opcode adds time to the total duration of the event. Before <code>xtratim</code>
+is executed, the duration is one k-frame long. In order to make sure
+the final duration is one second long, pass <code>idur - ikf</code>
+to <code>xtratim</code>.</p>
+
+<pre id="figure26">
+idur = 1
+xtratim idur - ikf  ; Extend time to idur
+</pre>
+
+<p class="figure"><span><strong>Figure 26</strong>
+See <code>instr $durFixed</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<p>Designers also have the option of assigning one of the
+user-defined parameters to duration.</p>
+
+<pre id="figure27">
+idur = p8  ; Duration in seconds
+...
+xtratim idur - ikf  ; Extend time to idur
+</pre>
+
+<p class="figure"><span><strong>Figure 27</strong>
+See <code>instr $durAbsolute</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<h4 id="BeatTime">Beat Time</h4>
+
+<p>Designers can use the seconds-per-beat value received by pfield 4 to set the duration relative to the tempo. In order to treat
+a value as if it were written in beat-time, multiply the value by the
+seconds-per-beat value, as shown in figure 28.</p>
+
+<pre id="figure28">
+ispb = p4  ; Seconds per beat
+...
+idur = p8  ; Duration in beats
+...
+idur = idur * ispb  ; Convert to relative time
+xtratim idur - ikf  ; Extend time to idur
+</pre>
+
+<p class="figure"><span><strong>Figure 28</strong>
+See <code>instr $durBeatTime</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<h4 id="NoteDivision">Note Division</h4>
+
+<p>The dseq interpreter passes the division of the trigger. Users
+can use this value to set the duration relative to the note division.
+The code in figure 29 sets the duration of the event to the resolution
+of the trigger. Since note durations are tempo dependent, both the
+second-per-beats value and the resolution of the note is required to
+calculate the division.</p>
+
+<pre id="figure29">
+ispb  = p4  ; Seconds per beat
+ires  = p5  ; Resolution of trigger
+...
+idur = ispb * ires  ; Set duration to note division
+xtratim idur - ikf  ; Extend time to idur
+</pre>
+
+<p class="figure"><span><strong>Figure 29</strong>
+See <code>instr $durDivision</code> in <a href="dseq/dseqDesign.csd">dseqDesign.csd</a>.</span></p>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<h2 id="TheCsoundDseqInterpreter">The Csound dseq
+Interpreter</h2>
+
+<p>The standard Csound dseq interpreter is much more involved
+than a standard Csound instrument. Explaining every nuanced detail
+would require an article in itself. Instead of trying to cover every
+aspect of the interpreter, a generalized explanation of how it works
+along with methods of deconstructing the instrument will be provided.</p>
+
+<h3 id="HostLanguageImplementation">Host Language
+Implementation</h3>
+
+<p>The dseq drum machine micro-language is only the string of
+text that exists between the two quotes. By itself, it does nothing, as
+it is nothing more than a strict specification for notating basic
+rhythms. The language must be implemented inside a host language. Since
+the dseq language is very limited, the host language must be
+responsible for everything dseq is not designed to do. For example,
+dseq is completely oblivious to the concept of tempo, leaving the host
+language to implement tempo in a fashion that makes sense.</p>
+
+<p>The host language, as it relates to this article, is Csound.
+The standard Csound dseq interpreter is only one possible interpreter
+out of many. For synth compatibility purposes, the standard Csound dseq
+interpreter found in <a href="dseq/dseq.csinstr">dseq.csinstr</a>
+should be considered the defacto version, though custom versions are
+highly encouraged.</p>
+
+<h3 id="WhereDoesDseqStartAndEnd">Where does dseq start
+and end?</h3>
+
+<p>The lines between the dseq language and the Csound
+implementation are blurry. The following list describes the
+responsibilities of both the dseq language and host language
+implementation:</p>
+
+<h5>The dseq language responsibilities:</h5>
+
+<ul>
+  <li>Triggering events.</li>
+  <li>The timing of new events in relation to a phrase.</li>
+  <li>The current division of note triggers and rests.</li>
+  <li>The value of a note event.</li>
+  <li>Rhythms.</li>
+</ul>
+
+<h5>Host language responsibilities:</h5>
+
+<ul>
+  <li>Generating i-events.</li>
+  <li>The tempo.</li>
+  <li>Global timing.</li>
+  <li>Instrument to play.</li>
+  <li>Parameters supplied to synth instruments.</li>
+  <li>Any other issues related to the host.</li>
+</ul>
+
+<h3 id="InterpreterInternals">Interpreter Internals</h3>
+
+<p>The internals of the dseq interpreter consist of four main
+components: the phrase reader, an internal clock, the resolution, and
+the error messaging system.</p>
+
+<p>The phrase reader translates a phrase into events. The reader
+reads a phrase one character at a time, from left to right. This is the
+mind, body and soul of the interpreter, as it encompasses everything
+for which the interpreter is responsible.</p>
+
+<p>The internal clock keeps track of time in beat-time. Every
+time a note is triggered or a rest is encountered, the clock
+accumulates the value of the current note division. The internal clock
+resets to zero for every new phrase. When a note is triggered, the
+value of the internal clock is converted into time-in-seconds. An
+instrument event is then scheduled by this amount of time in the future.</p>
+
+<p>The resolution is a variable that stores the division of notes
+and rests in beat-time. The resolution is modified when any of the
+three resolution function variations are encountered by the phrase
+reader. The internal clock uses this value when accumulating time. The
+default value for every new phrase is a sixteenth note.</p>
+
+<p>The error messaging system is responsible for reporting any
+syntax or value errors encountered by the phrase reader. After a
+message is written to the console or terminal window, the interpreter
+process is terminated, ignoring the remaining portion of the phrase.</p>
+
+<h3 id="ControlFlow">Control Flow</h3>
+
+<p>The interpreter makes heavy use of conditional branching.
+Using the <code>if</code> and <code>igoto</code>
+statements, the phrase reader will jump to different blocks of code
+based on the current character. Figure 30 shows the branching
+possibilities in <code>main_loop:</code>. For example, a
+space character causes the reader to jump to <code>main_space:</code>.
+If the character is not a space, rest, hexadecimal character, or the
+resolution function "r", then the reader jumps to <code>err_main_loop:</code>.</p>
+
+<pre id="figure30">
+main_loop:
+    ; Read character from string
+    Schar strsub Sphrase, iSindex, iSindex + 1
+
+    ; Space " "
+    icompare strcmp Schar, " "
+    if( icompare == 0 ) igoto main_space
+
+    ; Rest "."
+    icompare strcmp Schar, "."
+    if( icompare == 0 ) igoto main_rest
+
+    ; Hexadecimal 0-f
+    ic_x strchar Schar
+    if( ( ic_x &gt;= ic_0 &amp;&amp; ic_x &lt;= ic_9 ) || \
+      ( ic_x &gt;= ic_a &amp;&amp; ic_x &lt;= ic_f ) ) igoto main_hexadecimal
+
+    ; Resolution "r"
+    icompare strcmp Schar, "r"
+    if( icompare == 0 ) igoto r_loop
+
+    ; Error
+    igoto err_main_loop
+</pre>
+
+<p class="figure"><span><strong>Figure 30</strong>
+Condtional branching. See <code>instr $dseq</code> in <a href="dseq/dseq.csinstr">dseq.csinstr</a>.</span></p>
+
+<p>For an in-depth look at conditional branching, read Steven
+Yi's <q><a href="http://www.csounds.com/journal/2006spring/controlFlow.html">Control
+Flow - Part I</a></q> and <q><a href="http://www.csounds.com/journal/2006summer/controlFlow_part2.html">Control
+Flow - Part II</a></q> at <em><a href="http://www.csounds.com/journal/">The Csound Journal</a></em>
+(Yi 2006).</p>
+
+<h3 id="InterpreterMap">Interpreter Map</h3>
+
+<p>The interpreter works by analyzing each character of a phrase
+one at a time, and making decisions about which code is executed based
+on the current character. In order to understand the control flow of
+the interpreter, a map is provided in figure 31. If you are serious
+about gaining a greater understanding of the interpreter, you can
+manually trace this map in conjunction with a dseq phrase and the code
+in <a href="dseq/dseq.csinstr">dseq.csinstr</a>.</p>
+
+<p id="figure31">
+<img src="dseq/dseqInterpreterMap.gif" alt="dseq interpreter map" height="802" width="635" /></p>
+
+<p class="figure"><span><strong>Figure 31</strong>
+A map of the standard Csound dseq interpreter.</span></p>
+
+<p>Try tracing the phrase <code>"f... r4 f 8 r4d3 f88 x"</code>.
+Start at the top of the map where it says <code>main_loop:</code>.
+Since the first character "f" is a hexadecimal character, follow the
+path [x] to <code>main_hexadecimal:</code>. Along this
+path, an event is generated at [e] and the internal clock is advanced
+at [c]. The path continues to <code>advanceSIndex:</code>
+where the string index is advanced at [a], pointing to the next
+character ".". At [&lt;], a conditional in the code checks to see
+if the end of the phrase has been reached. Since it has not, take the
+left path back up to the <code>main_loop:</code>. The new
+character is a rest, so follow [.] to <code>main_rest:</code>.
+The path leads to [c], causing the internal clock to advance. Keep
+tracing through <code>advanceSIndex:</code>, [a],
+[&lt;], and then back up to <code>main_loop:</code>.
+See if you can trace the rest of the example.</p>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<h2 id="AndBeyond">And Beyond...</h2>
+
+<p>The dseq drum machine micro-language is only one path to true
+score laziness. The central premise of dseq is to make rhythm
+programming simple, quick and human-readable. However, there are many
+other areas of composition that would certainly benefit from custom
+micro-languages. Another example of a Csound micro-language is the
+mcseq interpreter from <em>The Csound Blog</em> entry <q><a href="http://www.thumbuki.com/csound/files/thumbuki20080102.csd">The
+Infamous mcseq</a></q> that translates a string of morse
+code into sound (Joaquin 2008). These two interpreters will hopefully
+inspire you to create and share your own text-centric instruments.</p>
+
+<p>As for the dseq language, it is still very young and will most
+likely grow over the course of the next year. There are already two
+features on the horizon, having been successfully prototyped in the
+lab: Swing rhythms and dotted divisions. Much care is being put into
+backwards compatibility, so that any phrases you develop today will
+work with future versions of Csound.</p>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<h2 id="Acknowledgments">Acknowledgments</h2>
+
+<p>I would like to thank three people for their contributions to
+this article. First, I would like to thank Dr. Richard Boulanger for
+his contribution of three instruments from <q><a href="http://csound.cvs.sourceforge.net/*checkout*/csound/csound5/examples/trapped.csd">Trapped
+in Convert</a></q> (Boulanger 1979). I would like to thank
+Joe Maffei's psytrance instruments and musical example, found in <a href="dseq/dseqPsy.csd">dseqPsy.csd</a> (Maffei 2008).
+And I would like to thank Jean-Luc Cohen for donating a wonderful
+singing FOF voice synth (Cohen, c. 1995). Thank you.</p>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<h2 id="References">References</h2>
+
+<div id="citation">
+<p>Boulanger, Richard. <span class="underline">Trapped
+in Convert</span>. July 1979. July 1996<br />
+
+&lt;http://csound.cvs.sourceforge.net/*checkout*/csound/csound5/examples/trapped.csd&gt;</p>
+
+<p>Boulanger, Richard and Mathews, Max. <q>The 1997
+Mathews Radio-Baton &amp; Improvisation Modes</q> From the
+Proceedings of the 1997 International Computer Music Conference -
+Thessaloniki Greece, 1997.<br />
+
+&lt;http://www.csounds.com/mathews/papers/ICMC1997.pdf&gt;</p>
+
+<p>"Chord chart." Wikipedia, The Free Encyclopedia. 18 Feb 2008,
+04:03 UTC. Wikimedia Foundation, Inc. 3 Mar 2008<br />
+
+&lt;http://en.wikipedia.org/w/index.php?title=Chord_chart&amp;oldid=192222900&gt;.</p>
+
+<p>Cohen, Jean-Luc. <span class="underline">FOF1.orc
+FOF1.sco</span>. [c. 1995]</p>
+
+<p>"Domain-specific programming language." Wikipedia, The Free
+Encyclopedia. 26 Feb 2008, 21:02 UTC. Wikimedia Foundation, Inc. 3 Mar
+2008<br />
+
+&lt;http://en.wikipedia.org/w/index.php?title=Domain-specific_programming_language&amp;oldid=194252457&gt;.</p>
+
+<p>"FastTracker 2." Wikipedia, The Free Encyclopedia. 29 Feb
+2008, 12:24 UTC. Wikimedia Foundation, Inc. 3 Mar 2008<br />
+
+&lt;http://en.wikipedia.org/w/index.php?title=FastTracker_2&amp;oldid=194879686&gt;.</p>
+
+<p>ffitch, John. "Using Csound's Macro Language Extenstions." <span class="underline">The Csound Book</span> Ed. Richard
+Boulanger. Cambridge: The M.I.T. Press, 2000.</p>
+
+<p>"Hexadecimal." Wikipedia, The Free Encyclopedia. 29 Feb 2008,
+19:38 UTC. Wikimedia Foundation, Inc. 3 Mar 2008<br />
+
+&lt;http://en.wikipedia.org/w/index.php?title=Hexadecimal&amp;oldid=194956476&gt;.</p>
+
+<p>Joaquin, Jacob. "A Micro Intro to Macros" The Csound Blog,
+April 20, 2007.<br />
+
+&lt;http://www.thumbuki.com/csound/files/thumbuki20070420.csd&gt;</p>
+
+<p>Joaquin, Jacob. "The Infamous mcseq" The Csound Blog, January
+2, 2008.<br />
+
+&lt;http://www.thumbuki.com/csound/files/thumbuki20080102.csd&gt;</p>
+
+<p>Maffei, Joe. <span class="underline">psy4-1</span>.
+January 2008.<br />
+
+&lt;http://joesprojectblog.blogspot.com/2008/01/psytrance-in-csound-4-score-macros.html&gt;</p>
+
+<p>Mathews, Max. <span class="underline">The
+Technology of Computer Music</span> Cambridge: The M.I.T. Press,
+1981.</p>
+
+<p>"Preprocessor." Wikipedia, The Free Encyclopedia. 27 Feb 2008,
+12:09 UTC. Wikimedia Foundation, Inc. 3 Mar 2008<br />
+
+&lt;http://en.wikipedia.org/w/index.php?title=Preprocessor&amp;oldid=194398476&gt;.</p>
+
+<p>Yi, Steven. "Control Flow - Part I" <span class="underline">The
+Csound Journal</span> Issue Spring 2006, 2006<br />
+
+&lt;http://www.csounds.com/journal/2006spring/controlFlow.html&gt;</p>
+
+<p>Yi, Steven. "Control Flow - Part II" <span class="underline">The Csound Journal</span> Issue
+Summer 2006, 2006<br />
+
+&lt;http://www.csounds.com/journal/2006summer/controlFlow_part2.html&gt;</p>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

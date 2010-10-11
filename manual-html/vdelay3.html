@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vdelay3</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vdelay.html" title="vdelay" />
+    <link rel="next" href="vdelayx.html" title="vdelayx" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vdelay3</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vdelay.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vdelayx.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="vdelay3">
+      <a id="vdelay3"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVdelay3" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vdelay3</span>
+        </h2>
+        <p>vdelay3 — 
+      A variable time delay with cubic interpolation.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3679055"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>vdelay3</em></span> is experimental. It is the same as <a class="link" href="vdelay.html" title="vdelay"><em class="citetitle">vdelay</em></a> except that it uses cubic interpolation. (New in Version 3.50.)
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3678813"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>vdelay3</strong></span> asig, adel, imaxdel [, iskip]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3678832"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imaxdel</em></span> -- Maximum value of delay in milliseconds. If <span class="emphasis"><em>adel</em></span> gains a value greater than <span class="emphasis"><em>imaxdel</em></span> it is folded around <span class="emphasis"><em>imaxdel</em></span>. This should not happen.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional) -- Skip initialization if present and non-zero.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3679734"></a>
+        <h2>Performance</h2>
+        <p>
+      With this unit generator it is possible to do Doppler effects or chorusing and flanging.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- Input signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>adel</em></span> -- Current value of delay in milliseconds. Note that linear functions have no pitch change effects. Fast changing values of <span class="emphasis"><em>adel</em></span> will cause discontinuities in the waveform resulting noise.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3679766"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  <span class="stamnt">f</span>1 0 8192 10 1
+  ims     <span class="op">=</span>          100             <span class="comment">; Maximum delay time in msec</span>
+  a1      <span class="opc">oscil</span>      10000, 1737, 1  <span class="comment">; Make a signal</span>
+  a2      <span class="opc">oscil</span>      ims<span class="op">/</span>2, 1<span class="op">/</span>p3, 1  <span class="comment">; Make an LFO</span>
+  a2      <span class="op">=</span>          a2 <span class="op">+</span> ims<span class="op">/</span>2      <span class="comment">; Offset the LFO so that it is positive</span>
+  a3      <span class="opc">vdelay</span>     a1, a2, ims     <span class="comment">; Use the LFO to control delay time</span>
+          <span class="opc">out</span>        a3</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Two important points here. First, the delay time must be always positive. And second, even though the delay time can be controlled in k-rate, it is not advised to do so, since sudden time changes will create clicks.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3679886"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vdelay.html" title="vdelay"><em class="citetitle">vdelay</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3679903"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1995</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vdelay.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vdelayx.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vdelay </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vdelayx</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

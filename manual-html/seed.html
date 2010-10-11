@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>seed</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="schedwhen.html" title="schedwhen" />
+    <link rel="next" href="sekere.html" title="sekere" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">seed</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="schedwhen.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sekere.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="seed">
+      <a id="seed"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSeed" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">seed</span>
+        </h2>
+        <p>seed — 
+      Sets the global seed value.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3551535"></a>
+        <h2>Description</h2>
+        <p>
+      Sets the global seed value for all <span class="emphasis"><em>x-class noise generators</em></span>, as well as other opcodes that use a random call, such as <a class="link" href="grain.html" title="grain"><em class="citetitle">grain</em></a>.
+    </p>
+        <div class="note" title="Please Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Please Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Please Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p><a class="link" href="rand.html" title="rand"><em class="citetitle">rand</em></a>, <a class="link" href="randh.html" title="randh"><em class="citetitle">randh</em></a>, <a class="link" href="randi.html" title="randi"><em class="citetitle">randi</em></a>, <a class="link" href="rnd.html" title="rnd"><em class="citetitle">rnd(x)</em></a> and <a class="link" href="birnd.html" title="birnd"><em class="citetitle">birnd(x)</em></a> are not affected by seed.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3552437"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>seed</strong></span> ival</pre>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3552454"></a>
+        <h2>Performance</h2>
+        <p>
+      Use of <span class="emphasis"><em>seed</em></span> will provide predictable results from an orchestra using with random generators, when required from multiple performances.
+    </p>
+        <p>
+      When specifying a seed value, <span class="emphasis"><em>ival</em></span> should be an integer between 0 and 2<sup>32</sup>. If <span class="emphasis"><em>ival</em></span> = 0, the value of <span class="emphasis"><em>ival</em></span> will be derived from the system clock.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="schedwhen.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sekere.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">schedwhen </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sekere</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

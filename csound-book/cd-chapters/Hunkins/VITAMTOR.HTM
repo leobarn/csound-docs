@@ -1,0 +1,39 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta name="generator" content="GoLive CyberStudio 3">
+		<title></title>
+		<meta name="Author">
+	</head>
+
+	<body bgcolor="white">
+		<pre>
+
+
+
+; <font size="5"><b>Test orchestra</b></font><b><font size="4"> to try out bell sonorities </font></b>
+;<font size="4"><b>  (with <a href="VITAMTSC.HTM">vitamt.sco</a>)</b></font>
+        sr = 8000 ; may be any number from about 6000 on up
+        kr = 800 ; must be sr / 10
+        ksmps = 10
+        nchnls = 1
+        gifreq = 400 ; select between 350-500
+        gicar = 1 ; 1=a little; 3=a lot of modulation
+
+        gicar1 = (gicar == 1? .38: 1.1)
+
+
+        instr 1
+
+        kamp  linen  1, 2, p3, 1
+        kamp  table  kamp * 511, 2
+        kamp2 linseg 0, 2, 1, 2, 1, 1, .5
+        kamp2 table  kamp2 * 511, 2
+        a1    foscil 15000*kamp, gifreq, 1, p4, kamp2*gicar1, 1, -1
+              out    a1
+              endin
+</pre>
+	</body>
+
+</html>

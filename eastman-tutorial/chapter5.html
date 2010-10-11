@@ -1,0 +1,1380 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML VERSION="2.0">
+<HEAD>
+<!-- WEBMAGIC VERSION NUMBER="2.0.1" -->
+<!-- WEBMAGIC TRANSLATION NAME="ServerRoot" SRC="/var/www/htdocs/" DST="/" -->
+<!-- WEBMAGIC TRANSLATION NAME="ProjectRoot" SRC="./" DST="" -->
+<TITLE>chapter5.html</TITLE>
+</HEAD>
+<BODY>
+<A NAME="chapter5.html#"></A>
+<HR><CENTER><FONTSIZE="-1"><I>Eastman Csound Tutorial</I></FONT></CENTER>
+<PRE>
+<H5>   <A HREF="./chapter5.html#END"><FONT SIZE="+1">END</FONT> of this chapter</A>  -- <A HREF="chapter6.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 6)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</H5><HR></PRE>
+
+
+<H2><A NAME="_wmh3_847374967">Chapter 5<BR>
+FILTERS ; GLOBAL INSTRUMENTS</A></H2>
+<P>By this point, you should be able to fend your way through the Csound manual
+discussions of additional unit generators and resources not covered in this tutorial,
+and, after some initial head-scratching, come to
+a working understanding of how to use these resources. From now on, our
+discussions will summarize major points and pitfalls, and will illustrate
+more by example than by verbiage. However, we will take a fairly detailed
+look at a few concepts, such as filter response curves, for which introductory
+literature is scarce.</P>
+<H4><A NAME="_wmh4_847374974">5.1. Filters</A></H4>
+<P>This chapter deals primarily with filters - computer algorithms or hardware
+circuits that pass certain frequency bands while attenuating other bands.
+Among the most common types of filters are:</P>
+<DD><I>low pass </I>- passes low frequencies, attenuates higher frequencies 
+<DD>
+<DD><I>high pass </I>- passes high frequenices, attenuates lower frequencies 
+<DD>
+<DD><I>band pass</I> - passes a band (limited range) of frequencies, and attenuates frequencies
+above and below this band 
+<DD>
+<DD><I>band reject </I>(or<I> notch)</I> - attenuates a particular frequency band, but passes frequencies above
+and below this band 
+
+<P>Two important (and often related) characteristics of many filters are
+<UL>
+<LI> the number of <STRONG>poles</STRONG> (peaks and "nulls," or "valleys")
+within the frequency response of the filter<BR>
+<FONT SIZE="2">A two-pole filter creates one peak (emphasized frequency region)
+and one null (attenuated frequency region)</FONT>
+<LI> the <STRONG>order</STRONG> of a filter, which indicates
+sharpness of the filtering, or the slope of the rolloff curve.<BR>
+<FONT SIZE="2">The order of a filter indicates the order of the differential equation
+(or, with digital filters, the difference equation) used to create the filter.
+The higher the order, the sharper the filtering. A first order filter rolls off
+at 6 dB per octave, a second order filter at 12 dB per octave, a third order
+filter at 18 dB per octave, and so on.
+</FONT>
+</UL>
+
+<P>A low pass
+filter, for example, supplies increasing attenuation to frequencies above
+some point, until &quot;total suppression&quot; (generally defined as 60 dB attenuation)
+is reached. A very sharp low pass filter (such as the smoothing filters
+of high quality DACs and analog-to-digital converters) may produce total
+elimination of frequencies 1/3 of
+an octave above the cutoff point. In a low pass filter with a more gradual
+roll-off slope, on the other hand, the difference between the cutoff frequency
+and the frequency where total suppression is reached might be five octaves.
+
+<P>Filters also are the basic building blocks of reverberators. Filtering generally introduces
+a phase shift and also a time delay in the audio signal. Conversely,
+combining two or more
+delayed versions of a signal always results in some filtering (partial or
+complete elimination of some frequencies, and reinforcement of other
+frequencies). Later in this chapter we will
+consider the Csound reverberant filters <I>comb</I> and <I>alpass,</I> and their combination in unit generator<I> nreverb.</I></P>
+<H4><A NAME="_wmh4_847374979">5.2. Low pass and High pass filters</A></H4>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/port.html"><B>TONE</B> and <B>ATONE</B></B></A>
+in the Csound reference manual ]</P>
+
+<P><B>tone </B>and<B> atone</B> are, respectively, Csound
+implementations of first order digital low-pass and high-pass
+filters. The two arguments to each of these filters are</P>
+<DD>(1) the input audio signal to be filtered; 
+<P>and</P>
+<DD>(2) the <B>half-power point,</B> in herz, which determines the sharpness of the filter rolloff curve. 
+<DD>
+<P><I>tone</I> progressively attenuates all frequencies above 0 herz, while <I>atone</I> applies progressively greater attenuation to all frequencies below the
+Nyquist. At the half-power point, an input frequency component is reduced
+by 6 dB ( a reduction of 50 % of the original amplitude level) and the rolloff
+curve is 6 dB per octave -- not very sharp, as can be seen in
+the following table.</P>
+
+<PRE>
+<I>tone       0 Hz.   H.P.  2*H.P.   3*H.P.   4*H.P.  8*H.P.   16*H.P.  32*H.P.</I>
+<I>atone     Nyquist  H.P. .5*H.P. 1/3*H.P. .25*H.P. 1/8*H.P. 1/16*H.P. 1/32*H.P.</I>
+
+<FONT SIZE="2">dB attenuation</FONT>    0     -3     -6      -9        -12     -18      -24     -30
+<FONT SIZE="2">percent of original</FONT>
+<FONT SIZE="2">amplitude remaining</FONT> 1.    .707  .5      .355      .25     .125     .063    .032
+<FONT SIZE="2">output amplitude </FONT> 32000 22624 16000   11360      8000     4000     2016    1024
+</PRE>
+<P>Thus, if we assume an H.P. (half-power) point of 200 herz, <I>tone</I> will reduce a frequency
+of 400 herz (2 * H.P.) by 6 dB, or by about 50 % of its raw unfiltered
+amplitude level. A sine tone at 400 herz with an original amplitude of 32000
+would have an amplitude of about 16000 after being run through this filter.
+A frequency of 6400 herz (32 * the 200 herz H.P. point) would be attenuated
+by 30 dB, to about .032 its original amplitude. If the input amplitude of
+this 6400 herz sine tone was 32000, the output amplitude would be about 1024.
+<P>Similarly, with a 1000 herz half power point, <I>atone</I> will attenuate
+a frequency of 333 herz (1/3 * H.P.) by 9 dB, so that only about 36 %
+of the amplitude inensity remains. An input sine tone with an amplitude of
+32000 would have an output amplitude of around 11360 after being run through
+this filter.
+
+<P>Running a signal through <I>tone</I> or <I>atone</I> will always cause some loss in amplitude. The greater the effect of the
+filtering, the greater the amplitude reduction.</P>
+<P>In the following example, a time-varying low-pass filter is applied to the
+digitized tamtam soundfile from the<I> /sflib/x </I>directory :</P>
+<PRE><B>
+;  #############################################################
+;  soundfile ex5-1    :  Tone               Eastman Csound Tutorial
+;  #############################################################
+sr=44100
+kr=2205
+ksmps=20
+nchnls=1
+
+
+; mono soundfile input:
+; p4  = soundin. number 
+; p5 = ampfac  ; p6 = skip from front of soundfile
+; p7 = exponential fade in time ; p8 = exponential fade out time
+; for low pass filtering of soundfiles
+; p9 = 1st half-power point, p10 = 2nd h.p. point
+; p11 = rate of change between p9 & p10, p12= func. for change
+
+instr 39
+isfnum = p4
+idur = p3
+
+a1 soundin isfnum,p6 
+
+; amplitude envelope
+iampfac  = (p5 =0?1:p5 )     
+; fade-in & fade-out defaults & checks:
+ip7  = (p7 =0?.001:p7 )
+ip8  = (p8 =0?.001:p8 )
+ip7 = (p7 < 0 ? abs(p7) * idur : ip7)
+ip8 = (p8 < 0 ? abs(p8) * idur : ip8)
+a3 expseg .01,ip7 ,iampfac,idur-(ip7 +ip8 ),iampfac,ip8 ,.01
+a1 = a1*a3
+
+; low pass filtering:
+irate = (p11=0? 1/p3 : p11)
+k1 oscili p10-p9,irate,p12
+khp = k1 + p9     ; changing half-power point
+a1 tone a1, khp
+out a1
+
+endin</B>
+<B>  -----------------------------------------------------------</B>
+<B>  &lt; score11 file used to create  &quot;ex5-1&quot; :</B>
+<B>  &lt; functions for time-varying change in half power point:</B>
+<B>
+*f1 0 65 7 0 64 1;
+* f2 0 65 7 0 32 1. 32 0;
+* f3 0 65 5 .01 32 1. 32 .01;
+
+SF 0 0 4;              < mono input, default mono output
+p3 3.5;                                                     
+du 303;                                                                   
+p4 5;    < soundin.# : soundin.5 points to /sflib/perc/tam 
+p5 .9;                                    < ampfac
+p6 .5;                                    < duration skipped from front of sf
+p7 1.;                                    < fade in time
+p8 1.;                                  < fade out time
+
+< "tone" p-fields :
+p9 nu  100/ 2000/ 2000/200;        < 1st half-power point
+p10 nu 3000/ 150 / 100/900;       < 2nd  "  "     "
+p11 nu  0  /  0 / .75/4.;          < rate of change (0 = 1/p3)
+p12 nu  1  /  2 / 3 /  / ;      < function for change
+end;
+-----------------------------------------------------------
+</B>
+</PRE>
+<P align=right
+<FONT SIZE=-1>
+<A target="_new" HREF="appendix.html#Chapter5"><I>Appendix Csound score file examples : Chapter 5</I></A></FONT SIZE></P>
+
+<P>Substituting <I>atone</I> for <I>tone</I> in this example would emphasize the higher frequencies of the tamtam spectrum.
+Since the rolloff curves of <I>tone</I> and <I>atone</I> are so gradual, these filters have the most effect on signals with a broad
+frequency spectrum that includes both low and high frequency components.
+The instrument algorithm above would have only marginal effect in reducing
+the brightness of crotales, or other sound sources with mostly high frequency
+energy.</P>
+
+<P>For sharper filtering, Csound also provides second order Butterworth
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/butterhp.html"><B>BUTTERLP</B> and <B>BUTTERHP</B></B></A>
+low- and high-pass filters.
+The arguments to <I>butterlp</I> and  <I>butterhp</I> are identical to
+the arguments to <I>tone</I> and <I>atone</I>, but the rolloff is much sharper
+and the passband much flatter, so the effects of the filtering often are
+more pronounced. Try substituting <I>butterlp</I> for <I>tone</I> in
+<I>ex5-1</I>. The choice of whether to use a first oder or second order
+Csound filter generally depends upon how much we wish to alter the timbral
+"brightness" of (or amount of high frequency energy within) a sound.
+
+<P><I>tone</I> and <I>atone</I> are complementary filters. This means that in the following series of operations:</P>
+<DD><I>anoise rand 5000</I> 
+<DD><I>alow tone anoise, 700</I> 
+<DD><I>ahigh atone anoise, 700</I> 
+<DD><I>addem = alow + ahigh</I> 
+<P>the resulting signal <I>addem</I> will be identical to the original white noise signal <I>anoise.</I>
+This can be very useful in varying the timbral "brightness" (and, often, the
+perceived "loudness" and "distance" as well) of sound sources:<PRE><TT>
+asound	diskin	p4, p6, 0
+alo		tone	asound	p7
+ahi	atone	asound	p7
+ibright = p8
+abright = (ibright * ahi) + ((1. - ibright) * alo)
+aout	balance	  abright, asound
+out aout</I></TT>
+-  -  and p-field 8 in our score11 input file: - - -<TT>
+p9  nu  0 / .5 / 1.;  < timbral brightness: 0, least bright, to 1., brightest</TT></PRE>
+Here three soundfiles are read in by <I>diskin</I> (or, perhaps, the same source soundfile
+is read in three times). For the first soundfile, we take only the output of
+the low-pass filter (<I>p9</I> = 0). For the second input sound, we mix an
+equal percentage of low- and high-pass filtered signals, equivalent to
+bypassing all filtering. And for the final output "note," we use only
+the high-pass variant. We also restore the amplitude lost in filter with the
+call to unit generator <I>balance</I> (discussed in the next section).
+By choosing a value for <I>p7</I> carefully (often setting it to 2 or 3
+times the fundamental frequency of the sound source), and perhaps by substituting
+<I>butterlp</I> and <I>butterhp</I> for <I>tone</I> and <I>tone</I>, we
+should be able to adjust the spectral brightness of the sounds to meet
+our msical needs.
+<P>To introduce a crescendo or diminuendo within a single sound, we would
+need to substitute a time varying filter <I>envelope</I>, perhaps created
+with <I>expseg</I> or with an oscillator, for the constant
+<I>ibright</I> in the
+example above, and perhaps create a complimentary
+amplitude envelope as well. Applying a periodic sinusoidal signal to
+the mixture of <I>ahi</I> and <I>alo</I> would create a tremolo effect.
+<H4><A NAME="_wmh4_847374986">5.3. balance, rms and gain</A></H4>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/rms.html"><B>RMS, GAIN</B> and <B>BALANCE</B></B></A>
+in the Csound reference manual ]</P>
+
+<P>As in the example above, applying an envelope to the half-power point of
+a low- or high-pass filter often has the effect of applying the same envelope
+to the amplitude level of a signal. Sometimes this is desired, but often
+it is not. A succession of sounds with similar input amplitudes may have
+widely varying output amplitudes after filtering, and thus not sound &quot;balanced,&quot;
+due to varying amounts of energy loss caused by the filtering. The unit
+generators <B>rms, gain,</B> and, especially, <B>balance</B> are useful in such situations.</P>
+<P><B>rms</B> is an envelope follower. It's output (which must be at the k-rate) is a
+control signal that tracks, or &quot;follows,&quot; the root-mean-squared (average)
+amplitude level of some audio signal.</BR>
+<B>gain</B> modifies the root-mean-squared amplitude of an audio signal, providing
+either attenuation or an increase, so that the audio signal matches (roughly)
+the level of a control signal.</BR>
+<B>balance</B> is a combination of <I>rms</I> and <I>gain.</I> It tracks the amplitude envelope of a control (or "comparison") <U>audio</U> signal (specified in
+the second argument), then modifies the sample values of another audio signal
+(given in the first argument) to match the average rms level of the control (comparator)
+signal.</P>
+<P>In the following example, we have modified the end of the previous instrument to &quot;balance&quot;
+the filtered output signal level against that of the unfiltered original
+tamtam. The same score file is used. /P>
+<PRE>
+<B> #############################################################</B>
+<B> ;  soundfile ex5-2  : Tone &amp; Balance (same  score as ex5-1)</B>
+<B>  #############################################################</B>
+<FONT SIZE="-1"><I>instr 39
+isfnum = p4
+idur = p3
+a1 soundin isfnum,p6 
+
+; amplitude envelope
+iampfac  = (p5 =0?1:p5 )     
+; fade-in & fade-out defaults & checks:
+ip7  = (p7 =0?.001:p7 )
+ip8  = (p8 =0?.001:p8 )
+ip7 = (p7 < 0 ? abs(p7) * idur : ip7)
+ip8 = (p8 < 0 ? abs(p8) * idur : ip8)
+a3 expseg .01,ip7 ,iampfac,idur-(ip7 +ip8 ),iampfac,ip8 ,.01
+a1 = a1*a3
+
+; low pass filtering:
+irate = (p11=0? 1/p3 : p11)
+k1 oscili p10-p9,irate,p12
+khp = k1 + p9     ; changing half-power point</FONT></I>
+</FONT>
+<B>afilt  tone a1, khp</I>
+<B>a1 balance afilt , a1</B>
+out a1 ])</B>
+</PRE>
+<P>In this particular instance, the audible difference between <I>ex5-1 </I>and<I> ex5-2</I> is not all that striking. We still hear the filter envelope, and when most
+the the higher frequencies are filtered out, we perceive a psychologically
+&quot;softer&quot; sound, even though the &quot;balanced&quot; amplitude level does not change
+very much. However, there are other situations in which <I>balance</I> is handy in restoring lost amplitude.</P>
+<P><I>balance</I> can also be a useful signal processor in its own right.
+In the instrument below, it is used to
+impose the envelope of one soundfile onto another soundfile:</P>
+<PRE>
+<B>  ;  #############################################################</B>
+<B>  ;  soundfile ex5-3  : Balance used as envelope follower</B>
+<B>  ;  #############################################################</B>
+<B>  sr=44100</B>
+<B>  kr=4410</B>
+<B>  ksmps=10</B>
+<B>  nchnls=1</B>
+
+<B>  ; p4  = soundin.#  number  of audio soundfile</B>
+<B>  ; p5 = amplitude multiplier     ; p6 = skip from front of audio soundfile</B>
+<B>  ; p7 = optional exponential fade in time ;    p8 = optional exponential fade out time</B>
+<B>  ; p9  = soundin.#  number  of control soundfile</B>
+<B>  ; p10 = skip time into control soundfile</B>
+
+<B>  instr 1</B>
+<B>  audio  soundin  p4, p6   ; read in the audio soundfile</B>
+<B>  aenv soundin p9 , p10    ; read in the control soundfile</B>
+
+<B>     ; impose control soundfile envelope on audio file</B>
+<B>  audio  balance  audio , aenv</B>
+<B>     ; vary output amplitude from note to note :</B>
+<B>  p5 = ( p5 = 0 ? 1. : p5 )</B>
+<B>  audio  =  audio * p5</B>
+
+<B>  ; optional fade-in &amp; fade-out</B>
+<B>  itest =  p7 + p8</B>
+<B>  if itest = 0  goto done</B>
+<B>       kfades expseg .01, p7, 1.,p3-(p7 + p8), 1., p8,.01</B>
+<B>       audio = audio * kfades</B>
+<B>  done:</B>
+<B>  out audio</B>
+<B>  endin</B>
+<B>  -----------------------------------------------------------</B>
+<B>  &lt; score11 file used to create soundfile example  &quot;ex5-3&quot;</B>
+<B>
+i1 0 0 8;                       < mono input, default mono output  
+p3 nu  .3 /// 3.2 /  1.5 //4/7. ;
+du nu 300.153/300.179/300.25/303./  301.18 / 301.43 / 303.3/ 307.29;
+p4 nu 6 /7 /8 /5; < audio soundfiles from /sflib/perc :
+< 6 = plate1, 7 = gong.ef3 , 8 = cym1 , 5 = tam
+p5 nu .2 / .6 /  .4 / .9 /
+.9 * 4;                  < output amplitude multiplier
+p6 nu 0/1./.4/2.;                < duration skipped from front of sf
+p7 0;                 < optional added fade in time
+p8 0;                 < optional added fade out time
+< envelope follower p-fields :
+p9  nu 9 / 10 / 11 / 12 /  < soundin # of control soundfiles 
+13 / 14 / 15 / 16;        < mostly from /sflib/perc
+< 9 = tb1 , 10 = tb2 , 11 = wb , 12 = crt.fs6 
+< 13 = bongo1.roll , 14 = sleighbells , 15 = maracaroll , 16 = voicetest
+p10  0 ;                  < skip off front of control soundfile
+end;
+-----------------------------------------------------------
+</B>
+</PRE>
+<P>In this example, the amplitude envelopes of various soundfiles, mostly from
+the
+<I>sflib/perc</I> directory and specified in <I>p9,</I> are imposed upon other,
+more sustained percussive soundfiles, specified in <I>p4.</I>< P>
+<P>It is also possible, of course, to mix some of the control soundfile signal
+into the audio output. In soundfile example <I>ex5-3-2,</I> we have modified the output statement of our previous orchestra file, replacing
+the penultimate line</P>
+<CENTER><DD ALIGN="CENTER"><I>out audio</I> 
+</CENTER><P>with this line :</P>
+<CENTER><DD ALIGN="CENTER"><I>out (p11 * aenv) + ((1. - p11) * audio)</I> 
+</CENTER><P>In the score file, we have added a p-field that controls the mix balance
+between the audio and control soundfiles:</P>
+<CENTER><DD ALIGN="CENTER"><I>p11 nu .2; &lt; % control soundfile mixed in to audio output</I> 
+</CENTER><PRE>
+;####################################################################
+;  soundfile ex5-3-2  : Mixture of audio  and  control soundfiles
+;####################################################################
+</PRE>
+
+<P>Note: The recently introduced
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/follow.html"><B>follow</B></A>
+unit generator can be used in place of <I>balance</I> to create a control
+signal from the amplitude variations of an audio signal, and provides the
+user with a few more
+hooks to perform this envelope extraction cleanly.
+
+<H4><A NAME="_wmh4_847374991">5.4. Band pass and band reject filters</A></H4>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/port.html"><B>RESON</B> and <B>ARESON</B></B></A>, and of
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/butterhp.html"><B>BUTTERBP</B> and <B>BUTTERBR</B></B></A>
+in the Csound reference manual ]</P>
+
+<P><B>reson</B> and <B>butterbp</B> are, respectively, first order and second order
+band-pass filters. The passband is a bell-shaped curve, with progressively
+greater amounts of attenuation applied to frequencies both above and below
+a center frequency resonance. The required arguments are :</P>
+<DD>1) the <I>audio signal input</I> 
+<DD>
+<DD>2) the<I> center frequency</I> resonance (in herz) 
+<DD>
+<DD>3) the <I>width</I> of the pass-band, defined as the difference (in herz) between upper and
+lower half-power points 
+
+<P>The frequency response produced by <I>reson</I> is :</P>
+<PRE>
+<CENTER>center frequency</CENTER>
+<CENTER><FONT SIZE="+2"><B>|</B></FONT></CENTER>
+</CENTER><CENTER>           passband            
+</CENTER><CENTER>-3dB ---- bandwidth ---- -3dB
+</CENTER><CENTER>-6dB  -------  2 * bandwidth  ------- -6dB
+</CENTER><CENTER>-9dB  ------------  3 * bandwidth  ------------  -9dB
+</CENTER><CENTER>-12dB ------------------- 4 * bandwidth  ------------------ -12dB
+</CENTER>(and so on)
+</PRE>
+
+Thus, the smaller the bandwidth, the sharper the filtering, and the more
+sharply defined the resonance.
+<P>With a center frequency (Fc) of 1200
+herz and a pass band of 200 herz: 
+<LI> an input sine tone at 1200 herz will be passed with no amplitude reduction
+<LI> frequencies at 1100 and 1300 herz will
+be attenuated by 3 dB (to about 70 % of their original amplitude)
+<LI> frequencies at 1000 and 1400 herz will be attenuated by roughly 6 dB (to about
+half their original intensity)
+</UL>
+<P><B>butterbp</B>, a second order alternative to <I>reson</I>, creates
+a flatter passband (less attenuation at frequencies of 1100 and 1300 herz in
+the example above) and a much sharper rolloff.</P>
+<P><B>areson</B> is a complementary band-reject (&quot;notch&quot;) filter, which produces the sharpest
+filtering (roughly -60 dB) at the center frequency and progressively less attenuation on
+either side. The output of this filter -- a "<I>V</I>-shaped" notch --
+is the inverse of the output of <I>reson</I>. <B>butterbr</B> is Csound's second
+order notch filter.
+<P>Band reject filters are used less frequently than low- , high- and band-pass
+filters. A few decades ago, when ground loops were a more common problem
+in sound reinforcement and recording applications, analog band reject filters with very
+narrow notch bands were sometimes used to reduce 60 herz and 120 herz (second
+harmonic) power supply hum. Today, band reject filters generally are used
+to notch out a portion of a complex frequency spectrum (e.g. a tam tam, or
+white noise), often creating a rather "hollow-sounding" output with a
+"hole in the middle." Note that a band pass filter with a center frequency
+of 0 herz is  a low-pass filter, and a band pass filter centered at the
+Nyquist frequency is a high-pass filter.
+
+<P>The optional fourth argument to <I>reson</I> and <I>areson, </I><B>iscl, </B>is an amplitude scaling factor with three possible values: 0, 1 or 2.</P>
+<DD><FONT SIZE="2">A &quot;0&quot; may cause the filter to become unstable, producing SAMPLES OUT OF
+RANGE, and is not recommended.</FONT> 
+<DD>
+<DD>A &quot;1&quot; will cause <I>reson</I> to attenuate all frequencies except the center frequency. This will often
+result in considerable amplitude loss in the post-filtered signal. In <I>areson</I> only the center frequency will be "totally" attenuated. 
+<DD>
+<DD><FONT SIZE="2">A &quot;2&quot; will cause an internal amplitude adjustment to be made, so that the
+filtered output will be (very roughly) at the same amplitude level as the
+pre-filtered signal. However, the amplitude adjustment will not be as accurate
+as that produced by <I>balance.</I></FONT> 
+<P>In general, a <B>1</B> is recommended for the <I>iscl</I> argument. If you want to restore lost amplitude after filtering, follow <I>reson</I> or <I>areson</I> with unit generator<I> balance, </I>as in<I> ex5-6.</I></P>
+<P>In the following example, both the center frequency and the bandwidth values
+remain constant during a note :</P>
+<PRE>
+
+<B>  ;  #############################################################</B>
+<B>  ;  soundfile ex5-4 : Reson filtering white noise     Csound Tutorial</B>
+<B>  ;  #############################################################</B>
+<B>  sr = 44100</B>
+<B>  kr = 2205</B>
+<B>  ksmps = 20</B>
+<B>  nchnls = 1</B>
+
+<B>  ; p4 = center frequency  ; p5 = bandwidth</B>
+<B>  instr 1</B>
+<B>  kamp expseg 1, p6, 8000, p3-(p6+p7), 5000, p7, 1</B>
+<B>  anoise  rand  kamp         ; white noise source audio signal</B>
+<B>  aout reson  anoise,  p4,  p5, 1    ; (note iscl scalar argument  = 1)</B>
+<B>  out aout</B>
+<B>  endin</B>
+<B>  -----------------------------------------------------------</B>
+<B>  &lt; score for ex5-4</B>
+
+<B>  i1 0 0 5;</B>
+<B>  p3 rh 4;</B>
+<B>  p4 1000;                                    &lt; center frequency</B>
+<B>  p5 nu 15/ 100/ 500/ 1500/ 5000;             &lt; bandwidth</B>
+<B>  p6 .25;                                     &lt; attack time</B>
+<B>  p7 .25;                                     &lt; decay time</B>
+<B>  end;</B>
+<B>  -----------------------------------------------------------</B>
+</PRE>
+<P>In the next example, both the center frequency and the bandwidth vary within
+each note :</P>
+<PRE>
+<B>  ; #############################################################</B>
+<B>  ;  soundfile ex5-5   : center freq. &amp; bandwidth vary during each note</B>
+<B>  ;  #############################################################</B>
+<B>  sr = 44100</B>
+<B>  kr = 2205</B>
+<B>  ksmps = 20</B>
+<B>  nchnls = 1</B>
+
+<B>  ; p4 = center frequency  ; p5 = bandwidth</B>
+<B>  instr 1</B>
+<B>  kamp expseg 1,p6,8000,p3-(p6+p7),5000,p7,1</B>
+<B>  anoise  rand  kamp</B>
+<B>  kbw expseg p8, .5 * p3 , p9 , .5 * p3 , p10   ; bandwidth envelope</B>
+<B>     p4 = (p4 &lt; 15 ? cpspch(p4) : p4)</B>
+<B>     p5 = (p5 &lt; 15 ? cpspch(p5) : p5)</B>
+<B>  kcf  expon p4, p3, p5                         ; center frequency</B>
+<B>  a1 reson anoise, kcf , kbw * kcf , 1</B>
+<B>  out a1</B>
+<B>  endin</B>
+<B>  -----------------------------------------------------------</B>
+
+
+<B>  &lt; score11 file for ex5-5</B>
+<B>  i1 0 0 3;</B>
+<B>  p3 4;</B>
+<B>  du .95;</B>
+<B>  p4 no a3/  d7/  c2;                    &lt; center frequency  1(beginning)</B>
+<B>  p5 no a5/  ef3/  fs7;                  &lt; center frequency  2 (end)</B>
+<B>  p6 .25;                                &lt; attack time</B>
+<B>  p7 .25;                                &lt; decay time</B>
+<B>  &lt; all bandwidths are multipliers for center frequency</B>
+<B>  p8 nu 5./  .2/  8.;                    &lt; bandwidth 1 (beginning)</B>
+<B>  p9 nu 2./  9./  1.;                    &lt; bandwidth 2 (middle of note)</B>
+<B>  p10 nu .1/  3./  10.;                  &lt; bandwidth 3 (end of note)</B>
+<B>  end;</B>
+<B>  -----------------------------------------------------------</B>
+</PRE>
+<H4><A NAME="_wmh4_847374997">5.4.1. Using band-pass filters in parallel</A></H4>
+<P>Many acoustic sounds, including the human voice, most aerophones and chordophones,
+and many membranophone and other percussive sounds, produce complex frequency
+spectra resulting from the amplifaction and filtering of source vibrations
+by a resonator.
+The resonator vibrates sympathetically, greatly increasing the amplitude,
+but in a frequency selective manner. responding much more to some frequencies
+than to others. Complex resonators such as the sounding board of a piano or
+harp, or the wooden body of a violin or cello, have many resonances of
+varying strengths, and occasionally one or two  antiresonances as
+well. The complex frequency response of such resonators may resemble the
+silhouette of a descending mountain range -- a combination of low pass
+filtering with many narrow band pass "spikes."
+The air inside the violin or cello body acts as a simple resonator, producing
+a <I>formant</I> (strong resonance) within a fairly narrow pass band.
+Similarly, the throat, mouth, tongue and nasal passages sharply
+filter human speech and singing, providing both individual
+vocal timbres (that help us distinguish the voice of Pavarotti
+from the voice of, say, Mick Jagger)
+and also creating the formants we associate with particular
+vowels.</P>
+<P>By splitting an audio signal into several paths, each routed through a band-pass
+filter to produce a particular formant, we can simulate such complex resonant
+responses. The filters generally should be applied in parallel (with the input
+to each the <I>unfiltered</I> original signal), since if applied in series
+the filters largely would cancel each other out.</P>
+<H4><A NAME="_wmh4_847375003">5.4.2. Unit generator table; gen02</A></H4>
+
+<P>[ See the discussions of
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/table.html"><B>TABLE</B></A> and of function generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Function/gen02.html"><B>GEN2</B></A>
+in the Csound reference manual]</P>
+
+<P>Rather than typing in center frequencies and bandwidths repeatedly for several
+bandpass filters in our scores, it is generally more efficient to create tables
+of these values. The numbers within such tables can then be read in to the
+filter arguments as needed. </P>
+<P>Unit generator <B>table</B> provides this capability to read in raw values from
+a function table.<BR>
+<FONT SIZE="2">(<I>table</I> is the non-interpolating sibling of <I>tablei</I>,
+which we employed in <I>ex3-6</I> to read in fuction tables filled with
+soundfile samples.)</FONT><BR>
+The two required arguments to <I>table</I> are:</P>
+<DD>(1) <I>indx</I> : the location within a table of the value we want. 
+<DD>The first value in a table is location &quot;0,&quot; the second value location &quot;1,&quot;
+and so on. 
+<DD>
+<DD>(2) <I>ifn</I> : the function number of the table we are using 
+<P>Function generator <B>gen02</B> allows us to type in the exact values we wish to place within a table.
+If we want a table of five numbers, we need a table size of &quot;8&quot; (since function
+tables must be powers-of-two or powers-of-two plus one).
+One other minor problem is that by default most
+Csound <I>gen</I> routines, including <I>gen 2</I>, normalize the values within
+the tables they create
+to a maximum value of floating point &quot;1.&quot; Thus, the following
+call to <I>gen2</I></P>
+<CENTER><DD ALIGN="CENTER"><I>*f90 0 8 2 145 300 650 1380 1720;</I> 
+</CENTER><P>would be normalized, with &quot;1720&quot; becoming &quot;1.&quot; in the table and the first
+four values scaled proportionately. Preceding the call to <I>gen02</I> with a <B>minus sign, </B>however :</P>
+<CENTER><DD ALIGN="CENTER"><I>*f90 0 8 <B>-2</B> 145 300 650 1380 1720;</I> 
+</CENTER><P>will cause the normalization procedure to be skipped, giving us precisely
+the five integer values we have asked for in locations 0 through 4 of function table
+&quot;90.&quot;</P>
+<P>With all of the foregoing clear (yes?), we present the following instrument
+algorithm and score, in which we run an alternating series of white noise,
+pulse train and digitized cymbal audio signals through a filter network that imposes a series
+of vowel-like formants upon these three sound sources.</P>
+<PRE>
+<B>
+;  #############################################################
+;  soundfile ex5-6 : 5 band-pass filters used to create vowel-like formants
+;  #############################################################
+sr = 44100
+kr = 2205
+ksmps = 20
+nchnls = 1
+
+instr 1
+kamp envlpx p5,  p6,  p3,  p7,  1,  p8,  .01 ; amplitude envelope
+; ==== get source audio signal, determined by p9 :white noise, pulse train or cymbal
+if p9 > 0 goto pulse    ; if p9 is 0, use white noise for audio source signal
+asource  rand  kamp   ; white noise source signal
+goto filter
+; - - - - - - - - - - -
+pulse:
+if p9 = 2 goto soundfile
+;      if p9 = 1 , generate a pulse train source signal :
+ipitch = cpspch(p4)  ; pitch for buzz
+if ipitch > 500 igoto hinote	;setting number of harmonics in buzz -
+iharmonics = 20             ; use 20 harmonics for pitches below Bb 4
+igoto makebuzz
+hinote:
+iharmonics = int((sr*.5)/ipitch)	;for higher pitches, as many partials as
+			       ;possible up to the nyquist frequency
+makebuzz:
+asource  buzz  kamp, ipitch,  iharmonics, 100  ; pulse train source signal
+goto filter
+; - - - - - - - - - - -
+soundfile:     ; if p9 = 2 , use soundfile for source audio signal
+asource  soundin  p12 , p13
+asource = asource * (kamp/32767)  ; impose new envelope on soundfile
+; - - - - - - - - - - -
+
+filter:
+;FILTER CENTER FREQUENCIES & RELATIVE AMPS. FROM FUNCTIONS 80-87, 90-94
+iformant1 table 0, p10   ; 1st formant frequency
+iformant2 table 1, p10   ; 2nd   "   "   "
+iformant3 table 2, p10   ; 3rd   "   "   "
+iformant4 table 3, p10   ; 4th   "   "   "
+iformant5 table 4, p10   ; 5th   "   "   "
+iamp1 table 5, p10   ; relative amplitude of 1st formant
+iamp2 table 6, p10   ;    "    "    "    "   2nd
+iamp3 table 7, p10  ;    "    "    "    "   3rd
+iamp4 table 8, p10  ;    "    "    "    "   4th
+iamp5 table 9, p10  ;    "    "    "    "   5th
+
+;  5 BANDPASS FILTERS TO SUPPLY THE 5 FORMANTS
+a2 reson iamp1*asource, iformant1, 1.2*p11 * iformant1,1	
+a3 reson iamp2*asource, iformant2, 1.05*p11 * iformant2,1
+a4 reson iamp3*asource, iformant3, .9*p11 * iformant3,1
+a5 reson iamp4*asource, iformant4, .8*p11 * iformant4,1
+a6 reson iamp5*asource, iformant5, .7*p11 * iformant5,1
+aformants  = a2 + a3 + a4 + a5 + a6
+aout   balance aformants , asource   ; restore amplitude lost in filtering
+out aout
+endin
+-----------------------------------------------------------
+</B>
+<B> &lt; score11 file  for ex5-6</B>
+<B>
+* f1 0 65 7 0 40 .75 4 .70 20 1.;	< envlpx rise function
+* f100 0 2048 10 1.;                    < sine wave for "buzz"
+< tables of resonances for vowels 
+< indices 0-4 = frequencies,indices 5-9 = relative amplitude of these frequencies
+< functions 80-87 for MALE voice
+* f80 0 16 -2 609 1000 2450 2700 3240 1. .25 .063 .07 .004;    < A as in hot
+* f81 0 16 -2 400 1700 2300 2900 3400 1. .125 .18 .07 .01;    < E as in bet
+* f82 0 16 -2 238 1741 2450 2900 4000 1. .01 .029 .01 .001;   < IY as in beet
+* f83 0 16 -2 325 700 2550 2850 3100 1. .063 .002 .007 .002;< < O as in beau
+* f84 0 16 -2 360 750 2400 2675 2950 1. .063 .001 .003 .001;  < OO as in boot
+* f85 0 16 -2 415 1400 2200 2800 3300 1. .063 .027 .015 .002; < U as in foot
+* f86 0 16 -2 300 1600 2150 2700 3100 1. .037 .063 .031 .005; < ER as in bird
+* f87 0 16 -2 400 1050 2200 2650 3100 1. .064 .011 .009 .001; < UH as in but
+< functions 90-94 for FEMALE voice
+* f90 0 16 -2 650 1100 2860 3300 4500 1. .16 .05 .063 .012;   < A as in hot
+* f91 0 16 -2 500 1750 2450 3350 5000 1. .125 .1 .041 .005;   < E as in bet
+* f92 0 16 -2 330 2000 2800 3650 5000 1. .042 .08 .11 .012;   < IY as in beet
+* f93 0 16 -2 400 840 2800 3250 4500 1. .063 .003 .004 .001;  < O as in beau
+* f94 0 16 -2 280 650 2200 3450 4500 1. .015 .001 .001 .001;  < OO as in boot
+
+i1 0 39.;
+p3 rh 4;
+du .95;
+p4 no ef3*24/f4*15;
+p5 12000;
+p6 .2;                                  < envlpx attack time
+p7 .3;                                  < decay time
+p8 .7;                                  < atss
+p9 nu 0/1/2;   < audio signal switch : 0 = buzz,1 = noise, 2 = soundfile
+
+p10 nu 80*3/81*3/82*3/83*3/84*3/85*3/  < vowel function
+86*3/87*3/90*3/91*3/92*3/93*3/94*3/;
+p11 .05;                                < bandwidth (scaled by register)
+p12 8;    < soundin.# number - used only when p9=2 {soundfile input}
+< soundin.8 points to /sflib/perc/cym1
+p13 0;    < optional skip into p12 soundfile
+end;
+-----------------------------------------------------------
+</B>
+</PRE>
+<P>The vowel functions in the score above are available in the Eastman Csound Library
+file <I>vowelfuncs</I> for your use (or abuse). To obtain a copy, type</P>
+<CENTER><DD ALIGN="CENTER"><I>getfunc vowelfuncs</I> </CENTER>
+Another listing of selected vocal formants is included in a
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Appendices/table3.html"><I>Table 3: Formant values</I></A>
+appendix to the online Csound Reference Manual.
+
+</CENTER><P>In <I>ex5-6,</I> the center frequencies and bandwidths of the vowel-like resonance both
+remain fixed, and the audible result is thus somewhat &quot;flat.&quot; If, instead,
+we &quot;move these resonances around&quot; somewhat, by applying random deviation
+or period control signals to the center frequencies, bandwidths or both,
+the resonances may have more &quot;life.&quot;</P>
+<H4><A NAME="_wmh4_847375009">5.5. Comb, Alpass and Reverb Filters</A></H4>
+
+<P>[ See the discussions of
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/comb.html"><B>COMB, ALPASS and REVERB</B></A>
+in the Csound reference manual]</P>
+
+<P><B>comb</B> and <B>alpass</B> filters send an audio signal through a delay line that includes a feedback
+loop. Very short delay times (less than 40 milliseconds, and often less than
+10 ms.) are normally used, resulting in multiple repetitions
+(too fast to be heard as echos) which fuse together to form a reverberant
+response. The arguments to both of these unit generators are :</P>
+<DD>(1) the input audio signal 
+<DD>
+<DD>(2) a reverberation time, in seconds 
+<DD>
+<DD><FONT SIZE="2">The value you supply here determines a signal feedback percentage within
+the unit generator. Note that this reverberation time argument can be varied
+within a note by means of control signal inputs.</FONT> 
+<DD>
+<DD>(3) loop (delay) time. Typical values range between .001 and .04. 
+<P>Comb filters tend to add strong coloration, often of a metallic quality,
+to an audio signal. Owing to the fixed delay and loop (feedback) time, the
+reiterations of some frequencies will be in phase (and thus increased in
+amplitude), while other frequencies will be out of phase, leading to partial
+or total cancellation. The resulting frequency response of the filter is
+an alternating series of equally-spaced, equal-strength peaks and nulls.
+If graphed, this response looks somewhat like the teeth of a comb, but
+actually more like a repeating triangle wave. The number of peaks is equal
+to</P>
+<CENTER><DD ALIGN="CENTER"><I>loop time * ( sampling rate / 2 )</I> 
+</CENTER><P>Thus, with a sampling rate of 44100 and a loop time of .02, the response
+of the comb will include 441 peaks and 441 nulls (.02*44100/2). Each peak
+(and each null) will be spaced 50 herz apart, from 0 herz to the Nyquist
+frequency (here, 22040 herz). Since these peaks are harmonically related,
+the output of comb often will have a pitched twang at a fixed frequency
+of 50 herz (see table below).
+This is highly undesirable
+if one wants &quot;natural-sounding&quot; reverberation, and comb filters are a poor
+choice for this purpose. Rather, they are useful for particular coloristic
+effects, and as building-blocks in the construction of more sophisticated
+reverberators.</P>
+<P>The following table indicates the frequency of the lowest peak for comb
+filters with delay and feedback times between 1 and 20 milliseconds. All other
+peaks are harmonic multiples of this frequency(2*, 3*, etc.). Note that
+although the number of peaks varies with dif- ferent sampling rates (here,
+SR = 44100 and 22050), the sampling rate has no effect on the frequencies
+of the peaks (4th column) for any given delay-loop time.</P>
+<PRE>
+<I>loop-feedback time  SR = 44100   SR = 22050   Frequency of lowest peak</I>
+<I>                    # of peaks   # of peaks   (and spacing between peaks)%</I>
+<B>     .001              22.05       11.025       1000Herz</B>
+<B>     .002              44.1        22.05         500</B>
+<B>     .003              66.15       33.075        333.33</B>
+<B>     .004              88.2        44.1          250</B>
+<B>     .005             110.25       55.125        200</B>
+<B>     .006             132.3        66.15         166.67</B>
+<B>     .007             154.35       77.175        166.67</B>
+<B>     .008             176.4        88.2          142.86</B>
+<B>     .009             198.45       99.225        111.11</B>
+<B>     .01              220.5       110.25         100</B>
+<B>     .02              441.        225.            50</B>
+</PRE>
+<P>A delay/feedback time of .0015 would produce a fundamental peak of 666.67
+herz.</P>
+<P>In the orchestra file used to create soundfile example <I>ex5-7,</I> we read in a soundfile (in this example, a <I>portion</I> of <I>sflib/x </I>soundfile<I> voicetest), </I>and then process this input with a comb filter. One problem when using any
+reverberant signal processor (such as Csound unit generators <I>comb, alpass </I>and<I> reverb) </I>is that the output duration must be longer than the duration of the input
+signal, in order to allow the concluding reverberant signal (which continues
+after the input has died away) to decay completely to zero amplitude. If
+we do not allow this extra time for the trailing reverberation, the end
+of each input sound may seem abrupt, and the loudspeakers may produce a
+click or pop.</P>
+<P>Within the score file below, we set the output duration to .3 seconds longer
+than the desired audio input. Within the orchestra file, we create an amplitude
+envelope that allows us to control the output gain (the variable <I>iamp), </I>and, optionally, to apply a fade-in and/or fade-out to the input signal.
+At the end of this envelope, we tack on .3 seconds of silence (shown here
+in boldface), to mute any input signal and allow the reverberation to decay:</P>
+<DD><I>amp expseg .01,ifadein ,iamp,inputdur-(ifadein +ifadeout ),iamp,ifadeout
+,.001 , .3 , .001</I> 
+<PRE>
+; #############################################################
+<B> ;  soundfile ex5-7    :  Comb filter        Csound Tutorial</B>
+<B> ;  #############################################################</B>
+<B> sr=44100</B>
+<B> kr=2205</B>
+<B> ksmps=20</B>
+<B> nchnls=1</B>
+
+<B> ; p4  = soundin.#   sflink  number</B>
+<B> ; p5 = amplitude multiplier      ; p6 = skip from front of soundfile</B>
+<B> ; p7 = exponential fade in time ; p8 = exponential fade out time</B>
+<B> ;  comb filter:  p9  =  comb reverb time , p10  =  comb loop time</B>
+
+<B> instr 1</B>
+
+<B> inputdur = p3 - .3 ; duration of audio input (.3 seconds shorter than output duration)</B>
+<B> audio soundin p4 , p6</B>
+
+<B> ;    output amplitude envelope: includes optional fade-in &amp; fade-out  and</B>
+<B> ;    .3 seconds at tend to mute any input signal</B>
+<B> iamp  = (p5 = 0 ? 1: p5 )</B>
+<B>         ifadein  = (p8 =0?.001:p8 )</B>
+<B>         ifadeout  = (p8 =0?.001:p8 )</B>
+<B> amp expseg .01,ifadein ,iamp,inputdur-(ifadein +ifadeout ),iamp,ifadeout ,.01 , .3 , .001</B>
+<B> audio = audio * amp</B>
+
+<B> aout  comb audio ,p9, p10</B>
+<B> out aout</B>
+<B> endin</B>
+<B> -----------------------------------------------------------</B>
+
+
+
+<B> &lt; score11 file  used to create soundfile &quot; ex5-7&quot; :</B>
+<B>
+< Score11 file used to create Eastman Csound Tutorial soundfile examples
+< ex5-7 & ex5-8: comb & alpass filter examples
+i39 0 0 7;         < mono input, default mono output
+p3 2;                                                     
+du  301.8;                                                                
+p4 16;  < soundin.# : soundin.16 points to /sflib/x/voicetest"
+p5 .5;                                 < ampfac
+p6                                     < duration skipped from front of sf
+p7                                     < fade in time
+p8 .05;                                 < fade out time
+< User-added parameters:
+p9 nu 0/.1/.25/.7/.3///;    < comb or alpass reverb time
+p10 nu .002////.005/.017/.033;  < comb or alpass loop time
+end;   &lt;&lt;&lt;&lt;end of score&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</B>
+<B> -----------------------------------------------------------</B>
+</PRE>
+<P>With <B>alpass</B> filters, the peaks and nulls, and the resulting coloration of the input
+sound, are less pronounced, especially when the reverberation time is low. <I>ex5-8</I> was created by the same orchestra and score files as ex5-7, except that
+an <U>alpass</U> filter was substituted for the comb filter.</P>
+<PRE>
+<B>  ;  #############################################################</B>
+<B>  ;  soundfile ex5-8    :  Alpass filter of above score</B>
+<B>  ;  #############################################################</B>
+</PRE>
+<P>In both of the preceding examples, 100 % of the input soundfile was sent
+through the comb or alpass filter. More often, however, only a portion of
+the input signal (say, somewhere between 20% and 60 %) is sent to <I>comb </I>or<I> alpass,</I> and the remaining direct signal is sent straight out.</P>
+<H4>reverberation unit generators</H4>
+<P>Csound unit generator <B>reverb</B> combines four comb filters in parallel followed by two alpass filters in
+series :</P>
+<PRE>
+
+<B>                         -----comb 1--------</B>
+<B>                         |                 |</B>
+<B>                         |-- -comb 2-------|</B>
+<B>                         |                 |</B>
+<B>    audio input signal ->>                 + --alpass1---alpass2 --&gt; out</B>
+<B>                         |                 |</B>
+<B>                         |----comb 3-------|</B>
+<B>                         |                 |</B>
+<B>                         |----comb 4-------|</B>
+</PRE>
+<P>Each of the filters has a different, prime number loop time (none of which
+are related by simple ratios). As a result, the overall frequency response
+is relatively flat, without the obvious pitch coloration of individual comb filters. <I>reverb</I> has only two arguments: the audio signal input, and the reverberation time.[1]</P>
+<DD><FONT SIZE="2">[1] Those wishing more technical information on the distinction between <I>comb</I> and <I>alpass</I> filters, and their combination in reverberators, are referred to the article
+&quot;About This Reverberation Business&quot; by J. A. Moorer, reprinted in <I>Computer Music Journal,</I> volume 3 number 2.</FONT> 
+<P>The design of opcode <I>reverb</I>, now about thirty five years old, is not
+very sophisticated by today's standards. The rather cheesy-sounding reverberant
+signal often includes an annoying flutter or twang, and I do not recommend using
+this unit generator.
+
+<P>The more recent unit generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/reverb2.html"><B>NREVERB</B></A> 
+(formerly known as <I>reverb2</I>)
+incorporate six comb filters in parallel summed through five alpass
+filters in series to provide better audio quality, although the output of
+these opcodes is
+unlikely to be confused with the ambience of, say, Carnegie Hall, nor of a
+top-of-the-line $5000 Lexicon hardware reverberation unit.
+<I>nreverb</I> and <I>reverb2</I> share the same argument syntax and
+similar processing operations, and produce similar reverberant qualities, although
+<I>nreverb</I> tends to sound a little "wetter" in my experience.
+However, <I>nreverb</I> is equally usable at all sampling rates, whereas
+<I>reverb2</I> tends to introduce more coloration at many sampling rates.
+
+<P><I>nreverb</I> and <I>reverb2</I> include a useful additional parameter, labeled <I>khdif</I>
+in the Reference Manual, that attempts to simulate control of high frequency diffusion
+(how quickly high frequencies decay relative to lower frequencies). In natural (avoustic) room
+reverberation, high frequencies almost always decay more quickly than lower frequencies.
+The more sound aborptant material in a room, and the larger the size of the room,
+the greater the discrepancy
+between high and low frequency decay rates. High <I>khdif</I>
+values, between about .8 and 1. (the maximum usable value), tend to produce a "drier", "pingier"
+(more "staccato")
+reverberant ambience, like a room with high absorptive coefficients (e.g.
+a room with thick rugs and drapes and many "soft," porous surfaces).
+
+When <I>khdif</I> is set to a low value (between about .2 and 0),
+the reverberation is "wetter," "brighter" for sounds with high frequency
+spectra and "boomier" for lower pitched sounds, simulating the ambience
+of a room with hard, reflective surfaces (e.g. cement block walls).
+Think of the reverberation time (<I>ktime</I>) argument as determining
+the size of the reverberant room and the diffusion (<i>khdif</I>) parameter
+as determining the "acoustical treatment" of this room and season to taste.
+<I>khdif</I> values between about .2 and .5 are most common.
+
+<P>The <I>ktime</I> (reverberation time, or "room size") argument can be varied
+to good effect
+with control rate signals to vary the reverberant ambience over time.
+Since the <I>khdif</I> argument of <I>nreverb</I> also is a <I>k-rate</I>
+variable, it would seem to be possible to vary this diffusion ("room brightness")
+parameter as well with a control signal. Currently, however, time varying changes
+applied to the <I>khdif</I> value often will produce artifacts -- often a
+sustained, high-pitched buzzing, unrelated to the source audio signal.
+Owing to this bug, I recommend that you treat this variable as an
+<I>i-rate</I> argument.
+
+<P>Without too much trouble, we could modify the orchestra and score files
+of <I>ex5-7</I> to add post-processing reverberation, rather than comb filtering, to our
+soundfile. We would substitute unit generator <I>nreverb</I> for <I>comb</I> within the orchestra file, and perhaps set score<I> p-field 10</I> to control the percentage of &quot;wet&quot; (reverberated) vs. &quot;dry&quot; (non-reverberated)
+signal. We might also change the output to stereo, and add another score
+p-field to control the left-right pan location of each output note:</P>
+<PRE>
+<I>awet nreverb audio ,p9 , p12; apply reverberation to input signal</I> 
+<I>aout = (p10 * awet) + ((1. - p10) * audio) ; set wet-dry mix</I> 
+<I>outs sqrt(p11) * aout, sqrt(1. - p11) * aout ; left-right pan location</I>
+</PRE>
+<P>Then, with random selection score values for <I>p9, p10, p11 </I>and<I> p12</I> such as the following</P>
+<PRE>
+<I>p9 1. .1 2.5 ;  &lt; randomly vary reverb time between .1 and 2.5 seconds</I> 
+<I>p10 1. .1 .9;  &lt; vary &quot;wet&quot;signal % between 10 and 90 %</I> 
+<I>p11 1. .05 .95;  &lt; vary % of signal sent to left channel between 5 &amp; 95 %</I> 
+<I>p12 1.  .2  .6;   < reverb high freq. diffusion</I>
+</PRE>
+
+<P>we could randomly place each output note in a different left-right and
+"close-distant"
+(&quot;dry-wet&quot;) location, and also vary the reverberation time and high frequency
+diffusion ("room brightness") to place each
+&quot;note&quot;
+in a "different hall."</P>
+<P>Generally, however, we do <U>not</U> wish to vary all such post-processing operations so radically from one
+note to the next, but rather wish to mix together all of the
+notes being produced by a given instrument,
+and then apply a single post-processing operation (such as reverberation)
+to this mix. 
+In order to
+perform such &quot;global&quot; signal processing operations with Csound, we need
+to create a separate <I>global instrument</I> within our orchestra file.</P>
+<H4><A NAME="_wmh4_847375015">5.6. Global Instruments</A></H4>
+<P><B>Global</B> instruments often do not generate any audio signal themselves, but
+instead are often used for post-processing, modifying audio signals that have
+been generated and mixed together by other instruments within the orchestra
+file.
+(Occasionally, however, global instruments are employed by advanced users instead
+as <I>pre-processors,</I> establishing certain variables that will be accessed by other instruments
+within an orchestra file, or even turning copies of these other instruments
+on and off.)
+There are a few unique aspects to dealing with
+global instruments that we have not yet encountered.</P>
+<P><B>Local and Global Variables</B></BR>
+[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/const.html"><B>
+CONSTANTS AND VARIABLES</B></A> in the Csound reference
+manual ]</P>
+<P>All of the <I>i-rate, k-rate </I>and<I> a-rate</I> variables we have looked at so far,
+with the exception of the header arguments <I>sr, kr, ksmps </I>and<I> nchnls,</I> have been local variables. Local variables, such as <I>&quot;p4,&quot; &quot;ipitch,&quot; &quot;kenv,&quot; &quot;kmart&quot;</I> (remember?) and <I>&quot;a1,&quot; </I>are only used, and can only be accessed,
+by <B>one copy</B> (created by one note event, or <I>I statement</I>, within
+the score file) of one instrument. Several copies of
+an instrument can be &quot;playing&quot; simultaneously ("polyphonically"),
+each with a different <I>ipitch</I> and/or <I>kenv</I> value, without
+colliding. This is because the <I>ipitch</I> or <I>kenv</I>
+value for each copy is written to a unique (&quot;local&quot;) RAM memory location
+that can only be accessed by this copy.</P>
+<P>After Csound computes a sample for one instrument copy, it zeros out all
+of the <I>a-rate</I> local variables, creating these values from scratch on each sample pass. When
+it completes a control <I>(k-rate) </I>cycle of samples for an instrument
+copy, it zeros out all the local <I>k</I> values, updating them at the
+beginning of the next <I>k-rate</I>  pass.
+
+<P><B>Global variables,</B> by contrast, can be accessed by <B>all</B> copies of <B>all</B> instruments currently in memory. Global variables can be created and updated
+at the <I>i-rate, k-rate </I>or<I> a-rate,</I> and are preceded by a &quot;<B>g</B>&quot;, with output variable names such as  <I>gi1</I>
+(a global <I>initialization</I> variable),
+gkpitch</I>, (a global <I>k-rate</I> variable) and
+<I>gaudio</I>. The values <I>a1 </I>and<I> ga1 </I>within an instrument are entirely distinct.</P>
+<P>One other important distinction must be noted : global<I> k-rate </I>and<I> a-rate</I> values are <U>not</U> zeroed out at the end of each control or sample pass. Rather, these values
+are CARRIED OVER from one pass to the next. For this reason, it is necessary
+to <B>initialize</B> these variables -- to set them to some initial value (most often to zero)
+-- with statements such as :</P>
+<DD><I>gi1 init 0   ;  set the initial value of variable gi1 to 0</I> 
+<DD><I>gk1 init 0</I> 
+<DD><I>gaudio init 0</I> 
+<P>All global variables that will be used in an orchestra should be initialized
+BEFORE the first <I>i-block</I> (immediately after the header and before the first
+instrument definition).
+These variables can then be accessed and operated
+upon by any instrument, through such operations as:</P>
+<CENTER><DD ALIGN="CENTER"><I>ga1 = ga1 + audio</I> 
+</CENTER><P>This means : Add the current value of local variable <I>audio</I>
+to the current value of global variable<I> ga1</I>, then assign the result
+as the new value of <I>ga1</I></P>
+<P>After all processing has been completed at the end of a sample calculation,
+or at the end of a control (<I>k</I>) rate cycle of sample calculations,
+it often is necessary to zero out
+global control and audio signals to prevent feedback, like this:
+<DD><I>gk1 = 0</I> 
+<DD><I>gaudio = 0</I> 
+
+<P>The following orchestra file, which employs the Eastman Csound Library macros
+<I>SETUP</I> and <I>MARIMBA</I> , uses Library instrument algorithm <I>marimba</I>
+to generate a series of notes. In place of the default audio output of this
+algorithm
+<CENTER><I>out a1</I> </CENTER>
+we substitute the following line of code
+<CENTER><I>ga1 = ga1 + a1</I> </CENTER>
+This mixes the overlapping notes created by all currently active copies of <I>marimba</I>
+into a single, global audio signal called <I>ga1</I>, which then is post-processed
+by a single reverberator (<I>instrument 99</I>).
+
+<P>To convert this macro file into a usable Csound orchestra
+file, ECMC users can type
+<CENTER><I>m4o   filename</I> <BR>
+<FONT SIZE ="-1"> (To view this macro-expanded, Csound-ready orchestra file, non-ECMC readers
+can click
+<A target="_new" HREF="ex5-9.orc.html"><FONT SIZE ="+1">here</FONT></A>
+)</FONT></CENTER>
+
+</BR><PRE><B>
+;  ###########################################
+;  orchestra file for examples ex5-9-0, ex5-9-1, ex5-9-2  and , ex5-9-3
+;  ECMC Csound Library algorithm marimba with added global reverberator
+;  ##########################################
+
+sr= 44100
+kr=2205
+ksmps=20
+nchnls=1
+
+ga1 init 0     ; initialize global variable
+
+MARIMBA([ ; send output to global reverberator
+ga1 = ga1 + a1])
+
+instr 99     < global reverberation instrument
+krevamount   line  p4, p3, p5   ; % signal to be reverberated
+adry = (1 - krevamount) * ga1  ; direct signal -- no reverberation
+
+irevtime = p6 ; reverberation time
+
+; awet  reverb2  krevamount * ga1 , irevtime, p7
+awet  nreverb  krevamount * ga1 , irevtime, p7
+out awet + adry  ; output reverberated plus direct signals
+ga1 = 0                ; clear global variable 
+endin
+</B></PRE>
+<P>The global reverberation instrument above allows us to vary over
+time the percentage of the input signal to be reverberated (the "wet/dry" mix,
+controlled by <I>p4</I> and <I>p5</I> in the score11 input file for <I>instr 99</I>),
+but the reverberation time (controlled by <I>p6</I>) and the high frequency
+diffusion (controlled by <I>p7</I>) remain fixed.
+
+<P>We have provided four similar <I>score11</I> input files,
+and resulting compiled soundfile examples in <I>/sflib/x</I>,
+that employ this orchestra file: <I>ex5-9-0, ex5-9-1, ex5-9-2 </I> and <I>ex5-9-3</I>.
+The <I>score11</I> input for the <I>marimba</I> algorithm is identical in each
+of these four score generating files -- a rather didactic "melody," encompassing
+a wide pitch range (so that the reverberant ambience added by <I>nreverb</I> can be
+heard in various pitch registers), that sounds as though it were being performed
+by a rather tired or disinterested percussionist.
+In <I>ex5-9-0</I>, so called because it contains no reverberation,
+both the beginning
+and ending "wet/dry" mix values are set to zero, resulting in a 100 % dry mix
+(we are hearing only the output of the <I>marimba</I>
+instrument).
+<PRE><TT><B>
+  < ESM Csound LIbrary Tutorial score11 input file >>  ex5-9-0 <<  
+  < Library algorithm MARIMBA with global reverberator
+  < NO reverberation : 100 % dry signal output
+* f100 0 1024 10 1.;			< SINE WAVE
+
+MARIMBA 0 8;
+rseed 888;
+rd .015;   
+p3 se 7.  1. .5 .33 .25 .1;
+du 302;
+p4 se 3 d1 c2 b2 gs3 e4 a4 ds5 bf5 g6;
+p5 mx 8. 2000 6000 12000;      < Amplitude
+p6 mx 8 .03 .01 .005 .01;      < Attack time: normal range .01-.04
+
+p7 mo 8. .7 1. 1.5;    < Attack hardness(1. ord; range .7-1.5)
+p8 mo 8. .25 .6 1.5;    < Brightness(1. ord; range .25 - 1.5)
+p9 0; < microtonal detuning {not used in this example}
+end;
+
+i99 0 0 1;         < global reverberation instrument
+p3 9.5;
+<FONT SIZE="+1">
+< wet/dry mix : % of signal sent to reverberator
+p4  0;                   < beginning % sent to nreverb
+p5  0;                   < end  % sent to nreverb</FONT>
+< reverberation time & brightness :
+p6 1.1;                < reverberation time
+p7 .02;                < khdif high freq. diffusion; 0 - 1.
+end;    <<>>>>>>>>>>>
+</PRE></TT></B>
+<HR>
+<P>
+<I>score11</I> input file <B>ex5-9-1</B> is identical to <I>ex5-9-0</I> except
+that the beginning and ending wet/dry mix arguments to the reverberator
+are set to .33. Thus, throughout the resulting soundfile, 1/3 of
+the <I>marimba </I>signal is routed through the reverberator, and
+2/3 bypasses the reverberator.
+The <I>khdif</I> argument in <I>p7</I> is very low (.02).
+Because both the highest and lowest
+frequencies within the reverberant signal decay at an almost identical
+rate of 1.1 seconds (<I>p6</I>), the ambience is "bright," "brittle"
+and fairly "wet."
+<PRE><TT><B>
+  < ESM Csound LIbrary Tutorial score11 input file >>  ex5-9-1 << 
+  < 1.1 second reverb time; 1/3 of signal is reverberated ; low khdif value
+  < 1/3 of signal is reverberated ; low khdif value
+</B>
+(The <I>marimba</I> input is identical to that in <I>ex5-9-0</I>)
+<FONT SIZE ="-1">
+<B>
+i99 0 0 1;         < global reverberation instrument
+p3 9.5;
+</FONT>
+< wet/dry mix : % of signal sent to reverberator
+p4  .33;                  < beginning % sent to nreverb
+p5 .33;                   < end  % sent to nreverb
+<FONT SIZE ="-1">
+< reverberation time & brightness :
+p6 1.1;                 < reverberation time
+p7 .02;                  < khdif high freq. diffusion; 0 - 1.
+end;    <<>>>>>>>>>>>
+</FONT></CODE></PRE></TT></B>
+<HR>
+<P><I>score11</I> input file <B>ex5-9-2</B> is identical to <i>ex5-9-1</i>
+except that the <I>khdif</I> high frequency diffusion value is set almost
+to its maximum allowable value
+<CENTER><PRE><TT><B>
+p7 .98;                  < khdif high freq. diffusion; 0 - 1.
+</CENTER></PRE></TT></B><BR>
+The resulting reverberation is much subtler. and less obvious, and
+might cause us to increase the 1.1 second reverberation time argument
+in <I>p6</I>.
+<HR>
+<P>Finally, in <B>ex5-9-3</B>, the wet/dry mix increases (from 1 % "wet"
+at the beginning of the outputsoundfile to 74 % "wet" at the end), and
+the <I>khdif</I> argument is set to a typical, "neutral" ("not too
+bright, not too dull") value of .3 :
+<PRE><TT><B>
+< Score11 file used to create Eastman Csound Tutorial soundfile example ex5-9-3:
+< % of wet signal increases from 1 % to 74 %; medium low .3 khdif value
+</B>
+(The <I>marimba</I> input is identical to that in <I>ex5-9-0</I>)
+<FONT SIZE ="-1">
+<B>
+i99 0 0 1;         < global reverberation instrument
+p3 9.5;
+<FONT SIZE ="+1">
+< wet/dry mix : % of signal sent to reverberator
+p4  .01;                  < beginning % sent to nreverb
+p5 .74;                   < end  % sent to nreverb
+</FONT>
+< reverberation time & brightness :
+p6 1.1;                 < reverberation time
+<FONT SIZE ="+1">p7 .3;                  < khdif high freq. diffusion; 0 - 1.</FONT>
+<FONT SIZE ="-1"> end;    <<>>>>>>>>>>></FONT>
+</FONT>
+</PRE>
+</FONT></CODE></PRE></TT></B>
+<HR>
+<P>Stereo global instruments are also possible,
+and a global instrument can pass all or part of its output to
+another global instrument for additional post-processing.
+To change the orchestra file for the <I>ex5-9</I> examples
+from mono to stereo, we would need to create two <I>nreverb</I> units
+(one for each channel), each fed by its own global audio signal,
+and add another p-field (<I>p10</I>) to the <I>marimba</I> instrument and its score
+to determine the left-right spatial placement of each note.
+These alterations are incorporated within the orchestra file for <I>ex5-10</I>
+below. In addition, <I>ex5-10</I> also adds two identical multitap delay lines, one for
+each stereo output channel, with the Csound
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/multitap.html"><B>mutitap</B></A>
+unit generator. In this example, four echos are applied to the <I>dry</I>
+left and right channel audio signals, but not to the reverberant signals
+created by the calls to <I>nreverb</I>. 
+<PRE><TT><B>
+;  #############################################################
+;  soundfile ex5-10 : gloabl stereo reverberation and echo instrument
+;  #############################################################
+
+sr= 44100
+kr=2205
+ksmps=20 
+nchnls=2
+
+galeft init 0     ; initialize left channel global variable
+garight init 0     ; initialize right channel global variable
+
+MARIMBA([ ; send output to global stereo reverberator
+galeft = sqrt(p10) *  a1  + galeft
+garight = sqrt(1. - p10) *  a1  + garight])
+
+
+instr 99      ; global reverberation instrument
+krevamount   line  p4, p3, p5   ; % signal to be reverberated
+adryleft = (1 - krevamount) * galeft  ; direct signal -- no reverberation
+adryright = (1 - krevamount) * garight  ; direct signal -- no reverberation
+
+irevtime = p6 ; reverberation time
+
+awetleft  nreverb  krevamount * galeft , irevtime, p7
+awetright  nreverb  krevamount * garight , irevtime, p7
+ ; add 4 echos, but only to dry signals 
+aechosleft  multitap adryleft, p8,p9,   p10,p11,   p12,p13,   p14,p15
+aechosright multitap adryright, p8,p9,   p10,p11,   p12,p13,   p14,p15
+outs awetleft + adryleft + aechosleft, awetright + adryright + aechosright  
+galeft = 0                ; clear global variable 
+garight = 0                ; clear global variable 
+endin
+<B>  -----------------------------------------------------------</B>
+
+< Score11 file used to create Eastman Csound Tutorial soundfile example ex5-10:
+
+* f100 0 1024 10 1.;			< SINE WAVE
+
+</B> (The <I>marimba</I> input is identical to that in the <I>ex5-9</I> examples,
+   but p10 has been added to control stereo placement.)
+<FONT SIZE ="-1"><B>
+MARIMBA 0 8;
+rseed 888;
+rd .015;   
+p3 se 7.  1. .5 .33 .25 .1;
+du 302;
+p4 se 3 d1 c2 b2 gs3 e4 a4 ds5 bf5 g6;
+p5 mx 8. 2000 6000 12000;      < Amplitude
+p6 mx 8 .03 .01 .005 .01;      < Attack time: normal range .01-.04
+
+p7 mo 8. .7 1. 1.5;    < Attack hardness(1. ord; range .7-1.5)
+p8 mo 8. .25 .6 1.5;    < Brightness(1. ord; range .25 - 1.5)
+p9 0; < microtonal detuning {not used in this example}
+</B></FONT><B>
+p10  1. .05 .95;  < left-right stereo spatial placement
+end;
+
+i99 0 0 1;         < global reverberation instrument
+p3 11.0;
+< % of signal sent to reverberator :
+p4  .01;                  < beginning % sent to reverb
+p5 .74;                   < end  % sent to reverb
+< reverberation time & brightness :
+p6 1.1;                 < reverberation time
+p7 .3;                  < khdif high freq. diffusion; 0 - 1.
+< multitap delay line : 4 echos : delays times and gains
+p8 .091;         < echo 1 delay time
+p9 .6;           < echo 1 gain
+p10 .41;       < echo 2 delay time
+p11 .3;        < echo 2 gain
+p12 1.17;        < echo 3 delay time
+p13 .17;         < echo 3 gain
+p14 1.95;       < echo 4 delay time
+p15 .07;        < echo 4 gain
+end;    <<>>>>>>>>>>>
+</PRE></TT></B>
+<P>The four echos created by the left and right channel <I>multitap</I>
+unit generators have delays times and gains of <PRE>
+             <I>delay           gain</I>
+   echo 1    .091 seconds     .6 * amlitude of dry signal
+   echo 2:   .41 seconds      .3 * amlitude of dry signal
+   echo 3:  1.17 seconds      .17 * amlitude of dry signal
+   echo 4:  1.95 seconds      .07 * amlitude of dry signal
+</PRE>
+To accomodate these delays, we have increased the duration of the "note"
+played by <I>instr 99</I> in our score file from 9.5 seconds (as in the
+<I>ex5-9</I> scores) to 11 seconds.
+<P>Note that although the <I>ex5-10 </I>score input for <I>marimba</I> 
+is identical to that in the four <I>ex5-9</I> examples except for
+the inclusion of the new <I>p10</I> stereo placement parameter, the "tune"
+played by <I>marimba</I> -- its rhythms, pitches and note articulations --
+differs noticeably from that of the <I>ex5-9</I> examples. The addition
+of this new p-field introduces additional pseudo-random number generation operation,
+which alter the note-by-note, parameter-by-parameter seed values
+for <I>marimba</I> p-fields 2 through 8.
+
+<P>While listening to the <I>ex5-9</I> and <I>ex5-10</I> examples,
+your ear will tell you that Csound unit generator <I>nreverb</I>
+is not an extremely high quality reverberator, but rather comparable
+in quality to what one typically finds in a hardware effects box
+costing a few hundred dollars. <I>nreverb</I> thus can
+be serviceable for certain
+uses if one doesn't push it too hard, but better reverberation algorithms 
+are available.
+Dissatisfaction with the generic <I>nreverb</I> unit generator
+has led some advanced Csound users to construct their own reverberation
+instrument algorithms from combinations of comb, alpass, low pass filter,
+delay line and other unit generators. Various delay line-based reverberation
+algorithms can be viewed  within  some of the illustrative orchestra
+files available under the <I>Instruments</I> tab at 
+<A target="_new" HREF="http://csounds.com"><I>http://csounds.com</I></A>.
+
+<H5>Other reverberation unit generators for advanced users : <I>convolve</I> and <I>hrtfer</I></H5>
+<P>In addition to reverberation algorithms based on delay lines combined with comb and
+alpass filters, Csound provides alternative ways of creating reverberation.
+Two of these alternatives, employing <I>convolution</I> and
+<I>head related transfer function</I> procedures, can provide high quality
+reverberation without the hissing or coloration often produced by delay line-based
+procedures, but these alternative methods also are more complex to use.
+<P>
+Unit generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/convolve.html"><I>CONVOLVE</I></A>
+employs Fast Fourier Transform (<I>fft</I>) procedures similar to
+(though considerably faster than) convolution procedures) to
+filter an input soundfile through the time varying impulse response
+characteristics of a particular concert hall or other acoustic space.
+Several steps are necessary to accompish this operation.
+<OL>
+<LI> One must obtain or record a suitable impulse response soundfile.
+Typically, such soundfiles contain the recording of a single, sharp,
+very short impulse (a sample value of 1 followed by many zeros)
+recorded in a particular hall, to capture the reverberant qualities
+of this acoustical space. Some suitable impulse resonse soundfiles
+can be downloaded over the Internet. (For example, as of this
+writing, 
+links to collections of impulse response soundfiles can be found at
+<a target="_new" HREF="http://www.csounds.com/resources/impulses.html"><i>http://www.csounds.com/resources/impulses.html</i></a>).
+<LI> Next, one must convert this impulse response soundfile into an
+FFT frame with the Csound
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Utility/convolve.html"><B>CVANAL</B></A>
+utility.
+
+<LI> Finally, one constructs an orchestra file, similar to the example
+provided in the Csound manual discussion of <I>convolve</I>, along with
+a companion score file, to apply the reverberant qualities of the
+impulse response file to an input soundfile. At times, this can be a complicated
+process, particularly with regard to achieving accurate time synchronization
+between the dry input signal
+and the reverberant convolution signal.
+</OL>
+<p>Convolution is becoming an increasingly important and common source
+of high quality reverberation (and other types of signal modification and
+transformation). The next edition of this tutorial
+will include more detailed procedures and examples for employing this technique.
+<P>Unit generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/In+Out/hrtfer.html"><B>HRTFER</B></A>
+employs a <i>head related transfer function </i>algorithm to create the illusion
+of spatially localized binaural outputs of monophonic input soundfiles.
+Here, too, a special format <I>hrtf</I> file must be created or
+obtained before this unit generator can be used. Furthermore, the
+aural results of <I>hrtfer</I> generally are more effective when
+heard over headphones than over loudspeakers, which limits its utility.
+
+<HR>
+<H5>Assignment </H5>
+<OL>
+<LI> Try out some of the following unit generators: <I>tone, atone, reson, areson</I>
+(and their second order Butterworth counterparts),<I>
+balance, comb, alpass, nreverb </I> and <I> multitap</I>
+<LI> Learn how to construct global instruments.
+</OL>
+
+<A NAME="END"></A>
+<HR><CENTER><FONTSIZE="-2">Eastman Csound Tutorial: End of <I>Chapter 5</I></FONT></CENTER><BR>
+<PRE>
+<H5>   <A HREF="./chapter5.html#"><FONT SIZE="+1">TOP</FONT> of this chapter</A>  -- <A HREF="chapter6.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 6)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+
+</BODY>
+</HTML>

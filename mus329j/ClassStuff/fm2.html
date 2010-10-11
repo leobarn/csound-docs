@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Pinkston FM Instruments 2 - Better FM</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<PRE>;---------------------------;
+; Pinkston: FM Instrument 2 ;
+;---------------------------;
+
+sr      =       44100
+kr      =       4410
+ksmps   =       10
+nchnls  =       1
+
+&#9;instr&#9;2&#9;;better simple FM instrument
+isine&#9;=&#9;1&#9;;f01 has a sine wave - best for simple FM
+iamp&#9;=&#9;p4&#9;;peak amp of carrier
+ihz0&#9;=&#9;cpspch(p5)+p18&#9;;basic pitch + detune
+icfac&#9;=&#9;p6&#9;;carrier factor
+imfac&#9;=&#9;p7&#9;;modulator factor
+index&#9;=&#9;p8&#9;;maximum index value
+ieva&#9;=&#9;p9&#9;;attack time of main envelope
+ievd&#9;=&#9;p10&#9;;decay time of main envelope
+iamp2&#9;=&#9;p11*iamp&#9;;main amp sustain level
+ievr&#9;=&#9;p12&#9;;release time of main envelope
+ievss&#9;=&#9;p3-ieva-ievd-ievr&#9;;env steady state
+indx1&#9;=&#9;p13*index&#9;;initial/final index
+idxa&#9;=&#9;p14&#9;;attack time of index
+idxd&#9;=&#9;p15&#9;;decay time of index
+indx2&#9;=&#9;p16*index&#9;;sustained index
+idxr&#9;=&#9;p17&#9;;release time of index
+idxss&#9;=&#9;p3-idxa-idxd-idxr&#9;;index steady state
+kndx&#9;linseg&#9;indx1,idxa,index,idxd,indx2,idxss,indx2,idxr,indx1&#9;
+kamp&#9;linseg&#9;0,ieva,iamp,ievd,iamp2,ievss,iamp2,ievr,0&#9;
+asig&#9;foscili&#9;kamp,ihz0,icfac,imfac,kndx,isine&#9;
+&#9;out&#9;asig&#9;
+&#9;endin&#9;&#9;&#9;
+&#9;</PRE>
+<P><HR></P>
+<PRE>;--------------------------------------------------;
+;Pinkston: Sample Score for FM Instruments 2 and 2a;
+;--------------------------------------------------;
+f01     0       2048    10      1       ;simple sine wave
+;&#9;st&#9;dur&#9;amp&#9;pch&#9;cfac&#9;mfac&#9;index&#9;rise&#9;dec
+i02&#9;0&#9;1&#9;20000&#9;8.09&#9;1&#9;1&#9;5&#9;.05&#9;.01
+;&#9;afact&#9;rel&#9;xfac1&#9;xris&#9;xdec&#9;xfac2&#9;xrel&#9;detune&#9;
+&#9;1&#9;.2&#9;0&#9;.1&#9;.5&#9;.25&#9;.25&#9;0&#9;
+i02&#9;2&#9;.&#9;.&#9;.&#9;3&#9;1&#9;2&#9;.&#9;.
+&#9;.&#9;.&#9;.&#9;.&#9;.01&#9;1&#9;.25&#9;&#9;
+i02&#9;4&#9;.&#9;.&#9;6.09&#9;5&#9;1&#9;1.5&#9;&#9;
+&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;
+i02&#9;6&#9;.&#9;.&#9;8.09&#9;3&#9;2&#9;4&#9;.&#9;.
+&#9;.&#9;.&#9;.5&#9;.&#9;.&#9;1&#9;&#9;&#9;
+;three notes slightly detuned and slightly staggered entrances
+i02&#9;8&#9;6&#9;10000&#9;6.00&#9;1&#9;1.4&#9;10&#9;3&#9;1.9
+&#9;.7&#9;1&#9;0&#9;3&#9;1.9&#9;.25&#9;1&#9;&#9;
+i02&#9;8.005&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.
+&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.&#9;1&#9;
+i02&#9;8.012&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.
+&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.&#9;.&#9;-1&#9;
+e</PRE>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="50%" VALIGN="TOP">
+<P><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/fm2.orc">Download fm2.orc</A></TD>
+<TD WIDTH="50%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/fm2.sco">Download fm2.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

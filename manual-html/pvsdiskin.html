@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsdiskin</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsdemix.html" title="pvsdemix" />
+    <link rel="next" href="pvsdisp.html" title="pvsdisp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsdiskin</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsdemix.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsdisp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="pvsdiskin">
+      <a id="pvsdiskin"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsdiskin" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsdiskin</span>
+        </h2>
+        <p>pvsdiskin — 
+      Read a selected channel from a PVOC-EX analysis file.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3507892"></a>
+        <h2>Description</h2>
+        <p>
+      Create an fsig stream by reading a selected channel from a PVOC-EX analysis file, with frame interpolation.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3507906"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsdiskin</strong></span>SFname,ktscal,kgain[,ioffset, ichan]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3508636"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sfname</em></span> -- Name of the analysis file. This must have the .pvx file extension.
+    </p>
+        <p>
+      A multi-channel PVOC-EX file can be generated using the extended <a class="link" href="pvanal.html" title="pvanal"><em class="citetitle">pvanal utility</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>ichan</em></span> -- (optional) The channel to read (counting from 1). Default is 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioff</em></span> -- start offset from beginning of file (secs) (default: 0) .
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3508684"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktscal</em></span> -- time scale, ie. the read pointer speed (1 is normal speed, negative is
+      backwards, 0 &lt; ktscal &lt; 1 is slower and ktscal &gt; 1 is faster) </p>
+        <p>
+      <span class="emphasis"><em>kgain</em></span> -- gain scaling. </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3508709"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+          fsigr <span class="opc">pvsdiskin</span> "test.pvx",1,1  <span class="comment">; read PVOCEX file with tscale and gain = 1</span>
+          aout <span class="opc">pvsynth</span> fsigr  <span class="comment">; resynthesise it</span>
+        </pre>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3508753"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>May 2007 </td>
+          </tr>
+        </table>
+        <p>
+      New in Csound 5.06
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsdemix.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsdisp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsdemix </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsdisp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

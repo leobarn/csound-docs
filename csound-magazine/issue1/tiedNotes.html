@@ -1,0 +1,777 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Csound Journal</title>
+
+
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<body>
+
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL: <a href="../index.html">Home</a> | <a href="index.html">Fall 2005</a>
+</div>
+
+<div id="header">
+<h2>Exploring Tied Notes in Csound</h2>
+
+Steven Yi<br>
+
+Email: stevenyi AT gmail.com
+</div>
+
+<div id="content">
+<h2>Introduction</h2>
+
+<p>One of the features of Csound which I find very useful in my
+own work is the tied notes capability in Csound score. By using the
+tied notes feature, the user can add&nbsp;expressive possibilities
+to their music, such as legato phrasing and continous pitch glissandi.
+By designing instruments that can work with both tied and non-tied
+notes, we will be creating instruments that can interpret musical ideas
+in more than simply one way.</p>
+
+<p>Setting up your scores and instruments does require
+understanding how to write scores with tied notes as well as designing
+instruments to work with these notes. This article will cover how to
+write tied-note scores, how to design instruments to work with both
+tied and non-tied notes, and&nbsp;provides examples&nbsp;for
+the reader to study and experiment with. &nbsp;The user is
+encouraged to take
+the ideas from this article and expand upon them for their own personal
+musical needs.</p>
+
+<p></p>
+
+<h2>I. Tied Notes in Csound Score&nbsp;<br>
+
+</h2>
+
+<h3>Usage</h3>
+
+<p>To use the tied notes feature of Csound is fairly simple: all
+that one needs to do is make the p3 field of a note(i-statement)
+negative. What this will do is tie a note to the next note following it
+that has the the same instrument number. &nbsp;You can tie a group
+of notes together by making all of the p3 fields negative except the
+last note.</p>
+
+<p>For example, the passage here
+consists of four notes that are not tied:</p>
+
+<pre>i1 0 1 8.00 80<br>i1 + . 8.02 80<br>i1 + . 8.04 80<br>i1 + . 8.04 80<br></pre>
+
+<p>
+To tie the first three notes together, simply change the above score to
+the following:</p>
+
+<pre>i1 0 -1 8.00 80<br>i1 + . 8.02 80<br>i1 + 1 8.04 80<br>i1 + 1 8.04 80<br></pre>
+
+<p><br>
+
+</p>
+
+<h3>Technical Details</h3>
+
+<p>In Csound, everytime a note is processed, a chain of data
+structs are put together for each opcode in the instrument. These
+structs hold information that the opcodes uses when processing. For
+example, for
+the oscil opcode, the struct will hold&nbsp;what ftable to use,
+what
+frequency the opcode runs through the table, what amplitude to generate
+at, as well the phase (where in the table it currently is in its
+processing).</p>
+
+<p>Normally for every note, when Csound sees the note, it checks
+to see what instrument it is for, find that instrument's definition
+from the orchestra, and then allocates a fresh chain of structs for
+each of the opcodes in that instrument.</p>
+
+<p>When two notes are tied together, the second note does not get
+a fresh chain of structs. Rather, it is given the previous note's chain
+of structs. By having the previous note's information, the new note can
+continue to process and generate sound where the previous note left
+off, or reference the information from the previous note to help
+determine what to do in the current note.&nbsp;</p>
+
+<p>Also, a key point, a flag is set in the note's instance that
+marks it as being tied or not. We'll be using Csound opcodes in the
+next section to check that flag to determine if a note has been tied or
+not. &nbsp;</p>
+
+<p></p>
+
+<h2>II. Some Essential Information</h2>
+
+From the previous section we find that tying notes together in the
+score is not so difficult to do, and it allows for notes of an
+instrument to inherit a previous note's data. With that
+information&nbsp;we'll be able to add some expressive possibilities
+to our instrument designs, but first we'll need to cover a few
+essential concepts before we can move on to learning how to design
+instruments to take advantage of Csound's tied-notes feature.<br>
+
+<br>
+
+<h3>Tied Notes and Duration</h3>
+
+<p><span style="font-weight: bold;"></span>One
+thing to be <span style="font-style: italic;">very
+careful </span>about
+when working with tied notes is that your instrument code does not
+assume p3 is positive. If your instrument has references to p3 with
+that assumption, when you go to build tied-note instruments, you may
+find that your instruments don't produce sound correctly because they
+assume the note's duration is a positive value. &nbsp;For
+instrument
+code that depends on the duration of the note, It is recommended to
+always first assign p3 to an i-time variable and to use the absolute
+value of p3 to guarantee that the instrument will read the duration
+correctly. For example, if your instrument contained&nbsp;code such
+as
+this:</p>
+
+<pre>kenv&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: bold;">linseg&nbsp;&nbsp;&nbsp; </span>0.0,&nbsp;.05, 1, p3 - .1, 1, .05, 0.0</pre>
+
+Your instrument may not work as envisioned. Instead, use code like
+this:
+<pre>idur&nbsp;&nbsp;&nbsp; = <span style="font-weight: bold;">abs</span>(p3)<br>kenv&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: bold;">linseg&nbsp;&nbsp;&nbsp; </span>0.0,&nbsp;.05, 1, idur - .1, 1, .05, 0.0</pre>
+
+<p>This code is guaranteed to work regardless if the note is tied
+or not.</p>
+
+<p><br>
+
+</p>
+
+<h3>Csound Tie Opcodes</h3>
+
+<p>
+For our instruments to take advantage of the tied notes feature of
+Csound, they'll first have to know if their note is tied or not. To do
+this, we use the tival opcode:</p>
+
+<br>
+
+<pre>ir <b>tival</b></pre>
+
+<p>
+which returns either a 1 or 0 if the note has been tied or not,
+repectively. &nbsp;Csound also has one other opcode that works with
+tied notes, tigoto:</p>
+
+<br>
+
+<pre><b>tigoto</b> label</pre>
+
+<p>
+This opcode is a part of the goto family of opcodes and will go to the
+label given if the note has been tied. &nbsp;This is generally used
+to skip a block of initialization code which may follow the tigoto line
+and the label that tigoto points to. &nbsp;This might not make
+sense at the moment but in context of instruments designed for
+tied-note usage that we'll explore later in this article, knowing how
+and why to use this opcode will hopefully be made clear.</p>
+
+<br>
+
+<h3>Fractional Instrument Numbers</h3>
+
+<p>To help with using the tied notes feature in Csound, it is
+possible
+to use fractional instrument numbers when writing your i-statements in
+your SCO so that if you would like two have multiple lines of tied
+notes using the same instrument but would like to have them separated,
+you can add a fraction to the instrument number. For example:</p>
+<pre>i1.1 	0 	-.25 	8.00 80<br>i1.1 	+ 	. 	8.02 80<br>i1.1 	+ 	. 	8.04 80<br>i1.1 	+ 	.25 	8.00 80<br>i1.2	0	1	7.00 80</pre>
+<p>In the above score fragment, there are two musical ideas, one
+consisting of four tied notes of duration .25 each, and one note of
+duration 1. &nbsp;The notes for instrument 1.1 are all tied to each
+other, and since the second musical idea of the note of duration1 is
+labeled inststrument 1.2, the notes with 1.1 will not tie to it.</p>
+<p>This feature is used prominently in the glissandi instrument example.</p>
+<p></p>
+
+<h3>Understanding Instrument Initialization Time</h3>
+
+<p>To understand how to take advantage of the tied notes
+information, I'd like to discuss a little bit about how Csound
+initializes instrument instances when it reads in notes, as I think
+it's important to clarify at this point how this works in case there is
+any questions the reader may have. &nbsp;</p>
+
+<p> When Csound goes to to perform a note, the instrument for
+that note is looked up and the instrument definition is found.
+&nbsp;From the instrument definition, a chain of data structs--one
+data struct for each opcode--is allocated for the instrument and then
+attached to the note instance. &nbsp;For notes which are untied,
+these structs usually come in uninitialized with any preset values.
+&nbsp;After the data structs are allocated, an initialization time
+pass is done and all opcodes with i-time functions will run.
+&nbsp;Afterwards, the note is then added to the set of active
+notes, and when the engine goes to perform, the note will only be
+running at control (k-) and audio (a-) rates until the note is finished
+and deallocated. &nbsp;(This is unless a reinit is called an
+another i-time pass is explicitly invoked.
+&nbsp;This is beyond the scope of this article and if interested
+the reader is encouraged to look up the reinit opcode in the manual to
+further explore this idea.)</p>
+
+<p> For opcodes in Csound, they are able to operate at either
+initialization time (i-rate), or performance time (k- and a-rate), or
+any combination of those three rates. &nbsp;Most every opcode in
+Csound has an init-time phase, even those which generally run at k- or
+a-rate.
+&nbsp;Those opcodes which are generally used for performance-time
+operations--such as oscilators and envelope generators--generally use
+their initialization time phase to do basic setup of their data struct
+which later gets used when they are running at performance-time. This
+may include setting what frequency to use, resetting the current phase
+to 0, allocating memory to use for delayed samples (such as used in a
+filter), etc.</p>
+
+<p> For tied notes, two key aspects initialization time play a
+part in how to design instruments to take advantage of the tied note
+feature in Csound. When notes are tied together, the chain of data
+structs from the previous note is reused, but all initialization that
+an opcode normally goes through will occur as usual, <span style="font-style: italic;">unless the opcode supports
+skipping initialization and is set to do so</span>. This means
+that for our instruments, if we are using opcodes that support a skip
+intialization flag (one can look at the user's manual to see if the
+opcodes being used in your instrument support this), we will most
+likely be utilizing that flag to skip initialization. &nbsp;If we
+don't do so, then opcodes that run through their normal initialization
+won't pick up where they were in the previous note, so we may get phase
+discontinuities in oscilators or cleared out delay lines, both of which
+may produce audible pops as well as simply unintended sonic results.</p>
+
+<p> The second aspect of initialization time to keep in mind for
+tied notes is that since initialization time runs for every opcode
+unless told otherwise, and performance time runs as it normally would
+if the note was tied or not, then it is at initialization time when we
+need to do all our work for the tied note. &nbsp;An example of
+things we'll be doing at initialization time are evaluating what type
+of note is being performed and conditionally using different amplitude
+envelopes as well as setting up portomento pitch glides (as is commonly
+used in monosynth mode in MIDI synthesizers).</p>
+
+<p> Now that we've had a brief overview of Csound's instrument
+initialization time, let's see what we can do with the opcodes
+mentioned above and the information we've covered to create some
+instruments that can take advantage of Csound's tied-notes feature.<br>
+
+<br>
+
+</p>
+
+<h2>III.&nbsp;Instrument Design</h2>
+
+To take advantage of Csound's tied notes, our instruments will be using
+the tival and tigoto opcodes to detect what type of note we have as
+well as to conditionally intialize what our note will do, depending on
+the context of the note. &nbsp;By doing this, we'll be able to do
+things such as emulate MIDI monosynth mode as well as to create
+continous glissandi sound masses. &nbsp;<br>
+
+<br>
+
+<h3>Design Goal</h3>
+
+<p>For this article, we'll be making two different types of
+instruments, described below.</p>
+
+<p><span style="font-weight: bold;">Type 1 -
+Monosynth Instruments</span></p>
+
+<p>This type of instrument will emulate MIDI synthesizers which
+support
+monosynth mode (which in themselves are a mode to emulate older analog
+synths which only supported one voice at a time). For those unfamiliar
+with monosynths and MIDI's monosynth mode, these are instruments which
+generally:</p>
+
+<ul>
+
+  <li>allow only one voice at a time to be played; if a new note
+is
+initiated before the previous note is finished, the new note takes over
+the old note and the new note uses the new note's parameters (pitch,
+amplitude, etc.)&nbsp;</li>
+
+  <li>have an amplitude attack on the first note and a release on
+the last note</li>
+
+  <li>generally portomento from one pitch to the next</li>
+
+</ul>
+
+While this is a simplified explanation, I think it is enough to get an
+idea of what we'll be aiming for in designing our tied note instrument.<br>
+
+<span style="font-weight: bold;"><span style="font-weight: bold;"></span></span>
+<p><span style="font-weight: bold;">Type 2 -
+Glissandi
+Instruments</span></p>
+
+<p>This type of instrument will be based on the type 1 instrument
+from
+above, but will differ mainly in its treatment of pitch.
+&nbsp;Rather
+than a fixed time for shifting of pitch when a new note is played, a
+duration dependent glissandi time will be implemented. &nbsp;This
+will
+allow us to express continous pitch glissandi and create sound masses
+common in avant-garde musical techniques (for example, those found in
+music by Iannis Xenakis or Krzysztof Penderecki).&nbsp;</p>
+
+<p></p>
+
+<h3>General Instrument Design </h3>
+
+For tied note instruments, we'll follow a general template of design.
+&nbsp;The sections of code will be:<br>
+
+<ul>
+
+  <li>Initialization of itime parameters from pfields (to give
+descriptive names to pfields)</li>
+
+  <li>Determining tie status and type of note</li>
+
+  <li>Further initialization setup of instrument, using tie
+status and
+type of note to determine what to do for treatment of pitch and
+amplitude, as well as to do first-note initialization or not</li>
+
+  <li>Audio signal generation and processing code</li>
+
+</ul>
+
+<p>There are three instruments in the example CSD file.
+&nbsp;The first
+of which is a non-tied-note instrument which we'll be using as the
+basis for the other two instruments. &nbsp;This instrument is
+designed
+pretty much in a way that is commonly found in many Csound examples.
+&nbsp;The audio generation code is not too remarkable, a VCO2
+running
+through a moogladder filter and also a feedbacked delay for a bit of
+body and color. It does not follow the plan above as it is not a tied
+note instrument.</p>
+
+<p>The second instrument will take the design from the first
+instrument
+and modify it to handle tied notes and do so in a way to behave like
+traditional monosynths. &nbsp;The third instrument also builds on
+the
+first instrument but is modified to behave in a way to allow continous
+glissandi.</p>
+
+<p></p>
+
+<h3>Determining Type of Note</h3>
+
+Besides knowing if a note has been tied to by the previous note or not,
+I've found it useful to know the "type" of notes and instrument is
+getting. &nbsp;The type of note is something I have classified in
+the following table: <br>
+
+<br>
+
+<table style="text-align: left; width: 100%;" border="1" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td>Note Type</td>
+
+      <td>Type Code</td>
+
+      <td>Explanation</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Normal Note</td>
+
+      <td>-1</td>
+
+      <td>This note is a free-standing note and is neither
+tied-from or tied-to any other notes.</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Initial Note&nbsp;</td>
+
+      <td>0</td>
+
+      <td>This note is the first note in a group of tied notes.
+This note is tied to the next note but is not tied from any other note.</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Middle Note</td>
+
+      <td>1</td>
+
+      <td>This note is contained within a group of tied notes and
+is neither the initial or ending note of the group. This note is both
+tied to the next note and tied from previous note.</td>
+
+    </tr>
+
+    <tr>
+
+      <td>End Note</td>
+
+      <td>2</td>
+
+      <td>This note is the final note in a group of tied notes.
+&nbsp;This not is tied from a previous note but is not tied to any
+other notes.</td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+To determine the type of note a note is, you will both have to get it's
+tie status by using tival as well as looking at the p3 value of the
+note. tival tells us if the note is currently being tied from a
+previous note, while looking to see if p3 is negative will tell us if
+the note is tied to the next note for the instrument. <br>
+
+<br>
+
+How to use this information is summarized in the following table:<br>
+
+<br>
+
+<table style="text-align: left; width: 100%;" border="1" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td>Note Type</td>
+
+      <td>How to Detect Note Type</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Normal Note</td>
+
+      <td>tival is 0 and p3 &gt; 0</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Initial Note&nbsp;</td>
+
+      <td>tival is 0 and p3 &lt; 0</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Middle Note</td>
+
+      <td>tival is 1 and p3 &lt; 0</td>
+
+    </tr>
+
+    <tr>
+
+      <td>End Note</td>
+
+      <td>tival is 1 and p3 &gt; 0</td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<p>
+I have written a small User-Defined Opcode to aid in developing
+tied-note instruments. &nbsp;It uses the above scheme to determine
+the
+type of note currently being processed and returns the type code as
+defined in the first table. &nbsp;The code is listed below:</p>
+
+<p></p>
+
+<pre>&nbsp;&nbsp;&nbsp; opcode <span style="font-weight: bold;">tieStatus</span>,i,0<br><br>itie tival<br><br>if (itie == 0 &amp;&amp; p3 &lt; 0) ithen<br>&nbsp;&nbsp;&nbsp; ; this is an initial note within a group of tied notes<br>&nbsp;&nbsp;&nbsp; itiestatus = 0<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>elseif (p3 &lt; 0 &amp;&amp; itie == 1) ithen<br>&nbsp;&nbsp;&nbsp; ; this is a middle note within a group of tied notes <br>&nbsp;&nbsp;&nbsp; itiestatus = 1<br><br>elseif (p3 &gt; 0 &amp;&amp; itie == 1) ithen<br>&nbsp;&nbsp;&nbsp; ; this is an end note out of a group of tied notes<br>&nbsp;&nbsp;&nbsp; itiestatus = 2<br><br>elseif (p3 &gt; 0 &amp;&amp; itie == 0) ithen<br>&nbsp;&nbsp;&nbsp; ; this note is a standalone note<br>&nbsp;&nbsp;&nbsp; itiestatus = -1<br><br>endif&nbsp; <br><br>&nbsp;&nbsp;&nbsp; xout&nbsp;&nbsp;&nbsp; itiestatus<br><br>&nbsp;&nbsp;&nbsp; endop<br></pre>
+
+<p>We will be using the note's type information to design our
+instrument
+to work with scores that contain notes both tied and untied.</p>
+
+<p></p>
+
+<h3>Implementing the Monosynth Instrument</h3>
+
+<p>For the monosynth instrument, we'll want it to perform like a
+normal
+instrument when there is no tied notes. When there is a series of tied
+notes, we have two main concerns for the instrument, one of which is
+our treatement of pitch, the other other of amplitude. &nbsp;</p>
+
+<p>For pitch, we will use a simple scheme of using the linseg
+opcode to
+move linearly from the previous notes value to the new notes value (I
+used a .05 second time for transitioning to the new pitch value), then
+to hold on the new pitch value for the duration of the note.
+&nbsp;The
+way this instrument is coded, the pitch line will always use the same
+scheme regardless of note type.</p>
+
+<p>For amplitude, our concerns are a little tricker.
+&nbsp;Depending on
+the note type, we will generate amplitude envelopes differently:</p>
+
+<table style="text-align: left; width: 100%;" border="1" cellpadding="2" cellspacing="2">
+
+  <caption style="caption-side: bottom;">Amplitude
+Envelope Properties</caption> <tbody>
+
+    <tr>
+
+      <td>Note Type</td>
+
+      <td>Type Code</td>
+
+      <td>Handling of Amplitude</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Normal Note</td>
+
+      <td>-1</td>
+
+      <td>Use ADSR</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Initial Note&nbsp;</td>
+
+      <td>0</td>
+
+      <td>Use same attack and decay time as ADSR, holding sustain
+value until end of note</td>
+
+    </tr>
+
+    <tr>
+
+      <td>Middle Note</td>
+
+      <td>1</td>
+
+      <td>Linearly move from old amplitude value to new amplitude
+value in same amount of time as portamento time<br>
+
+      </td>
+
+    </tr>
+
+    <tr>
+
+      <td>End Note</td>
+
+      <td>2</td>
+
+      <td>Like middle, move to new amplitude in same amount of
+time as
+portamento time, but also do a release to zero in the same amount of
+time as ADSR's release time</td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<p></p>
+
+<p>In the instrument, the tieStatus User-Defined Opcode is used
+get the
+type of note. From there, the type of note is used in conditional code
+(a chain of if-then's) to determine what manner of amplitude envelope
+to generate.</p>
+
+<p>After this, the instrument pretty much operates like the
+non-tied-note version, except that opcodes which support skipping
+initialization do so when in a series of tied notes.</p>
+
+<p><br>
+
+</p>
+
+<h3>Implementing the Glissandi Instrument</h3>
+
+<p>For the glissandi instrument, our amplitude envelope scheme is
+similar to the one used in the monosynth example, though we've also
+made linear changes for the amplitude value given in, such that the
+overall amplitude of the note is determined as a product of both the
+ampltiude envelope (which is a value between 0 to 1) and the line from
+the old&nbsp;amplitude value to the new amplitude value (which is a
+value in decibels). &nbsp;This give a smooth amplitude change over
+time.</p>
+
+<p>For pitch, the implementation of this instrument for tied
+notes is to glide from the old pitch to the new pitch in the duration
+of the note. &nbsp;Now, with this example, the instrument has an
+issue in that the first note of a tied-note group will stay on its
+initial note and there is no method to have a glissandi on the first
+note. &nbsp;The design can be modified to take in to use two pitch
+fields, only using the second field if the first of a group of tied
+notes. &nbsp;This is done already in the author's personal
+instruments, but for this article it is left as-is for the sake of
+simplicity. </p>
+
+<p><br>
+
+</p>
+
+<h2>IV. Examples</h2>
+
+Download the examples here: <br>
+
+<ul>
+
+  <li><a href="examples/yi_tied_notes_example.csd">Csound
+CSD (68 k)</a></li>
+
+  <li><a href="examples/yi_tied_notes_example.blue">blue
+project file (16 k)</a></li>
+
+  <li><a href="examples/yi_tied_notes_example.mp3">MP3
+render of examples (1.1 meg)</a></li>
+
+</ul>
+
+<h3>Notes on the Examples</h3>
+
+<p>The examples include three instruments: a normal non-tied-note
+instrument, a monosynth instrument, and a glissandi instrument.
+&nbsp;The score sections are as follows:</p>
+
+<ol>
+
+  <li><span style="font-weight: bold;">Melodic Line
+for Instrument 1 using regular notes</span><br>
+
+A standard score as
+would be used in normal Csound usage<br>
+
+    <br>
+
+  </li>
+
+  <li><span style="font-weight: bold;">Melodic Line
+for Instrument 1 using tied notes</span><br>
+A tied note score
+but using a normal non-tied-note instrument. &nbsp;Notice there are
+click in the notes, demonstrating that simply tying the notes in the
+score is not enough and may cause inadvertent problems. The melodic
+line is given a fracitional instrument number so as note to interfere
+with the held chords.<br>
+
+    <br>
+
+  </li>
+
+  <li><span style="font-weight: bold;">Melodic Line
+for
+Instrument 2 (monosynth) using regular notes</span><br>
+
+A standard score used with our Type 1 instrument. The audio result is
+the same as score example 1, demonstrating that this instrument is
+capable of working with non-tied notes.<br>
+    <br>
+  </li>
+
+  <li><span style="font-weight: bold;">Melodic Line
+for Instrument 2 (monosynth) using tied notes </span><br>
+
+    <span style="font-weight: bold;"></span>A tied
+note score used with
+our Type 1 monosynth instrument. &nbsp;The melodic line is phrased
+together using groups of tied notes, and the audible results resemble
+those of monosynths, using portomento between note pitches.<br>
+
+    <span style="font-weight: bold;"><br>
+
+    </span></li>
+
+  <li><span style="font-weight: bold;">Sound Mass
+for Instrument 3 (glissandi) using tied notes </span>-
+This example uses the Type 2 glissandi instrument to create sound
+masses of microtonally inflected glissandi clouds. &nbsp;There are many
+lines and different fractional instrument numbers are used to allow for
+distinct lines to be created without the lines getting tied to each
+other inadvertently. The score
+was
+generated using the author's Orchestral Composition library, written in
+Python and included with the author's blue music composition
+environment.</li>
+
+</ol>
+
+<p></p>
+
+<p>Some other notes:</p>
+
+<ul>
+
+  <li>For examples 1-4 above, a setting of chords is given using
+instrument 1 beneath the melodic lines.</li>
+
+  <li>These examples were created and tested
+using&nbsp;Csound5.&nbsp;</li>
+
+  <li>The generated score may seem very verbose, but it is
+because when
+blue generates a CSD, it exapnds all the Csound SCO features (i.e. "+",
+".", "&gt;"). &nbsp;The author generally takes advantage of
+these
+Csound SCO features liberally in his own work and encourages users
+unfamiliar with these features to take advantage of them, as they make
+SCO writing faster. &nbsp;The original score fragments can be
+viewed
+either by opening the blue project file in blue, or opening it in a
+text editor, as the project file is in an XML format.</li>
+
+</ul>
+
+<h2>Acknowledgements</h2>
+
+I would like to thank Richard Dobson for his chapter in <span style="font-weight: bold;">The Csound Book</span>,
+"Designing Legato Instruments in Csound", as it helped a great deal in
+understanding Csound's tied-notes functionality.
+</div>
+
+</div>
+
+</body>
+</html>

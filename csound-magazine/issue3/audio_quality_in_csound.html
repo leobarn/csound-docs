@@ -1,0 +1,680 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<title>Csound Journal</title>
+<link href="csoundJournal.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+
+.example {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #CCCCCC;
+}
+
+.style1 {font-family: monospace}
+</style>
+</head>
+<body>
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL: <a href=
+"../index.html">Home</a> | <a href="index.html">Summer
+2006</a></div>
+
+<center>
+<div id="header">
+<h2>Hearing Audio Quality in Csound</h2>
+
+<p>Michael Gogins<br>
+ Email: gogins AT pipeline.com<br>
+ August 30, 2006</p>
+</div>
+</center>
+
+<div id="content">
+<div style="text-align: center;"><em><a href=
+"csound-audio-quality.pdf">Download Original PDF Version of
+Article</a></em></div>
+
+<p>This article describes some <span style=
+"font-style: italic;">methods</span> for improving the audio
+quality of Csound pieces, and also a <span style=
+"font-style: italic;">methodology</span> for evaluating audio
+quality and improving one's hearing by using a software-based ABX
+comparator.</p>
+
+<h2>Introduction</h2>
+
+<p>Hearing is like thinking: you think you are thinking, but if
+you go to school and study with a good teacher of thinking, you
+learn that you only <span style=
+"font-style: italic;">thought</span> you were thinking.
+Similarly, the naive ear hears things that are not
+there&mdash;things one hopes to hear, or fears to hear&mdash;and
+fails to hear other things that really are there&mdash;things for
+which one has not consciously and reliably heard a <span style=
+"font-style: italic;">standard of comparison</span>.</p>
+
+<p>This article contains two main sections, one much more
+important than the other.</p>
+
+<p>The first section is a laundry list of techniques that have
+been found to improve the subjective, or artistic, sound quality
+of "tape music" style compositions rendered using Csound [<a
+href="#1">1</a>]. For the most part, these techniques have to do
+with choosing the best opcodes for a particular task, avoiding
+certain signal processing artifacts such as clicking and
+aliasing, and understanding how to balance levels and frequencies
+for a transparent listening experience.</p>
+
+<p>These techniques cover ground that normally comes under the
+heading of several fields, including software instrument design,
+musical composition and arrangement, and mastering.</p>
+
+<p>To illustrate the use of these techniques, I have applied some
+of them to two well-known sample compositions that are
+distributed with Csound. In the Csound/examples directory, you 
+will find both the original and high-definition rendering of <span style=
+"font-style: italic;">Trapped in Convert</span>, and both the original and high-definition rendering of <span style="font-style: italic;">Xanadu</span>.</p>
+
+<p>The second section describes a <span style=
+"font-style: italic;">scientific</span> approach to discovering
+the <span style="font-style: italic;">artistic</span> effect of
+these and other techniques. One renders the same piece twice in
+almost exactly the same way, differing only by one opcode choice,
+or one level change, or one parameter of some other objective
+technique. One then listens to two renderings of the piece using
+an ABX comparator [<a href="#2">2</a>], a small software
+application. The comparator allows you to play a selected segment
+of sound first from one known source A, then from another known
+source B, and finally from an unknown source X chosen completely
+at random from A or B. One must then guess whether A or B was the
+source of X.</p>
+
+<p>This is an absolutely reliable way of finding out what one
+actually can and cannot hear. Scientifically speaking, it is a
+double-blind experiment. The experimenter (the ABX software) does
+not know which source was chosen for the X segment, and the
+subject (the listener) also does not know which source was
+chosen. Therefore, there is no opportunity for subjective bias to
+influence the results&mdash;at least, not as long as one does not
+start throwing out results one does not like. (It is surprising
+how tempting this can become!) The binomial theorem gives the
+likelihood for N trials that one has identified X by chance and
+not skill. It does not take many trials to reduce the odds that
+one has identified X by sheer luck to the vanishing point.</p>
+
+<p>Even better, because the ABX comparator is so reliable, it can
+be used to learn how to correctly discriminate the smallest
+perceptible differences. In other words, the ABX comparator <span
+style="font-style: italic;">teaches one to hear</span>. That is
+the real reason for using this tool with Csound. And Csound is
+uniquely well suited to it, for in live performance, or even in a
+recording studio, it is very hard to produce two versions of the
+same piece that differ only in one small parameter. But with
+Csound, all it takes is a text editor.</p>
+
+<p>To illustrate the use of the methodology, I suggest some
+segments in the two renderings of <span style=
+"font-style: italic;">Trapped in Convert</span> and <span style=
+"font-style: italic;">Xanadu</span> to hear using the ABX
+comparator. I am confident that after getting used to the
+comparator, after only a few trials many listeners will
+experience a sense of revelation&mdash;just as I did.</p>
+
+<h2>1 Audio Quality in Csound</h2>
+
+<p>Currently, studio recording is done to stereo or surround
+sound (5.1 or 7.1) on computers, hard disk recorders, or
+professional digital audio tape (DAT) recorders using 24-bit or
+floating-point samples at a rate of 48,000, 88,200, 96,000 or
+even 192,000 sample frames per second. This is "high-definition
+audio."</p>
+
+<p>At the present time, the only consumer electronics formats
+that can reproduce high-definition audio are DVD-Audio,
+high-definition audio tracks that may exist on some DVD-Video
+discs, SACD, and of course high-definition computer soundfiles.
+CD-quality audio is of rather lower definition: stereo sound with
+16 bit integer samples at 44,100 samples per second.</p>
+
+<p>High-definition audio, on good speakers or earphones, sounds
+distinctly airy, present, spacious, and undistorted. CD-quality
+audio, by contrast, can sound flat, shrill, harsh, and flat or
+boxed in. Usually, this is the result of cumulative mistakes made
+in this less forgiving medium&mdash;CDs actually are precise
+enough to reproduce most of what we hear. Therefore, CDs made by
+experts can sound very good indeed, except for their more limited
+dynamic range and slightly less detailed quiet sounds. Normally,
+it takes educated ears to hear these differences.</p>
+
+<p>Vinyl records of high quality are not directly comparable to
+digital recordings. They have their own virtues and flaws. They
+are more detailed, airy, and spacious than CDs, but can have
+harmonic distortion, rumbling, hiss, and crackling. In general,
+well-made records, especially if pressed from direct metal
+masters, are roughly equal to high-definition audio in aesthetic
+quality, even if they are not really as precise.</p>
+
+<p>All of these remarks set aside questions of "warmth" or
+"musical quality" in sound. Vinyl records, audio tape, and analog
+electronics introduce a little harmonic distortion, which creates
+a soft, burnished glow on the sound that some people prefer to
+hear. Such "warmth" is not what this article is about. If the
+composer or producer wants this sound, it can can easily be
+created using Csound alone, without any analog gear, simply by
+convolving the signal with an appropriate impulse response.</p>
+
+<p>Csound is eminently capable of high-definition audio. It can
+render to <span style="font-style: italic;">any</span> number of
+channels, at <span style="font-style: italic;">any</span>
+sampling rate, using floating-point samples. Csound also contains
+high-quality software implementations of all the effects applied
+by mastering engineers. Therefore, Csound can sound as good or
+better than the best studio gear.</p>
+
+<p>If you have a professional or semi-professional audio
+interface on your computer, you can play high-definition
+soundfiles made with Csound, although you will not hear their
+full dynamic range unless you have professional monitoring gear.
+In fact, some newer "media center" or "multimedia production"
+computers now come with built-in high-definition audio systems.
+You can detect the existence of such a system on Windows PCs by
+using the <span style="font-weight: bold;">Control Panel, Sounds
+and Audio Devices</span> dialog, <span style=
+"font-weight: bold;">Hardware</span> tab, and looking in the list
+of devices for something like the words "High Definition Audio
+CODEC" or "Internal High Definition Audio Bus," as shown in
+Figure 1. For example, Intel's high-definition chipset supports
+up to eight channels of 32 bit samples at 192,000 sample frames
+per second.</p>
+
+<div style="text-align: center;"><img style=
+"width: 367px; height: 448px;" alt=
+"Windoes Driver for High-Definition Audio" src=
+"images/audioQuality/hd_codec.png"></div>
+
+<div style="text-align: center;"><br>
+ Figure 1: <span style="font-weight: bold;">Windows Driver for
+High-Definition Audio</span></div>
+
+<p>The constant goal in critical listening is to <span style=
+"font-style: italic;">hear as accurately as possible the signal
+as it actually exists on the recording</span>. Similarly, the
+constant goal in audio production is not to make a piece sound
+good on a typical listener's sound system&mdash;it is to make the
+piece <span style="font-style: italic;">sound as good as possible
+on the most accurate possible listening system</span> . If you
+lose sight of these realities for any reason, then whether you
+know it or not, you&nbsp;will become lost in a wilderness of
+illusions. Experienced mastering engineers know that making a
+piece sound good on the most accurate possible sound system will
+make the piece sound better on most listeners' systems and worse
+on a few, whereas trying to make the piece sound good on one sort
+of inferior sound system will indeed make the piece sound much
+better on that one type of system, but only at the cost of making
+it sound much worse on almost all other systems.</p>
+
+<p>I strongly recommend that you listen to all soundfiles from
+this article through real studio monitor speakers, with the
+flattest possible frequency response, in an acoustically deadened
+room, at a volume that is about as loud as you can listen to
+indefinitely. If you don't have such a listening environment,
+then use real studio monitor headphones plugged into a
+high-definition interface.</p>
+
+<p>Specific technical advice in decreasing order of importance
+(all this assumes you don't care how long it takes to render a
+piece, only if it sounds good):</p>
+
+<ol>
+<li>Some of the sounds made by Csound have no counterpart in
+other kinds of music. They may contain excessive high
+frequencies, aliasing distortion, or other kinds of noise. On the
+other hand, the sounds can be of extreme clarity and
+precision&mdash;<span style=
+"font-style: italic;">hyper-real</span>. You need to be
+constantly aware of what your sounds <span style=
+"font-style: italic;">actually sound like</span>.</li>
+
+<li>Always render to floating-point soundfiles at 88,200 sample
+frames per second.You can translate them to 24 bits or to CD
+quality later if you want, but having the extra precision and
+dynamic range is vital. There is no audible difference in quality
+between 88,200 and 96,000 sample frames per second, but 88,200
+can be translated to CD quality by direct downsampling, whereas
+96,000 requires fancy filtering and lots of time.<br>
+</li>
+
+<li>If you use sampled sounds, use the best samples you can
+possibly find. Pay if you must!<br>
+</li>
+
+<li>Also if you use sampled sounds, beware of their own ambience
+clashing with any reverberation or other ambience you set up
+using Csound. Samples may also have unwanted noise&mdash;it may
+be possible to de-noise them (Csound has facilities for doing
+this too).<br>
+</li>
+
+<li>Use a "de-clicking" envelope to wrap all your instrument
+final output signals.<br>
+</li>
+
+<li>Watch out for aliasing, which can make sounds buzzy or harsh,
+in frequency modulation and wavetable oscillators. Aliasing
+happens when the signal contains frequencies above half the
+sampling rate (the Nyquist frequency), so that under digital
+sampling they reflect or fold back under the Nyquist frequency.
+For so-called "analog" sounds with simple waveforms such as
+square or sawtooth waves, use non-aliasing opcodes such as
+<code>vco</code> or <code>vco2</code>. You do not need to worry
+about aliasing with plain sine or cosine waves.<br>
+</li>
+
+<li>For final renderings, always render with
+<code>ksmps=1</code>.<br>
+</li>
+
+<li>Use a-rate variables for envelopes and, in general, wherever
+opcodes permit. This enables decent results with
+<code>ksmps=100</code> or so.<br>
+</li>
+
+<li>In general, if an opcode has both an interpolating form and a
+non-interpolating form, use the interpolating form, e.g. use
+<code>tablei</code> not <code>table</code>.&nbsp;<br>
+</li>
+
+<li>Use only the most precise interpolating oscillators, such as
+<code>poscil</code> or <code>poscil3</code>.<br>
+</li>
+
+<li>For all wavetable oscillators, the larger the wavetable, the
+less noisy the signal; 65537 is not too big.<br>
+</li>
+
+<li>Be vigilant for artifacts and noise introduced by various
+digital signal processing algorithms, especially echoes in
+reverberation. Don't over-use effects&mdash;this is a very common
+error that you can fix by listening to good examples of studio
+and live recording.<br>
+</li>
+
+<li>Try rendering with dither (<code>-Z</code> option).<br>
+</li>
+
+<li>Experiment with some modest compression, e.g. by using the
+compress or dam opcodes.<br>
+</li>
+
+<li>Use the 64-bit sample version of Csound.<br>
+</li>
+</ol>
+
+<p>The above are technical considerations. <span style=
+"font-style: italic;">Artistic</span> considerations are more
+subjective, but the following rules of thumb are generally
+followed in music production:</p>
+
+<ol>
+<li>For art music, the use of signal processing and effects
+should be minimized. In general, the listener should not be aware
+that such effects have been used. If they are audible to the
+listener, they should normally be perceived as being an integral
+part of a particular voice.<br>
+</li>
+
+<li>If more than one voice is sounding at the same time, the
+composer usually intends either to fuse the sounds, or to
+separate the sounds. To fuse the sounds, their spectra should
+overlap, their spatial locations should overlap, and their
+pitches should either be a unison, or in an octave relationship.
+Their envelopes may or may be the same shape, but the attack
+portions should not be too different. To separate sounds, any one
+or more of the above considerations may be negated: their spectra
+should not overlap; and/or their spatial locations should be
+different; and/or their pitches should be different; and/or their
+envelopes should not be the same shape.<br>
+</li>
+
+<li>Usually, solo voices and bass lines should be acoustically
+separated from the rest of the music.<br>
+</li>
+
+<li>Computer music and electroacoustic music tends to be shrill
+in comparison with historical traditions for art music. Many such
+pieces can be improved by rolling off the treble equalization or,
+better yet, changing the design of the instruments
+themselves.<br>
+</li>
+
+<li>Computer music and electroacoustic music tends to be bass-shy
+in comparison with other genres of music. Many such pieces can be
+improved with a little "big bottom."<br>
+</li>
+
+<li>Computer music and electroacoustic music tends to be loud in
+comparison with other genres of music, excepting the louder forms
+of rock and dance music. Some such pieces would benefit from a
+quieter average level combined with a larger dynamic range.<br>
+</li>
+
+<li>Both computer music and electroacoustic music use a great
+deal of signal processing, which often causes pieces to acquire a
+particular artifact technically known as "convolution smear." It
+can sound like smearing, ringing, or a sheen overlaying the
+sound. This sound may or may not be artistically desirable, but
+the composer needs to know when it is there so that he or she can
+decide whether or not to use it.<br>
+</li>
+
+<li>Computer music, as opposed to purely electronic music, uses
+digital signal processing which, in turn, frequently causes
+aliasing distortion. It can manifest itself as false tones, false
+harmonics, or graininess or grittiness in sounds. Again, the
+effect may or may not be desirable, but the composer needs to
+know when it is there.<br>
+</li>
+
+<li>Computer music, electroacoustic music, and studio recordings
+in general tend to combine sounds into an artificial sound stage.
+Our sensation of the location of sounds is complex, rather
+accurate, and depends on several cues including the relative
+<span style="font-style: italic;">loudnesses</span> of a sound
+with respect to direction, the relative <span style=
+"font-style: italic;">phases</span> of the sound with respect to
+different directions, the type of echoes or reverberation
+associated with the sound, and even the frequency equalization of
+the sound (high frequencies are attenuated by distance). Most
+recorded music features a collapsed, artificial sound stage. In
+computer music and electroacoustic music, especially when using
+sampled sound, it is common to use only relative loudness as a
+spatial cue, and to attempt to place sounds with quite different
+reverberant qualities onto the same sound stage. Again, this may
+or may not be desirable, but the composer needs to hear what the
+sound stage actually is, and to be able to identify its
+causes....</li>
+</ol>
+
+<h2>2 Using the ABX Comparator</h2>
+
+<p>You can download a useful free ABX comparator from <a href=
+"http://www.kikeg.arrakis.es/winabx">http://www.kikeg.arrakis.es/winabx</a>.
+Install this on your PC.</p>
+
+<p>This article assumes that you have installed the
+double-precision version of Csound 5.03.01 using the Windows
+installer. In the Csound/examples directory, you will find both the
+original and high-definition versions of <span style="font-style: italic;">Trapped
+in Convert</span> and <span style=
+"font-style: italic;">Xanadu</span>:</p>
+
+<p><code>trapped .csd<br>
+ trapped-high-resolution.csd<br>
+ xanadu .csd<br>
+ xanadu-high-resolution.csd</code></p>
+
+<p>If you do not find these files in your installation of Csound,
+you can download them directly from the Csound CVS repository at
+<a href=
+"http://csound.cvs.sourceforge.net/csound/csound5/examples">http://csound.cvs.sourceforge.net/csound/csound5/examples</a>.</p>
+
+<p>To see what changes I have made to improve sound quality in
+these pieces, you can run a program such as WinMerge [<a href=
+"#3">3</a>] to highlight the differences between versions, as
+shown in Figure 2.<br>
+<br>
+</p>
+
+<div style="text-align: center;"><a href=
+"images/audioQuality/winmerge.png"><img style=
+"border: 0px solid ; width: 360px; height: 225px;" alt=
+"Comparing Versions of Xanadu" src=
+"images/audioQuality/winmerge.png"></a></div>
+
+<div style="text-align: center;">
+<p>Figure 2: <span style="font-weight: bold;">Comparing Versions
+of Xanadu<br>
+</span> <span style="font-style: italic;">Click image to see the
+full size version</span><br>
+</p>
+</div>
+
+<p>Open a Windows console, navigate to your Csound/examples
+directory, and render each of the two pieces in both the normal
+version and the high-definition version, using the following
+commands:</p>
+
+<p><code>csound -R -W -s -o trapped .wav trapped .csd<br>
+ csound trapped -high - resolution .csd<br>
+ csound -R -W -s -o xanadu .wav xanadu .csd<br>
+ csound xanadu -high - resolution .csd</code></p>
+
+<p>Use a soundfile editor such as Audacity [<a href="#4">4</a>]
+to determine if the soundfile amplitudes are the same in both
+renderings&mdash;which means within 0.25 dB of each other. If,
+but <span style="font-style: italic;">only</span> if, the
+amplitudes of the renderings are different, then use the editor
+to remove any DC bias, and normalize the level in each of these
+soundfiles to -3 dB, to ensure that each source has the same
+subjective loudness, as shown in Figure 3.</p>
+
+<p>Equal amplitudes are <span style=
+"font-style: italic;">essential</span> whenever you do an ABX
+comparison, because:</p>
+
+<ul>
+<li>People are <span style="font-style: italic;">quite</span>
+sensitive to loudness.</li>
+
+<li>Given two sounds A and B, if A is louder, people will tend to
+prefer it, even if at the same loudness they might prefer B.</li>
+
+<li>Different synthesis and signal processing techniques, e.g.
+compression, can modify signal amplitudes.</li>
+</ul>
+
+<br>
+ 
+
+<div style="text-align: center;"><a href=
+"images/audioQuality/normalize.png"><img style=
+"border: 0px solid ; width: 360px; height: 225px;" alt=
+"Normalizing Trapped in Convert" src=
+"images/audioQuality/normalize.png"></a><br>
+</div>
+
+<div style="text-align: center;">
+<p>Figure 3: <span style="font-weight: bold;">Normalizing Trapped
+in Convert<br>
+</span> <span style="font-style: italic;">Click image to see the
+full size version</span><br>
+</p>
+</div>
+
+<p>When all of your pieces are rendered and, if necessary,
+normalized, run the ABX comparator and load the two versions of
+<span style="font-style: italic;">Trapped in Convert</span>.
+Select the ABX mode. Select a segment beginning at 8 seconds and
+ending at 10 seconds. The reason for using such a short segment
+is that human short-term memory for sounds is much more accurate
+than long-term memory, and short-term memory only extends to
+about 5 seconds. Make sure that your listening volume is loud,
+but not uncomfortable. If while listening your ears hurt or pop,
+<span style="font-style: italic;">immediately</span> reduce the
+volume until they do not.</p>
+
+<p>Listen to A and B several times to see if you think you can
+hear any differences between them. Then, listen to X and decide
+whether X is A or B. You are free to listen to A, B, and X any
+number of times and in any order. I find that the best approach
+is to listen to A and B repeatedly until some feature that is
+different begins to emerge from the listening process. I can then
+listen to X and see if it does or does not have this
+discriminating feature.</p>
+
+<p>When you have made up your mind, click on the <span style=
+"font-weight: bold;">X is A button</span> or the <span style=
+"font-weight: bold;">X is B button</span> to indicate your
+choice, then click on the <span style="font-weight: bold;">Next
+trial</span> button. Keep repeating these trials. If after 10 or
+20 trials the probability that you are guessing goes below 5% and
+stays there, then you almost certainly actually <span style=
+"font-style: italic;">can</span> hear a difference between A and
+B. But if after a large number of trials you can never get the
+probability you are guessing to stay below 10%, then no matter
+what you may think, you <span style=
+"font-style: italic;">cannot</span> hear any difference between A
+and B. Figure 4 shows WinABX in action.<br>
+</p>
+
+<div style="text-align: center;">
+<p><img style="width: 359px; height: 466px;" alt="Using WinABX"
+src="images/audioQuality/winabx.png"><br>
+<br>
+ Figure 4: <span style="font-weight: bold;">Using
+WinABX</span><br>
+</p>
+</div>
+
+<p>This is painstaking work, but it is the <span style=
+"font-style: italic;">only</span> way to make sure you really
+<span style="font-style: italic;">are</span> hearing what you
+<span style="font-style: italic;">think</span> you are
+hearing.</p>
+
+<p>As time goes on, you should find that your hearing of this
+piece becomes quite a bit more perceptive. More importantly, you
+should be able to form a reliable judgment of which rendering is
+better according to your own musical taste. This may or may not
+be the high-definition version! <span style=
+"font-style: italic;">The vital thing is to improve the accuracy
+of your hearing with respect to your own musical
+judgment</span>.</p>
+
+<p>You also should find that you can more quickly decide whether
+or not you really can hear a difference between the
+sources&mdash;which means that you really are improving your
+musical hearing.</p>
+
+<p>I will not, in this article, explain what I think the
+differences are between the regular rendering and the
+high-definition rendering of <span style=
+"font-style: italic;">Trapped in Convert</span>. But, here are
+some other segments to try.</p>
+
+<p>Warning: not all segments have differences that I could
+hear!</p>
+
+<ol>
+<li>0:46 to 0:51</li>
+
+<li>1:08 to 1:15</li>
+
+<li>1:18 to 1:21</li>
+
+<li>1:53 to 1:56</li>
+
+<li>2:20 to 2:25</li>
+
+<li>3:44 to 3:48</li>
+
+<li>4:28 to 4:32<br>
+</li>
+</ol>
+
+<p>When you have listened to a number of segments, you may wish
+to try listening to each version all the way through, in order to
+see if you can still hear the differences that you had learned to
+identify.</p>
+
+<p>For <span style="font-style: italic;">Xanadu</span>, compare
+the following segments.</p>
+
+<p>Warning: in every case, I can reliably hear a difference
+between the renderings!</p>
+
+<ol>
+<li>0:00 to 0:02</li>
+
+<li>0:05 to 0:07</li>
+
+<li>0:14 to 0:17</li>
+
+<li>0:23 to 0:24</li>
+
+<li>0:35 to 0:38</li>
+
+<li>0:43 to 0:48</li>
+
+<li>0:51 to 0:55<br>
+</li>
+</ol>
+
+<p>Of course, your experience with ABX so far concerns two
+sources that differ by many changes in the Csound code.</p>
+
+<p>If you <span style="font-style: italic;">really</span> want to
+understand what is doing on, make copies of
+<code>trapped.csd</code> and <code>xanadu.csd</code>, use
+WinMerge to add one modification at a time to your copies from
+<code>trapped-high-resolution.csd</code> and
+<code>xanadu-high-resolution.csd</code> files, and do the ABX
+comparison all over for each modification.</p>
+
+<p>Another source of deeper insight might be to visit Dominique
+Bassal's web site on mastering [<a href="#5">5</a>], download
+some of his pre-mastered/post-mastered example soundfiles, and do
+ABX comparisons on them. Bassal is an acknowledged expert in
+mastering computer music, and his on-line article <span style=
+"font-style: italic;">The Practice of Mastering in
+Electroacoustics</span> [<a href="#6">6</a>] provides a much more
+experienced and in-depth review of some of the issues (i.e.,
+those not specific to Csound) that I have tried to cover
+here.</p>
+
+<h2>3 Conclusion</h2>
+
+<p>Well, I hope this article has been useful to you!</p>
+
+<p>I believe that learning these methods, and above all the ABX
+methodology, has made an enormous difference to my own ability to
+hear my own music more objectively.</p>
+
+<p>I also have a renewed appreciation of what I am now better
+equipped to realize are astonishing feats of perception and
+signal processing on the part of the best computer musicians,
+recording engineers, and mastering engineers.</p>
+
+<p>And I believe my own ability to work at that level has
+improved, at least a little bit, as a result of the ABX
+comparator.<br>
+</p>
+
+<h2>References</h2>
+
+<a name="1"></a> [1] Richard Boulanger. csounds.com... almost
+everything Csound. <a href=
+"http://www.csounds.com">http://www.csounds.com</a>.<br>
+<a name="2"></a> [2] KikeG. WinABX, 2005.<br>
+<a name="3"></a> [3] Christian List, Dean Grimm, et al. Winmerge.
+<a href=
+"http://winmerge.sourceforge.">http://winmerge.sourceforge.net/index.php</a>.<br>
+
+<a name="4"></a> [4] Audacity. <a href=
+"http://audacity.sourceforge.net">http://audacity.sourceforge.net</a>.<br>
+
+<a name="5"></a> [5] Dominique Bassal. Mastering. <a href=
+"http://cec.concordia.ca/pep/mastering_e.html">http://cec.concordia.ca/pep/mastering_e.html</a>.<br>
+
+<a name="6"></a> [6] Dominique Bassal. The practice of mastering
+in electroacoustics, December 2002. <a href=
+"http://cec.concordia.ca/ftp/The_Practice_of_Mastering.pdf">http://cec.concordia.ca/ftp/The_Practice_of_Mastering.pdf</a>.<br>
+
+</div>
+</div>
+</body>
+</html>
+
+

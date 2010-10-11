@@ -1,0 +1,219 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>data.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* data.c */
+/* make pre-scorefile datafields */
+
+#include &lt;math.h&gt;
+#include &lt;stdlib.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs, prototypes */
+
+<A NAME="copy_specxy">void copy_specxy(void)</A>
+{
+&#9;int i;
+&#9;
+&#9;for(i=0; i&lt;PA_SPECPOI; i++) {
+&#9;&#9;specplex[i].x = specxy[i].x;
+&#9;&#9;specplex[i].y = specxy[i].y;
+&#9;}
+}
+
+<A NAME="calc_hd_hr">void calc_hd_hr(void)</A>
+{
+&#9;int q, r=1;
+&#9;float rumin;
+&#9;float *ri, *ru;
+&#9;double ppri, apri, pnri, anri, ppru, apru, pnru, anru;
+&#9;ri=malloc(PA_SPECPOI*sizeof(float));
+&#9;ru=malloc(PA_SPECPOI*sizeof(float));
+
+&#9;if(!ri || !ru)
+&#9;&#9;printf("\n; Malloc trouble.\n\n");
+
+&#9;/* hd (angle of the curve) */
+
+&#9;for(q=0; q&lt;PA_SPECPOI; q++) {
+&#9;&#9;if(q&lt;PA_SPECPOI-1) {
+&#9;&#9;&#9;r=q+1;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;/* &gt; q segment */
+&#9;&#9;&#9;ppri=specplex[r].y - specplex[q].y;
+&#9;&#9;&#9;ppru=specplex[r].x - specplex[q].x;
+&#9;&#9;&#9;r++;
+&#9;&#9;&#9;do {
+&#9;&#9;&#9;&#9;apri=ppri;
+&#9;&#9;&#9;&#9;apru=ppru;
+&#9;&#9;&#9;&#9;ppri=specplex[r].y - specplex[q].y;
+&#9;&#9;&#9;&#9;ppru=specplex[r].x - specplex[q].x;
+&#9;&#9;&#9;&#9;r++;
+&#9;&#9;&#9;} while( (r &lt; PA_SPECPOI) &amp;&amp;
+&#9;&#9;&#9;&#9;&#9; (fabs(ppri) &gt; fabs(apri)) &amp;&amp;
+&#9;&#9;&#9;&#9;&#9; (fabs(ppru) &gt;= fabs(apru)) );
+&#9;&#9;}
+&#9;&#9;else apri=apru=0;
+&#9;
+&#9;&#9;if(q&gt;0) {
+&#9;&#9;&#9;r=q-1;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;/* &lt; q segment */
+&#9;&#9;&#9;pnri=specplex[q].y - specplex[r].y;
+&#9;&#9;&#9;pnru=specplex[q].x - specplex[r].x;
+&#9;&#9;&#9;r--;
+&#9;&#9;&#9;if( ((SIGN(pnri)==SIGN(apri)) &amp;&amp; (SIGN(pnru)==SIGN(apru)))
+&#9;&#9;&#9;&#9;|| apri==0 )
+&#9;&#9;&#9;&#9;do {
+&#9;&#9;&#9;&#9;&#9;anri=pnri;
+&#9;&#9;&#9;&#9;&#9;anru=pnru;
+&#9;&#9;&#9;&#9;&#9;pnri=specplex[q].y - specplex[r].y;
+&#9;&#9;&#9;&#9;&#9;pnru=specplex[q].x - specplex[r].x;
+&#9;&#9;&#9;&#9;&#9;r--;
+&#9;&#9;&#9;&#9;} while( (r &gt; 0) &amp;&amp;
+&#9;&#9;&#9;&#9;&#9;&#9; (fabs(pnri) &gt; fabs(anri)) &amp;&amp;
+&#9;&#9;&#9;&#9;&#9;&#9; (fabs(pnru) &gt; fabs(anru)) );
+&#9;&#9;&#9;else {
+&#9;&#9;&#9;&#9;anri=0;
+&#9;&#9;&#9;&#9;anru=0;
+&#9;&#9;&#9;}
+&#9;&#9;&#9;ri[q]=anri+apri;
+&#9;&#9;&#9;ru[q]=anru+apru;
+&#9;&#9;}
+&#9;&#9;else {
+&#9;&#9;&#9;ri[q]=apri;
+&#9;&#9;&#9;ru[q]=apru;
+&#9;&#9;}
+&#9;}
+
+&#9;for(q=0; q&lt;PA_SPECPOI; q++)
+&#9;&#9;specplex[q].hd=asin( ri[q] / hypot(ri[q],ru[q]) );
+
+&#9;/* hr (change in angle) */
+&#9;
+&#9;for(q=0; q&lt;PA_SPECPOI; q++) {
+&#9;&#9;if(q&lt;PA_SPECPOI-1) {
+&#9;&#9;&#9;r=q+1;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;/* &gt; q segment */
+&#9;&#9;&#9;ppri=specplex[r].hd - specplex[q].hd;
+&#9;&#9;&#9;ppru=hypot(specplex[r].x - specplex[r-1].x,
+&#9;&#9;&#9;&#9;&#9;   specplex[r].y - specplex[r-1].y);
+&#9;&#9;&#9;r++;
+&#9;&#9;&#9;do {
+&#9;&#9;&#9;&#9;apri=ppri;
+&#9;&#9;&#9;&#9;apru=ppru;
+&#9;&#9;&#9;&#9;ppri=specplex[r].hd - specplex[q].hd;
+&#9;&#9;&#9;&#9;ppru+=hypot(specplex[r].x - specplex[r-1].x,
+&#9;&#9;&#9;&#9;&#9;&#9;&#9;specplex[r].y - specplex[r-1].y);
+&#9;&#9;&#9;&#9;r++;
+&#9;&#9;&#9;} while( (r &lt; PA_SPECPOI) &amp;&amp;
+&#9;&#9;&#9;&#9;&#9; (fabs(ppri) &gt; fabs(apri)) );
+&#9;&#9;}
+&#9;&#9;else apri=apru=0;
+
+&#9;&#9;if(q&gt;0) {
+&#9;&#9;&#9;r=q-1;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;/* &lt; q segment */
+&#9;&#9;&#9;pnri=specplex[q].hd - specplex[r].hd;
+&#9;&#9;&#9;pnru=hypot(specplex[r+1].x - specplex[r].x,
+&#9;&#9;&#9;&#9;&#9;   specplex[r+1].y - specplex[r].y);
+&#9;&#9;&#9;r--;
+&#9;&#9;&#9;if( (SIGN(pnri) == SIGN(apri)) || apri==0.0)
+&#9;&#9;&#9;&#9;do {
+&#9;&#9;&#9;&#9;&#9;anri=pnri;
+&#9;&#9;&#9;&#9;&#9;anru=pnru;
+&#9;&#9;&#9;&#9;&#9;pnri=specplex[q].hd - specplex[r].hd;
+&#9;&#9;&#9;&#9;&#9;pnru+=hypot(specplex[r+1].x - specplex[r].x,
+&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;specplex[r+1].y - specplex[r].y);
+&#9;&#9;&#9;&#9;&#9;r--;
+&#9;&#9;&#9;&#9;} while( (r &gt; 0) &amp;&amp;
+&#9;&#9;&#9;&#9;&#9;&#9; (fabs(pnri) &gt; fabs(anri)) );
+&#9;&#9;&#9;else {
+&#9;&#9;&#9;&#9;anri=0;
+&#9;&#9;&#9;&#9;anru=0;
+&#9;&#9;&#9;}
+&#9;&#9;&#9;ri[q]=anri+apri;
+&#9;&#9;&#9;ru[q]=anru+apru;
+&#9;&#9;}
+&#9;&#9;else {
+&#9;&#9;&#9;ri[q]=apri;
+&#9;&#9;&#9;ru[q]=apru;
+&#9;&#9;}
+&#9;}
+
+&#9;for(q=0; q&lt;PA_SPECPOI; q++)
+&#9;&#9;specplex[q].hr=ri[q]/ru[q];
+}
+
+<A NAME="make_fullplex">void make_fullplex(void)</A>
+{
+&#9;int r, q, loc;
+&#9;float fb, te;
+&#9;int scale=MAX_POI/PA_SPECPOI;
+&#9;PA_FULLPLEXPOI=scale*PA_SPECPOI;
+&#9;
+&#9;for(r=0; r&lt;PA_SPECPOI; r++) {
+&#9;&#9;loc = r * scale;
+&#9;&#9;fullplex[loc].x = specplex[r].x;
+&#9;&#9;fullplex[loc].y = specplex[r].y;
+&#9;&#9;fullplex[loc].hr = specplex[r].hr;
+&#9;&#9;fullplex[loc].hd = specplex[r].hd;
+&#9;&#9;for(q=1; q&lt;scale; q++) {
+&#9;&#9;&#9;fb = (float)(scale-q)/scale;
+&#9;&#9;&#9;te = (float)q/scale;
+&#9;&#9;&#9;fullplex[q+loc].x = (specplex[r].x * fb) + (specplex[r+1].x * te);
+&#9;&#9;&#9;fullplex[q+loc].y = (specplex[r].y * fb) + (specplex[r+1].y * te);
+&#9;&#9;&#9;fullplex[q+loc].hd=(specplex[r].hd * fb) + (specplex[r+1].hd * te);
+&#9;&#9;&#9;fullplex[q+loc].hr=(specplex[r].hr * fb) + (specplex[r+1].hr * te);
+&#9;&#9;}
+&#9;}
+&#9;printf("; (%i-point scale factor)\n", scale);
+}
+
+<A NAME="s_and_q">void s_and_q(void)</A>
+{
+&#9;int q;
+&#9;float pcsz=(float)1/PA_NPC, nminhr, pminhr, nmaxhr, pmaxhr;
+&#9;
+&#9;q=0;
+&#9;while(fullplex[q].hr&lt;=0) q++;
+&#9;pminhr=pmaxhr=fullplex[0].hr;
+
+&#9;q=0;
+&#9;while(fullplex[q].hd&gt;=0) q++;
+&#9;nminhr=nmaxhr=fullplex[0].hr;
+
+&#9;for(q=0; q&lt;PA_FULLPLEXPOI; q++) {
+&#9;&#9;if(fullplex[q].hr&gt;0) {
+&#9;&#9;&#9;pminhr=(fullplex[q].hr&lt;pminhr ? fullplex[q].hr : pminhr);
+&#9;&#9;&#9;pmaxhr=(fullplex[q].hr&gt;pmaxhr ? fullplex[q].hr : pmaxhr);
+&#9;&#9;}
+&#9;&#9;else {
+&#9;&#9;&#9;nminhr=(fullplex[q].hr&gt;nminhr ? fullplex[q].hr : nminhr);
+&#9;&#9;&#9;nmaxhr=(fullplex[q].hr&lt;nmaxhr ? fullplex[q].hr : nmaxhr);
+&#9;&#9;}
+&#9;}
+
+&#9;for(q=0; q&lt;PA_FULLPLEXPOI; q++) {
+&#9;&#9;fullplex[q].x=quant(
+&#9;&#9;&#9;linscale(fullplex[q].x, PA_XMIN, PA_XMAX, PA_MINPCH, PA_MAXPCH)
+&#9;&#9;&#9;, pcsz);
+&#9;&#9;fullplex[q].y=quant(
+&#9;&#9;&#9;linscale(fullplex[q].y, PA_YMIN, PA_YMAX, PA_MINPCH, PA_MAXPCH)
+&#9;&#9;&#9;, pcsz);
+&#9;&#9;
+&#9;&#9;if(fullplex[q].hd&gt;=0)
+&#9;&#9;&#9;fullplex[q].hd=quant(
+&#9;&#9;&#9;&#9;linscale(fullplex[q].hd, 0, POSHALFPI,
+&#9;&#9;&#9;&#9;PA_DURUNIT, PA_MAXDUR), PA_MINDUR);
+&#9;&#9;else
+&#9;&#9;&#9;fullplex[q].hd=quant(
+&#9;&#9;&#9;&#9;linscale(fullplex[q].hd, 0, NEGHALFPI,
+&#9;&#9;&#9;&#9;PA_MINDUR, PA_DURUNIT), PA_MINDUR);
+&#9;&#9;
+&#9;&#9;if(fullplex[q].hr&gt;0)
+&#9;&#9;&#9;fullplex[q].hr=rint(
+&#9;&#9;&#9;&#9;linscale(fullplex[q].hr,pminhr,pmaxhr,
+&#9;&#9;&#9;&#9;PA_MINREACH,PA_MAXREACH));
+&#9;&#9;else
+&#9;&#9;&#9;fullplex[q].hr=rint(
+&#9;&#9;&#9;&#9;linscale(fullplex[q].hr,nminhr,nmaxhr,
+&#9;&#9;&#9;&#9;-PA_MINREACH,-PA_MAXREACH));
+&#9;}
+}</PRE></BODY>
+</HTML>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsmooth</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsmorph.html" title="pvsmorph" />
+    <link rel="next" href="pvsout.html" title="pvsout" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsmooth</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsmorph.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsout.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="pvsmooth">
+      <a id="pvsmooth"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsmooth" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsmooth</span>
+        </h2>
+        <p>pvsmooth — 
+     Smooth the amplitude and frequency time functions of a pv stream using parallel 1st order
+	 lowpass IIR filters with time-varying cutoff frequency. 
+      
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3515883"></a>
+        <h2>Description</h2>
+        <p>
+     Smooth the amplitude and frequency time functions of a pv stream using a 1st order
+	 lowpass IIR with time-varying cutoff frequency. This opcode uses the same filter 
+	 as the 'tone' opcode, but this time acting separately on the amplitude and frequency
+	 time functions that make up a pv stream. The cutoff frequency parameter runs at the
+	 control-rate, but unlike tone and tonek, it is not specified in Hz, but as fractions
+	 of 1/2 frame-rate (actually the pv stream sampling rate), which is easier to
+	 understand. This means that the highest cutoff frequency is 1 and the lowest 0; the lower
+	 the frequency the smoother the functions and more pronounced the effect will be. This 
+	 opcode produces effects that are more or less similar to pvsblur, but with two important
+	 differences: 1.smoothing of amplitudes and frequencies use separate sets of filters; and 2. there is
+	 no increase in computational cost when higher amounts of 'blurring' (smoothing) are desired.
+	 	 
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3515893"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsmooth</strong></span> fsigin, kacf, kfcf</pre>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3515651"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>fsigin</em></span> -- input pv stream.
+    </p>
+        <p>
+      <span class="emphasis"><em>kacf</em></span> -- amount of cutoff frequency for amplitude function filtering, between 0 and 1,
+	                     in fractions of 1/2 frame-rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfcf</em></span> -- amount of cutoff frequency for frequency function filtering, between 0 and 1,
+	                     in fractions of 1/2 frame-rate.
+    </p>
+        <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3516561"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="id3516569"></a>
+          <p class="title">
+            <b>Example 427. Example</b>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+
+asig1  in                             ; input
+fim   pvsanal  asig1,1024,256,1024,0  ; pvoc analysis 
+fou   pvsmooth fim, 0.01, 0.01        ; smooth with cf at 1% of 1/2 frame-rate (ca 8.6 Hz)
+aout  pvsynth fou                     ; pvoc synthesis
+        </pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+    </p>
+        <p>
+     In the example above the input signal will be smoothed/blurred by pvsmooth with
+	 a cutoff frequency of 1% of 1/2 frame-rate (which is about 172Hz, so the cf is about 8.6Hz) .</p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3516594"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>May 2006 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>May 2006.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsmorph.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsout.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsmorph </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsout</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

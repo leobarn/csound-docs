@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN18</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN17.html" title="GEN17" />
+    <link rel="next" href="GEN19.html" title="GEN19" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN18</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN17.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN19.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="GEN18">
+      <a id="GEN18"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN18" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN18</span>
+        </h2>
+        <p>GEN18 — 
+      Writes composite waveforms made up of pre-existing waveforms.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id4069507"></a>
+        <h2>Description</h2>
+        <p>
+      Writes composite waveforms made up of pre-existing waveforms. Each contributing waveform requires 4 pfields and can overlap with other waveforms.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id4069519"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 18 fna ampa starta finisha fnb ampb startb finishb ...</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id4069842"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Must be a power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)">f</a> statement).
+    </p>
+        <p>
+      <span class="emphasis"><em>fna, fnb, etc.</em></span> -- pre-existing table number to be written into the table.
+    </p>
+        <p>
+      <span class="emphasis"><em>ampa, ampb, etc.</em></span> -- strength of wavefoms. These are relative strengths, since the composite waveform may be rescaled later. Negative values are permitted and imply a 180 degree phase shift.
+    </p>
+        <p>
+      <span class="emphasis"><em>starta, startb, etc.</em></span> -- where to start writing the fn into the table.
+    </p>
+        <p>
+      <span class="emphasis"><em>finisha, finishb, etc.</em></span> -- where to stop writing the fn into the table.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id4070236"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">f</span> 1  0  4096  10  1
+<span class="stamnt">f</span> 2  0  1025  18  1  1  0  512  1  1  513  1025</pre>
+        </div>
+        <p>
+
+      f2 consists of two copies of f1 written in to locations 0-512 and 513-1025.
+    </p>
+      </div>
+      <div class="refsect1" title="Deprecated Names">
+        <a id="id4070269"></a>
+        <h2>Deprecated Names</h2>
+        <p>
+      <span class="emphasis"><em>GEN18</em></span> was called <span class="emphasis"><em>GEN22</em></span> in version 4.18. The name was changed due to a conflict with DirectCsound.
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id4070288"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: William <span class="quote">“<span class="quote">Pete</span>”</span> Moss</td>
+          </tr>
+          <tr>
+            <td>University of Texas at Austin</td>
+          </tr>
+          <tr>
+            <td>Austin, Texas USA</td>
+          </tr>
+          <tr>
+            <td>January 2002</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 4.18, changed in version 4.19</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN17.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN19.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN17 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN19</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  
+
+
+  
+  <title>Csound Journal</title>
+  <link href="csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+
+
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL: <a href="../index.html">Home</a> | <a href="index.html">Spring
+      2006</a>
+</div>
+
+
+<center><div id="header">
+<h2>Tour of Oscillators</h2>
+
+Jim Hearon<br>
+Email: j_hearon AT hotmail.com
+</div></center>
+
+
+<div id="content">
+<h2>Introduction</h2>
+There are a large number of oscillator opcodes in Csound. This article takes a brief tour of those oscillators and attempts to demonstrate the various differences,
+and usefulness between the different types of oscillators.  The graphs below are the output of an oscillator at the A- or K- rate, in relation
+to an input parameter via an f-table.  Also a list of the various oscillators is given, as well a brief summary.  Finally, if you have been using a particular 
+oscillator consistently, this article might prompt you to experiment with other oscillators in order to obtain better precision or control over interpolation values.
+
+<h2><br>
+I. A-Rate Output Graphs <br>
+</h2>
+<br>For oscillators which have an a-rate output 
+and take an ifn input the following methods were employed: 
+<br>1.) A 16 point sine table was generated as ifn input using Gen10 and an "f" statement in the score.
+This was purposely small so that the outputs could
+be easily compared to the input table.
+<br>2.) An empty table was created in the instrument playing
+the type of oscillator.  This table was 512 points long
+since tablew along with an index over p3 from 0 to 512 was
+used to "capture" the a-rate output of oscillator over time.  Alternatively the "capture" table could be the same as the input table, (16 points) but this is probably not a true picture of the oscillator over time and also makes it harder to see how the oscillator is actually interpolating the input table's values.
+
+<br>3.) The oscillator's parameters used a set amp (10000) and a set frequency (100 cps) so that consistency could be maintained in the output tables.  Alternatively the pitch could be swept (20 Hz - 20KHz), but this makes it harder to select a test segment for comparison purposes in the output table.  Also there is a general 
+problem with "seeing" the sine shape for low frequencies.
+
+<br>4.) The output was saved to file.  Then this file was opened
+and a segment from the beginning of the table to the max amp point (10000, specified in the oscillators parameters) was cut and saved to a new table.
+
+<br>5.) This new table was compared to other saved tables, as well as the initial 16-point input sine table for differences.
+<br>6.) The new table was saved to post script file type using the post script option on Winsound.
+
+<pre>A-RATE OSCILLATOR OUTPUT SAVED TO A TABLE</pre>
+<pre>
+&lt;CsoundSynthesizer&gt;
+&lt;CsInstruments&gt;
+sr=44100
+kr= 100
+ksmps=441
+nchnls=1
+
+gitmp  ftgen 100, 0, 512, 10, 1
+ga1 init 0
+
+instr 1
+ga1 oscil 10000, 100, 10
+endin
+
+instr 2
+andx line 0, p3, 512
+tablew ga1, andx, 100 
+endin
+
+instr 3
+ftsave "testOSCIL.save", 1, 100
+endin
+&lt;/CsInstruments&gt;
+&lt;CsScore&gt;
+;16 POINT SINE
+f10  0   16    10  1
+i1 0 5
+i2 6 5
+i3 12 5
+e
+&lt;/CsScore&gt;
+&lt;CsoundSynthesizer&gt;
+</pre>
+<pre>EXAMPLE OF 32 POINTS FROM OSCIL OPCODE OUTPUT TABLE</pre>
+-3826.832764<br>
+-3826.832764<br>
+-7071.066406<br>
+-7071.066406<br>
+-9238.794922<br>
+-9238.794922<br>
+-9238.794922<br>
+-10000.000000<br>
+-10000.000000<br>
+-10000.000000<br>
+-9238.795898<br>
+-9238.795898<br>
+-7071.068359<br>
+-7071.068359<br>
+-7071.068359<br>
+-3826.835205<br>
+-3826.835205<br>
+-3826.835205<br>
+-0.000874<br>
+-0.000874<br>
+3826.833740<br>
+3826.833740<br>
+3826.833740<br>
+7071.066895<br>
+7071.066895<br>
+7071.066895<br>
+9238.794922<br>
+9238.794922<br>
+10000.000000<br>
+10000.000000<br>
+10000.000000<br>
+
+<img src="images/oscillators/A-Rate_1_2.jpg" width="720" height="466" alt="" border="0">
+<img src="images/oscillators/A-Rate_3_4.jpg" width="720" height="466" alt="" border="0">
+<img src="images/oscillators/A-Rate_5_6.jpg" width="720" height="466" alt="" border="0">
+<img src="images/oscillators/A-Rate_7_8.jpg" width="720" height="466" alt="" border="0">
+<img src="images/oscillators/A-Rate_9_10.jpg" width="720" height="466" alt="" border="0">
+<img src="images/oscillators/A-Rate_11.jpg" width="360" height="466" alt="" border="0">
+
+<br>
+
+<br>
+<h2>II.  K-rate Output Graphs <br>
+</h2>
+<br>
+1. The opcode "dumpk" was used to send k-rate ouput to file, based on the same 16 point input sine, as above.  For the "dumpk" opcode's <i>iprd</i> input parameter, a value of 0 implies one control period.
+<br>
+2. With a SR of 44100 Hz, the Kr was set to 15 since 16 would not work (Csound 4.23).
+<br>
+3. In the .orc file the <i>cps</i> input parameter for the oscillator was set to 1, and in the .sco file the duration, P3, was set to 1 in order to yield a 16 point output.
+<br>
+<pre>K-RATE OSCILLATOR OUTPUT SAVED TO A TABLE</pre>
+
+<pre>&lt;CsoundSynthesizer&gt;
+&lt;CsInstruments&gt;
+sr=44100
+kr=15
+nchnls=1
+
+instr 1
+ksig oscil 10000, 1, 10
+dumpk ksig, "oscilDump", 8, 0
+endin
+
+&lt;/CsInstruments&gt;
+&lt;CsScore&gt;
+;16 POINT SINE
+f10  0   16    10  1
+i1 0 1
+e
+&lt;/CsScore&gt;
+&lt;CsoundSynthesizer&gt;</pre>
+<br>
+<pre>EXAMPLE OF 16 POINTS FROM OSCIL OPCODE OUTPUT TABLE at K-Rate</pre>
+0.0000<br>
+3826.8345<br>
+7071.0679<br>
+9238.7959<br>
+10000.0000<br>
+9238.7949<br>
+7071.0669<br>
+3826.8337<br>
+-0.0009<br>
+-3826.8352<br>
+-7071.0684<br>
+-9238.7959<br>
+-10000.0000<br>
+-9238.7949<br>
+-7071.0664<br>
+<img src="images/oscillators/K-Rate_1_2.jpg" width="720" height="466" alt="" border="0">
+<img src="images/oscillators/K-Rate_3_4.jpg" width="720" height="466" alt="" border="0">
+<img src="images/oscillators/krate_5.jpg" width="360" height="466" alt="" border="0">
+
+<br>
+<h3> K-rate Outputs</h3>
+<br>
+The Control period was evaluated for OSCIL, OSCILI, OSCIL3, 
+and OSCIL1I to see if the results compared favorably with the 16 point 
+input sine.  The outputs at the K-rate do not result in significant differences.
+
+<br>
+<h2> Summary <br>
+</h2>
+SIMILARITIES-
+Most use function table input, and have a k or a rate output variable.
+There is usually an input parameter for amplitude and pitch, sometimes phase.
+<br><br>
+DIFFERENCES-
+Differences include the use of x,k, and i input rate parameters, whether the 
+oscillator opcode outputs at the a- or k-rate, and the way the opcode renders 
+or interpolates the function table of the input parameter.
+<br><br>
+SEEING AND HEARING THE DIFFERENCES-
+For those that use k- or control rate output, dumpk can be used to compare 
+differences in the output of the control rate signal.  However some 
+oscillators use i-rate params to set duration or number of passes thru a 
+function table per second in order to simulate pitch, therefore it is best 
+to use a static (one i pass) rather than sweeping pitch (k function) to 
+compare k outputs of those oscillators with all other.
+<br><br>
+For those that use a or a- or audio rate output, the generating input sine 
+table should be printed and compared with the a-rate variables output of the 
+various a- rate oscillators.  The a-rate output from the oscillator can be 
+saved in a table.
+<br>
+<br>
+<h3> A-rate Outputs</h3>
+<u>Oscil</u> - a-rate output, using a 16 point input sine table.
+Oscil uses only the input ifn's table points to render results at the amplitude 
+and frequency defined as input parameters at the k-rate.
+<br>
+<u>Oscili</u> - a-rate ouput, using a 16 point input sine table.  
+Oscili interpolates the input ifn's table points over the specified amplitude and 
+frequency defined as input parameters at the k-rate.
+<br>
+<u>Oscil3</u> - a-rate output, using a 16 point input sine table.
+Oscil3 interpolates using cubic interpolation the input ifn's table points over 
+the specified amplitude and frequency defined as input parameters at the k-rate.  
+It yields the same number of interpolated points as Oscili, but the curve is 
+slightly sharper.
+<br>
+<u>Oscils </u>- a-rate output, but does not use an input table therefore is not 
+a table lookup oscillator?  Yet the output compares closely with the interpolating 
+oscillators OSCILI and OSCIL3 above; but shows slight differences in the shape 
+of the curve.
+<br>
+<u>Oscilikt</u>- oscilikt is very similar to oscili, but allows changing the 
+table number at k-rate. It is slightly slower than oscili (especially with high 
+control rate), although also more accurate as it uses a 31-bit phase accumulator, 
+as opposed to the 24-bit one used by oscili. 
+<br>
+<u>Oscilikts</u>- oscilikts is the same as oscilikt, except it has a sync input 
+that can be used to re-initialize the oscillator to a k-rate phase value. It is 
+slower than oscilikt and osciliktp. 
+<br>
+<u>Osciliktp</u> - allows phase modulation (which is actually implemented as 
+k-rate frequency modulation, by differentiating phase input). The disadvantage 
+is that there is no amplitude control, and frequency can be varied only at the 
+control-rate. This opcode can be faster or slower than oscilikt, depending on 
+the control-rate. 
+<br>
+<u>Phasor</u> - There is no lookup table, only a sin function.  Yet its output 
+is very smooth and compares as one of the smoothest results.
+<br>
+<u>Osciln</u> - Uses only the input table's 16 point values and provides no interpolation.  Accesses table values at a user-defined frequency. This opcode can also be written as oscilx. Osciln will sample several times through the stored table at a rate of ifrq times per second, after which it will output zeros. Generates audio signals only, with output values scaled by kamp.   Difficult to control due to 
+itimes parameter.  Poorest definition.  Questionable frequency accuracy.  Better used to scan thru tables than to create pitch.
+<br>
+<u>Poscil</u> - Does not provide interpolation and uses only the input tables's 16 point values.  It uses floating-point table indexing, instead of integer math, like oscil and oscili. It is only a bit slower than oscili.   Since Csound 4.22, poscil can accept also negative frequency values and use a-rate values both for amplitude and frequency. So both AM and FM are allowed using this opcode.   It's output compares with Oscil.
+<br>
+<u>Poscil3</u> - High Precision Oscillator similar to Oscili.  Uses cubic interpolation and provides good results but can be slower than lower precision interpolation opcodes (oscili, oscil3).
+<br><br>
+<h2>
+III. Conclusion <br>
+</h2>
+OSCIL and POSCIL give poorest results because they are non-interpolating opcodes.  
+They only sample the input table's points.  Also OSCILN is non interpolating but 
+its itimes parameter makes it more useful to scan a table a certain number of 
+times than to create pitch.  The interpolating opcodes (OSCILi, OSCIL3, OSCILIKT, 
+OSCILIKTS, OSCILIKTP) all compare favorably and the cubic interpolations 
+provide good results with less work.  OSCILIKT, OSCILIKTS, and OSCILIKTP all 
+provide accessing tables at the k-rate.  Differences are OSCILIKTS has a sync 
+input to reset the phase (arate), and OSCILIKTP has krate phase modulation, 
+but no amplitude control.  OSCILS is a special case where it is not a table 
+look up oscillator, yet its a-rate output compares favorably with interpolating 
+opcodes.  PHASOR is also not a table look up oscillator, and its results are 
+very good compared to interpolating opcodes.
+<br><br>
+Many of the opcodes can accept negative frequency values as input.  The High 
+Precision opcodes offer the most number or rate possibilities for input and 
+output.  For ex. since Csound 4.22, poscil can accept also negative frequency 
+values and use a-rate values both for amplitude and frequency.  The manual has 
+a good examples for OSCILIKT (changing tables at the k-rate) where a k-rate 
+square wave function is created to oscillate between two tables, 
+OSCILIKTS using the a-rate phase change to create a "phasing" effect, and 
+OSCILIKTP where a difference is created between two different a-rate outputs 
+with different phase relationships.
+<br><br>
+
+Generating a sine shape at frequencies below @50Hz is difficult at the a-rate.  
+The shape tends towards sawtooth.  It seems k-rate is better suited for capturing 
+the output at extremely low frequency. Several approaches were tried at the a-rate: <br>
+1.) 1 cps, using 16 pt table (like input table)<br>
+2.) 10 cps, using large table which only results
+    in a sawtooth with more definition<br>
+3.) using lfo, and phasor at low freqs.  Result
+    is still a sawtooth<br>
+4.) Tried using the high precision oscillator Poscil
+    which results in a square wave<br>
+5.) Used Poscil3 which results in sawtooth<br>
+
+<br>
+<h4>Basic and High Precision Oscillators</h4>
+oscil --  A simple oscillator. <br>
+ar oscil xamp, xcps, ifn [, iphs]<br>
+kr oscil kamp, kcps, ifn [, iphs]<br>
+------<br>
+oscili --  A simple oscillator with linear interpolation. <br>
+ar oscili xamp, xcps, ifn [, iphs]<br>
+kr oscili kamp, kcps, ifn [, iphs]<br>
+------<br>
+oscil3 --  A simple oscillator with cubic interpolation.<br>
+ar oscil3 xamp, xcps, ifn [, iphs]<br>
+kr oscil3 kamp, kcps, ifn [, iphs]<br>
+-----<br>
+oscils --  A simple, fast sine oscillator <br>
+ar oscils iamp, icps, iphs [, iflg]<br>
+-----<br>
+oscilikt --  A linearly interpolated oscillator that allows changing the table number at k-rate.<br> 
+ar oscilikt xamp, xcps, kfn [, iphs] [, istor]<br>
+kr oscilikt kamp, kcps, kfn [, iphs] [, istor]<br>
+-----<br>
+oscilikts --  A linearly interpolated oscillator with sync status that allows changing the table number at k-rate.<br> 
+ar oscilikts xamp, xcps, kfn, async, kphs [, istor]
+-----<br>
+osciliktp --  A linearly interpolated oscillator that allows allows phase modulation. 
+ar osciliktp kcps, kfn, kphs [, istor]<br>
+-----<br>
+osciln --  Accesses table values at a user-defined frequency.<br>
+-----<br>
+oscilx --  Same as the osciln opcode. <br> 
+ar osciln kamp, ifrq, ifn, itimes<br>
+-----<br>
+poscil --  High precision oscillator.<br> 
+ar poscil aamp, acps, ifn [, iphs]<br>
+ar poscil aamp, kcps, ifn [, iphs]<br>
+ar poscil kamp, acps, ifn [, iphs]<br>
+ar poscil kamp, kcps, ifn [, iphs]<br>
+ir poscil kamp, kcps, ifn [, iphs]<br>
+kr poscil kamp, kcps, ifn [, iphs]<br>
+-----<br>
+poscil3 --  High precision oscillator with cubic interpolation.<br> 
+ar poscil3 kamp, kcps, ifn [, iphs]<br>
+kr poscil3 kamp, kcps, ifn [, iphs]<br>
+-----<br>
+oscil1 --  Accesses table values by incremental sampling.<br> 
+kr oscil1 idel, kamp, idur, ifn<br>
+------<br>
+oscil1i --  Accesses table values by incremental sampling with linear interpolation.<br> 
+kr oscil1i idel, kamp, idur, ifn<br>
+
+<br>
+<h4>Additional Oscillators</h4>
+Other Opcodes: (lfo, oscbnk, and phasor)<br> 
+------<br>
+Direct Table Access [using a Phasor for ex.] ( table, table3, and tablei)<br>
+------<br>
+FM Synthesis (foscil, and foscili)<br>
+------<br>
+Additive Synthesis and Resynthesis (hsboscil) <br>
+------<br>
+Dynamic Spectrum Oscillators(buzz, gbuzz, mpulse, vco, and vco2)<br>
+------<br>
+Sample Playback(loscil, loscil3, lphasor, lposcil, lposcil3,and waveset) <br>
+------<br>
+Midi Out (moscil)<br>
+------<br>
+
+The phasorbank example from the manual is notable for how to use several phasors at once.
+The oscillatorbank example is also good for showing how to dynamically create ftables and numbers in the .orc using ftgen.
+<br>
+<br>
+
+
+
+
+
+<h2>Acknowledgements</h2>
+Barry Vercoe et Al. 2005. <i>The Csound Reference Manual</i><br> 
+<a href="http://www.csounds.com/manual/html/index.html">
+http://www.csounds.com/manual/html/index.html</a><br><br>
+Dattorro, Jon.  "Effect Design, Part 3 Oscillators: 
+Sinusoidal and Pseudonoise", <br><i>Journal of the Audio Engineering Society</i>.  
+2002 March, Vol 50 Number 3.
+
+
+
+
+
+
+
+
+
+ 
+
+
+ 
+
+
+</div>
+
+
+</div>
+
+
+</body>
+</html>

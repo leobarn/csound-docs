@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>60_23_2.orc.html</title>
+<meta name="FORMATTER" content="Microsoft FrontPage 2.0">
+</head>
+
+<body stylesrc="../admin/adporc.html"
+background="../admin/AccciDefaultBackground.gif"
+bgcolor="#FFFFFF">
+
+<pre>; ************************************************************************
+; ACCCI:      60_23_2.ORC
+; synthesis:  phase vocoder(60)
+;             kfmod variable(23)
+;             transposition control by LINSEG, speech1.pv1(2)
+; coded:      jpg 12/93
+
+
+sr = 44100
+kr  =  441
+ksmps= 100
+nchnls = 1
+
+
+instr 1; *****************************************************************
+idur    = p3
+ibeg    = p4
+ifqsc   = cpspch(p5)/200    ; scale frequency down, towards unity
+imid    = p6                ; assuming fundamental of 200 Hz...
+iend    = p7
+
+   ktimpnt   line   0, idur, 5.1
+   kfmod     linseg ibeg, idur/2, imid, idur/2, iend
+   aout      pvoc   ktimpnt, ifqsc*kfmod, &quot;speech1.pv1&quot;
+             out    aout
+endin</pre>
+</body>
+</html>

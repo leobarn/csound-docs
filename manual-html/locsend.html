@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>locsend</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="linsegr.html" title="linsegr" />
+    <link rel="next" href="locsig.html" title="locsig" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">locsend</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="linsegr.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="locsig.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="locsend">
+      <a id="locsend"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLocsend" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">locsend</span>
+        </h2>
+        <p>locsend — 
+      Distributes the audio signals of a previous <span class="emphasis"><em>locsig</em></span> opcode.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3365455"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>locsend</em></span> depends upon the existence of a previously defined <a class="link" href="locsig.html" title="locsig"><em class="citetitle">locsig</em></a>. The number of output signals must match the number in the previous <span class="emphasis"><em>locsig</em></span>. The output signals from <span class="emphasis"><em>locsend</em></span> are derived from the values given for distance and reverb in the <span class="emphasis"><em>locsig</em></span> and are ready to be sent to local or global reverb units (see example below). The reverb amount and the balance between the 2 or 4 channels are calculated in the same way as described in the Dodge book (an essential text!).
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3365532"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>locsend</strong></span></pre>
+        <pre class="synopsis">a1, a2,  a3, a4 <span class="command"><strong>locsend</strong></span></pre>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3365559"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  asig some audio signal
+  kdegree            <span class="emphasis"><em>line</em></span>    0, p3, 360
+  kdistance          <span class="emphasis"><em>line</em></span>    1, p3, 10
+  a1, a2, a3, a4     <span class="emphasis"><em>locsig</em></span>  asig, kdegree, kdistance, .1
+  ar1, ar2, ar3, ar4 <span class="emphasis"><em>locsend</em></span>
+  ga1 = ga1+ar1
+  ga2 = ga2+ar2
+  ga3 = ga3+ar3
+  ga4 = ga4+ar4
+                     <span class="emphasis"><em>outq</em></span>    a1, a2, a3, a4
+<span class="emphasis"><em>endin</em></span>
+
+<span class="emphasis"><em>instr</em></span> 99 ; reverb instrument
+  a1                 <span class="emphasis"><em>reverb2</em></span> ga1, 2.5, .5
+  a2                 <span class="emphasis"><em>reverb2</em></span> ga2, 2.5, .5
+  a3                 <span class="emphasis"><em>reverb2</em></span> ga3, 2.5, .5
+  a4                 <span class="emphasis"><em>reverb2</em></span> ga4, 2.5, .5
+                     <span class="emphasis"><em>outq</em></span>    a1, a2, a3, a4
+  ga1=0
+  ga2=0
+  ga3=0
+  ga4=0
+        </pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      In the above example, the signal, <span class="emphasis"><em>asig</em></span>, is sent around a complete circle once during the duration of a note while at the same time it becomes more and more <span class="quote">“<span class="quote">distant</span>”</span> from the listeners' location. <span class="emphasis"><em>locsig</em></span> sends the appropriate amount of the signal internally to <span class="emphasis"><em>locsend</em></span>. The outputs of the <span class="emphasis"><em>locsend</em></span> are added to global accumulators in a common Csound style and the global signals are used as inputs to the reverb units in a separate instrument.
+    </p>
+        <p>
+      <span class="emphasis"><em>locsig</em></span> is useful for quad and stereo panning as well as fixed placed of sounds anywhere between two loudspeakers. Below is an example of the fixed placement of sounds in a stereo field.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="emphasis"><em>instr</em></span> 1
+  a1, a2             <span class="emphasis"><em>locsig</em></span>  asig, p4, p5, .1
+  ar1, ar2           <span class="emphasis"><em>locsend</em></span>
+  ga1=ga1+ar1
+  ga2=ga2+ar2
+                     <span class="emphasis"><em>outs</em></span> a1, a
+<span class="emphasis"><em>endin
+instr</em></span> 99 
+  ; reverb....
+<span class="emphasis"><em>endin</em></span>
+        </pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      A few notes:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  ;place the sound in the left speaker and near:
+  i1 0 1 0 1
+  
+  ;place the sound in the right speaker and far:
+  i1 1 1 90 25
+  
+  ;place the sound equally between left and right and in the middle ground distance:
+  i1 2 1 45 12
+  e
+        </pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      The next example shows a simple intuitive use of the distance value to simulate Doppler shift. The same value is used to scale the frequency as is used as the distance input to <span class="emphasis"><em>locsig</em></span>.
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  kdistance          <span class="emphasis"><em>line</em></span>    1, p3, 10
+  kfreq = (ifreq * 340) / (340 + kdistance)
+  asig               <span class="emphasis"><em>oscili</em></span>  iamp, kfreq, 1
+  kdegree            <span class="emphasis"><em>line</em></span>    0, p3, 360
+  a1, a2, a3, a4     <span class="emphasis"><em>locsig</em></span>  asig, kdegree, kdistance, .1
+  ar1, ar2, ar3, ar4 <span class="emphasis"><em>locsend</em></span>
+        </pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3366683"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="locsig.html" title="locsig"><em class="citetitle">locsig</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3366701"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="linsegr.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="locsig.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">linsegr </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> locsig</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

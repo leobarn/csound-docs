@@ -1,0 +1,148 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>instr_2.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* instr_2.c */
+/* instrument 2 ("P"-stage) */
+
+#include &lt;math.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs, prototypes */
+
+int instr_2(int bat);
+
+<A NAME="instr_2">int instr_2(int bat)</A>
+{
+&#9;int pc1, pc2, pcdiff, tally1[PA_NPC], tally2[PA_NPC],
+&#9;  m1, m2, numnotes=lcount(rsco)-1, numpevs=abs(bat),
+&#9;  evnum, reach, dir,
+&#9;  p, q, r, s, j, nl=(bat&gt;0);
+&#9;float dur, tdur, durf, pchdiff1, pchdiff2, pcsize=(float)1/PA_NPC,
+&#9;  notetime, pch1, pch2, freq1, freq2,
+&#9;  absmindur=0.025, absminatk=0.005, absmindec=0.0125,
+&#9;  minatk, maxatk, mindec1, mindec2, maxdec1, maxdec2,
+&#9;  absminfreq=50, absmaxfreq=18000,
+&#9;  absminpch=gof(PA_MINPCH-2,octcps(absminfreq)),
+&#9;  absmaxpch=lof(PA_MAXPCH+2,octcps(absmaxfreq));
+&#9;  
+&#9;for(q=0; q&lt;PA_NPC; q++) tally1[q]=tally2[q]=0;  
+
+&#9;i2ev=&amp;sco-&gt;e[1];
+&#9;i1ev=&amp;rsco-&gt;e[1];
+&#9;
+&#9;if(nl) {
+&#9;&#9;printf("\n\n; \"P\"-stage, instr 2:\n\n\t");
+&#9;&#9;for(j=1; j&lt;=NUM_I2PFIELDS; j++) printf("\t%-7s", i2pf[j]);
+&#9;}
+
+&#9;for(evnum=1, q=0; q&lt;numnotes; q++, i1ev++) {
+&#9;&#9;do {
+&#9;&#9;&#9;reach=(*i1ev)-&gt;p[I1_RCH];
+&#9;&#9;&#9;p=(q*PA_STEP)+2;
+&#9;&#9;&#9;if(reach&lt;0 &amp;&amp; abs(reach)&gt;q) {
+&#9;&#9;&#9;&#9;numpevs-=2*(abs(reach)-q);
+&#9;&#9;&#9;&#9;reach=(-q);
+&#9;&#9;&#9;}
+&#9;&#9;&#9;if(reach&gt;0 &amp;&amp; q+reach&gt;numnotes) {
+&#9;&#9;&#9;&#9;numpevs-=2*(abs(reach)-(numnotes-q));
+&#9;&#9;&#9;&#9;reach=numnotes-q;
+&#9;&#9;&#9;}
+&#9;&#9;&#9;if(reach==0) q++, i1ev++;
+&#9;&#9;} while(reach==0);
+
+&#9;&#9;pchdiff1=
+&#9;&#9;&#9;((*i1ev)-&gt;p[I1_PCH1])-((*(i1ev+reach))-&gt;p[I1_PCH1]);
+&#9;&#9;pchdiff2=
+&#9;&#9;&#9;((*i1ev)-&gt;p[I1_PCH2])-((*(i1ev+reach))-&gt;p[I1_PCH2]);
+&#9;&#9;dir=SIGN(reach);
+&#9;&#9;notetime=tdur=0;
+&#9;&#9;for(r=0; abs(r)&lt;abs(reach); r+=dir) tdur+=(*(i1ev+r))-&gt;p[II_DUR];
+&#9;&#9;durf=((*i1ev)-&gt;p[II_DUR])/(tdur);
+&#9;&#9;for(r=0; abs(r)&lt;abs(reach); r+=dir, evnum++, i2ev++) {
+&#9;&#9;&#9;(*i2ev)=createv(NUM_I2PFIELDS);
+&#9;&#9;&#9;(*i2ev)-&gt;op='i';
+&#9;&#9;&#9;(*i2ev)-&gt;p[II_I]=2;
+&#9;&#9;&#9;(*i2ev)-&gt;p[II_STA]=(*i1ev)-&gt;p[II_STA]+notetime+
+&#9;&#9;&#9;&#9;(.5*(PA_DURUNIT/(reach+dir)))+(.5*(PA_DURUNIT/(r+dir)));
+&#9;&#9;&#9;(*i2ev)-&gt;p[II_DUR]=dur=
+&#9;&#9;&#9;&#9;gof(((*(i1ev+r))-&gt;p[II_DUR])*durf,absmindur);
+&#9;&#9;&#9;notetime+=fabs((*i2ev)-&gt;p[II_DUR]);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_WID1]=(*(i1ev+r))-&gt;p[I1_WID2];
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_WID2]=(*(i1ev+r))-&gt;p[I1_WID1];
+&#9;&#9;&#9;pch1=((*(i1ev+r))-&gt;p[I1_PCH1])+pchdiff1;
+&#9;&#9;&#9;pch2=((*(i1ev+r))-&gt;p[I1_PCH2])+pchdiff2;
+&#9;&#9;&#9;freq1=cpsoct(pch1);
+&#9;&#9;&#9;freq2=cpsoct(pch2);
+&#9;&#9;&#9;pc1=pc(quant(pch1,pcsize));
+&#9;&#9;&#9;pc2=pc(quant(pch2,pcsize));
+&#9;&#9;&#9;tally1[pc1]++;
+&#9;&#9;&#9;tally2[pc2]++;
+&#9;&#9;&#9;
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_FREQ1]=fbetw(
+&#9;&#9;&#9;&#9;freq1*linscale(pc1,0,PA_NPC,0,1.6),
+&#9;&#9;&#9;&#9;absminfreq,absmaxfreq);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_FREQ2]=fbetw(
+&#9;&#9;&#9;&#9;freq2*linscale(pc2,0,PA_NPC,0,1.6),
+&#9;&#9;&#9;&#9;absminfreq,absmaxfreq);
+
+
+&#9;&#9;&#9;pcdiff=fabs(pc1-pc2)+((pc1==pc2)*PA_NPC);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_PDF1]=1/(fabs(pc1-pc2)+((pc1==pc2)*PA_NPC));
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_PDF2]=1/(PA_NPC-pcdiff+((pcdiff==PA_NPC)*PA_NPC));
+
+&#9;&#9;&#9;minatk=gof(absminatk, 0.05*dur);
+&#9;&#9;&#9;maxatk=5*minatk;
+&#9;&#9;&#9;m1=talmid(tally1);
+&#9;&#9;&#9;m2=talmid(tally2);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_ATK1]=
+&#9;&#9;&#9;&#9;linscale(pc1,(PA_NPC*(pc1&gt;m1)),m1,minatk,maxatk);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_ATK2]=
+&#9;&#9;&#9;&#9;linscale(pc2,(PA_NPC*(pc2&gt;m2)),m2,minatk,maxatk);
+
+&#9;&#9;&#9;mindec1=gof(absmindec,
+&#9;&#9;&#9;&#9;0.5*(dur-((*i2ev)-&gt;p[I2_ATK1])));
+&#9;&#9;&#9;mindec2=gof(absmindec,
+&#9;&#9;&#9;&#9;0.5*(dur-((*i2ev)-&gt;p[I2_ATK2])));
+&#9;&#9;&#9;maxdec1=(0.99*((*i2ev)-&gt;p[II_DUR]))-((*i2ev)-&gt;p[I2_ATK1])-mindec1;
+&#9;&#9;&#9;maxdec2=(0.99*((*i2ev)-&gt;p[II_DUR]))-((*i2ev)-&gt;p[I2_ATK2])-mindec2;
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_DEC1]=linscale(tally2[pc2],
+&#9;&#9;&#9;&#9;tally2[talmax(tally2)],tally2[talmin(tally2)],
+&#9;&#9;&#9;&#9;mindec1,maxdec1);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_DEC2]=linscale(tally1[pc1],
+&#9;&#9;&#9;&#9;tally1[talmax(tally1)],tally1[talmin(tally1)],
+&#9;&#9;&#9;&#9;mindec2,maxdec2);
+
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_PDB1]=linscale(tally1[pc1],
+&#9;&#9;&#9;&#9;tally1[talmin(tally1)],tally1[talmax(tally1)],
+&#9;&#9;&#9;&#9;PA_MINDB,PA_MAXDB);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_PDB2]=linscale(tally2[pc2],
+&#9;&#9;&#9;&#9;tally2[talmin(tally2)],tally2[talmax(tally2)],
+&#9;&#9;&#9;&#9;PA_MINDB,PA_MAXDB);
+&#9;&#9;&#9;&#9;
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_AZI1]=linscale(pc1,0,PA_NPC,DEG30,DEG120);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_AZI2]=linscale(pc2,0,PA_NPC,DEG330,DEG240);
+&#9;&#9;&#9;
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_DIST1]=linscale(tally1[pc1],
+&#9;&#9;&#9;&#9;tally1[talmin(tally1)],tally1[talmax(tally1)],
+&#9;&#9;&#9;&#9;PA_MINDIST,PA_MAXDIST);
+&#9;&#9;&#9;(*i2ev)-&gt;p[I2_DIST2]=linscale(tally2[pc2],
+&#9;&#9;&#9;&#9;tally2[talmin(tally2)],tally2[talmax(tally2)],
+&#9;&#9;&#9;&#9;PA_MINDIST,PA_MAXDIST);
+&#9;&#9;
+&#9;&#9;&#9;if(nl) {
+&#9;&#9;&#9;&#9;printf("\nP %i/%i:\ti%.1f", evnum, numpevs,
+&#9;&#9;&#9;&#9;&#9;(*i2ev)-&gt;p[II_I]);
+&#9;&#9;&#9;&#9;for(j=2; j&lt;=NUM_I2PFIELDS; j++)
+&#9;&#9;&#9;&#9;&#9;printf("\t%7.3f", (*i2ev)-&gt;p[j]); 
+&#9;&#9;&#9;}
+&#9;&#9;}
+&#9;}
+&#9;&#9;
+&#9;printf("\n; instr 2 finished\n");
+&#9;printf(";\n");
+
+&#9;return numpevs*(nl==1 ? 1 : -1);
+}</PRE></BODY>
+</HTML>

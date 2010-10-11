@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>linenr</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="linen.html" title="linen" />
+    <link rel="next" href="lineto.html" title="lineto" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">linenr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="linen.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lineto.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="linenr">
+      <a id="linenr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLinenr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">linenr</span>
+        </h2>
+        <p>linenr — 
+      The <span class="emphasis"><em>linen</em></span> opcode extended with a final release segment.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3362398"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>linenr</em></span> -- same as <a class="link" href="linen.html" title="linen"><em class="citetitle">linen</em></a> except that the final segment is entered only on sensing a MIDI note release. The note is then extended by the decay time.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3362619"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>linenr</strong></span> xamp, irise, idec, iatdec</pre>
+        <pre class="synopsis">kres <span class="command"><strong>linenr</strong></span> kamp, irise, idec, iatdec</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3362650"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>irise</em></span> -- rise time in seconds. A zero or negative value signifies no rise modification.
+    </p>
+        <p>
+      <span class="emphasis"><em>idec</em></span> -- decay time in seconds. Zero means no decay. An <span class="emphasis"><em>idec</em></span> &gt; <span class="emphasis"><em>idur</em></span> will cause a truncated decay.
+    </p>
+        <p>
+      <span class="emphasis"><em>iatdec</em></span> -- attenuation factor by which the closing steady state value is reduced exponentially over the decay period. This value must be positive and is normally of the order of .01. A large or excessively small value is apt to produce a cutoff which is audible. A zero or negative value is illegal.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3363262"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp, xamp</em></span> -- input amplitude signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>linenr</em></span> is unique within Csound in containing a <span class="emphasis"><em>note-off sensor</em></span> and <span class="emphasis"><em>release time extender</em></span>. When it senses either a score event termination or a MIDI noteoff, it will immediately extend the performance time of the current instrument by <span class="emphasis"><em>idec</em></span> seconds, then execute an exponential decay towards the factor <span class="emphasis"><em>iatdec</em></span>. For two or more units in an instrument, extension is by the greatest <span class="emphasis"><em>idec</em></span>.
+    </p>
+        <p>
+      You can use other pre-made envelopes which start a release segment upon recieving a note off message, like <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a> and <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>, or you can construct more complex envelopes using <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> and <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a>. Note that you don't need to use <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> if you are using <span class="emphasis"><em>linenr</em></span>, since the time is extended automatically.
+    </p>
+        <p>
+      These <span class="quote">“<span class="quote">r</span>”</span> units can also be modified by MIDI noteoff velocities (see veloffs).
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3363366"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>,
+      <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>,
+      <a class="link" href="envlpxr.html" title="envlpxr"><em class="citetitle">envlpxr</em></a>,
+      <a class="link" href="mxadsr.html" title="mxadsr"><em class="citetitle">mxadsr</em></a>,
+      <a class="link" href="madsr.html" title="madsr"><em class="citetitle">madsr</em></a>,
+      <a class="link" href="envlpx.html" title="envlpx"><em class="citetitle">envlpx</em></a>,
+      <a class="link" href="linen.html" title="linen"><em class="citetitle">linen</em></a>,
+      <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="linen.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lineto.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">linen </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lineto</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

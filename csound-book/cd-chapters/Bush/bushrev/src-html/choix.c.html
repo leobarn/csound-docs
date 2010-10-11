@@ -1,0 +1,176 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>choix.c</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BACKGROUND="bg3.jpg">
+
+<PRE>/* choix.c */
+/* handle choices, adjustments, data entry */
+
+#include &lt;ctype.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;math.h&gt;
+#include &lt;sys/param.h&gt;
+#include "<A HREF="defg.h.html">./defg.h</A>"&#9;/* macros, typedefs, prototypes */
+
+<A NAME="task">int task(void)</A>
+{
+&#9;char s[80];
+&#9;
+&#9;do {
+&#9;&#9;printf("\n\n");
+&#9;&#9;printf("; (A)djust/view working parameters\n\n");
+&#9;&#9;printf("; (V)iew datafield [enter an \"e\" to interrupt view]\n");
+&#9;&#9;printf("; (I)nitialize datafield\n");
+&#9;&#9;printf("; (L)oad datafield\n");
+&#9;&#9;printf("; (W)rite datafield\n\n");
+&#9;&#9;printf("; (E)nter/edit minspec values\n");
+&#9;&#9;printf("; (F)ind hd and hr values: minspec--&gt;specplex\n");
+&#9;&#9;printf("; (M)ake fullplex from specplex\n");
+&#9;&#9;printf("; (S)cale and quantize fullplex values\n");
+&#9;&#9;printf("; (C)reate scorefile\n");
+&#9;&#9;printf("; (Q)uit\n\n");
+&#9;&#9;printf("; choose one: ");
+&#9;&#9;gets(s);
+&#9;} while(!strchr("avinlwefmscq", tolower(*s)));
+&#9;return tolower(*s);
+}
+
+<A NAME="wh">int wh(char *chdx, char *chab)</A>
+{
+&#9;char s[80];
+&#9;int res;
+&#9;
+&#9;do {
+&#9;&#9;printf("\n; %s? ", chdx);
+&#9;&#9;gets(s);
+&#9;&#9;strcat(s, "\n");
+&#9;&#9;if(*s=='\n') break;
+&#9;} while(!strchr(chab, tolower(*s)));
+&#9;res=strcspn(chab, s)+1;
+&#9;return (res&gt;strlen(chab) ? 1 : res);
+}
+
+<A NAME="enteredit_specxy">void enteredit_specxy(void)</A>
+{
+&#9;int i,u=0;
+&#9;float x,y;
+&#9;&#9;
+&#9;if(PA_SPECPOI==MAX_POI) {
+&#9;&#9;printf("\n; Spec datafield full!\n; (Want to initialize it?)\n");
+&#9;&#9;return;
+&#9;}
+&#9;if(PA_SPECPOI&gt;0) {
+&#9;&#9;printf("\n; Current entries number 0 thru %i.\n; Start at (0-%i)? ", PA_SPECPOI-1, PA_SPECPOI);
+&#9;&#9;do scanf("%i", &amp;u);
+&#9;&#9;while (u &lt; 0 || u &gt; PA_SPECPOI);
+&#9;}
+
+&#9;printf("\n\n; Enter \"-1, -1\" to quit entry;\n; enter \"-2, -2\" to leave values unchanged and go to next entry;\n; enter \"-3, -3\" to go back one entry.\n\n");
+&#9;printf(";\t   x\t   y\n");
+&#9;printf(";\t-------\t-------\n");
+&#9;for(i=u; i&lt;MAX_POI; i++) {
+&#9;&#9;if(specxy[i].x&gt;0)
+&#9;&#9;&#9;printf("%d:\t[%.0f]\t[%.0f]\t(present values)\n",
+&#9;&#9;&#9;  i, specxy[i].x, specxy[i].y);
+&#9;&#9;do {
+&#9;&#9;&#9;printf("%d:\t", i);
+&#9;&#9;&#9;scanf("%f\t%f", &amp;x, &amp;y);
+&#9;&#9;} while(x&gt;ABS_XMAX || y&gt;ABS_YMAX);
+
+&#9;&#9;if(x==-1) {
+&#9;&#9;&#9;if(specxy[i].x!=-1)printf("\n; Okay--value of entry %i unchanged.", i);
+&#9;&#9;&#9;else printf("\n; Okay--%i points in minspec so far (last entry: %i).", PA_SPECPOI=i, i-1);
+&#9;&#9;&#9;break;
+&#9;&#9;}
+&#9;&#9;else if(x==-2) {
+&#9;&#9;&#9;if(specxy[i].x==-1) {
+&#9;&#9;&#9;&#9;printf("\n; There's no value there to begin with.  Leaving entry.");
+&#9;&#9;&#9;&#9;break;
+&#9;&#9;&#9;}
+&#9;&#9;}
+&#9;&#9;else if(x==-3) i-=2;
+&#9;&#9;else {
+&#9;&#9;&#9;specxy[i].x=x;
+&#9;&#9;&#9;specxy[i].y=y;
+&#9;&#9;&#9;PA_SPECPOI+=(i==PA_SPECPOI);
+&#9;&#9;}
+&#9;}
+&#9;copy_specxy();
+&#9;GOT_MINSPEC=YES;
+}
+
+<A NAME="adj_params">void adj_params(void)</A>
+{
+&#9;char cho[80];
+&#9;int nu=0;
+&#9;
+&#9;printf("\n; Enter parameter number to adjust, enter \"i\" to\n");
+&#9;printf("; initialize parameters to defaults (won't affect values\n");
+&#9;printf("; dependent upon table in memory), or press return to exit.\n");
+&#9;printf("; (nonbracketed values are fixed)\n");
+&#9;for(;;) {
+&#9;&#9;show_params(stdout);
+&#9;&#9;do {
+&#9;&#9;&#9;printf("; choice (\"i\", 1-%i, return to exit)? ", PA_NUMPARAMS-1);
+&#9;&#9;&#9;gets(cho);
+&#9;&#9;&#9;nu=atoi(cho);
+&#9;&#9;&#9;strcat(cho, "\n");
+&#9;&#9;} while ((nu&gt;PA_NUMPARAMS || nu==0) &amp;&amp; (*cho!='\n' &amp;&amp; *cho!='i'));
+&#9;&#9;if(*cho=='\n') break;
+&#9;&#9;if(*cho=='i') {
+&#9;&#9;&#9;init(PARS, TIND);
+&#9;&#9;&#9;printf("\n; Okay--initializing table-independent parameters to defaults...\n");
+&#9;&#9;}
+&#9;&#9;else {
+&#9;&#9;&#9;if(MOD==YES) {
+&#9;&#9;&#9;&#9;printf("\n; new value for\n; %s: ", dpa[nu].dex);
+&#9;&#9;&#9;&#9;gets(cho);
+&#9;&#9;&#9;&#9;if(KIND==FNAME) strcpy(dpa[nu].fname, cho);
+&#9;&#9;&#9;&#9;if(KIND==INT) dpa[nu].i=atoi(cho);
+&#9;&#9;&#9;&#9;if(KIND==FLOAT) dpa[nu].f=atof(cho);
+&#9;&#9;&#9;&#9;printf("\n; Okay.\n");
+&#9;&#9;&#9;}
+&#9;&#9;&#9;else printf("\n; Sorry--that value is fixed.\n");
+&#9;&#9;}
+&#9;}
+}
+
+<A NAME="check_pause">int check_pause(int t)</A>
+{
+&#9;char key[10];
+&#9;
+&#9;if(PA_TERMLINES&gt;0 &amp;&amp; fmod(t+1,PA_TERMLINES-3)==0) {
+&#9;&#9;gets(key);
+&#9;&#9;return (int)strchr(key, 'e');
+&#9;}
+&#9;else return 0;
+}
+
+<A NAME="getack">char *getack(void)</A>
+{
+&#9;char ackstr[80];
+&#9;printf("; [ok]:");
+&#9;return(gets(ackstr));
+}
+
+<A NAME="get_filename">char *get_filename(int what, int which)</A>
+{
+&#9;char fn[MAX_FNLEN], *filename;
+&#9;
+&#9;printf("\n; filename: %s[%s%s] ",
+&#9;&#9;PA_PATH, dpa[what+1].fname, (which==TXT &amp;&amp; what&lt;FSCO) ? ".txt" : "");
+&#9;do gets(fn);
+&#9;while(strlen(fn)&gt;MAX_FNLEN);
+&#9;if(strlen(fn)==0) strcpy(fn, dpa[what+1].fname);
+&#9;else strcpy(dpa[what+1].fname, fn);
+
+&#9;filename=fn;
+&#9;if(which==TXT &amp;&amp; what&lt;FSCO)
+&#9;&#9;if(!strstr(filename, ".txt")) strcat(filename, ".txt");
+&#9;return filename;
+}</PRE></BODY>
+</HTML>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsifd</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvshift.html" title="pvshift" />
+    <link rel="next" href="pvsinfo.html" title="pvsinfo" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsifd</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvshift.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsinfo.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="pvsifd">
+      <a id="pvsifd"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsifd" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsifd</span>
+        </h2>
+        <p>pvsifd — 
+     Instantaneous Frequency Distribution, magnitude and phase analysis.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3512602"></a>
+        <h2>Description</h2>
+        <p>
+  The pvsifd opcode takes an input a-rate signal and performs an Instantaneous Frequency,
+  magnitude and phase analysis, using the STFT and pvsifd (Instantaneous Frequency Distribution),
+  as described in Lazzarini et al, "Time-stretching using the Instantaneous Frequency Distribution and Partial
+  Tracking", Proc.of ICMC05, Barcelona. It generates two PV streaming signals, one containing the
+  amplitudes and frequencies (a similar output to pvsanal) and another containing amplitudes and 
+  unwrapped phases. 
+	      </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3512816"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ffr,fphs <span class="command"><strong>pvsifd</strong></span> ain, ifftsize, ihopsize, iwintype[,iscal]</pre>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3512834"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ffr</em></span> -- output pv stream in AMP_FREQ format
+    </p>
+        <p>
+      <span class="emphasis"><em>fphs</em></span> -- output pv stream in AMP_PHASE format
+    </p>
+        <p>
+      <span class="emphasis"><em>ifftsize</em></span> -- FFT analysis size, must be power-of-two and integer multiple of the hopsize.
+    </p>
+        <p>
+      <span class="emphasis"><em>ihopsize</em></span> -- hopsize in samples
+    </p>
+        <p>
+      <span class="emphasis"><em>iwintype</em></span> -- window type (O: Hamming, 1: Hanning) 
+    </p>
+        <p>
+      <span class="emphasis"><em>iscal</em></span> -- amplitude scaling (defaults to 1).
+    </p>
+        <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+      It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3513515"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="id3513523"></a>
+          <p class="title">
+            <b>Example 420. Example</b>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+ain inch 1                  ; input signal
+fs1,fsi2 pvsifd ain,2048,512,1 ; pvsifd analysis
+fst  partials fs1,fsi2,.003,1,3,500  ; partial tracking
+      aout  resyn fst, 1, 1.5, 500, 1 ; resynthesis (up a 5th)
+out aout
+        </pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+
+    </p>
+        <p>
+The example above shows the pvsifd analysis feeding into partial tracking and
+cubic-phase additive resynthesis with pitch shifting.
+    
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3513547"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>June 2005 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>November 2004.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvshift.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsinfo.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvshift </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsinfo</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

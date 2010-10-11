@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>massign</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="marimba.html" title="marimba" />
+    <link rel="next" href="max.html" title="max" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">massign</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="marimba.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="max.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="massign">
+      <a id="massign"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMassign" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">massign</span>
+        </h2>
+        <p>massign — 
+      Assigns a MIDI channel number to a Csound instrument.
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3389573"></a>
+        <h2>Description</h2>
+        <p>
+	    Assigns a MIDI channel number to a Csound instrument.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3389313"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>massign</strong></span> ichnl, insnum[, ireset]</pre>
+        <pre class="synopsis"><span class="command"><strong>massign</strong></span> ichnl, "insname"[, ireset]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3389340"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ichnl</em></span> -- MIDI channel number (1-16).
+    </p>
+        <p>
+      <span class="emphasis"><em>insnum</em></span> -- Csound orchestra instrument number.
+      If zero or negative, the channel is muted (i.e. it doesn't trigger a csound instrument, though information will still be received by opcodes like <a class="link" href="midiin.html" title="midiin"><em class="citetitle">midiin</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">insname</span>”</span></em></span> -- A string (in double-quotes) representing a named instrument.
+    </p>
+        <p>
+      <span class="emphasis"><em>ireset</em></span> -- If non-zero resets the
+    controllers; default is to reset.
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3390220"></a>
+        <h2>Performance</h2>
+        <p>
+      Assigns a MIDI channel number to a Csound instrument. Also useful to make sure a certain instrument (if its number is from 1 to 16) will not be triggered by midi noteon messages (if using something <a class="link" href="midiin.html" title="midiin"><em class="citetitle">midiin</em></a> to interpret midi information). In this case set <span class="emphasis"><em>insnum</em></span> to 0 or a negative number.
+    </p>
+        <p>
+      If <span class="emphasis"><em>ichan</em></span> is set to 0, the value of <span class="emphasis"><em>insnum</em></span> is used for all channels. This way you can route all MIDI channels to a single Csound instrument. You can also disable triggering of instruments from MIDI note events from all channels with the following line:
+    </p>
+        <pre class="programlisting">massign 0,0</pre>
+        <p>
+      This can be useful if you are doing all MIDI evaluation within Csound with an always on instrument(e.g. using <a class="link" href="midiin.html" title="midiin"><em class="citetitle">midiin</em></a> and <a class="link" href="turnon.html" title="turnon"><em class="citetitle">turnon</em></a>) to avoid doubling the instrument when a note is played.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3390289"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="ctrlinit.html" title="ctrlinit"><em class="citetitle">ctrlinit</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3390306"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Barry L. Vercoe - Mike Berry</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge, Mass.</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p><span class="emphasis"><em>ireset</em></span> parameter new in Csound5</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel range.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="marimba.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="max.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">marimba </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> max</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

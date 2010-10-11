@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft FrontPage 4.0">
+<TITLE>FM Drum Instrument</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<div align="left">
+
+<pre ALIGN="left"><br>	sr     = 44100<br>	kr     = 44100<br>	ksmps  = 1<br>	nchnls = 2</pre>
+<pre>;Simple FM drum instrument using foscil
+;Built in class on 09/28/06</pre>
+<pre>	instr	1	;FM Percussion Instr
+ipkamp	=	ampdb(p4)
+ibasoct	=	octpch(p5)
+icarfac	=	p6
+imodfac	=	p7
+imaxbnd	=	p8
+itrdur	=	p9
+itridur	=	itrdur*.75	;slightly shorter index envelope duration
+itrbdur	=	itrdur*1.5	;slightly longer pitch bend duration
+iendbnd	=	p10
+indx1	=	p11
+indx2	=	p12
+isusamp	=	ampdb(p13)
+kbend	linseg	imaxbnd,itrbdur,iendbnd,1,iendbnd	;pitch bend in oct
+koct	=	ibasoct+kbend
+kcarhz	=	cpsoct(koct*icarfac)
+kmodhz	=	cpsoct(koct*imodfac)
+kndx	expseg	indx1,itridur,indx2,p3-itridur,indx2
+aamp	expseg	ipkamp,itrdur,isusamp,p3-itrdur,.01
+asig	foscili	aamp,cpsoct(ibasoct+kbend),icarfac,imodfac,kndx,1 
+	outs	asig,asig
+	endin</pre>
+</div>
+<HR>
+<div align="left">
+
+<pre ALIGN="left">;test score for fm drum instrument<br>;single sine cycle<br>f01	0	8192	10	1<br>;half second of silence at start of tests<br>f0	.5<br>s<br>;Test a range of pitches, bend amounts, transient durations, and indexes.<br>;	st	dur	ipkdb	ipch	carfac	modfac	maxbnd	trdur	endbnd	indx1	indx2	isusdb<br>i01	0	.75	90	7.00	1	.31791	1	.2	0	7	.005	82<br>i01	+	.	.	6.08	.	.	&lt;	&lt;	.	&lt;<br>i01	+	.	.	6.04	<br>i01	+	.	.	6.00<br>i01	+	.	.	5.08<br>i01	+	.	.	5.04	.	.	1.5	.5	.	15<br>e</pre>
+</div>
+<HR>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=624>
+<TR><TD WIDTH="50%" VALIGN="TOP">
+<P><A HREF="../../../dwnld/classorc/fmdrum.orc">Download
+    fmdrum.orc</A></TD>
+<TD WIDTH="50%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="../../../dwnld/classsco/fmdrum.sco">Download
+    fmdrum.sco</A></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

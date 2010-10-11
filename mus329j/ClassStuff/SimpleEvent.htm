@@ -1,0 +1,44 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Simple Event Instrument</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>;========================================<br>;Simple demonstration of the event opcode<br>;RP<br>;========================================<br>	sr     = 44100<br>	kr     = 4410<br>	ksmps  = 10<br>	nchnls = 2</pre>
+<pre>	instr	1
+kamp	linseg	2000,p3,30000	;gradually get louder
+kpit	linseg	11,p3,8	;gliss down 3 octaves
+klast	init 1		;initialize last phase val
+kphase	phasor	20
+; The next line tests to see if the phasor has started a new
+; cycle. If it has, then we'll make a new event. Otherwise,
+; we'll skip over the event opcode and wait.
+	if	(kphase &gt;= klast) kgoto skip
+	event	&quot;i&quot;,2,0,.025,kamp,kpit
+skip:
+klast = kphase	;remember last phase val
+	endin</pre>
+<pre>	instr	2	;simple blip
+agate	linen	p4,.001,p3,.01
+asig	oscili	agate,cpsoct(p5),1
+	outs	asig,asig
+	endin</pre>
+<P><HR>
+<pre>f01	0	8192	10	1
+i01	0	3
+e </pre>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="50%" VALIGN="TOP">
+<P><A HREF="../../../dwnld/classorc/eventst.orc">Download eventst.orc</A></TD>
+<TD WIDTH="50%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="../../../dwnld/classsco/eventst.sco">Download eventst.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>puts</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ptrack.html" title="ptrack" />
+    <link rel="next" href="push.html" title="push" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">puts</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ptrack.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="push.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="puts">
+      <a id="puts"></a>
+      <div class="titlepage"></div>
+      <a id="Indexputs" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">puts</span>
+        </h2>
+        <p>puts — 
+      Print a string constant or variable
+          </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3494379"></a>
+        <h2>Description</h2>
+        <p>
+      puts prints a string with an optional newline at the end whenever the trigger signal is positive and changes.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3495133"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>puts</strong></span> Sstr, ktrig[, inonl]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3495150"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sstr</em></span> -- string to be printed
+    </p>
+        <p>
+      <span class="emphasis"><em>inonl</em></span> (optional, defaults to 0) -- if non-zero, disables the default printing of a newline character at the end of the string
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3495173"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> -- trigger signal, should be valid at i-time. The string is printed at initialization time if ktrig is positive, and at performance time whenever ktrig is both positive and different from the previous value. Use a constant value of 1 to print once at note initialization.
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3495191"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ptrack.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="push.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ptrack </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> push</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

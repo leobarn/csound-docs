@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>polynomial</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="polyaft.html" title="polyaft" />
+    <link rel="next" href="pop.html" title="pop" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">polynomial</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="polyaft.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="polynomial">
+      <a id="polynomial"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPolynomial" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">polynomial</span>
+        </h2>
+        <p>polynomial — 
+      Efficiently evaluates a polynomial of arbitrary order.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3482812"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>polynomial</em></span> opcode calculates a polynomial with a single a-rate input variable.  The polynomial is a sum of any number of terms in the form <span class="emphasis"><em>kn*x^n</em></span> where <span class="emphasis"><em>kn</em></span> is the nth coefficient of the expression.  These coefficients are k-rate values.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3483647"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>polynomial</strong></span> ain, k0 [, k1 [, k2 [...]]]</pre>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3483665"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> --  the input signal used as the independent variable of the polynomial ("x").
+    </p>
+        <p>
+      <span class="emphasis"><em>aout</em></span> --  the output signal ("y").
+    </p>
+        <p>
+      <span class="emphasis"><em>k0, k1, k2, ...</em></span> --  the coefficients for each term of the polynomial.
+    </p>
+        <p>
+      If we consider the input parameter <span class="emphasis"><em>ain</em></span> to be "x" and the output <span class="emphasis"><em>aout</em></span> to be "y", then the <span class="emphasis"><em>polynomial</em></span> opcode calculates the following equation:
+      </p>
+        <div class="literallayout">
+          <p><br />
+        y = k0 + k1*x + k2*x^2 + k3*x^3 + ...<br />
+      </p>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3483720"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="chebyshevpoly.html" title="chebyshevpoly"><em class="citetitle">chebyshevpoly</em></a>, 
+      <a class="link" href="mac.html" title="mac"><em class="citetitle">mac</em></a>
+      <a class="link" href="maca.html" title="maca"><em class="citetitle">maca</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3483753"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the polynomial opcode. It uses the file <a class="ulink" href="examples/polynomial.csd" target="_top"><em class="citetitle">polynomial.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="id3483770"></a>
+          <p class="title">
+            <b>Example 382. Example of the polynomial opcode.</b>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; no sound output</span>
+ -n
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+
+<span class="ohdr">sr</span> <span class="op">=</span> 44100	<span class="comment">; audio rate is not important</span>
+<span class="ohdr">kr</span> <span class="op">=</span> 10	<span class="comment">; execute the statements in instr 1 ten times per second</span>
+
+<span class="oblock">instr</span> 1
+	<span class="comment">; ax will vary from 1 to 10</span>
+	ax         <span class="opc">init</span>        1
+	
+	<span class="comment">; ay = ax^3 + 2ax^2 + 3ax + 4</span>
+	ay         <span class="opc">polynomial</span>  ax, 4, 3, 2, 1
+	
+	<span class="comment">; convert our a-rate signals to k-rate values so that we can print</span>
+	ky         <span class="opc">downsamp</span>    ay
+	kx         <span class="opc">downsamp</span>    ax
+	           <span class="opc">printf</span>      "<span class="op">%</span>d<span class="op">:</span>  <span class="op">%</span>d\n", kx, kx, ky
+
+	ax         <span class="op">=</span>           ax <span class="op">+</span> 1
+<span class="oblock">endin</span>
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+
+<span class="stamnt">i</span>1 0 1
+<span class="stamnt">e</span>
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3483808"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Anthony Kozar</td>
+          </tr>
+          <tr>
+            <td>January 2008</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="polyaft.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">polyaft </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pop</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

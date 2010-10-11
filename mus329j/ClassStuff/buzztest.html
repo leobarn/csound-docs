@@ -1,0 +1,68 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Buzz and Gbuzz Examples</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<PRE>sr&#9;=&#9;44100
+kr&#9;=&#9;4410
+ksmps&#9;=&#9;10
+nchnls&#9;=&#9;1
+;----------------------------------------
+&#9;instr&#9;1&#9;;example use of buzz
+ibigsin&#9;=&#9;1&#9;;requires a large sine wave table
+ifund&#9;=&#9;cpspch(p5)
+kgate&#9;linen&#9;p4,.1,p3,.5
+knharm&#9;linseg&#9;1,p3/2,p6,p3/2,1&#9;;vary n harmonics
+asig&#9;buzz&#9;kgate,ifund,knharm,ibigsin
+&#9;out&#9;asig
+&#9;endin
+;-----------------------------------------
+&#9;instr&#9;2&#9;;example use of gbuzz
+ibigcos&#9;=&#9;2&#9;;requires a large cosine table
+ilow&#9;=&#9;(p10 == 0 ? 1 : p10)&#9;;lowest n harmonics for gbuzz
+ifund&#9;=&#9;cpspch(p5)
+kgate&#9;linen&#9;p4,.1,p3,.5
+knharm&#9;linseg&#9;p6,p3/2,p7,p3/2,p6&#9;;vary n harmonics
+krfac&#9;linseg&#9;p8,p3/2,p9,p3/2,p8&#9;;vary amp scale factor
+asig&#9;gbuzz&#9;kgate,ifund,knharm,ilow,krfac,ibigcos
+&#9;out&#9;asig
+&#9;endin</PRE>
+<P><HR></P>
+<PRE>;Test score for buzztest.orc
+;large sine wave table for buzz
+f01&#9;0&#9;8192&#9;10&#9;1
+;large cosine wave table for gbuzz
+f02&#9;0&#9;8192&#9;9&#9;1&#9;1&#9;90
+;test buzz instrument
+;nn&#9;st&#9;dur&#9;amp&#9;pch&#9;nh
+i01&#9;0&#9;10&#9;20000&#9;6.00&#9;30
+s
+;test gbuzz instrument
+;first, just vary nh over time
+;nn&#9;st&#9;dur&#9;amp&#9;pch&#9;nhmin&#9;nhmax&#9;rmin&#9;rmax	ilow
+i02&#9;0&#9;10&#9;20000&#9;6.00&#9;1&#9;50&#9;1&#9;1	1
+;next, just vary r factor over time
+i .&#9;+&#9;.&#9;.&#9;.&#9;50&#9;50&#9;.25&#9;1
+;vary both nh and r
+i .&#9;+&#9;.&#9;.&#9;.&#9;1&#9;50&#9;.25&#9;1
+;set lowest harmonic to 8
+i .&#9;+&#9;.&#9;.&#9;.&#9;1&#9;42&#9;.25&#9;1	8
+e</PRE>
+<P><HR></P>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=624>
+<TR><TD WIDTH="35%" VALIGN="TOP">
+<P><A HREF="../../../dwnld/classorc/BUZZTEST.ORC">Download buzztest.orc</A></TD>
+<TD WIDTH="34%" VALIGN="TOP">
+<P>&nbsp;</TD>
+<TD WIDTH="32%" VALIGN="TOP">
+<P ALIGN="RIGHT"><A HREF="../../../dwnld/classsco/BUZZTEST.SCO">Download buzztest.sco</A></TD>
+</TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P></BODY>
+</HTML>

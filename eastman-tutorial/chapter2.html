@@ -1,0 +1,1094 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML VERSION="2.0">
+<HEAD>
+<!-- WEBMAGIC VERSION NUMBER="2.0.1" -->
+<!-- WEBMAGIC TRANSLATION NAME="ServerRoot" SRC="/var/www/htdocs/" DST="/" -->
+<!-- WEBMAGIC TRANSLATION NAME="ProjectRoot" SRC="./" DST="" -->
+<TITLE>chapter2.html</TITLE>
+</HEAD>
+<BODY>
+<A NAME="chapter2.html#"></A>
+<HR><CENTER><FONTSIZE="-1"><I>Eastman Csound Tutorial</I></FONT></CENTER>
+<PRE>
+<H5>   <A HREF="./chapter2.html#END"><FONT SIZE="+1">END</FONT> of this chapter</A>  -- <A HREF="chapter3.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 3)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+</H5><HR></PRE>
+
+
+<H2><A NAME="_wmh4_847374459">Chapter 2<BR>
+PITCH CONVERTERS ; INIT VARIABLES ; ENVELOPE GENERATORS ; READING IN SOUNDFILES</A></H2>
+<P>Much of this chapter will be devoted to the creation of <B>envelopes</B> (time varying upward and downward curves), which can be applied to amplitude,
+to pitch, and to most other parameters of our sounds. Because envelope values
+vary <I>within</I> a note, they must be produced by means of control signals, which we can
+create with oscillators, or with other unit generators specifically designed
+for this purpose.
+A second major topic we will consider, at the conclusion of this chapter,
+will be some methods of reading soundfiles into Csound for processing.
+<P>First, however, we will look at some alternative ways to specify pitch,
+and at initialization variables.</P>
+<H3><A NAME="_wmh3_847374411">2.1. Pitch Converters</A></H3>
+
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Convert/pitch.html"><B>PITCH CONVERTERS</B></A>
+in the Csound reference manual ]</P>
+
+<P>If we want equal-tempered pitches, typing in the frequency of each pitch
+in our scores grows old very quickly. Csound provides three alternative
+ways (actually four ways, if we include MIDI note numbers) to specify frequency
+or pitch. Here, we will consider: </P>
+<DD><B>cycles per second</B><I> (cps)</I> ; 
+<DD><B>octave pitch class</B> <I>(pch)</I> ; and 
+<DD>and <B>octave decimal</B> <I>(oct)</I> notations. 
+<P>Each of these pitch specification methods is useful in certain circumstances.</P>
+<DD><B>cps :</B> In <I>cps</I> notation, pitch is expressed in terms of cycles per second (hertz). This
+is the method we employed in Chapter 1. Ultimately, oscillators <U>always</U> must receive pitch information in terms of cps. 
+<DD><B>pch :</B> Here, digits to the left of the decimal point specify the octave, while
+digits to the right specify and equal-tempered pitch class. 8.00 represents
+middle C; 5.00 specifies the lowest pitch-class C on the piano, and 12.00
+the highest &quot;C&quot; on the piano. The &quot;fraction&quot; .01 represents
+the pitch class  &quot;C#&quot;, .02 &quot;D&quot;,
+and .11 &quot;B&quot; 
+<DD><FONT SIZE="2">In <I>pch</I> notation, any number with a decimal portion</FONT> <FONT SIZE="2">higher than .11 gets converted to the next highest</FONT> <FONT SIZE="2">octave. Thus, 8.12 is the same as 9.00, 8.15 is</FONT> <FONT SIZE="2">the same as 9.03, etc.</FONT> 
+<DD><B>oct :</B>  Octave designations (to the left of the decimal point) are
+the same as those in <I>pch</I> notation
+(8.00 is still middle c). However, now the octave is divided into 100 equal parts;
+8.50 is a pitch exactly half-way between middle c and the c above it (F#),
+8.75 is 3/4 of an octave above middle c (A 440). A half step has a value
+of .0833. 
+<DD><I><FONT SIZE="2">oct</FONT></I><FONT SIZE="2"> notation, while less common than <I>cps</I>
+and <I>pch,</I> is</FONT> <FONT SIZE="2">can be useful for representing
+microtonal tunings, vibratos, glissandi, and</FONT> <FONT SIZE="2">other purposes.</FONT> 
+<P>Csound provides several <B>pitch converter</B> utilities that enable us to convert pitch specifications between these
+three formats. The (ugly) names of these <I>pitch converter</I> utilities consist of two of these 3-letter groups butted together. The
+first three letters specify the output format of the pitch notation, while
+the second three letters indicate the <I>input</I> format. Thus, a line of code like this:</P>
+<CENTER><P ALIGN="CENTER"><I>cpspch(p4)</I></P>
+</CENTER><P>means: The argument in <I>p4</I> is currently in <I>pch</I> notation. Convert this value into its <I>cps</I> equivalent, and use this <I>cps</I> value to compute the oscillator's output value.</P>
+<P>Here are some other examples of pitch-conversion operations :</P>
+<PRE>
+
+<I><FONT SIZE="2">     (operation input value)             (output value)</FONT></I>
+    <B>octpch(8.01)</B>  returns     <B>8.083</B> (a half-step above middle C)
+    <B>pchoct(9.5)  </B> returns    <B> 9.06</B>  (F#,  18semitones  above middle C)
+<B>    cpspch(7.09)</B>  returns   <B>220</B>     (A below middle C)
+ <B>   octcps(294)</B>   returns     <B>8.166</B> (  D  above  middle  C)
+   <B> cpsoct(7.5)  </B> returns   <B>184.99</B>  (F# below middle C)
+  
+</PRE>
+<PRE><CENTER>---------------------------------------</CENTER></PRE>
+If you would like some additional help with conversions between <I>pch, cps</I> and
+some other common pitch notation formats, consult the following:
+<UL>
+<LI> The ECMC helpfile 
+<A target="_new" HREF="../../docs/hertz.html"><I>hertz</I></A>
+contains a table of conversions between <I>&quot;notes&quot; (score11), pch </I>and<I> cps </I>formats.
+<LI> The ECMC utility <I>midinote</I>, when submitted with no argument, displays
+a similar table of corresponding (1) MIDI note numbers, (2) <I>score11 notes</I> designations,
+(3) octave pitch class numbers and (4) <I>cps</I> (hertz, or frequency) values.<BR>
+<LI> An appendix to the online version of the <I>Csound Reference Manual</I> called
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Appendices/table1.html"><I>Table 1</I></A>
+contains conversions between (1) <I> note names</I>, (2) <I>pch</I> notations
+and (3) MIDI note numbers. However, the <I>NOTE</I> names within this table do
+<STRONG>not</STRONG> correspond to <I>score11 notes</I> designations. (Middle <I>c</I>
+in this table is <I>C5</I>, rather than <I>c4</I> as in the <I>score11 notes</I>
+keyword.)
+</UL>
+<PRE><CENTER>---------------------------------------</CENTER></PRE>
+
+<P>Next question: How do we use these things? Let's go back to our sample orchestra
+from Chapter 1 and modify the oscillator's second (frequency) argument as
+follows: </P>
+<CENTER><DD ALIGN="CENTER"><I>a1 oscili p5, </I><B>cpspch(p4), </B><I>p6 </I>
+</CENTER><P>Now the value in <I>p4</I> will be converted from <I>pch</I> to <I>cps,</I> before the oscillator performs any computation. This illustrates an important
+feature of unit generator arguments in Csound. An argument may consist of
+an <B>expression</B> - one or more mathematical or logical operations to be performed, such
+as addition, multiplication, substitution or (as here) conversion.</P>
+<P>With this <I>cpspch</I> converter in place in our orchestra file, we can now specify equal-tempered
+pitches in our score:</P>
+<PRE>
+     Orchestra file:
+          sr= 22050
+          kr= 2205
+          ksmps= 10
+          nchnls= 1
+          instr 1
+          asound oscili p5,<B>cpspch(p4)</B>,p6
+          out asound
+          endin
+           -----------------------------------------------
+
+     Score11 input file :
+          *f1 0 1024 10 1.;
+          *f2 0 1024 10 .3 1. .4 .15 .05;
+          *f3 0 1024 9 1. 1. 0 2.7 .67 0 5.4 .3 0 8.1 .1 0;
+          i1 0 0 3;
+          p3 2;
+          <B>p4 no c4/ df3/ g5;</B>
+          p5 1. 8000 12000;
+          p6 nu 1/ 2/ 3;
+          end;
+           -----------------------------------------------
+     Csound score file output produced by <I>score11</I> from the input file above:
+          f1 0 1024 10 1.
+          f2 0 1024 10 .3 1. .4 .15 .05
+          f3 0 1024 9 1. 1. 0 2.7 .67 0 5.4 .3 0 8.1 .1 0
+            i1 0.000 2.000 0 9723 1
+            i1 2.000 2.000 0 8752 2
+            i1 4.000 2.000 0 9369 3
+          e
+           -----------------------------------------------
+</PRE>
+<H4><A NAME="_wmh4_847374440">2.2. Initialization Values</A></H4>
+<P>Suppose that we want to use the value of <I>cpspch(p4)</I> more than once in our instrument block. We might wish, for example, to
+create several oscillators, each producing some multiple of the frequency
+specified in p4. Typing the magic incantation <I>cpspch(p4)</I> several times is not an appealing prospect, nor is it necessary. By creating
+an <B>initialization variable, </B>we can direct Csound to compute this value once, give the result a name
+(which must begin with the character <B>i</B>), store the result in RAM, and return
+the value of this variable whenever we call it by name. Here is an example:</P>
+<PRE>
+<I>     ipitch = cpspch(p4)     a1 oscili .5 * p5, ipitch, p6</I>
+<I>     a2 oscili .3 * p5, 2.001 * ipitch, p6</I>
+<I>     a3 oscili .2 * p5, 4.98 * ipitch, p6</I>
+<I>     a1 = a1 + a2 + a3            ; add 'em up</I>
+<I>     out a1                       ; and spit 'em out</I>
+</PRE>
+<P> The first line of code above
+declares the variable <I>ipitch</I> and assigns to it the value of the operation <I>cpspch(p4). </I>The letter <I>i</I> that begins this output name signifies an operation that is performed at <B>initialization time,</B> before the production of samples begins. Unlike <I>a-rate </I>(audio) and <I>k-rate</I> (control) signals, <I>i-rate</I> (initialization) values are computed only once, at the very beginning of
+a note.</P>
+<P>Data from score p-fields are examples of initialization values. But, as
+here, initialization values can also be created within an instrument, and
+can be the result of a mathematical or logical expression (operation).
+These initialization values remain
+constant throughout a note, but often change from one note to the next.
+Each subsequent use of an init variable within the instrument algorithm
+actually consists of taking the current value of a particular memory location
+and patching it into an argument in some unit generator. Any string of numbers
+and/or letters after the initial<I> &quot;i&quot;</I> can be used to label the variable. We could just as well have called it <I>ivalue, i1 </I>or<I> ilikethis </I>as<I> ipitch.</I></P>
+<P>In the example above, all three oscillators access the value of <I>ipitch</I> within their frequency arguments. The second oscillator multiplies the <I>ipitch</I> value for this note by 2.001 (producing a slightly sharp second harmonic),
+while the third oscillator by multiplies the variable by 4.98 (producing
+a slightly flat fifth harmonic). The three oscillator signals are mixed
+together in the proportions 50 % (a1), 30 % (a2) and 20 % (a3), as specified
+in the amplitude arguments to these oscillators. The result of this mix
+is then assigned to the audio-rate variable <I>a1.</I> Note that this overwrites the previous value of a1, which can no longer
+be accessed and presumably is no longer needed. (It had <U>better</U> no longer be needed!)</P>
+<P>On the final two lines in this example, we have added comment (which begin
+with semicolons, the Csound comment symbol) to congratulate ourselves
+on this successful additive synthesis. The function for the oscillators,
+supplied in <I>p6</I> of our score, might well be a sine wave. However, it might also be a more
+complex signal, with many partial frequencies. If we like the results we
+get, we might also add several more oscillators to this additive synthesis
+algo- rithm.</P>
+<H4><A NAME="_wmh4_847374472">2.3. Envelope Generators</A></H4>
+<P>Now that we have greater flexibility in specifying pitch, and at least some
+control over timbre, our instrument is somewhat more useful, though probably
+still not something to which we would entrust a performance realization of, say,
+the complete <I>Goldberg Variations.</I> The most important feature it still lacks is time-varying amplitude control.
+Currently, the amplitude remains fixed at some level throughout a note.
+Not only is this oppressive to the ear, it also causes clicks at the beginnings
+and ends of each note. We are asking the loudspeaker cones to start
+and stop oscillating at this amplitude level almost instantaneously.
+Since inertia makes this impossible, they will flap around wildly for an instant at the onset 
+and conclusion of each note, producing noise artifacts (clicks).
+</P>
+<P>What we need is a means to shape the amplitude over the duration of each
+note, so that it rises from 0 (or near 0) to some maximum level determined
+in our score (probably in <I>p5</I>), then eventually falls back down to 0 at the end of the note. Such a rise
+and fall (or attack and decay) amplitude pattern is called an <I>envelope.</I></P>
+<P>Characteristically, musical sounds have amplitude envelopes with the following
+properties: There is generally a peak, or &quot;spike&quot; near the beginning of
+a note, as energy build up and the amplitude rises to its peak value. This
+rise in physical intensity is called the <I>attack.</I> Then, there is usually some attenuation, down to a <I>steady-state </I>level (typically between 50 and 90 % of the peak level). Actually, the steady-state
+is rarely very &quot;steady,&quot; but usually includes random and/or quasi-periodic variations.
+Finally, at the end of the note, after a violinist lifts her bow off the
+string, or a clarinetist stops blowing into the instrument, the amplitude
+falls off to zero. This is known as the <I>decay, </I>Idiophonic percussive sounds usually contain no &quot;steady state&quot; segment,
+but rather consist entirely of attack and decay.</P>
+<P>What we want to do then, is to create a signal at the control (or, less
+often, audio) rate that defines such a shape, and then feed this control
+signal to the amplitude input of our oscillator. There are several ways
+to create envelopes in Csound. Here, we will survey some of the most commonly
+used <I>envelope generators.</I></P>
+<H4><A NAME="_wmh4_847374480">2.4. Line and Expon</A></H4>
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/line.html"><B>LINE</B> and <B>EXPON</B></B></A>
+in the Csound reference manual ]</P>
+
+<P>The simplest envelope generators available in Csound are <I>line</I> and <I>expon.</I> Unit generator <B>line</B> creates a linear (straight line) connection between two values over a specified
+duration. Thus, there are three required arguments : (1) a beginning value;
+(2) the duration over which to move between the two values (generally this
+duration will be the entire duration of a note); and (3) the closing value.
+Consider the following modification to our sample orchestra :</P>
+<PRE>
+    <FONT SIZE="2"> (header omitted here)</FONT><CODE>
+     instr 1
+     ipitch = cpspch(p4)
+     <B>kmart line 0, p3, p5</B>
+     asound oscili <B>kmart,</B> ipitch, p6
+     out asound
+     endin
+</CODE></PRE>
+<P>Here we use the unit generator <I>line</I> to create a gradual, linear increase in amplitude from 0, at the start
+of the note, to our p5 value, at the very end of the note. Since this is
+a rather prosaic, off-the-shelf envelope, we call the output of this operation <I>kmart.</I> (Not all that funny, but I like it anyway.) Remember that the output name
+of a unit generator or mathematical operation must begin with an &quot;i,&quot; a
+&quot;k&quot;, or an &quot;a,&quot; specifying the rate at which the operation is performed,
+but that the remainder of the name can consist of any string of numbers
+and/or alphabetical characters.</P>
+<P>Next, we patch the current contents of memory location <I>kmart</I> into the amplitude argument
+of <I>oscili.</I> Note that the operations performed by <I>line</I> must be done <U>before</U> we
+call <I>oscili,</I> since the oscillator is looking for a control-rate value named <I>kmart.</I>
+In our instrument code, therefore, the call to <I>line</I> must precede the call to
+<I>oscili.</I> If we reversed the order of these two lines of code, <I>oscili</I> would
+be unable to find <I>kmart. Csound</I> would complain and quit.
+<P>Note, too, that the Csound manual indicates that <I>line</I> and <I>expon</I> can be run either at the control rate or at the audio rate (but NOT at
+the i-rate, since the values CHANGE within a note.) Why did we choose to
+run <I>line</I> at the k-rate? A single line segment is a simple shape, and not much resolution
+is needed to get the desired result.</P>
+<P><FONT SIZE="2">Occasionally, if a control value changes very rapidly (such as an attack
+that lasts just a few milliseconds) or has a complex shape, better audio
+quality can be achieved by running this control variable at the audio rate.
+The general rule, however, is to run control signals at the k-rate. (Audio
+signals, of course, MUST be run at the audio rate.)</FONT></P>
+<P>A final observation before we bid a fond adieu to unit generator <I>line.</I> Note in the Csound manual that the mnemonic names for the three arguments
+to <I>line</I> <I>(&quot;ia,&quot; &quot;idur1,&quot; </I>and<I> ib)</I> all begin with the letter <B>i</B>. This tells us that each of these inputs is an <I>i-time value</I> which CANNOT change within a note. </P>
+<P>Back to work.....</P>
+<P>One problem with using <I>line</I> is that linear amplitude changes (and linear pitch changes) often sound
+rather abrupt or unrealistic. In natural acoustic sounds, changes in amplitude
+(and also in pitch) more typically follow exponential curves. To obtain a more natural-sounding
+exponential increase in amplitude intensity, we could substitute <B>expon</B> for <I>line</I> in our instrument algorithm:</P>
+<CENTER><DD ALIGN="CENTER"><I>kmart expon 1, p3, p5</I> 
+</CENTER><P>Notice that we have changed the first argument value from a <B>0</B> to a <B>1</B>. Exponential segments are computed as <I>ratios</I> between two values. There is no ratio between zero and some number. Therefore,
+zeros are illegal in any exponential operation. If we had used a value of<B> .1</B> instead of <B>1.0</B> for the first argument, the slope of the exponential curve would be much
+steeper, with most of the increase coming at the very end of the note. The
+ratio of <I>.1 </I>to <I>p5 </I>is ten times greater than the ratio of <I>1.0</I> to <I>p5.</I> A value of <B>.01</B> would give us an extremely steep curve. If we were using <I>line, </I>however, there would be no audible difference between using 1, 0, .1 or
+.01 for the first argument.</P>
+<P>There is another restriction that applies to all exponential operations.
+One cannot go from a positive to a negative value, or vice versa. There
+is no ratio between positive and negative numbers.</P>
+<P>Actually, the line and expon amplitude envelope examples above, while 
+possibly instructive, are academic for our purposes here.
+The simple one-segment slopes produced by these two
+unit generators clearly are inadequate for the generation of amplitude envelopes,
+which must include at least two segments (a rise and a decay). However,
+line and expon sometimes are adequate for the creation of other types of
+control signals. In the following stereo orchestra file, expon is used to
+create a simple pitch glissando, and line is employed to produce a moving
+stereo pan:</P>
+<P>------------------------------------------------------------</P>
+<PRE>
+     Orchestra file :
+<I>          sr=44100</I>
+<I>          kr=2205</I>
+<I>          ksmps=20</I>
+<I>          nchnls=2</I>
+<I>     instr 1</I>
+<I>     ipitch  =  cpspch(p4)</I>
+<B>     kpitch   expon   ipitch, p3, p7 * pitch ;</B><I>glissando control signal</I>
+<I>     asound  oscili p5, <B>kpitch</B> , p6</I>
+<I>         ;  now add a moving stereo pan :</I>
+<I>   </I> <B> kpan   line   p8 , p3  , p9<I> </I></B><I> ;  pan envelope</I>
+<I>     outs  </I><B>kpan</B><I> * a1 ,  (1.  - </I><B>kpan</B>)<I> * a1</I>
+<I>     endin</I>
+<I>     ------------------------------------------------------------</I>
+     Score p-field values for glissando and pan:
+
+<I>     p7  nu 2./.97 ; &lt; multiplier (*p4) for ending pitch</I>
+<I>     p8  nu  1./.5 ; &lt; starting %  of signal sent to left channel</I>
+<I>     p9  nu  0/.25 ; &lt; end % of signal sent to left channel</I>
+                         ---------------
+</PRE>
+Results:<BR>
+<I>Pitch :</I> For the first note,  the  pitch  will
+begin  on the tone specified in <I>p4,</I> then, over the full
+duration of the note, glissando up  one  octave  <I>(p7</I>  = (2.)<BR>
+For  the  second  note,  the  pitch  will descend
+slightly ( to .97  times  the  starting  frequency,  or
+about a quarter tone down).<BR>
+<I>Pan :</I> The first note will  begin  with  a  hard
+left  pan  <I>(p8</I>  =  1.).   Over the full duration of the
+note, this sound  will  move  gradually  to  the  right
+speaker. The second note will begin mid way between the
+two speakers, and move to a concluding position 3/4  of
+the way to the right.
+<P>The panning operation above will work fairly well, but could be
+improved. For psychoacousical reasons, a sound emanating mid way between
+two loudspeakers (a <I>kpan</I> value of .5 or so in the example above)
+tends to sound softer than the same sound panned hard left or hard right.
+The panpot circuits on most hardware mixing consoles compensate for this
+nonlinearity by logarithmically varying the output intensity of signals
+as the potentiometer position is moved, applying 3 dB of gain when the
+panpot is centered and no gain when the pot is moved all the way
+to the right or left.
+<P>To improve our panning subroutine in the example above, therefore,
+we could employ the Csound value converter
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Convert/value.html"><B>sqrt</B></A>,
+which returns the square root of an input value or expression:
+<PRE>
+<I>         ;  now add a moving stereo pan :</I>
+<I>     kpan   line   p8 , p3  , p9 ;  pan envelope</I>
+<B>     kleft = sqrt(kpan)
+     kright = sqrt(1. kpan)
+     outs  kleft * a1 ,  kright * kpan</B>
+Now:
+   when <I>kpan</I> = 1.000  then <I>kleft</I> = 1.000  and <I>kright</I> = 0.000
+   when <I>kpan</I> = 0.900  then <I>kleft</I> = 0.949  and <I>kright</I> = 0.316
+   when <I>kpan</I> = 0.800  then <I>kleft</I> = 0.894  and <I>kright</I> = 0.447
+   when <I>kpan</I> = 0.700  then <I>kleft</I> = 0.837  and <I>kright</I> = 0.548
+   when <I>kpan</I> = 0.600  then <I>kleft</I> = 0.775  and <I>kright</I> = 0.632
+   when <I>kpan</I> = 0.500  then <I>kleft</I> = 0.707  and <I>kright</I> = 0.707
+   when <I>kpan</I> = 0.400  then <I>kleft</I> = 0.632  and <I>kright</I> = 0.775
+   when <I>kpan</I> = 0.300  then <I>kleft</I> = 0.548  and <I>kright</I> = 0.837
+   when <I>kpan</I> = 0.200  then <I>kleft</I> = 0.447  and <I>kright</I> = 0.894
+   when <I>kpan</I> = 0.100  then <I>kleft</I> = 0.316  and <I>kright</I> = 0.949
+   when <I>kpan</I> = 0.000  then <I>kleft</I> = 0.000  and <I>kright</I> = 1.000
+</FONT></PRE>
+Often, this will result in better stereo imaging and "smoother" panning
+operations.
+
+<H4><A NAME="_wmh4_847374487">2.5. Linseg and Expseg</A></H4>
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Generate/line.html"><B>LINSEG</B> and <B>EXPSEG</B></B></A>
+in the Csound reference manual ]</P>
+<P><B>linseg</B> and <B>expseg</B> work much like their little sisters <I>line</I> and <I>expon,</I> except that they enable us to include <U>any number </U> of linear <I>(linseg)</I> or exponential <I>(expseg) </I>envelope segments within a note.
+Thus, they do not have a fixed number of
+input arguments. Here is an example of how we can &quot;draw&quot; an amplitude envelope
+with <I>expseg:</I></P>
+<PRE>
+<FONT SIZE="3">k1 expseg 1,        .15,        12000,  .10,    10000,  p3-.5,  6000,  .25,     1</FONT>
+<FONT SIZE="3">         (value 1) (duration1) (val 2) (dur 2) (val 3) (dur 3) (val 4) (dur 4) (val 5)</FONT>
+</PRE>
+<P>The arguments to <I>expseg</I> or <I>linseg,</I> called <B>break-points,</B> present an alternating series of intensity levels and of durations between
+adjacent intensities. As with <I>expon</I> and <I>line</I>,the first and last values must be intensity levels.
+The <I>expseg</I> example above creates a series of four exponentially shaped
+connections ("curves") derived from
+the ratios between values 1 and 2, then values 2 and 3, and so on, and
+and zero amplitude values are illegal.
+If we had used <I>linseg</I> rather than <I>expseg</I> in the line above, then the segments between each pair of values would
+be linear instead of exponential, and zeros would be permissable.</P>
+<P>You might be wondering how we derived the sixth argument, <I>p3-.5,</I> in the example above. Since we want the envelope to last the exact duration
+of the note, all of the durational arguments must add up to <I>p3.</I> Thus, by adding up the other three durations (.15 , .1 and .25), and getting
+a total of .5, we simply make the rest of the note the &quot;steady-state&quot; time, <I>(p3 - .5).</I> One thing to watch for: this envelope will not work with notes shorter
+than .5 seconds. Why?</P>
+<P>Here's a more flexible envelope that can vary from note to note:</P>
+<PRE>
+<I><FONT SIZE="3">k1 expseg 1,         p7,          p5,      p3 - (p7+p8) , p9 * p5,  p8,      1</FONT></I>
+<I><FONT SIZE="3">    </FONT></I><FONT SIZE="3">     (value  1) (duration1)  (val  2) (dur  2)       (val 3)   (dur 3)  (val 4) </FONT>
+</PRE>
+<P>To use this amplitude envelope in our instrument, we would have to add p-fields
+7,8 and 9 to our score. <I>p7</I> will determine attack time, <I>p8</I> decay time. <I>p9</I> will indicate the &quot;steady-state&quot; amplitude level as a percentage of p5.
+Let's assume the following score values :</P>
+<PRE>
+       p3  3      ;   duration (here, 3 seconds)
+       p5  10000  ;   peak amplitude
+       p7  .2     ;   attack time
+       p8  1.     ;   decay time
+       p9  .5     ;   &quot;steady-state&quot; amplitude level
+</PRE>
+<P>The resulting amplitude will rise over .2 seconds to our <I>p5</I> level of 10000. Over the next 2.3 seconds - the duration of <I>p3-(p7+p8)</I> - the amplitude will decrease to a value of 5000<I> (p9*p5), </I>and then decay over the final .5 seconds to a final value of 1 (inaudible).</P>
+<P>Many different types of amplitude patterns are now possible. If <I>p9</I> is <U>greater</U> than <I>1., </I>for example, the amplitude will <U>rise</U> during the &quot;steady-state,&quot; and the
+maximum amplitude for the note will exceed our <I>p5</I> value. Attack and decay times can be individually long or short. We can
+employ random selection procedures in score p-fields 5, 7, 8 and 9 to vary
+the envelope of each note. The only thing we must watch is that <I>p7+p8</I> does not exceed <I>p3.</I> Our instrument algorithm is now more powerful. On the down side, we must
+make more decisions when creating scores for it to compute.</P>
+<P>At this point it would be a good idea to try out some of the procedures
+discussed above in sample orchestras and scores of your own. It is important
+not only to understand these procedures, but also to be able to incorporate
+them into your own instrument algorithms, and to see what problems arise
+in using them at each step, before the bulk of accumulated information becomes
+too great or confusing.</P>
+<H4><A NAME="_wmh4_847374494">2.6. Linen and Envlpx</A></H4>
+<P>[ See the discussion of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Modifier/linen.html"><B>LINEN</B> and <B>ENVLPX</B></B></A>
+in the Csound reference manual ]</P>
+<P>There are two more envelope generators that clamor for our attention. One
+is simple, and therefore rather limited. The other is powerful, and therefore
+more cumbersome to use. Let's take the simple unit generator, <B>linen, </B>first. The four arguments to linen are, respectively :</P>
+<PRE>
+     (1) amplitude, or level
+     (2) rise (attack) time
+     (3) duration (almost always <I>p3)</I>
+     (4) decay time.
+
+<FONT SIZE="2">                               (peak amplitude) (rise time) (duration) (decay time)</FONT>
+        kamp  linen  10000,     .15  ,   p3 ,  .35
+<FONT SIZE="2">                           (every note in our score will have an identical  envelope)</FONT>
+        kamp  linen  p5 ,        p6 ,    p3 ,   p7
+<FONT SIZE="2">                (this enables us to vary amplitude, attack and decay values for each note)</FONT>
+
+
+</PRE>
+<P>In the first example above, the amplitude will start at 0, rise linearly
+to 10000 over .15 seconds, hold steady at 10000, then fall linearly to 0
+over the last .35 seconds. With linen, we really do get a &quot;steady-state&quot;
+level. However, note that the amplitude (first) argument can be a k-variable
+- that is, the amplitude value fed to linen can change during a note. Consider
+the following : </P>
+<PRE>
+<I>   SETUP(44100,2205,1)</I>
+<I>   instr 1</I>
+<I>     ktrem  oscil .2, 4/p3, 100  ;tremolo control oscillator</I>
+<I>     kamp linen (ktrem * p5)+(.8 * p5), .25, p3, .5 ;amplitude envelope</I>
+<I>   audio   oscili  kamp, cpspch(p4), p6  ;audio oscillator</I>
+<I>   out audio</I>
+<I>   endin</I>
+
+</PRE>
+<P>The sound produced by this instrument will include a <I>tremolo</I> - alternating increases and decreases in amplitude. Assuming that function
+100 (specified in the third argument to the control oscillator) is a sine
+wave, the control oscillator will produce a stream of numbers at the k-rate
+that move in the shape of a sine wave from 0 to .2, back to 0, then to -.2,
+then back to 0. It will produce this shape four times per note ( <I>4/p3,</I> the frequency input to this oscillator).</P>
+<P>The amplitude argument to <I>linen</I> is a complex expression in two parts. The first part directs linen to multiply
+the output of the tremolo oscillator<I> (ktrem)</I> by <I>p5,</I> producing a tremolo of +/- 20 % of our <I>p5</I> value. To this tremolo, <I>linen</I> adds 80 % of our <I>p5</I> value without alteration. Thus the maximum amplitude we will get, when
+the <I>ktrem</I> oscillator is at the top of its sine wave curve, still will equal <I>p5.</I> <I>linen</I> also provides here a .25 second fade-in at the beginning of each note and
+a .5 second decay at the end.</P>
+<P>When an expression includes two or more operations, as in the first argument
+to <I>linen</I> above, it is always a good idea to use parentheses to guarantee that the
+operations are performed in the correct order. Read the discussion on
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/arith.html"><B>ARITHMETIC OPERATIONS</B></A>
+in the Csound manual to learn the normal order of precedence for algebraic
+and logical operations. (Strictly speaking, the parentheses were not necessary
+in the example above - the operations would have been done in the correct
+order even had they been omitted - but they make the code easier to read
+and help us to avoid mistakes.) Every &quot;(&quot; must be balanced by a &quot;)&quot; or your
+orchestra file will not pass the initial Csound syntax check.</P>
+<P>Make certain that you understand this example. It is the first instance
+of a control signal <I>(kamp) </I>which itself includes a time-varying control signal input <I>(ktrem).</I> Such &quot;stacking&quot; or &quot;banking&quot; of control signals is frequently necessary
+to produce desired changes in amplitude, pitch, timbre, and other musical
+qualities.</P>
+<H4>Envlpx</H4>
+<PRE>
+
+</PRE>
+<P><I>envlpx</I> is the most powerful of the Csound envelope segment generators, and therefore the
+most complicated to use, so get some coffee if necessary before reading
+on. <I>envlpx</I> requires seven (count 'em) input arguments. An eighth argument<I> (ixmod)</I> is optional. Here is an example, with typical values filled in for the
+seven required arguments:</P>
+<PRE>
+<I><FONT SIZE="3">kenv envlpx 10000 , .15 , p3 ,   .25 , 3     .7 , .001 , -.5</FONT></I>
+<I><FONT SIZE="2">                  amp.        rise    duration   decay    function  atss   atdec    [xmod]</FONT></I>
+<I><FONT SIZE="2">                              time               time     number</FONT></I>
+</PRE>
+<P>Arguments one through four are the same as for <I>linen,</I> respectively determining peak amplitude, rise time, duration (almost always
+p3) and decay time. The remaining arguments are unique to <I>envlpx :</I></P>
+<DD><I>ifn (function number) : envlpx</I> allows us to create a wide variety of rise shapes. This is at times very
+useful, since not all acoustic sounds have exponential attacks. However,
+the shape of the attack must be specified in a function table. Thus, <I>envlpx, </I>like<I> oscili </I>and<I> oscil,</I> requires that any function to be used be defined within our score file.
+This attack function, however, will be read only once (during the rise time
+of the envelope), and will increase from 0, or near 0, to 1. This argument
+wants to know the NUMBER of the function to be read -- function 3 in the
+example above. 
+<DD>
+<DD><I>iatss (attenuation of steady-state) :</I> This is a multiplier for the peak amplitude value. In the example above
+the amplitude would decrease from the peak value of 10000 to a value of
+7000, which would be reached just before the final decay begins. A value
+of 1.6, by contrast, would cause the amplitude to rise from 10000 (which
+would no longer be the &quot;peak&quot;) to 16000. However, without corresponding
+changes in timbre, this would not produce a very convincing crescendo. 
+<DD>
+<DD><I>iatdec (final attenuation multiplier) :</I> This is also a mul- tiplier of peak amplitude, but for the very end of
+the note, at the conclusion of the decay. Very small values (but not zero,
+since the decay is exponential) are normal for amplitude envelopes, as in
+the .01 value in this example. 
+<DD><FONT SIZE="2">Why do we need this argument, if it is normally so small? <I>envlpx,</I> like all envelope generators, can be used to create pitch and other types
+of envelopes as well as amplitude shapes. Thus, there are occasions when
+we will <U>NOT</U> want this final value to be near zero.</FONT> 
+<DD>
+<DD><I>ixmod (optional eighth argument) : </I>Normally, the change between &quot;peak&quot; level, and the level specified by iatss,
+occurs exponentially. If we include a value for ixmod, however, the <U>shape</U> of this change will be modified, as illustrated in the bottom example on
+page 27 of the Csound manual. Negative values, between -.01 and a maximum
+of -.95 will cause a progressively more <I>rapid</I> change to the iatss level (useful, perhaps, for a forte-piano), while positive
+numbers between .01 up to .95 (an absolute maximum) will cause the change
+to occur more <I>slowly</I>.[1] 
+<P><FONT SIZE="2">[1] As of this writing, a long-standing bug in Csound
+necessitates that the <I>xmod</I> argument be used <U>only</U> if
+<I>envlpx</I> is running at the <I>k-rate.</I> If <I>envlpx</I> is running at
+the <I>a-rate,</I> including any <I>xmod</I> value likely will
+result in amplitudes
+far exceeding 32767. ECMC users may wish to check the helpfile <I>csound</I>
+to see if this bug still exists in the version of Csound we currently are
+running at Eastman.</FONT></P>
+<H4><A NAME="_wmh4_847374503">2.7. gen5 and gen7</A></H4>
+
+<P>[ See the discussions of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Function/gen05.html"><B>GEN5</B> and <B>GEN7</B></A>
+in the Csound reference manual ]</P>
+
+<P>So, we need to be able to create attack function shapes for <I>envlpx.</I> Function generators <I>gen9</I> and <I>gen10,</I> which compute <I>audio</I> waveforms, are of no help to us here. We need a <U>control</U> shape, not frequency and amplitude ratios. For this purpose, we would use <B>gen5,</B> which creates a table of numbers tracing <B>exponential</B> changes, or, less often, <B>gen7,</B> which creates tables defining <B>linear</B> changes in level.</P>
+<P>Let's assume that we want a simple rise shape, which increases exponentially
+from near 0 to our peak amplitude. Our table of numbers, then, should rise
+from near 0 to 1., since each of these table values will be multiplied by
+our peak amplitude. Such a function might look like this :</P>
+<CENTER><DD ALIGN="CENTER">* f3 0 65 5 .01 64 1; 
+</CENTER><P>The table we are calling <I>function 3</I> is computed at time 0, has 65 numbers, and is created by gen5 (p-fields
+one through four). Since we want this function to be read only once per
+note (during the attack), rather than repetitively by an oscillator, we
+have included an &quot;extended guard point&quot; in the table. Thus, the table size
+is a power-of-two-plus-one (65), rather than a simple power-of-two (64).
+The purpose of the extra table number (&quot;guard point&quot;) is this : after envlpx
+(or some other unit generator) has read to the last number in the table,
+but still needs values for the last batch of samples within the attack,
+it will use the last value in the table for these final samples, rather
+than wrapping around the table and interpolating between the first and last
+entries.</P>
+<P>The remaining p-fields in the function definition work somewhat like the
+break-points in an expseg or linseg statement. Instead of durations, however,
+we use<I> numbers of points </I>within the table to define the distance between values. To illustrate in
+terms of our example, we start at a value of .01, then rise over 64 points
+to a value of 1. 64 points covers the entire duration during which the function
+is read. If we wanted it to rise during half the duration, then come back
+down to to our starting value, the function definition would look like this:</P>
+<PRE>
+<FONT SIZE="2">                                          |-- rise --|       |---fall ---|</FONT>
+              *f3  0  65  5 .01   32  1  32   .01;
+</PRE>
+<P>Here, the function starts at a value of .01, moves exponentially over 32
+points (half the duration during which the function is read) to a value
+of 1, then decreases over 32 points to .01. Notice that the sum of the points
+again totals 64, as it did in our first example, and not 65. Also note that
+this would <U>not</U> be a usable <I>rise</I> shape for <I>envlpx.</I></P>
+<P><FONT SIZE="2">Since ECMC users normally use <I>score11</I> to generate our Csound scores, our function definition examples above have
+included the mandatory <I>score11</I> asterisk the beginnings of each definition, and semi-colons to delineate
+the ends of lines of code.</FONT></P>
+<P><B>gen7</B> works just like <I>gen05,</I> except linearly. Zero values, while illegal with gen5, are permissable
+(and common) with <I>gen7.</I> Using <I>gen5</I> and <I>gen7,</I> we can create arbitrarily complex exponential and linear shapes for use
+by envlpx, oscillators and other unit generators. Suppose, for example,
+that we would like an attack shape that includes three preliminary 
+rising and falling spikes before finally reaching its peak. The following
+envelope would do the trick:</P>
+<PRE>
+<FONT SIZE="2">                |- rise -| |- fall -| |- rise -| |- fall -| |- rise -| |- fall -| |- rise -|</FONT>  
+*f1 0 65 5 .01 10 .6   5 .3   15 .8   5 .4  15  .9  4  .5  10  1.;
+</PRE>
+<P>Although most often used to create control shapes, these two function generators
+can also be used to create audio waveforms. Here are some common <I>audio</I> waveshapes, similar to those produced by &quot;vintage&quot; analog synthesizers,
+that we can create with<I> gen7:</I></P>
+<PRE>
+  * f1 0 64 7 <I>-1 64 1</I> ; &lt;  sawtooth wave
+  * f1 0 64 7 <I>-1 32 1 32 -1</I> ;  &lt; triangle wave (odd harmonics)
+  * f1 0 64 7 <I> 1 32 1 </I><B>0</B><I>  -1 32 -1</I> ;  &lt; square wave (odd harmonics)
+  * f1 0 64 7  <I>1 4  1 </I><B>0</B><I>  -1 60 -1</I>  ;  &lt;  pulse train waveform
+</PRE>
+<P>Note, in the boldface parameters within the square and pulse wave examples,
+that we can specify discontinuities in waveforms by &quot;telling&quot; the function
+generator to move from one value to another over zero points in the table.</P>
+<P>One must be careful when employing &quot;sharp edged&quot; waveforms, like those above,
+in digital synthesis, however, because these waveforms are not band limited
+in frequency. Each of the waveforms above includes a great many harmonics,
+and aliasing can easily result when the pitch exceeds A 440 or so. Subsequent
+filtering would not eliminate the these artifacts.</P>
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex2-1 : envlpx example 1      Csound Tutorial</B>
+<B>;  #############################################################</B>
+
+<B>; Orchestra file used to create example soundfiles &quot;ex2-1&quot; and &quot;ex2-2&quot; :-------------------------------------------------</B>
+<B>;Fixed wave form instrument, using envlpx to create an amplitude envelope</B>
+<B>        sr=44100</B>
+<B>        kr=2205</B>
+<B>        ksmps=20</B>
+<B>        nchnls=1</B>
+
+<B>instr 1</B>
+<B>ipitch = cpspch(p4)      ; convert p4 from pch  to  cps</B>
+<B>kenv envlpx p5,  p6,  p3,  p7,  60,  p8,  .01,  p9  ; amplitude envelope</B>
+<B>   display kenv , p3        ; show envelope shape on sterr</B>
+<B>asignal  oscili   kenv,  ipitch,  p10</B>
+<B>out asignal</B>
+<B>endin</B>
+<B>-------------------------------------------------</B>
+<B>&lt; Score11 file used to create soundfile  ex2-1 :</B>
+<B>&lt; score example ex2-1 : envlpx : various envelope shapes and audio functions</B>
+<B>* f1 0 64 7  -1  64  1  ; &lt;  sawtooth wave</B>
+<B>* f2 0 64 7  -1  32  1  32  -1 ;  &lt;  triangle wave (odd harmonics)</B>
+<B>* f3 0 64 7  1  32  1  0  -1  32  -1 ;  &lt;  square wave (odd harmonics)</B>
+<B>* f4 0 64 7  1  4  1   0  -1  60  -1  ;  &lt;  pulse train waveform</B>
+<B>&lt; function 5 has harmonics 1,4,7,11,15,18</B>
+<B>* f5 0 256 10 1. 0  0  .4  0  0  .65  0  0  0  .3  0  0  0  .18  0  0  .08;</B>
+<B>&lt; function 6 has harmonics 3,4,7,8,11,12,15,16</B>
+<B>* f6 0 256 10 0 0 .5  .8 0 0  .7  1. 0 0  .3  .4  0 0  .2  .12;</B>
+
+<B>&lt; function 7 has a strange assortment of widely spaced partials</B>
+<B>*f7 0 256 9 1. 1. 0 9  .7 0  5. 15 .45 0  23 .3  0 31  .15 0  39 .08 0;</B>
+<B>&lt; function 8 has only high harmonics (20 through 28)</B>
+<B>* f8 0 256 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .2 .4 .6 1. .7 .5 .3 .1;</B>
+
+<B>* f60 0 65 5 .005 64 1;   &lt; envlpx rise shape function</B>
+
+<B>i1 0 0 8;</B>
+<B>p3 2;</B>
+<B>du .95;</B>
+<B>p4 no c3;</B>
+<B>p5 nu 6000*3/4000;</B>
+<B> &lt; p6 = rise time</B>
+<B>p6 nu .5/ .35/  .2 / .1 /  .07 / .03 / .012 / .005; &lt; rise time</B>
+<B>p7 mo 14. .5  .1 ;       &lt; decay time</B>
+<B>p8 mo 14. .9  .1;        &lt; atss</B>
+<B>p9 0;                    &lt; ixmod</B>
+<B>p10 nu 1/2/3/4/5/6/7/8;  &lt; audio waveform function</B>
+<B>end;</B>
+<B>-------------------------------------------------</B>
+</PRE>
+<P align=right
+<FONT SIZE=-1>
+<A target="_new" HREF="appendix.html#Chapter2"><I>Appendix Csound score file examples : Chapter 2</I></A></FONT SIZE></P>
+
+<P>Comment on example <I>ex2-1</I> : The envelope shapes specified in <I>p5</I> through <I>p9</I> become progressively sharper, beginning with fairly lengthy attacks and
+decays, and ending with very short transients. A different audio timbral function
+is used for each of the eight notes. The first four waveshapes (functions 1-4) are reminiscent
+of those employed in analog synthesizers of the 1960s and 1970s -- ugly as sin to my own aging
+ears, though in fashion in retro pop music circles today --  while in the concluding
+four audio functions (functions 5-8) we specify somehwat more interesting (or at
+least less common) harmonic spectra.
+Unit generator
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/In+Out/print.html"><B>display</B></A>
+will include a
+graphical &quot;picture&quot; of the amplitude envelope for each note within the <I>sterr</I> terminal output.
+This can be a useful diagnostic tool when we do not get the results
+we anticipate. Once we have the instrument algorithm and a usable range of
+score p-field values for <I>envlpx</I> working to our satisfaction we probably
+would comment out the call to <I>display</I> by placing a semicolon at the beginning
+of this line.
+</P>
+<PRE>
+<B>  #############################################################</B>
+<B>  soundfile ex2-2 : envlpx example 2      Csound Tutorial</B>
+<B>  #############################################################</B>
+<B>&lt; Score11 file used to create soundfile  ex2-2 :</B>
+<B>      &lt; xmod envelope modifications to a fixed envelope shape</B>
+
+<B>Eastman Csound Tutorial</B>
+
+
+<B>* f3 0 512 7 -1 220 -1 36 1 512 1 36 -1;   &lt; square wave, sloped sides</B>
+<B>* f60 0 65 5 .005 64 1;</B>
+
+<B>i1 0 0 4;</B>
+<B>p3 2;</B>
+<B>p4 no fs2;</B>
+<B>p5  6000;</B>
+<B>p6 .1;             &lt; rise time</B>
+<B>p7 .5;             &lt; decay time</B>
+<B>p8 .1;             &lt; atss</B>
+<B>p9 nu .95/.3/-.3/-.95;  &lt; xmod</B>
+<B>p10 3;              &lt; audio waveform function</B>
+<B>end;</B>
+<B>-------------------------------------------------</B>
+
+
+</PRE>
+<P>Comments on example <I>ex2-2 :</I> All of the score p-fields are constants except for the <I>ixmod</I> value, which modifies the slope of the change from <I>p5</I> (&quot;peak&quot; amplitude) to <I>p8*p5</I> (&quot;attenuation of steady state&quot;). Note that there is <U>some</U> audible difference
+in the envelopes, but, in the absence of corresponding timbral changes,
+these differences are rather subtle.</P>
+<P>As has become our custom, we will now harangue you again on the need to
+try out the resources discussed and illustrated on the preceding pages.</P>
+<H4><A NAME="_wmh4_847374511">2.8. Creating Envelopes with Oscillators</A></H4>
+<P>In addition to such Csound envelope generators as <I>envlpx</I> and <I>expseg, </I>there is another way that we can create envelope patterns: by using oscillators
+What do you think of this? </P>
+<DD><I>kenv oscili p5, 1/p3, 5</I> 
+<DD><I>a1 oscili kenv, cpspch(p4), 100</I> 
+<P>Here we are using a control oscillator <I>(kenv)</I> to read function number 5 once over the entire duration of each note (more
+on this below). Function 5 includes both a rise and a fall:</P>
+<PRE>
+          *f5 0 65 5 .001 10 .8  10 1. 10  .9  34  .001;
+<FONT SIZE="2">                              |-------- rise ---------||--------- decay --------|</FONT>
+  p-fields: 1 2 3  4 5    6   7  8  9  10  11  12  13
+</PRE>
+<P>p-fields 5 through 9 specify a rise shape, p-fields 9 through 13 a (longer,
+more gradual) decay shape. p-fields 5, 7, 9, 11 and 13 within this table
+will be multiplied by our <I>p5</I> amplitude. The envelope created by our control oscillator is then passed
+as the amplitude input to our audio oscillator (a1).</P>
+<P>The frequency argument to the control oscillator <I>kenv, </I>1/p3, assures that function 5 will be read exactly once per note. If <I>p3</I> is 4 seconds, the frequency argument to the control oscillator is .25 hertz <I>(1/p3, </I>or, here, <I>1/4),</I> so that it will take exactly four seconds for oscillator <I>kenv</I> to march through the table.</P>
+<P>When using an oscillator as an envelope generator, as here, there is an
+important point to consider. The attack and decay times will always be dependent
+upon the duration of the note (since they are percentages of the length
+of the function table, which is being read once). Thus, rise and fall times
+will vary proportionately with the total durations of various notes. We
+have no way to specify exact attack or decay times. (If we want to be able
+to specify exact attack and decay durations, we should use one of the Csound
+envelope generators, such as <I>expseg</I> or <I>envlpx.)</I> For some applications, however, oscillators can create useful envelopes,
+especially if we want to read an envelope more than once per note : </P>
+<CENTER><DD ALIGN="CENTER">kenv oscil p5, 3/p3, 5 
+</CENTER><P>This control oscillator would give us triplets <I>(3/p3)</I> for every note in our score.</P>
+<P>The instrument used to create soundfiles <I>ex2-3</I> (a didactic example) and <I>ex2-4 </I>(musically more interesting) contains a control oscillator that generates
+an amplitude envelope, and an audio oscillator that reads various audio
+functions:</P>
+<PRE>
+<B>  #############################################################</B>
+<B>  Soundfile examples &quot;ex2-3&quot; and &quot;ex2-4&quot;</B>
+<B>  #############################################################</B>
+
+<B>Orchestra file used to create these two soundfiles::</B>
+<B>-----------------------------------------------------</B>
+<B>sr=44100</B>
+<B>kr=2205</B>
+<B>ksmps=20</B>
+<B>nchnls=1</B>
+
+
+<B>; control oscillator (kenv) supplies time envelope to audio oscillator</B>
+<B>;    score p-fields:</B>
+<B>;    p4 =  pitch, in pch notation,</B>
+<B>;    p5 = peak amplitude</B>
+<B>;    p6 = function number for control oscillator envelope</B>
+<B>;    p7 = function number for audio oscillator waveshape</B>
+<B>instr 1</B>
+
+<B>kenv oscili p5, 1/p3, p6    ; control oscillator -- creates amplitude envelope</B>
+<B>a1 oscili kenv, cpspch(p4),  p7  ; audio oscillator</B>
+<B>out a1</B>
+
+<B>endin</B>
+<B>-----------------------------------------------------</B>
+
+
+<B>&lt; score11 file used  for &quot;ex2-3&quot; :</B>
+<B>-----------------------------------------------------</B>
+<B>&lt; different audio waveshapes and time envelope functions</B>
+<B>&lt; Envelope functions :</B>
+<B>* f52 0 65 7 0 32 1. 32 0;              &lt; linear pyramid: rise &amp; fall</B>
+<B>* f62 0 65 5 .01 32 1. 32 .01;          &lt; exponential pyramid rise &amp; fall</B>
+<B>* f21 0 65 5 .001 4 .8 10 1. 10 .7 40 .001;</B>
+<B>* f22 0 65 5 .001 10 1. 10 .2 10 .8 10 .1 10 .6 14 .001;</B>
+
+<B>&lt; Audio waveshape functions :</B>
+<B>* f11 0 1024 10 1. .8 0 .6 0 .4 0 .2 ;  &lt; fundamental &amp; even harmonics</B>
+<B>* f12 0 1024 10 1. 0 .33 0 .13 0 .07;   &lt; fundamental &amp; odd harmonics</B>
+<B>* f13 0 64 7 -1 32 -1 0 1. 32 1. ;     &lt; square wave, not band-limited</B>
+<B>* f14 0 64 7 -1 30 -1 2 1. 30 1. 2 -1.; &lt; square wave, band-limited</B>
+
+<B>i1 0 0 4;</B>
+<B>p3 3.;</B>
+<B>p4 no c3;                              &lt; pitch (in pch)</B>
+<B>p5 8000;                               &lt; amplitude</B>
+<B>p6 nu 52/ 62/ 21/ 22;                  &lt; function number for time envelope</B>
+<B>p7 nu 11/ 12/ 13/ 14;                  &lt; function number for audio waveshape</B>
+<B>end;</B>
+<B>&lt; score11 file used to create  &quot;ex2-4&quot; :  alternating audio &amp; envelope functions :</B>
+<B>-----------------------------------------------------</B>
+<B>&lt; Envelope functions :</B>
+<B>* f21 0 65 5 .001 4 .8 10 1. 10 .7 40 .001;</B>
+<B>* f23 0 65 5 .001 6 1. 58 .001;               &lt; rapid attack, long decay</B>
+<B>* f24 0 65 5 .001  12  1.  28  .05  10  .8  24  .001; &lt; 2 attacks per note</B>
+
+<B>&lt; Audio waveshape functions :</B>
+<B>* f12 0 512 10 1.  0  .33  0  .13  0  .07;   &lt; fundamental &amp; odd harmonics</B>
+<B>* f15 0 512 10 0 1. .8  0  .5  .3  0  .15  .1; &lt; harmonics 2,3,5,6,8,9</B>
+
+<B>i1 0 6;</B>
+<B>p3 mx 5. .5 .1/1. 1.;</B>
+<B>du mx 5. 1. 2. 4./1. 3;</B>
+<B>p4 mx 5. c2 c4 b4 b5/1. ds6;         &lt; pitch (in pch)</B>
+<B>p5 mx 5. 2000 4000 12000/1. 13000;   &lt; amplitude</B>
+<B>p6 nu 21/23/24;                      &lt; function number for time envelope</B>
+<B>p7 nu 12/15;                         &lt; function number for audio waveshape</B>
+<B>end;</B>
+<B>-----------------------------------------------------</B>
+
+</PRE>
+<P>Comment : No, it won't win a Pulitzer Prize, but we are beginning to progress
+on our <I>Gradus ad Parnassus.</I></P>
+<P>The important point in all of this is that oscillators can be used in many
+different ways, to generate various kinds of audio and control signals.
+Oscillators can cycle through function tables repetitively (generating audio
+from scratch), once per note (creating envelope control signals, which can
+be applied to amplitude, pitch, or other musical parameters), or even less
+than once per note (reading only a portion of a table, if the period of
+oscillation in greater than the duration of a note). Given enough resourcefulness,
+we could create a variety of intriguing musical sounds and gestures solely
+by means of oscillators.
+<H4><A NAME="_wmh4_847374522">2.9. Reading Soundfiles into Csound with soundin and diskin </A></H4>
+
+<P>Most of the signal processing operations we perform on synthetic waveforms
+created by oscillators also can be performed on samples read into Csound
+from existing soundfiles. Csound provides several ways in which we can read
+in soundfiles. These methods include:</P>
+<UL>
+<LI>using standard oscillators, or else a special &quot;looping&quot; oscillator called <I>loscil</I><BR>
+<FONT SIZE="2">In this method, instead of reading from a synthetically created table of
+numbers, as in our examples so far, the oscillator reads from a (very large)
+function table loaded with the samples from a soundfile.</FONT> <BR>
+<LI>using unit generators <I>table</I> and <I>phasor</I> <BR>
+<FONT SIZE="2">The operations performed by these two unit generators are incorporated
+within Csound oscillators: <I>table</I> reads in the values from a function table
+loaded in RAM, and <I>phasor</I> provides a moving pointer (or sampling
+increment) to locations
+within this table. Using <I>table</I> and <I>phasor</I> rather than an oscillator
+can enable us to perform certain types of operations (such as reading in the table values in
+reverse order) more easily. See <I>ex3-6</I>. </FONT>
+<LI>
+and, when our sound processing goals are fairly simple, and ease of
+use is more important to us than processing speed, using
+using <I>soundin </I> or <I>diskin</I>. These two
+unit generators read the samples from
+a disk soundfile into Csound for processing and/or mixing.
+This is slower than reading samples from RAM, as in the two methods above, and thus
+less well suited to complex signal processing or real-time applications. However,
+it can be easier to employ for relatively simple soundfile processing and mixing
+operations, and so we will consider it first.
+</UL>
+<UL>
+<FONT SIZE="2">Instrument algorithms from the Eastman Csound Library illustrate
+all three of the methods above.
+<LI> The <I>sf</I> family of algorithms employ unit generators <I>soundin</I>.
+<LI> The granular synthesis Library algorithm <I>gran</I> illustrates the use of <I>table</I> and <I>phasor.</I>
+<LI> For examples of how to employ <I>loscil</I> to read in and
+process soundfiles, ECMC users
+can consult the Csound code for the <I>samp</I> and <I>tsamp</I> family
+of Library algorithms, or, for MIDI implementations, the <I>midisamp</I> and
+<I>ccsamp</I> families of <I>midiins</I> algorithms.</FONT>
+</UL>
+
+<H5>soundin and diskin</H5>
+[ See the discussions of 
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/In+Out/in.html"><B>SOUNDIN</B> and <B>DISKIN</B></A>
+in the Csound reference manual ]
+<P>The <B>soundin</B> opcode has one required and one optional argument. The required
+argument specifies the directory path and the name of the soundfile to be
+accessed. An optional second argument indicates a skip time (in seconds)
+into this soundfile. 
+The <B>diskin</B> unit generator works in similar fashion, but offers additional
+soundfile processing capabilities that we will consider later.
+
+<P>Within the first (<I>ifilcod</I>) argument to <I>soundin</I> or <I>diskin</I>
+there are two ways in which one can tell
+the unit generator input soundfile(s) to use:</P>
+<DD>(1) by typing in the full directory path and name of the soundfile, surrounded
+by double quotes, within the orchestra file, like this: 
+<DD>
+<CENTER><DD ALIGN="CENTER"><I>asound soundin</I> <B>&quot;/snd/allan/monkeysound1&quot;</B> , <I>1.5</I> 
+</CENTER><DD>Result: Monophonic soundfile <I>monkeysound1,</I> in my home soundfile directory, will be read into a Csound compile job
+by <I>soundin. </I>The first 1.5 seconds of this input soundfile will be skipped. 
+<P>This method has an obvious severe disadvantage. Since the input soundfile argument
+is a constant within the orchestra file, rather than a variable, this orchestra
+file can only access a single input soundfile - <I>babycries1.</I></P>
+<DD>(2) by creating one or more Unix soft <B>link</B> files, called <I>soundin.#</I> (where <B>#</B> is an
+integer), which "point to" the desired soundfiles. These source soundfiles
+can be in any soundfile directory, but most often are located either within the user's
+<A target="_new" HREF="http://www.ecmc.rochester.edu/onlinedocs/Csound/Syntax/dir.html"><B>SFDIR</B></A>
+(current working output soundfile) directory,
+or else, if defined, within the user's <I>SSDIR</I> "sound sample input"
+directory.
+<P>At the ECMC, such soundfile links are most easily created by means
+of the local utility <B>sflink</B> -- or, for <I>sflib</I> soundfiles, with
+the <B>sflinksflib</B>
+(<B>sflinksfl</B>) variant. Some of you may already have used these commands
+in working with the <I>sf</I> family of Eastman Csound Library instrument algorithms. See the manual
+page for <I>sflink</I> for usage details. The link files to three soundfiles in the<I> /sflib/env</I> directory, used in example soundfile <I>ex2-5</I> which follows, were created by means of the following command line:</P>
+<CENTER><DD ALIGN="CENTER"><I>sflinksfl wind.low 1 caridle 2 riverlock 3</I> </CENTER>
+This command creates three link files within the users <I>$SFDIR</I> (current
+working output soundfile directory):<BR>
+
+<PRE>
+   <I>soundin.1</I> <FONT SIZE="2">which points to the soundfile </FONT><I>/sflib/env/wind.low</I>  (low pitched blowing wind)
+   <I>soundin.2</I> <FONT SIZE="2">which points to the soundfile </FONT><I>/sflib/env/caridle.low</I>   (car engine noise)
+   <I>soundin.3</I> <FONT SIZE="2">which points to the soundfile </FONT><I>/sflib/env/riverlock</I>   (gushing water)
+</PRE>
+
+In example <I>ex2-5,</I> portions of these three soundfiles
+are read into Csound by <I> soundin:</I></P>
+<PRE>
+<B>;  #############################################################</B>
+<B>;  soundfile ex2-5 : soundin            Csound Tutorial</B>
+<B>;  #############################################################</B>
+<B>Orchestra file used to create this example:</B>
+<B>-------------------------------------------------</B>
+<B>sr= 44100</B>
+<B>kr = 4410</B>
+<B>ksmps = 10</B>
+<B>nchnls = 2</B>
+
+<B>   ;  score p-fields:</B>
+<B>   ;  p4 =  soundin.# number {source soundfile} , p6 = skip time</B>
+<B>   ;  new amplitude envelope {p5, 7, 8 &amp; 9}</B>
+<B>   ;     p5 = &quot;peak&quot; level multiplier</B>
+<B>   ;     p7 = rise {fade-in} time</B>
+<B>   ;     p8 = decay {fade-out} time</B>
+<B>   ;     p9 = &quot;steady-state&quot; level  multiplier</B>
+<B>   ;  moving stereo pan {p10 &amp; p11} :</B>
+<B>   ;     p10 =  number of left-right pans per note</B>
+<B>   ;     p11 = function number for moving pans</B>
+
+<B>instr 1</B>
+<B>asig  soundin  p4, p6    ; read in the soundfile</B>
+<B>   ; now apply a new envelope to these samples</B>
+<B>kamp  expseg  .005 ,p7  , p5  , p3 - (p7 + p8) , p9 , p8 , .005; &lt; amp. envelope</B>
+<B>asig = asig * kamp</B>
+<B>    ; supply a moving stereo pan between left &amp; right channels</B>
+<B>kpan oscili  1. ,  p10/p3 , p11    ; panning control signal</B>
+<B>outs  sqrt(kpan) * asig , sqrt(1. - kpan) * asig</B>
+<B>endin</B>
+<B>-------------------------------------------------</B>
+
+<B>Eastman Csound Tutorial</B>
+
+
+
+<B>Score file used to create &quot;ex2-5&quot; :</B>
+<B>-------------------------------------------------</B>
+<B>  &lt; three panning functions :</B>
+<B>*f1  0 65  7  0  32  1.  32 0 ;  &lt; linear rise &amp; fall</B>
+<B>*f2  0 129  5  .01  64  1.  64 .01 ;  &lt; exponential rise &amp; fall</B>
+<B>*f3  0 1024 9 .5 1. 0;  &lt; 1st half of a sine wave {rise &amp; fall}</B>
+
+<B>i1 0 0 3;   &lt; create 3 output &quot;notes&quot;</B>
+<B>p3 4;              &lt; the three notes start at 4 second intervals</B>
+<B>du 306. ;          &lt; each output note lasts 6 seconds</B>
+<B>p4 nu 1 / 2 / 3 ;  &lt; soundin.# number : all soundfiles are from /sflib/env</B>
+<B>                   &lt; 1 = wind.low, 2 = caridle , 3 = riverlock</B>
+<B>p5 nu .5 / .9 / .2 ;        &lt; amplitude multipler</B>
+<B>p6 1. .5 2.;               &lt; skip time into soundfiles</B>
+<B>p7 nu 2. / 1. / .5 ;       &lt; rise {fade-in} times</B>
+<B>p8 nu 2. / 1.2 / 2. ;      &lt; decay {fade-out} times</B>
+<B>p9 nu .9 / .6 / .2;        &lt; steady state amplitude multiplier</B>
+
+<B>p10 nu 2. / 8. / 3. ;      &lt; number of left-right pans per note</B>
+<B>p11 nu 1 / 2 /  3 ;        &lt; pan function table number</B>
+<B>end;</B>
+
+<B>-------------------------------------------------</B>
+</PRE>
+<P>Comments on <I>ex2-5:</I> Two signal processing operations are applied to the three source soundfiles:</P>
+<DD>(1) First, a new fade-in/fade-out amplitude envelope is applied to the input
+samples by control signal <I>kamp. </I>Note that since the signal inputs already are 16 bit integers ranging between
+0 and +/-32767, our <I>p5</I> and <I>p9</I> amplitude arguments are decimal multipliers for these samples. 
+<DD>
+<DD>(2) Although the input soundfiles are monophonic, our orchestra is stereo.
+Control oscillator signal <I>kpan</I> applies a moving stereo pan to each audio signal. The <I>wind.low</I> sound is panned twice by means of a symmetrical linear function <I>(f1),</I> resulting in a smooth oscillation between the left and right speakers.
+The <I>caridle</I> soundfile, by contrast, is panned more rapidly (eight times) according
+to an accelerating/decelerating exponential pyramid shape <I>(f2),</I> resulting in a pulsating output. The <I>riverlock</I> soundfile is panned three times following the shape of the first (positive)
+half of a sine wave (note that the only "harmonic" we create in <I>f3</I>
+is .5, which will generate one half of a sine wave):
+<PRE>    *f3   0  1024  9 <FONT SIZE=+2><B> .5</FONT></B>  1  0;  &lt; 1st half of a sine wave {rise &amp; fall}</PRE>
+This also produces uneven movement (alternately speeding up and slowing down)between the speakers. 
+
+<P>Note in the Csound reference manual that the soundfiles accessed by <I>soundin</I>
+or <I>diskin</I> can be mono, stereo or quad. For stereo soundfiles,
+the left and right channel inputs are retained as separate audio signals
+within Csound, and each requires a <I>soundin</I> output name. Example:</P>
+<CENTER><PRE><I>aleft ,  aright    soundin    3</I> </PRE></CENTER>
+</CENTER>
+Result: The samples from the stereo soundfile associated with link file <I>soundin.3</I> are
+read into the Csound compile job by <I>soundin.</I> The left channel input becomes audio
+signal <I>aleft,</I> and the right channel samples become signal <I>aright</I>,
+and these two audio signals can be processed independently
+within our Csound orchestra. The <I>nchnls</I> argument in our orchestra header should
+be set to 2, and unit generator <I>outs</I> (rather than <I>out), </I>should be used (unless, of course, we subsequently mix <I>aleft</I> and <I>aright</I> down to a mono output).
+
+<H5>diskin</H5>
+The <B>diskin</B> unit generator offers several
+soundfile processing options not available with the simpler <I>soundin</I>, including
+the ability to transpose the pitch of input soundfiles. An additional parameter
+argument, labeled <I>kpitch</I> in the Csound Reference Manual, controls
+pitch shifting.
+<I>diskin</I> also offers options for reading the input samples in reverse order
+(backwards), and for wrapping around the input soundfile. Wwhen the end of the input
+samples is reached, <I>diskin</I> can loop back to the beginning  of the soundfile)
+(Example algorithm
+<I>ex3-6</I> in the next chapter provides an alternative way to
+skip into a soundfile and to read it backwards.)
+
+<P>To add pitch transposition capabilities to the <I>ex2-5</I> instrument algorithm
+we could substitute unit generator <I>diskin</I> for <I>soundin</I> in our
+orchestra file, and add
+an additional p-field (<I>p12</I>, the next available p-field) to our score
+to control pitch transposition:
+<PRE>
+<FONTSIZE="2"><TT>     Orchestra file: substitute these 2 lines:</FONT></TT>
+<B>   print p2 </B><I> ; this dummy line, which shouldn't be needed, corrects a current bug in diskin</I>
+<B>   asig  diskin  p4, p12, p6    ; read in & transpose soundfiles</B>
+<FONTSIZE="2">        for this line:</FONT></FONT></FONT>
+<I>   asig  soundin  p4, p6    ; read in soundfiles</I>
+<TT>     Score11 input file: add this line:</TT/</FONT>
+<B>   p12   nu  1. / 1.059 / .75;  < pitch transposition ratio</B> </PRE>
+Result: The first input soundfile will be untransposed. The second input soundfile
+will be transposed up a semitone (a transposition ratio of 1.059), and the duration
+of the output samples will be only .944 (1./1.059) that of the original sound. The third
+input soundfile will be transposed down a perfect fourth, and its output duration
+will be 1.333 (1./.75) times the input duration.<BR>
+Note: For a table of equal tempered pitch transposition ratios like those used
+in <I>p12</I> above, consult the ECMC help file
+<A target="_new" HREF="../../docs/pitchratios.html"><I>pitchratios</I></A>
+<P><I>Some notes on pitch shifting:</I><BR>
+<I>diskin</I>, like the pitch shifting algorithms within almost all hardware
+samplers, performs pitch transposition by resampling the input samples, in much the same manner that
+oscillators resample the values within a function table to produce different
+pitches. Some resampling programs employ interpolation (slower but more accurate)
+while others employ truncation. (<FONT SIZE="2">To review these concepts, see section
+1.5.1. Interpolating and Truncating Oscillators</FONT>.)
+<P>Pitch shifting by resampling always changes not only the pitch of the sound,
+but also its duration, decreasing the duration for upward transpositions (since
+some of the input samples are skipped in order to produce more cycles per second)
+and increasing the duration for downward
+pitch shifts (where additional samples are added to "stretch out" the waveform):
+<CENTER><PRE>output_duration  =  (1. / pitch_shift_ratio)  *  input_duration</PRE></CENTER>
+We must take these durational changes into account when setting the <I>p3</I>
+output durations for each "note" (or "soundfile event") in our score file,
+increasing our <I>p3</I> durational values for soundfiles that are
+transposed dowo that these sounds are not truncated, before <I>diskin</I> reaches
+the end of the input sample stream.
+<P>In the non-looping mode, <I>diskin</I> (and also <I>loscil</I>) will output
+zeros when they reach the end of an input sample stream. Thus, we do not need to
+compute the exact output duration for each note in our score file, but
+merely need to make sure that the <I>p3</I> output durations we specify
+will be sufficiently long to hold all of the output samples computed
+by <I>diskin</I> or <I>loscil</I> (unless, of course, we do not <U>want</U>
+to read in a complete soundfile, but only a portion of it).
+<P>Example: Assume that we want to read in a complete 4 second soundfile
+five times, with the following pitch shifts:
+<CENTER><I><PRE>p12  nu  1.059 / .5 / 1.122 / .75 / .89 ; < pitch shift ratios</I></PRE></CENTER>
+If we wish, we can merely set the <I>p3</I> output durations for all five
+"notes" to 8 seconds
+<CENTER><I><PRE>du    308;</I></PRE></CENTER>
+and realize that our output soundfile will include some silence at the end.
+However, vibratos, tremolos, note attack and decay times, and all other time-varying
+elements within the sound still will be altered by the durational changes.
+<FONT SIZE="-1">(We will propose a more elegant solution to the problem
+of setting output durations for transposed soundfiles within example <I>ex3-6</I>.)</FONT>
+<P><I>Formants:</I> When we pitch shift a sound by resampling, we also will be shifting the
+<I>formants</I> -- the resonant (emphasized) frequency bands produced by many acoustic
+sound sources -- by the same transposition interval, and thus changing the
+timbre, or apparent size, of the sound source. For unpitched or quasi-pitched
+idiophones and membranophones, and for many other types of percussive or
+environmental sounds, the timbral change often will be acceptable. However,
+for sound sources such as the human voice, which contains prominent formants,
+pitch shifting by more than a minor third or so will result in the "munchkin effect"
+(for upward transpositions) or the "sick cow effect" (for downward pitch shifts).
+<P><FONT SIZE="2">To change the pitch of a sound without changing its duration, or
+vice versa, one must employ some technique other than resampling. Most often,
+this is achieved either by
+<UL>
+<LI><I>analysis-and-resynthesis</I> procedures, such as the <I>phase vocoder</I>
+or <I>linear prediction</I> resources within Csound, or by
+<LI> algorithms that divide an input sample stream into small "windows,"
+and eliminate (for upward transpostiions) or duplicate (for downward
+tranpositions) groups of samples. Csound unit generators <I>harmon </I>
+and <I>sndwarp</I> exemplify this technique.<BR>
+</UL>
+A final note: Do not confuse <I>pitch shifting</I>
+resampling algorithms with <I>sample rate conversion</I> resampling algorithms,
+which change the sampling rate of an input sample stream but do not alter
+the pitch or duration.</FONT>
+
+<HR>
+<H5>Assignment</H5>
+<P> </B>Construct a few new orchestra files, similar to those in this chapter, which
+make use of some combination of unit generators <I>line, expon, linseg, expseg </I>and<I> envlpx.</I> (using <I>gen5 </I>and<I> gen7 </I>to create different attack shapes for <I>envlpx</I>),
+as well as control oscillators.
+Use oscillators to create audio signals in some of your instruments, and
+soundfiles (read into Csound with <I>soundin</I> or <I>diskin</I>) as signal sources in other instruments.
+</I> Create some scores for these instrument algorithms, then compile soundfiles
+with Csound, listen to the results, and improve your orchestra and score
+files until you begin to get something that resembles music (broadly - but
+not <U>too</U> broadly - defined).</P>
+
+<A NAME="END"></A>
+<HR><CENTER><FONTSIZE="-2">Eastman Csound Tutorial: End of <I>Chapter 2</I></FONT></CENTER><BR>
+<PRE>
+<H5>   <A HREF="./chapter2.html#"><FONT SIZE="+1">TOP</FONT> of this chapter</A>  -- <A HREF="chapter3.html#"><FONT SIZE="+1">NEXT CHAPTER </FONT>(Chapter 3)</A> --   <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</A>
+<FONT SIZE="-2">        <A HREF="appendix.html">APPENDIX 1</A>  --  <A HREF="appendix2.html">APPENDIX 2</A></FONT>
+
+</BODY>
+</HTML>

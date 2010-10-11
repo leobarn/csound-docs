@@ -1,0 +1,119 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft FrontPage 4.0">
+<TITLE>Chowning FM Soprano from Dodge Book</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>;********************************************************************** 
+; chowning soprano instrument from dodge book, pp 120 - 121    rp     * 
+;********************************************************************** 
+sr        =         44100
+kr        =         4410
+ksmps     =         10                                    
+nchnls    =         1
+                                            
+          instr   1,2,3,4                                              
+;**********************INITIALIZATION...
+iamp      =         p6                       ;RANGE 0 &lt; AMP &lt; 1
+ifenvfn   =         p7
+iportfn   =         p8
+ifmtfn1   =         p9
+ifmtfn2   =         p10
+ifmtfn3   =         p11
+ifundfn   =         p12
+irange    =         3                        ; MAX RANGE OF 3 OCTAVES
+ibase     =         octpch(7.07)             ; LOWEST NOTE = G3
+icaroct   =         octpch(p5)
+icarhz    =         cpspch(p5)
+ipoint    =         (icaroct-ibase)/irange*512.999
+
+ifmthz    tablei    ipoint,ifmtfn1           ; RELATIVE POS. OF FORMANT
+ifmthz    =         ifmthz*3000              ; MAP ONTO FREQUENCY RANGE
+ifmthz    =         int(ifmthz/icarhz+.5)*icarhz ; AS NEAREST HARMONIC
+
+ifmtfac   tablei    ipoint,ifmtfn2           ; RELATIVE AMP. OF FORMANT
+ifmtfac   =         ifmtfac*.1               ; MAX VALUE = .1
+ifndfac   =         1-ifmtfac                ; RELATIVE AMP. OF FUND
+
+ifmtndx   tablei    ipoint,ifmtfn3           ; RELATIVE INDEX OF FORMANT
+ifmtndx   =         ifmtndx*5                ; MAX VALUE = 5
+
+ifndndx   tablei    ipoint,ifundfn           ; RELATIVE INDEX OF FUND
+ifndndx   =         ifndndx*.25              ; MAX VALUE = .25
+
+ifndamp   =         ifndfac * sqrt(iamp)     ; AMP**.5 
+ifmtamp   =         ifmtfac * iamp * sqrt(iamp) ; AMP**1.5
+
+imodhz    =         icarhz                   ; CALCULATE MODULATOR AND
+ipkdev1   =         ifndndx*imodhz           ; PEAK DEVIATION
+
+; compute vibrato parameters:
+ilog2pch  =         log(icarhz)/log(2)      
+ivibwth   =         .003*ilog2pch           ; RELATE WIDTH TO FUND PCH
+ivibhz    =         5.5                        ; FROM 5 TO 6.5 Hz AVERAGE
+irandhz   =         125                      ; FROM MORRILL TRUMPET DESIGN
+iportdev  =         .05                      ;  &quot;     &quot;       &quot;      &quot;
+;************************* PERFORMANCE...
+; vibrato
+krand     randi     ivibwth/2,irandhz
+kvibwth   linen     ivibwth,.6,p3,.1         ; GATE VIBRATO WIDTH
+kport     oscil1    0,iportdev,.2,iportfn    ; INITIAL PORTAMENTO
+kvib      oscili    kvibwth,ivibhz,1         ; Fn1 = SINE
+kv        =         1+kvib+kport+krand       ; VIBRATO FACTOR ALWAYS CA 1
+; fm
+adev1     oscili    ipkdev1,imodhz*kv,1      ; MODULATOR
+adev2     =         adev1*ifmtndx/ifndndx    ; RESCALE FOR FORMANT CARRIER
+afundhz   =         (icarhz+adev1)*kv        ; VIB THE MODULATED FUND...
+aformhz   =         (ifmthz+adev2)*kv        ; ...AND MODULATED FORMANT
+
+afund     linen     ifndamp,.1,p3,.08
+afund     oscili    afund,afundhz,1
+aform     envlpx    ifmtamp,.1,p3,.08,ifenvfn,1,.01  
+aform     oscili    aform,aformhz,1
+
+asig      =         (afund+aform)*p4         ; SCALE TO PEAK AMP HERE
+          out       asig
+          endin</pre>
+<HR>
+
+<pre>f01        0   512    10     1
+; fmt amplitude rise function
+f02        0   513     7     0   256    .2   257     1
+; portamento function
+f03        0   513     7    -1   200     1   100     0   217     0
+; fmt freq lookup function
+f04        0   513     7     1    80     1   200    .9   200    .6    33    .6
+; fmt amplitude factor lookup function
+f05        0   513     7    .4   100    .2   413     1
+; index 1 lookup function
+f06        0   513     7     1   100     1   112    .4   301   .15
+; index 2 lookup function
+f07        0   513     7     1   100    .5    80   .25   132    .5   100    .7
+   101    .4
+; play some notes
+; p4 = amp; p5 = fund; p6 = 0 &lt; ampfac &lt; 1; p7 = fmt env func
+; p8 = port func; p9 = fmt hz func; p10 = fmt amp func; p11, 12 = i1,i2 fns
+i01        0     1 30000  7.07    .7     2     3     4     5     6     7
+i01        1     .     .  8.04
+i01        2     .     .  9.01
+i01        3     .     .  9.10
+i01        4     2     . 10.07 
+e</pre>
+<HR>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="229" VALIGN="TOP">
+<P><a HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/soprano.orc">Download
+soprano.orc</a></TD>
+  <TD WIDTH="193" VALIGN="TOP">
+<p align="center"></TD>
+<TD WIDTH="168" VALIGN="TOP">
+<p ALIGN="RIGHT"><a HREF="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/soprano.sco">Download
+soprano.sco</a></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

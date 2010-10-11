@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fluidEngine</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fluidControl.html" title="fluidControl" />
+    <link rel="next" href="fluidLoad.html" title="fluidLoad" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fluidEngine</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fluidControl.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fluidLoad.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="fluidEngine">
+      <a id="fluidEngine"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFluidEngine" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fluidEngine</span>
+        </h2>
+        <p>fluidEngine — 
+      Instantiates a fluidsynth engine.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3284891"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ienginenum <span class="command"><strong>fluidEngine</strong></span> [iReverbEnabled] [, iChorusEnabled] [,iNumChannels] [, iPolyphony] </pre>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3284822"></a>
+        <h2>Description</h2>
+        <p>Instantiates a fluidsynth engine, and returns <span class="emphasis"><em>ienginenum</em></span> to identify the
+    engine. <span class="emphasis"><em>ienginenum</em></span> is passed to other other opcodes for loading 
+    and playing SoundFonts and gathering the generated sound.  
+    </p>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3284843"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>ienginenum </em></span> -- engine number assigned from fluidEngine.</p>
+        <p><span class="emphasis"><em>iReverbEnabled </em></span> -- optionally set to 0 to disable any reverb effect in the loaded SoundFonts.</p>
+        <p><span class="emphasis"><em>iChorusEnabled </em></span> -- optionally set to 0 to disable any chorus effect in the loaded SoundFonts.</p>
+        <p><span class="emphasis"><em>iNumChannels </em></span> -- number of channels to use; range is 16-256 and Csound default is 256 (Fluidsynth's default is 16).</p>
+        <p><span class="emphasis"><em>iPolyphony </em></span> -- number of voices to be played in parallel; range is 16-4096 and Csound default is 4096 (Fluidsynth's default is 256).
+    Note: this is not the number of notes played at the same time as a single note may use create multiple voices depending on instrument zones
+    and velocity/key of played note. 
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3285674"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fluidsynth opcodes. It uses the file <a class="ulink" href="examples/fluidAllOut.orc" target="_top"><em class="citetitle">fluidAllOut.orc</em></a>.
+    </p>
+        <pre class="programlisting">
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">kr</span> <span class="op">=</span> 4410
+<span class="ohdr">ksmps</span> <span class="op">=</span> 10  
+<span class="ohdr">nchnls</span> <span class="op">=</span> 2
+<span class="ohdr">0dbfs</span> <span class="op">=</span> 32767
+
+<span class="comment">; LOAD SOUNDFONTS</span>
+gienginenum1 <span class="opc">fluidEngine</span>
+gienginenum2 <span class="opc">fluidEngine</span>
+isfnum1      <span class="opc">fluidLoad</span> "Piano Steinway Grand Model C (21,738KB).sf2", gienginenum1, 1
+<span class="comment">; Bright Steinway, program 1, channel 1</span>
+             <span class="opc">fluidProgramSelect</span> gienginenum1, 1, isfnum1, 0, 1
+<span class="comment">; Concert Steinway with reverb, program 2, channel 3</span>
+             <span class="opc">fluidProgramSelect</span> gienginenum1, 3, isfnum1, 0, 2
+isfnum2      <span class="opc">fluidLoad</span> "63.3mg The Sound Site Album Bank V1.0.SF2", gienginenum2, 1
+<span class="comment">; General MIDI, program 50, channel 2</span>
+             <span class="opc">fluidProgramSelect</span> gienginenum2, 2, isfnum2, 0, 50
+
+<span class="comment">; SEND NOTES TO STEINWAY SOUNDFONT</span>
+
+<span class="oblock">instr</span> 1 <span class="comment">; FluidSynth Steinway Rev</span>
+  <span class="comment">; INITIALIZATION</span>
+             <span class="opc">mididefault</span>   60, p3 <span class="comment">; Default duration of 60 -- overridden by score.</span>
+             <span class="opc">midinoteonkey</span> p4, p5 <span class="comment">; Channels MIDI input to pfields.</span>
+  <span class="comment">; Use channel assigned in fluidload.</span>
+  ichannel   <span class="op">=</span> 1
+  ikey       <span class="op">=</span> p4
+  ivelocity  <span class="op">=</span> p5
+  istatus    <span class="op">=</span> 144
+             <span class="opc">fluidControl</span> gienginenum1, istatus, ichannel, ikey, ivelocity
+<span class="oblock">endin</span>
+
+<span class="oblock">instr</span> 2 <span class="comment">; GM soundfont</span>
+  <span class="comment">; INITIALIZATION</span>
+             <span class="opc">mididefault</span>   60, p3 <span class="comment">; Default duration of 60 -- overridden by score.</span>
+             <span class="opc">midinoteonkey</span> p4, p5 <span class="comment">; Channels MIDI input to pfields.</span>
+  <span class="comment">; Use channel assigned in fluidload.</span>
+  ichannel   <span class="op">=</span> 2
+  ikey       <span class="op">=</span> p4
+  ivelocity  <span class="op">=</span> p5
+  istatus    <span class="op">=</span> 144
+             <span class="opc">fluidNote</span> gienginenum2, ichannel, ikey, ivelocity
+<span class="oblock">endin</span>
+
+<span class="oblock">instr</span> 3 <span class="comment">; FluidSynth Steinway Rev</span>
+  <span class="comment">; INITIALIZATION</span>
+             <span class="opc">mididefault</span>   60, p3 <span class="comment">; Default duration of 60 -- overridden by score.</span>
+             <span class="opc">midinoteonkey</span> p4, p5 <span class="comment">; Channels MIDI input to pfields.</span>
+  <span class="comment">; Use channel assigned in fluidload.</span>
+  ichannel   <span class="op">=</span> 3
+  ikey       <span class="op">=</span> p4
+  ivelocity  <span class="op">=</span> p5
+  istatus    <span class="op">=</span> 144
+             <span class="opc">fluidNote</span> gienginenum1, ichannel, ikey, ivelocity
+<span class="oblock">endin</span>
+
+
+<span class="comment">; COLLECT AUDIO FROM ALL SOUNDFONTS</span>
+
+<span class="oblock">instr</span> 100 <span class="comment">; Fluidsynth output</span>
+  <span class="comment">; INITIALIZATION</span>
+  <span class="comment">; Normalize so iamplitude for p5 of 80 == ampdb(80).</span>
+  iamplitude <span class="op">=</span> ampdb(p5) <span class="op">*</span> (10000.0 <span class="op">/</span> 0.1)  
+  <span class="comment">; AUDIO</span>
+  aleft, aright <span class="opc">fluidAllOut</span>
+             <span class="opc">outs</span> aleft <span class="op">*</span> iamplitude, aright <span class="op">*</span> iamplitude
+<span class="oblock">endin</span>
+</pre>
+        <p>
+      Here is another example of the fluidsynth opcodes using 2 engines. It uses the file <a class="ulink" href="examples/fluid-2.orc" target="_top"><em class="citetitle">fluid-2.orc</em></a>.
+    </p>
+        <pre class="programlisting">
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">kr</span> <span class="op">=</span> 4410
+<span class="ohdr">ksmps</span> <span class="op">=</span> 10  
+<span class="ohdr">nchnls</span> <span class="op">=</span> 2
+<span class="ohdr">0dbfs</span> <span class="op">=</span> 32767
+
+<span class="comment">; LOAD SOUNDFONTS</span>
+gienginenum1 <span class="opc">fluidEngine</span>
+gienginenum2 <span class="opc">fluidEngine</span>
+isfnum1      <span class="opc">fluidLoad</span> "Piano Steinway Grand Model C (21,738KB).sf2", gienginenum1, 1
+<span class="comment">; Bright Steinway, program 1, channel 1</span>
+             <span class="opc">fluidProgramSelect</span> gienginenum1, 1, isfnum1, 0, 1
+<span class="comment">; Concert Steinway with reverb, program 2, channel 3</span>
+             <span class="opc">fluidProgramSelect</span> gienginenum1, 3, isfnum1, 0, 2
+isfnum2      <span class="opc">fluidLoad</span> "63.3mg The Sound Site Album Bank V1.0.SF2", gienginenum2, 1
+<span class="comment">; General MIDI, program 50, channel 2</span>
+             <span class="opc">fluidProgramSelect</span> gienginenum2, 2, isfnum2, 0, 50
+
+<span class="comment">; SEND NOTES TO STEINWAY SOUNDFONT</span>
+
+<span class="oblock">instr</span> 1 <span class="comment">; FluidSynth Steinway Rev</span>
+  <span class="comment">; INITIALIZATION</span>
+             <span class="opc">mididefault</span>   60, p3 <span class="comment">; Default duration of 60 -- overridden by score.</span>
+             <span class="opc">midinoteonkey</span> p4, p5 <span class="comment">; Channels MIDI input to pfields.</span>
+  <span class="comment">; Use channel assigned in fluidload.</span>
+  ichannel   <span class="op">=</span> 1
+  ikey       <span class="op">=</span> p4
+  ivelocity  <span class="op">=</span> p5
+             <span class="opc">fluidNote</span> gienginenum1, ichannel, ikey, ivelocity
+<span class="oblock">endin</span>
+
+<span class="oblock">instr</span> 2 <span class="comment">; GM soundfont</span>
+  <span class="comment">; INITIALIZATION</span>
+             <span class="opc">mididefault</span>   60, p3 <span class="comment">; Default duration of 60 -- overridden by score.</span>
+             <span class="opc">midinoteonkey</span> p4, p5 <span class="comment">; Channels MIDI input to pfields.</span>
+  <span class="comment">; Use channel assigned in fluidload.</span>
+  ichannel   <span class="op">=</span> 2
+  ikey       <span class="op">=</span> p4
+  ivelocity  <span class="op">=</span> p5
+             <span class="opc">fluidNote</span> gienginenum2, ichannel, ikey, ivelocity
+<span class="oblock">endin</span>
+
+<span class="oblock">instr</span> 3 <span class="comment">; FluidSynth Steinway Rev</span>
+  <span class="comment">; INITIALIZATION</span>
+             <span class="opc">mididefault</span>   60, p3 <span class="comment">; Default duration of 60 -- overridden by score.</span>
+             <span class="opc">midinoteonkey</span> p4, p5 <span class="comment">; Channels MIDI input to pfields.</span>
+  <span class="comment">; Use channel assigned in fluidload.</span>
+  ichannel   <span class="op">=</span> 3
+  ikey       <span class="op">=</span> p4
+  ivelocity  <span class="op">=</span> p5
+             <span class="opc">fluidNote</span> gienginenum1, ichannel, ikey, ivelocity
+<span class="oblock">endin</span>
+
+<span class="comment">; COLLECT AUDIO FROM ALL SOUNDFONTS</span>
+
+<span class="oblock">instr</span> 100 <span class="comment">; Fluidsynth output</span>
+  <span class="comment">; INITIALIZATION</span>
+  <span class="comment">; Normalize so iamplitude for p5 of 80 == ampdb(80).</span>
+  iamplitude1 <span class="op">=</span> ampdb(p5) <span class="op">*</span> (10000.0 <span class="op">/</span> 0.1)
+  iamplitude2 <span class="op">=</span> ampdb(p6) <span class="op">*</span> (10000.0 <span class="op">/</span> 0.1)
+
+<span class="comment">; AUDIO</span>
+aleft1, aright1 <span class="opc">fluidOut</span>   gienginenum1
+aleft2, aright2 <span class="opc">fluidOut</span>   gienginenum2
+                <span class="opc">outs</span>       (aleft1 <span class="op">*</span> iamplitude1) <span class="op">+</span> (aleft2 <span class="op">*</span> iamplitude2),  \
+                           (aright1 <span class="op">*</span> iamplitude1) <span class="op">+</span> (aright2 <span class="op">*</span> iamplitude2)
+<span class="oblock">endin</span>
+</pre>
+        <p>
+      Here is another more complex example of the fluidsynth opcodes written by Istvan Varga. It uses the file <a class="ulink" href="examples/fluidcomplex.csd" target="_top"><em class="citetitle">fluidcomplex.csd</em></a>.
+    </p>
+        <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+-d -m229 -o dac -T -F midifile.mid
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">ksmps</span> <span class="op">=</span> 128
+<span class="ohdr">nchnls</span> <span class="op">=</span> 2
+<span class="ohdr">0dbfs</span> <span class="op">=</span> 1
+
+<span class="comment">; Example by Istvan Varga</span>
+
+<span class="comment">; disable triggering of instruments by MIDI events</span>
+
+ichn <span class="op">=</span> 1
+<span class="olabel">lp1</span><span class="op">:</span>
+        <span class="ohdr">massign</span>   ichn, 0
+        <span class="octrl">loop_le</span>   ichn, 1, 16, <span class="olabel">lp1</span>
+        <span class="ohdr">pgmassign</span> 0, 0
+
+<span class="comment">; initialize FluidSynth</span>
+
+gifld   <span class="opc">fluidEngine</span>
+gisf2   <span class="opc">fluidLoad</span> "07AcousticGuitar.sf2", gifld, 1
+
+<span class="comment">; k-rate version of fluidProgramSelect</span>
+
+<span class="oblock">opcode</span> fluidProgramSelect_k, 0, kkkkk
+  keng, kchn, ksf2, kbnk, kpre <span class="opc">xin</span>
+        <span class="octrl">igoto</span>     skipInit
+  doInit<span class="op">:</span>
+        <span class="opc">fluidProgramSelect</span> <span class="opc">i</span>(keng), <span class="opc">i</span>(kchn), <span class="opc">i</span>(ksf2), <span class="opc">i</span>(kbnk), <span class="opc">i</span>(kpre)
+        <span class="opc">reinit</span>    doInit
+        <span class="opc">rireturn</span>
+  skipInit<span class="op">:</span>
+<span class="oblock">endop</span>
+
+<span class="oblock">instr</span> 1
+  <span class="comment">; initialize channels</span>
+  kchn  <span class="opc">init</span> 1
+  <span class="octrl">if</span> (kchn <span class="op">==</span> 1) then
+<span class="olabel">lp2</span><span class="op">:</span>
+        <span class="opc">fluidControl</span> gifld, 192, kchn <span class="op">-</span> 1, 0, 0
+        <span class="opc">fluidControl</span> gifld, 176, kchn <span class="op">-</span> 1, 7, 100
+        <span class="opc">fluidControl</span> gifld, 176, kchn <span class="op">-</span> 1, 10, 64
+        <span class="octrl">loop_le</span>   kchn, 1, 16, <span class="olabel">lp2</span>
+  <span class="octrl">endif</span>
+
+  <span class="comment">; send any MIDI events received to FluidSynth</span>
+<span class="olabel">nxt</span><span class="op">:</span>
+  kst, kch, kd1, kd2 <span class="opc">midiin</span>
+  <span class="octrl">if</span> (kst <span class="op">!=</span> 0) then
+    <span class="octrl">if</span> (kst <span class="op">!=</span> 192) then
+        <span class="opc">fluidControl</span> gifld, kst, kch <span class="op">-</span> 1, kd1, kd2
+    <span class="octrl">else</span>
+        fluidProgramSelect_k gifld, kch <span class="op">-</span> 1, gisf2, 0, kd1
+    <span class="octrl">endif</span>
+      <span class="octrl">kgoto</span> <span class="olabel">nxt</span>
+  <span class="octrl">endif</span>
+
+  <span class="comment">; get audio output from FluidSynth</span>
+  aL, aR <span class="opc">fluidOut</span> gifld
+        <span class="opc">outs</span>      aL, aR
+<span class="oblock">endin</span>
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+
+<span class="stamnt">i</span> 1 0 3600
+<span class="stamnt">e</span>
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3285738"></a>
+        <h2>See Also</h2>
+        <p><a class="link" href="fluidNote.html" title="fluidNote"><em class="citetitle">fluidNote</em></a>, <a class="link" href="fluidLoad.html" title="fluidLoad"><em class="citetitle">fluidLoad</em></a></p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3285761"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot com), Steven Yi. 
+      Thanks to Peter Hanappe for Fluidsynth.</p>
+        <p>Optional <span class="emphasis"><em>iNumChannels</em></span> and <span class="emphasis"><em>iPolyphony</em></span> parameters added in 5.07</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fluidControl.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fluidLoad.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fluidControl </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fluidLoad</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

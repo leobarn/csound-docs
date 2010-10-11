@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>MixerReceive</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="MixerSend.html" title="MixerSend" />
+    <link rel="next" href="MixerClear.html" title="MixerClear" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">MixerReceive</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MixerSend.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="MixerClear.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="MixerReceive">
+      <a id="MixerReceive"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMixerReceive" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">MixerReceive</span>
+        </h2>
+        <p>MixerReceive — 
+      Receives an arate signal from a channel of a buss.
+           </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3411321"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asignal <span class="command"><strong>MixerReceive</strong></span> ibuss, ichannel</pre>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3411347"></a>
+        <h2>Description</h2>
+        <p>Receives an arate signal that has been mixed onto a channel of a buss.
+    </p>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3411359"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>ibuss</em></span> -- The number of the buss, for example the number of the instrument receiving the signal.</p>
+        <p><span class="emphasis"><em>ichannel</em></span> -- The number of the channel. Each buss has <code class="literal">nchnls</code> channels.</p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3411385"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>asignal</em></span> -- The signal that has been mixed onto the indicated channel of the buss.</p>
+        <p>
+Use of the mixer requires that instruments setting gains have smaller numbers than instruments sending signals, 
+and that instruments sending signals have smaller numbers than instruments receiving those signals. 
+However, an instrument may have any number of sends or receives. After the final signal is received, 
+<a class="link" href="MixerClear.html" title="MixerClear"><em class="citetitle">MixerClear</em></a> must be invoked to reset the busses to 0 before the next kperiod.
+</p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3412100"></a>
+        <h2>Examples</h2>
+        <pre class="programlisting">
+instr 220 ; Master output
+    ; It applies a bass enhancement, compression and fadeout
+    ; to the whole piece, outputs signals, and clears the mixer.
+  a1  MixerReceive 220, 0
+  a2  MixerReceive 220, 1
+  ; Bass enhancement
+  al1 butterlp a1, 100
+  al2 butterlp a2, 100
+  a1 = al1*1.5 +a1
+  a2 = al2*1.5 +a2 
+
+  ; Global amplitude shape
+  kenv   linseg 0., p5 / 2.0, p4, p3 - p5, p4, p5 / 2.0, 0.
+  a1=a1*kenv
+  a2=a2*kenv 
+  
+  ; Compression
+  a1 dam a1, 5000, 0.5, 1, 0.2, 0.1  
+  a2 dam a2, 5000, 0.5, 1, 0.2, 0.1  
+  
+  ; Remove DC bias
+  a1blocked 	dcblock		a1
+  a2blocked	dcblock		a2
+  
+  ; Output signals
+  outs a1blocked, a2blocked
+  MixerClear
+endin
+</pre>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3412123"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot com).</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MixerSend.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="MixerClear.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">MixerSend </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> MixerClear</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

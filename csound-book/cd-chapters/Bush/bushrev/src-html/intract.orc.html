@@ -1,0 +1,1251 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>;</TITLE>
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BACKGROUND="bg2.jpg">
+
+<PRE>; =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
+; =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
+;
+;&#9;&#9;&#9;&#9;  INTRACT.ORC for Csound
+;
+;&#9;&#9;&#9;&#9;      Noel Clark Bush
+;
+;&#9;&#9;&#9;&#9;October 1995 - December 1996
+;
+; =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
+; =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
+
+;   +  +  View in mono-spaced font, 8-character tabs, 150 col. wide (90 minimum)  +  +
+
+
+; =====================================================================================
+;  Orchestra Header
+; =====================================================================================
+
+; -------------------------------------------------------------------------------------
+; Csound-required values
+
+sr&#9;=&#9;44100&#9;&#9;&#9;&#9;; sample rate (44.1 kHz)
+kr&#9;=&#9;441&#9;&#9;&#9;&#9;; control rate (441 Hz)
+ksmps&#9;=&#9;100&#9;&#9;&#9;&#9;; number of samples in a control period
+nchnls&#9;=&#9;2&#9;&#9;&#9;&#9;; dual channel sound
+
+; -------------------------------------------------------------------------------------
+; global constants manually entered
+
+gihead&#9;&#9;= &#9;0.10&#9;&#9;&#9;; distance (m) between ears
+gi1minbw&#9;=&#9;2&#9;&#9;&#9;; minimal filter bandwidth for i1
+giroomlen&#9;=&#9;200&#9;&#9;&#9;; length (m) of room
+giroomwid&#9;=&#9;133&#9;&#9;&#9;; width (m) of room
+giscalef&#9;=&#9;1&#9;&#9;&#9;; determined by trial and error
+
+; -------------------------------------------------------------------------------------
+; global constants calculated
+
+gihfhead&#9;=&#9;gihead * 0.5&#9;&#9;; (to avoid repeating this calculation)
+gihfrl&#9;&#9;=&#9;giroomlen * 0.5&#9;&#9;; (to avoid repeating this calculation)
+gihfrlsq&#9;=&#9;gihfrl * gihfrl&#9;&#9;; (to avoid repeating this calculation)
+gihfrw&#9;&#9;=&#9;giroomwid * 0.5&#9;&#9;; (to avoid repeating this calculation)
+gihfrwsq&#9;=&#9;gihfrw * gihfrw&#9;&#9;; (to avoid repeating this calculation)
+
+gai1lrev&#9;init&#9;0&#9;&#9;&#9;; global reverb for i1 left channel
+gai1rrev&#9;init&#9;0&#9;&#9;&#9;; global reverb for i1 right channel
+gai2lrev&#9;init&#9;0&#9;&#9;&#9;; global reverb for i2 left channel
+gai2rrev&#9;init&#9;0&#9;&#9;&#9;; global reverb for i2 right channel
+gai4lrev&#9;init&#9;0&#9;&#9;&#9;; global reverb for i4 left channel
+gai4rrev&#9;init&#9;0&#9;&#9;&#9;; global reverb for i4 right channel
+
+gibufkcyc&#9;=&#9;4 / kr&#9;&#9;&#9;; a buffer of several k-cycles
+giihfsr&#9;&#9;=&#9;int(sr * 0.5)
+
+
+<A NAME="instr1">; I1 =====================================================================================</A>
+; I1  Instrument 1
+; I1 =====================================================================================
+
+instr 1
+
+; I1 -------------------------------------------------------------------------------------
+; I1 p-fields read
+
+; I1 --- common to both components
+
+&#9;idur&#9;&#9;=&#9;p3
+
+; I1 --- component 1
+
+&#9;ifreq1&#9;&#9;=&#9;cpsoct(p4)
+&#9;ipc1&#9;&#9;=&#9;p5
+&#9;iwob1&#9;&#9;=&#9;p6
+&#9;ipdf1&#9;&#9;=&#9;p7
+&#9;iwid1&#9;&#9;=&#9;p8
+&#9;iatk1&#9;&#9;=&#9;p9
+&#9;idec1&#9;&#9;=&#9;p10
+&#9;ipdb1&#9;&#9;=&#9;p11
+&#9;ipamp1&#9;&#9;=&#9;ampdb(ipdb1)
+&#9;iiloc1&#9;&#9;=&#9;p12
+&#9;ieloc1&#9;&#9;=&#9;p13
+
+; I1 --- component 2
+
+&#9;ifreq2&#9;&#9;=&#9;cpsoct(p14)
+&#9;ipc2&#9;&#9;=&#9;p15
+&#9;iwob2&#9;&#9;=&#9;p16
+&#9;ipdf2&#9;&#9;=&#9;p17
+&#9;iwid2&#9;&#9;=&#9;p18
+&#9;iatk2&#9;&#9;=&#9;p19
+&#9;idec2&#9;&#9;=&#9;p20
+&#9;ipdb2&#9;&#9;=&#9;p21
+&#9;ipamp2&#9;&#9;=&#9;ampdb(ipdb2)
+&#9;iiloc2&#9;&#9;=&#9;p22
+&#9;ieloc2&#9;&#9;=&#9;p23
+&#9;ireach&#9;&#9;=&#9;p24
+
+; I1 -------------------------------------------------------------------------------------
+; I1 which attack function?&#9;&#9;
+
+&#9;ifn1&#9;=&#9;(ireach &gt; 0 ? 2 : 3)
+&#9;ifn2&#9;=&#9;(ireach &gt; 0 ? 3 : 2)
+
+; I1 -------------------------------------------------------------------------------------
+; I1 amp envelopes
+
+&#9;aenv1&#9;envlpx&#9;ipamp1, iatk1, idur, idec1, ifn1, 0.5, 0.01, 0
+&#9;aenv2&#9;envlpx&#9;ipamp2, iatk2, idur, idec2, ifn2, 0.5, 0.01, 0&#9;
+
+; I1 -------------------------------------------------------------------------------------
+; I1 raw noise&#9;
+
+&#9;awhite1&#9;rand&#9;ipamp1
+&#9;awhite2&#9;rand&#9;ipamp2
+
+; I1 -------------------------------------------------------------------------------------
+; I1 varying filter bandwidths calculated
+
+&#9;kiwid1&#9;envlpx&#9;iwid1, iatk1, idur, idec1, ifn1, 0.5, 0.01, 0
+&#9;kiwid2&#9;envlpx&#9;iwid2, iatk2, idur, idec2, ifn2, 0.5, 0.01, 0
+&#9;kwid1&#9;=&#9;(iwid1 + gi1minbw) - kiwid1
+&#9;kwid2&#9;=&#9;(iwid2 + gi1minbw) - kiwid2
+
+; I1 -------------------------------------------------------------------------------------
+; I1 random pitch fluctuations
+
+&#9;kwob1&#9;randi&#9;iwob1*ifreq1,kr
+&#9;kwob2&#9;randi&#9;iwob2*ifreq2,kr
+
+; I1 -------------------------------------------------------------------------------------
+; I1 band-pass filtering of noise&#9;
+
+&#9;afil1&#9;reson&#9;awhite1, ifreq1 + kwob1, kwid1, 1
+&#9;afil2&#9;reson&#9;awhite2, ifreq2 + kwob2, kwid2, 1
+
+; I1 -------------------------------------------------------------------------------------
+; I1 filtered noise amp enveloped
+
+&#9;anv1&#9;=&#9;afil1 * aenv1
+&#9;anv2&#9;=&#9;afil2 * aenv2
+&#9;
+; I1 -------------------------------------------------------------------------------------
+; I1 amp factor paths for direct sound
+
+&#9;k1d0f&#9;linseg&#9;(1 - ipdf1) * iiloc1, idur, (1 - ipdf1) * ieloc1
+&#9;k2d0f&#9;linseg&#9;(1 - ipdf2) * iiloc2, idur, (1 - ipdf2) * ieloc2
+
+; I1 -------------------------------------------------------------------------------------
+; I1 amp factor paths for reverbed sound
+
+&#9;k1r0f&#9;linseg&#9;(1 - sqrt(ipdf1)) * iiloc1, idur, (1 - sqrt(ipdf1)) * ieloc1
+&#9;k2r0f&#9;linseg&#9;(1 - sqrt(ipdf2)) * iiloc2, idur, (1 - sqrt(ipdf2)) * ieloc2
+
+; I1 -------------------------------------------------------------------------------------
+; I1 no-reverb signal&#9;
+
+&#9;aldir&#9;=&#9;(anv1 * k1d0f) * 0.5 + (anv2 * k2d0f) * 0.5
+&#9;ardir&#9;=&#9;(anv1 * (1 - k1d0f)) * 0.5 + (anv2 * (1 - k2d0f)) * 0.5
+
+; I1 -------------------------------------------------------------------------------------
+; I1 reverb-input signal
+
+&#9;gai1lrev&#9;=&#9;gai1lrev + (anv1 * k1r0f) * 0.5 + (anv2 * k2r0f) * 0.5
+&#9;gai1rrev&#9;=&#9;gai1rrev + (anv1 * (1 - k1r0f)) * 0.5 + (anv2 * (1 - k2r0f)) * 0.5
+&#9;
+; I1 -------------------------------------------------------------------------------------
+; I1 sound out
+&#9;&#9;outs&#9;aldir, ardir
+
+; I1 -------------------------------------------------------------------------------------
+; I1 end
+
+endin
+
+
+<A NAME="instr2">; I2 =====================================================================================</A>
+; I2  Instrument 2
+; I2 =====================================================================================
+
+instr 2
+
+; I2 -------------------------------------------------------------------------------------
+; I2 p-fields read
+
+; I2 --- common to both components
+
+&#9;idur&#9;=&#9;p3
+
+; I2 --- component 1
+
+&#9;ifreq1p0&#9;=&#9;p4
+&#9;ifund1&#9;&#9;=&#9;ifreq1p0
+&#9;iwid1&#9;&#9;=&#9;p5
+&#9;ipdf1&#9;&#9;=&#9;p6
+&#9;iatk1&#9;&#9;=&#9;p7
+&#9;idec1&#9;&#9;=&#9;p8
+&#9;ipdb1&#9;&#9;=&#9;p9
+&#9;ipamp1&#9;&#9;=&#9;ampdb(ipdb1)
+&#9;ids1&#9;&#9;=&#9;p10
+&#9;ids1sq&#9;&#9;=&#9;ids1 * ids1
+&#9;iazi1&#9;&#9;=&#9;p11
+
+; I2 --- component 2
+
+&#9;ifreq2p0&#9;=&#9;p12
+&#9;ifund2&#9;&#9;=&#9;ifreq2p0
+&#9;iwid2&#9;&#9;=&#9;p13
+&#9;ipdf2&#9;&#9;=&#9;p14
+&#9;iatk2&#9;&#9;=&#9;p15
+&#9;idec2&#9;&#9;=&#9;p16
+&#9;ipdb2&#9;&#9;=&#9;p17
+&#9;ipamp2&#9;&#9;=&#9;ampdb(ipdb2)
+&#9;ids2&#9;&#9;=&#9;p18
+&#9;ids2sq&#9;&#9;=&#9;ids2 * ids2
+&#9;iazi2&#9;&#9;=&#9;p19
+
+; I2 -------------------------------------------------------------------------------------
+; I2 listener-to-sound-source distances
+
+&#9;isb1&#9;=&#9;cos (1.5708 - iazi1) * ids1
+&#9;isb1sq&#9;=&#9;isb1 * isb1
+&#9;ibh1&#9;=&#9;sqrt (ids1sq - isb1sq)
+&#9;ibl1&#9;=&#9;ibh1 + gihfhead
+&#9;ibr1&#9;=&#9;ibh1 - gihfhead
+&#9;ibl1sq&#9;=&#9;ibl1 * ibl1
+&#9;ibr1sq&#9;=&#9;ibr1 * ibr1
+&#9;il1ds&#9;=&#9;sqrt (isb1sq + ibl1sq)
+&#9;ir1ds&#9;=&#9;sqrt (isb1sq + ibr1sq)
+&#9;isb2&#9;=&#9;cos (1.5708 - iazi2) * ids2
+&#9;isb2sq&#9;=&#9;isb2 * isb2
+&#9;ibh2&#9;=&#9;sqrt (ids2sq - isb2sq)
+&#9;ibl2&#9;=&#9;ibh2 + gihfhead
+&#9;ibr2&#9;=&#9;ibh2 - gihfhead
+&#9;ibl2sq&#9;=&#9;ibl2 * ibl2
+&#9;ibr2sq&#9;=&#9;ibr2 * ibr2
+&#9;il2ds&#9;=&#9;sqrt (isb2sq + ibl2sq)
+&#9;ir2ds&#9;=&#9;sqrt (isb2sq + ibr2sq)
+
+; I2 -------------------------------------------------------------------------------------
+; I2 listener-to-first-reflected-sound distances
+
+; I2 --- "north/south"
+
+&#9;insxl1ds&#9;=&#9;sqrt (ibl1sq + gihfrlsq)
+&#9;insxr1ds&#9;=&#9;sqrt (ibr1sq + gihfrlsq)
+&#9;insxl2ds&#9;=&#9;sqrt (ibl2sq + gihfrlsq)
+&#9;insxr2ds&#9;=&#9;sqrt (ibr2sq + gihfrlsq)
+
+; I2 --- "east/west"
+
+&#9;iewtvdsl&#9;=&#9;gihfrw + gihfhead
+&#9;iewtvdsr&#9;=&#9;gihfrw - gihfhead
+&#9;iewtvdslsq&#9;=&#9;iewtvdsl * iewtvdsl
+&#9;iewtvdsrsq&#9;=&#9;iewtvdsr * iewtvdsr
+&#9;iewxl1ds&#9;=&#9;sqrt (isb1sq + iewtvdslsq)
+&#9;iewxr1ds&#9;=&#9;sqrt (isb1sq + iewtvdsrsq)
+&#9;iewxl2ds&#9;=&#9;sqrt (isb2sq + iewtvdslsq)
+&#9;iewxr2ds&#9;=&#9;sqrt (isb2sq + iewtvdsrsq)
+&#9;
+; I2 -------------------------------------------------------------------------------------
+; I2 sound-source-to-wall distances
+
+&#9;inwlds1&#9;&#9;=&#9;gihfrl - isb1
+&#9;iewlds1&#9;&#9;=&#9;gihfrw - ibh1
+&#9;iswlds1&#9;&#9;=&#9;gihfrl + isb1
+&#9;iwwlds1&#9;&#9;=&#9;gihfrw + ibh1
+&#9;inwlds2&#9;&#9;=&#9;gihfrl - isb2
+&#9;iewlds2&#9;&#9;=&#9;gihfrw - ibh2
+&#9;iswlds2&#9;&#9;=&#9;gihfrl + isb2
+&#9;iwwlds2&#9;&#9;=&#9;gihfrw + ibh2
+
+; I2 -------------------------------------------------------------------------------------
+; I2 total first reflection paths
+
+; I2 --- component 1
+
+; I2 --- --- left channel
+
+&#9;infrpl1&#9;&#9;=&#9;inwlds1 + insxl1ds
+&#9;iefrpl1&#9;&#9;=&#9;iewlds1 + iewxl1ds
+&#9;isfrpl1&#9;&#9;=&#9;iswlds1 + insxl1ds
+&#9;iwfrpl1&#9;&#9;=&#9;iewlds1&#9;+ iewxl1ds
+
+; I2 --- --- right channel
+
+&#9;infrpr1&#9;&#9;=&#9;inwlds1 + insxr1ds
+&#9;iefrpr1&#9;&#9;=&#9;iewlds1 + iewxr1ds
+&#9;isfrpr1&#9;&#9;=&#9;iswlds1 + insxr1ds
+&#9;iwfrpr1&#9;&#9;=&#9;iewlds1&#9;+ iewxr1ds
+
+; I2 --- component 2
+
+; I2 --- --- left channel
+
+&#9;infrpl2&#9;&#9;=&#9;inwlds1 + insxl2ds
+&#9;iefrpl2&#9;&#9;=&#9;iewlds1 + iewxl2ds
+&#9;isfrpl2&#9;&#9;=&#9;iswlds1 + insxl2ds
+&#9;iwfrpl2&#9;&#9;=&#9;iewlds1&#9;+ iewxl2ds
+
+; I2 --- --- right channel
+
+&#9;infrpr2&#9;&#9;=&#9;inwlds1 + insxr2ds
+&#9;iefrpr2&#9;&#9;=&#9;iewlds1 + iewxr2ds
+&#9;isfrpr2&#9;&#9;=&#9;iswlds1 + insxr2ds
+&#9;iwfrpr2&#9;&#9;=&#9;iewlds1&#9;+ iewxr2ds
+
+
+; I2 -------------------------------------------------------------------------------------
+; I2 delay times for direct sound
+
+&#9;il1dyd&#9;=&#9;il1ds * 0.00289855
+&#9;&#9;il1dyd&#9;=&#9;(il1dyd &gt; gibufkcyc ? il1dyd : gibufkcyc)
+&#9;ir1dyd&#9;=&#9;ir1ds * 0.00289855
+&#9;&#9;ir1dyd&#9;=&#9;(ir1dyd &gt; gibufkcyc ? ir1dyd : gibufkcyc)
+&#9;il2dyd&#9;=&#9;il2ds * 0.00289855
+&#9;&#9;il2dyd&#9;=&#9;(il2dyd &gt; gibufkcyc ? il2dyd : gibufkcyc)
+&#9;ir2dyd&#9;=&#9;ir2ds * 0.00289855
+&#9;&#9;ir2dyd&#9;=&#9;(ir2dyd &gt; gibufkcyc ? ir2dyd : gibufkcyc)
+
+; I2 -------------------------------------------------------------------------------------
+; I2 delay times for reflected sound
+
+&#9;ildt&#9;=&#9;0
+
+; I2 --- component 1
+
+; I2 --- --- left channel
+
+&#9;inxl1dy&#9;=&#9;infrpl1 * 0.00289855
+&#9;&#9;inxl1dy&#9;=&#9;(inxl1dy &gt; gibufkcyc ? inxl1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(inxl1dy &gt; ildt ? inxl1dy : ildt)
+&#9;iexl1dy&#9;=&#9;iefrpl1 * 0.00289855
+&#9;&#9;iexl1dy&#9;=&#9;(iexl1dy &gt; gibufkcyc ? iexl1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iexl1dy &gt; ildt ? iexl1dy : ildt)
+&#9;isxl1dy&#9;=&#9;infrpl1 * 0.00289855
+&#9;&#9;isxl1dy&#9;=&#9;(isxl1dy &gt; gibufkcyc ? isxl1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(isxl1dy &gt; ildt ? isxl1dy : ildt)
+&#9;iwxl1dy&#9;=&#9;iefrpl1 * 0.00289855
+&#9;&#9;iwxl1dy&#9;=&#9;(iwxl1dy &gt; gibufkcyc ? iwxl1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iwxl1dy &gt; ildt ? iwxl1dy : ildt)
+
+; I2 --- --- right channel
+
+&#9;inxr1dy&#9;=&#9;infrpr1 * 0.00289855
+&#9;&#9;inxr1dy&#9;=&#9;(inxr1dy &gt; gibufkcyc ? inxr1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(inxr1dy &gt; ildt ? inxr1dy : ildt)
+&#9;iexr1dy&#9;=&#9;iefrpr1 * 0.00289855
+&#9;&#9;iexr1dy&#9;=&#9;(iexr1dy &gt; gibufkcyc ? iexr1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iexr1dy &gt; ildt ? iexr1dy : ildt)
+&#9;isxr1dy&#9;=&#9;infrpr1 * 0.00289855
+&#9;&#9;isxr1dy&#9;=&#9;(isxr1dy &gt; gibufkcyc ? isxr1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(isxr1dy &gt; ildt ? isxr1dy : ildt)
+&#9;iwxr1dy&#9;=&#9;iefrpr1 * 0.00289855
+&#9;&#9;iwxr1dy&#9;=&#9;(iwxr1dy &gt; gibufkcyc ? iwxr1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iwxr1dy &gt; ildt ? iwxr1dy : ildt)
+
+; I2 --- component 2
+
+; I2 --- --- left channel
+
+&#9;inxl2dy&#9;=&#9;infrpl2 * 0.00289855
+&#9;&#9;inxl2dy&#9;=&#9;(inxl2dy &gt; gibufkcyc ? inxl2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(inxl2dy &gt; ildt ? inxl2dy : ildt)
+&#9;iexl2dy&#9;=&#9;iefrpl1 * 0.00289855
+&#9;&#9;iexl2dy&#9;=&#9;(iexl2dy &gt; gibufkcyc ? iexl2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iexl2dy &gt; ildt ? iexl2dy : ildt)
+&#9;isxl2dy&#9;=&#9;infrpl2 * 0.00289855
+&#9;&#9;isxl2dy&#9;=&#9;(isxl2dy &gt; gibufkcyc ? isxl2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(isxl2dy &gt; ildt ? isxl2dy : ildt)
+&#9;iwxl2dy&#9;=&#9;iefrpl1 * 0.00289855
+&#9;&#9;iwxl2dy&#9;=&#9;(iwxl2dy &gt; gibufkcyc ? iwxl2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iwxl2dy &gt; ildt ? iwxl2dy : ildt)
+
+; I2 --- --- right channel
+
+&#9;inxr2dy&#9;=&#9;infrpr2 * 0.00289855
+&#9;&#9;inxr2dy&#9;=&#9;(inxr2dy &gt; gibufkcyc ? inxr2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(inxr2dy &gt; ildt ? inxr2dy : ildt)
+&#9;iexr2dy&#9;=&#9;iefrpr1 * 0.00289855
+&#9;&#9;iexr2dy&#9;=&#9;(iexr2dy &gt; gibufkcyc ? iexr2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iexr2dy &gt; ildt ? iexr2dy : ildt)
+&#9;isxr2dy&#9;=&#9;infrpr2 * 0.00289855
+&#9;&#9;isxr2dy&#9;=&#9;(isxr2dy &gt; gibufkcyc ? isxr2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(isxr2dy &gt; ildt ? isxr2dy : ildt)
+&#9;iwxr2dy&#9;=&#9;iefrpr1 * 0.00289855
+&#9;&#9;iwxr2dy&#9;=&#9;(iwxr2dy &gt; gibufkcyc ? iwxr2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iwxr2dy &gt; ildt ? iwxr2dy : ildt)
+
+; I2 -------------------------------------------------------------------------------------
+; I2 actual duration (p3) lengthened by longest delay time &#9;&#9;&#9;
+
+&#9;p3&#9;=&#9;idur + ildt + gibufkcyc
+
+; I2 -------------------------------------------------------------------------------------
+; I2 partial series calculations
+
+&#9;ifreq1p1&#9;=&#9;ifreq1p0 * (1 + ipdf1)
+&#9;ifreq1p2&#9;=&#9;ifreq1p0 * (1 + (2 * ipdf1))
+&#9;ifreq1p3&#9;=&#9;ifreq1p0 * (1 + (3 * ipdf1))
+&#9;ifreq1p4&#9;=&#9;ifreq1p0 * (1 + (4 * ipdf1))
+&#9;ifreq1p5&#9;=&#9;ifreq1p0 * (1 + (5 * ipdf1))
+&#9;ifreq2p1&#9;=&#9;ifreq2p0 * (1 + ipdf2)
+&#9;ifreq2p2&#9;=&#9;ifreq2p0 * (1 + (2 * ipdf2))
+&#9;ifreq2p3&#9;=&#9;ifreq2p0 * (1 + (3 * ipdf2))
+&#9;ifreq2p4&#9;=&#9;ifreq2p0 * (1 + (4 * ipdf2))
+&#9;ifreq2p5&#9;=&#9;ifreq2p0 * (1 + (5 * ipdf2))
+
+; I2 -------------------------------------------------------------------------------------
+; I2 amp envelopes for buzz sources &#9;&#9;&#9;
+
+&#9;aenv1&#9;envlpx&#9;ipamp1, iatk1, idur, idec1, 2, .5, .01, 0
+&#9;aenv2&#9;envlpx&#9;ipamp2, iatk2, idur, idec2, 2, .5, .01, 0&#9;
+
+; I2 -------------------------------------------------------------------------------------
+; I2 random pitch fluctuations
+
+&#9;kwarb1&#9;randi&#9;.0053*ifund1,10
+&#9;kwarb2&#9;randi&#9;.0052*ifund2,10
+
+; I2 -------------------------------------------------------------------------------------
+; I2 number of harmonics in buzz sources
+
+&#9;knh1&#9;&#9;=&#9;giihfsr / ifund1
+&#9;knh2&#9;&#9;=&#9;giihfsr / ifund2
+&#9;knh1&#9;&#9;=&#9;(knh1 &lt; 1 ? 1 : knh1)&#9;
+&#9;knh2&#9;&#9;=&#9;(knh2 &lt; 1 ? 1 : knh2)&#9;
+
+; I2 -------------------------------------------------------------------------------------
+; I2 buzz sources
+
+&#9;a1sou&#9;buzz&#9;aenv1, ifund1 + kwarb1, knh1, 4
+&#9;a2sou&#9;buzz&#9;aenv2, ifund1 + kwarb2, knh2, 4
+
+; I2 -------------------------------------------------------------------------------------
+; I2 filter banks (in parallel)
+
+&#9;a1p0&#9;reson&#9;a1sou, ifreq1p0, iwid1, 1
+&#9;a1p1&#9;reson&#9;a1sou, ifreq1p1, iwid1, 1
+&#9;a1p2&#9;reson&#9;a1sou, ifreq1p2, iwid1, 1
+&#9;a1p3&#9;reson&#9;a1sou, ifreq1p3, iwid1, 1
+&#9;a1p4&#9;reson&#9;a1sou, ifreq1p4, iwid1, 1
+&#9;a1p5&#9;reson&#9;a1sou, ifreq1p5, iwid1, 1
+&#9;a2p0&#9;reson&#9;a2sou, ifreq2p0, iwid2, 1
+&#9;a2p1&#9;reson&#9;a2sou, ifreq2p1, iwid2, 1
+&#9;a2p2&#9;reson&#9;a2sou, ifreq2p2, iwid2, 1
+&#9;a2p3&#9;reson&#9;a2sou, ifreq2p3, iwid2, 1
+&#9;a2p4&#9;reson&#9;a2sou, ifreq2p4, iwid2, 1
+&#9;a2p5&#9;reson&#9;a2sou, ifreq2p5, iwid2, 1
+
+; I2 -------------------------------------------------------------------------------------
+; I2 filter outputs summed&#9;and balanced against buzz source
+
+&#9;i01t1&#9;=&#9;ifreq1p0 / ifreq1p1
+&#9;i12t1&#9;=&#9;ifreq1p1 / ifreq1p2
+&#9;i23t1&#9;=&#9;ifreq1p2 / ifreq1p3
+&#9;i34t1&#9;=&#9;ifreq1p3 / ifreq1p4
+&#9;i45t1&#9;=&#9;ifreq1p4 / ifreq1p5
+&#9;i01t2&#9;=&#9;ifreq2p0 / ifreq2p1
+&#9;i12t2&#9;=&#9;ifreq2p1 / ifreq2p2
+&#9;i23t2&#9;=&#9;ifreq2p2 / ifreq2p3
+&#9;i34t2&#9;=&#9;ifreq2p3 / ifreq2p4
+&#9;i45t2&#9;=&#9;ifreq2p4 / ifreq2p5
+&#9;a1sum&#9;=&#9;a1p0 + (i01t1 * a1p1) + (i12t1 * a1p2) + (i23t1 * a1p3) + (i34t1 * a1p4) + (i45t1 * a1p5)
+&#9;a2sum&#9;=&#9;a2p0 + (i01t2 * a2p1) + (i12t2 * a2p2) + (i23t2 * a2p3) + (i34t2 * a2p4) + (i45t2 * a2p5)
+&#9;a1bal&#9;balance&#9;a1sum, a1sou
+&#9;a2bal&#9;balance&#9;a2sum, a2sou
+
+; I2 -------------------------------------------------------------------------------------
+; I2 delay lines (ITD)
+
+; I2 --- component one
+
+; I2 --- --- left channel
+
+&#9;al1d&#9;delay&#9;a1bal, il1dyd
+&#9;al1xn&#9;delay&#9;a1bal, inxl1dy
+&#9;al1xe&#9;delay&#9;a1bal, iexl1dy
+&#9;al1xs&#9;delay&#9;a1bal, isxl1dy
+&#9;al1xw&#9;delay&#9;a1bal, iwxl1dy
+
+; I2 --- --- right channel
+
+&#9;ar1d&#9;delay&#9;a1bal, ir1dyd
+&#9;ar1xn&#9;delay&#9;a1bal, inxr1dy
+&#9;ar1xe&#9;delay&#9;a1bal, iexr1dy
+&#9;ar1xs&#9;delay&#9;a1bal, isxr1dy
+&#9;ar1xw&#9;delay&#9;a1bal, iwxr1dy
+
+; I2 --- component 2
+
+; I2 --- --- left channel
+
+&#9;al2d&#9;delay&#9;a2bal, il2dyd
+&#9;al2xn&#9;delay&#9;a2bal, inxl2dy
+&#9;al2xe&#9;delay&#9;a2bal, iexl2dy
+&#9;al2xs&#9;delay&#9;a2bal, isxl2dy
+&#9;al2xw&#9;delay&#9;a2bal, iwxl2dy
+
+; I2 --- --- right channel
+
+&#9;ar2d&#9;delay&#9;a2bal, ir2dyd
+&#9;ar2xn&#9;delay&#9;a2bal, inxr2dy
+&#9;ar2xe&#9;delay&#9;a2bal, iexr2dy
+&#9;ar2xs&#9;delay&#9;a2bal, isxr2dy
+&#9;ar2xw&#9;delay&#9;a2bal, iwxr2dy
+
+; I2 -------------------------------------------------------------------------------------
+; I2 amp factors for no-reverb direct sound
+
+&#9;il1dampf&#9;=&#9;1 + (1 / il1ds)
+&#9;ir1dampf&#9;=&#9;1 + (1 / ir1ds)
+&#9;il2dampf&#9;=&#9;1 + (1 / il2ds)
+&#9;ir2dampf&#9;=&#9;1 + (1 / ir2ds)
+
+; I2 -------------------------------------------------------------------------------------
+; I2 amp factors for no-reverb first-reflected sound
+
+; I2 --- component 1
+
+; I2 --- --- left channel
+
+&#9;il1xnampf&#9;=&#9;1 + (1 / infrpl1)
+&#9;il1xeampf&#9;=&#9;1 + (1 / iefrpl1)
+&#9;il1xsampf&#9;=&#9;1 + (1 / isfrpl1)
+&#9;il1xwampf&#9;=&#9;1 + (1 / iwfrpl1)
+
+; I2 --- --- right channel
+
+&#9;ir1xnampf&#9;=&#9;1 + (1 / infrpr1)
+&#9;ir1xeampf&#9;=&#9;1 + (1 / iefrpr1)
+&#9;ir1xsampf&#9;=&#9;1 + (1 / isfrpr1)
+&#9;ir1xwampf&#9;=&#9;1 + (1 / iwfrpr1)
+
+; I2 --- component 2
+
+; I2 --- --- left channel
+
+&#9;il2xnampf&#9;=&#9;1 + (1 / infrpl2)
+&#9;il2xeampf&#9;=&#9;1 + (1 / iefrpl2)
+&#9;il2xsampf&#9;=&#9;1 + (1 / isfrpl2)
+&#9;il2xwampf&#9;=&#9;1 + (1 / iwfrpl2)
+
+; I2 --- --- right channel
+
+&#9;ir2xnampf&#9;=&#9;1 + (1 / infrpr2)
+&#9;ir2xeampf&#9;=&#9;1 + (1 / iefrpr2)
+&#9;ir2xsampf&#9;=&#9;1 + (1 / isfrpr2)
+&#9;ir2xwampf&#9;=&#9;1 + (1 / iwfrpr2)
+
+; I2 -------------------------------------------------------------------------------------
+; I2 amp factors for reverb-input direct sound
+
+&#9;il1revdampf&#9;=&#9;1 + (1 / (il1ds * il1ds))
+&#9;ir1revdampf&#9;=&#9;1 + (1 / (ir1ds * ir1ds))
+&#9;il2revdampf&#9;=&#9;1 + (1 / (il2ds * il2ds))
+&#9;ir2revdampf&#9;=&#9;1 + (1 / (ir2ds * ir2ds))
+
+; I2 -------------------------------------------------------------------------------------
+; I2 amp factors for reverb-input first-reflected sound
+
+; I2 --- component 1
+
+; I2 --- --- left channel
+
+&#9;il1revxnampf&#9;=&#9;1 + (1 / (infrpl1 * infrpl1))
+&#9;il1revxeampf&#9;=&#9;1 + (1 / (iefrpl1 * iefrpl1))
+&#9;il1revxsampf&#9;=&#9;1 + (1 / (isfrpl1 * isfrpl1))
+&#9;il1revxwampf&#9;=&#9;1 + (1 / (iwfrpl1 * iwfrpl1))
+
+; I2 --- --- right channel
+
+&#9;ir1revxnampf&#9;=&#9;1 + (1 / (infrpr1 * infrpr1))
+&#9;ir1revxeampf&#9;=&#9;1 + (1 / (iefrpr1 * iefrpr1))
+&#9;ir1revxsampf&#9;=&#9;1 + (1 / (isfrpr1 * isfrpr1))
+&#9;ir1revxwampf&#9;=&#9;1 + (1 / (iwfrpr1 * iwfrpr1))
+
+; I2 --- component 2
+
+; I2 --- --- left channel
+
+&#9;il2revxnampf&#9;=&#9;1 + (1 / (infrpl2 * infrpl2))
+&#9;il2revxeampf&#9;=&#9;1 + (1 / (iefrpl2 * iefrpl2))
+&#9;il2revxsampf&#9;=&#9;1 + (1 / (isfrpl2 * isfrpl2))
+&#9;il2revxwampf&#9;=&#9;1 + (1 / (iwfrpl2 * iwfrpl2))
+
+; I2 --- --- right channel
+
+&#9;ir2revxnampf&#9;=&#9;1 + (1 / (infrpr2 * infrpr2))
+&#9;ir2revxeampf&#9;=&#9;1 + (1 / (iefrpr2 * iefrpr2))
+&#9;ir2revxsampf&#9;=&#9;1 + (1 / (isfrpr2 * isfrpr2))
+&#9;ir2revxwampf&#9;=&#9;1 + (1 / (iwfrpr2 * iwfrpr2))
+
+; I2 -------------------------------------------------------------------------------------
+; I2 no-reverb sound&#9;
+
+; I2 --- direct sound
+
+&#9;al1d&#9;=&#9;(al1d * il1dampf)
+&#9;ar1d&#9;=&#9;(ar1d * ir1dampf)
+&#9;al2d&#9;=&#9;(al2d * il2dampf)
+&#9;ar2d&#9;=&#9;(ar2d * ir2dampf)
+
+; I2 --- first reflections
+
+&#9;al1x&#9;=&#9;(al1xn * il1xnampf) + (al1xe * il1xeampf) + (al1xs * il1xsampf) + (al1xw * il1xwampf)
+&#9;ar1x&#9;=&#9;(ar1xn * ir1xnampf) + (ar1xe * ir1xeampf) + (ar1xs * ir1xsampf) + (ar1xw * ir1xwampf)
+&#9;al2x&#9;=&#9;(al2xn * il2xnampf) + (al2xe * il2xeampf) + (al2xs * il2xsampf) + (al2xw * il2xwampf)
+&#9;ar2x&#9;=&#9;(ar2xn * ir2xnampf) + (ar2xe * ir2xeampf) + (ar2xs * ir2xsampf) + (ar2xw * ir2xwampf)
+
+; I2 --- sum
+
+&#9;alnorev&#9;=&#9;al1d + al2d + al1x + al2x
+&#9;arnorev&#9;=&#9;ar1d + ar2d + ar1x + ar2x
+
+; I2 -------------------------------------------------------------------------------------
+; I2 reverb-input sound&#9;
+
+; I2 --- direct sound
+
+&#9;al1revd&#9;=&#9;(al1d * il1revdampf)
+&#9;ar1revd&#9;=&#9;(ar1d * ir1revdampf)
+&#9;al2revd&#9;=&#9;(al2d * il2revdampf)
+&#9;ar2revd&#9;=&#9;(ar2d * ir2revdampf)
+
+; I2 --- first reflections
+
+&#9;al1revx&#9;=&#9;(al1xn * il1revxnampf) + (al1xe * il1revxeampf) + (al1xs * il1revxsampf) + (al1xw * il1revxwampf)
+&#9;ar1revx&#9;=&#9;(ar1xn * ir1revxnampf) + (ar1xe * ir1revxeampf) + (ar1xs * ir1revxsampf) + (ar1xw * ir1revxwampf)
+&#9;al2revx&#9;=&#9;(al2xn * il2revxnampf) + (al2xe * il2revxeampf) + (al2xs * il2revxsampf) + (al2xw * il2revxwampf)
+&#9;ar2revx&#9;=&#9;(ar2xn * ir2revxnampf) + (ar2xe * ir2revxeampf) + (ar2xs * ir2revxsampf) + (ar2xw * ir2revxwampf)
+
+; I2 --- sum
+
+&#9;alrev&#9;=&#9;al1revd + al2revd + al1revx + al2revx
+&#9;arrev&#9;=&#9;ar1revd + ar2revd + ar1revx + ar2revx
+&#9;
+; I2 -------------------------------------------------------------------------------------
+; I2 no-reverb sound scaled and out
+&#9;&#9;outs&#9;giscalef * alnorev, giscalef * arnorev
+
+; I2 -------------------------------------------------------------------------------------
+; I2 reverb-input sound to global reverb signal
+
+&#9;gai2lrev&#9;=&#9;gai2lrev + alrev
+&#9;gai2rrev&#9;=&#9;gai2rrev + arrev
+
+; I2 -------------------------------------------------------------------------------------
+; I2 end
+
+endin
+
+
+<A NAME="instr4">; I4 =====================================================================================</A>
+; I4  Instrument 4
+; I4 =====================================================================================
+
+instr 4
+
+; I4 -------------------------------------------------------------------------------------
+; I4 p-fields read
+
+; I4 --- common to both components
+
+&#9;idur&#9;=&#9;p3
+
+; I4 --- component 1
+
+&#9;ifreq1p0&#9;=&#9;cpsoct(p4)
+&#9;ipc1&#9;&#9;=&#9;p5
+&#9;iwobmt1&#9;&#9;=&#9;cpsoct(p4 * p6)
+&#9;iwid1&#9;&#9;=&#9;p7
+&#9;inpdf1&#9;&#9;=&#9;p8
+&#9;iatk1&#9;&#9;=&#9;p9
+&#9;idec1&#9;&#9;=&#9;p10
+&#9;ipdb1&#9;&#9;=&#9;p11
+&#9;ipamp1&#9;&#9;=&#9;ampdb(ipdb1)
+&#9;ids1&#9;&#9;=&#9;p12
+&#9;ids1sq&#9;&#9;=&#9;ids1 * ids1
+&#9;iazi1&#9;&#9;=&#9;p13
+
+; I4 --- component 2
+
+&#9;ifreq2p0&#9;=&#9;cpsoct(p14)
+&#9;ipc2&#9;&#9;=&#9;p15
+&#9;iwobmt2&#9;&#9;=&#9;cpsoct(p13 * p16)
+&#9;iwid2&#9;&#9;=&#9;p17
+&#9;inpdf2&#9;&#9;=&#9;p18
+&#9;iatk2&#9;&#9;=&#9;p19
+&#9;idec2&#9;&#9;=&#9;p20
+&#9;ipdb2&#9;&#9;=&#9;p21
+&#9;ipamp2&#9;&#9;=&#9;ampdb(ipdb2)
+&#9;ids2&#9;&#9;=&#9;p22
+&#9;ids2sq&#9;&#9;=&#9;ids2 * ids2
+&#9;iazi2&#9;&#9;=&#9;p23
+&#9;&#9;
+; I4 -------------------------------------------------------------------------------------
+; I4 listener-to-sound-source distances
+
+&#9;isb1&#9;=&#9;cos (1.5708 - iazi1) * ids1
+&#9;isb1sq&#9;=&#9;isb1 * isb1
+&#9;ibh1&#9;=&#9;sqrt (ids1sq - isb1sq)
+&#9;ibl1&#9;=&#9;ibh1 + gihfhead
+&#9;ibr1&#9;=&#9;ibh1 - gihfhead
+&#9;ibl1sq&#9;=&#9;ibl1 * ibl1
+&#9;ibr1sq&#9;=&#9;ibr1 * ibr1
+&#9;il1ds&#9;=&#9;sqrt (isb1sq + ibl1sq)
+&#9;ir1ds&#9;=&#9;sqrt (isb1sq + ibr1sq)
+&#9;isb2&#9;=&#9;cos (1.5708 - iazi2) * ids2
+&#9;isb2sq&#9;=&#9;isb2 * isb2
+&#9;ibh2&#9;=&#9;sqrt (ids2sq - isb2sq)
+&#9;ibl2&#9;=&#9;ibh2 + gihfhead
+&#9;ibr2&#9;=&#9;ibh2 - gihfhead
+&#9;ibl2sq&#9;=&#9;ibl2 * ibl2
+&#9;ibr2sq&#9;=&#9;ibr2 * ibr2
+&#9;il2ds&#9;=&#9;sqrt (isb2sq + ibl2sq)
+&#9;ir2ds&#9;=&#9;sqrt (isb2sq + ibr2sq)
+
+; I4 -------------------------------------------------------------------------------------
+; I4 listener-to-first-reflected-sound distances
+
+; I4 --- "north/south"
+
+&#9;insxl1ds&#9;=&#9;sqrt (ibl1sq + gihfrlsq)
+&#9;insxr1ds&#9;=&#9;sqrt (ibr1sq + gihfrlsq)
+&#9;insxl2ds&#9;=&#9;sqrt (ibl2sq + gihfrlsq)
+&#9;insxr2ds&#9;=&#9;sqrt (ibr2sq + gihfrlsq)
+
+; I4 --- "east/west"
+
+&#9;iewtvdsl&#9;=&#9;gihfrw + gihfhead
+&#9;iewtvdsr&#9;=&#9;gihfrw - gihfhead
+&#9;iewtvdslsq&#9;=&#9;iewtvdsl * iewtvdsl
+&#9;iewtvdsrsq&#9;=&#9;iewtvdsr * iewtvdsr
+&#9;iewxl1ds&#9;=&#9;sqrt (isb1sq + iewtvdslsq)
+&#9;iewxr1ds&#9;=&#9;sqrt (isb1sq + iewtvdsrsq)
+&#9;iewxl2ds&#9;=&#9;sqrt (isb2sq + iewtvdslsq)
+&#9;iewxr2ds&#9;=&#9;sqrt (isb2sq + iewtvdsrsq)
+&#9;
+; I4 -------------------------------------------------------------------------------------
+; I4 sound-source-to-wall distances
+
+&#9;inwlds1&#9;&#9;=&#9;gihfrl - isb1
+&#9;iewlds1&#9;&#9;=&#9;gihfrw - ibh1
+&#9;iswlds1&#9;&#9;=&#9;gihfrl + isb1
+&#9;iwwlds1&#9;&#9;=&#9;gihfrw + ibh1
+&#9;inwlds2&#9;&#9;=&#9;gihfrl - isb2
+&#9;iewlds2&#9;&#9;=&#9;gihfrw - ibh2
+&#9;iswlds2&#9;&#9;=&#9;gihfrl + isb2
+&#9;iwwlds2&#9;&#9;=&#9;gihfrw + ibh2
+
+; I4 -------------------------------------------------------------------------------------
+; I4 total first reflection paths
+
+; I4 --- component 1
+
+; I4 --- --- left channel
+
+&#9;infrpl1&#9;&#9;=&#9;inwlds1 + insxl1ds
+&#9;iefrpl1&#9;&#9;=&#9;iewlds1 + iewxl1ds
+&#9;isfrpl1&#9;&#9;=&#9;iswlds1 + insxl1ds
+&#9;iwfrpl1&#9;&#9;=&#9;iewlds1&#9;+ iewxl1ds
+
+; I4 --- --- right channel
+
+&#9;infrpr1&#9;&#9;=&#9;inwlds1 + insxr1ds
+&#9;iefrpr1&#9;&#9;=&#9;iewlds1 + iewxr1ds
+&#9;isfrpr1&#9;&#9;=&#9;iswlds1 + insxr1ds
+&#9;iwfrpr1&#9;&#9;=&#9;iewlds1&#9;+ iewxr1ds
+
+; I4 --- component 2
+
+; I4 --- --- left channel
+
+&#9;infrpl2&#9;&#9;=&#9;inwlds1 + insxl2ds
+&#9;iefrpl2&#9;&#9;=&#9;iewlds1 + iewxl2ds
+&#9;isfrpl2&#9;&#9;=&#9;iswlds1 + insxl2ds
+&#9;iwfrpl2&#9;&#9;=&#9;iewlds1&#9;+ iewxl2ds
+
+; I4 --- --- right channel
+
+&#9;infrpr2&#9;&#9;=&#9;inwlds1 + insxr2ds
+&#9;iefrpr2&#9;&#9;=&#9;iewlds1 + iewxr2ds
+&#9;isfrpr2&#9;&#9;=&#9;iswlds1 + insxr2ds
+&#9;iwfrpr2&#9;&#9;=&#9;iewlds1&#9;+ iewxr2ds
+
+
+; I4 -------------------------------------------------------------------------------------
+; I4 delay times for direct sound
+
+&#9;il1dyd&#9;=&#9;il1ds * 0.00289855
+&#9;&#9;il1dyd&#9;=&#9;(il1dyd &gt; gibufkcyc ? il1dyd : gibufkcyc)
+&#9;ir1dyd&#9;=&#9;ir1ds * 0.00289855
+&#9;&#9;ir1dyd&#9;=&#9;(ir1dyd &gt; gibufkcyc ? ir1dyd : gibufkcyc)
+&#9;il2dyd&#9;=&#9;il2ds * 0.00289855
+&#9;&#9;il2dyd&#9;=&#9;(il2dyd &gt; gibufkcyc ? il2dyd : gibufkcyc)
+&#9;ir2dyd&#9;=&#9;ir2ds * 0.00289855
+&#9;&#9;ir2dyd&#9;=&#9;(ir2dyd &gt; gibufkcyc ? ir2dyd : gibufkcyc)
+
+; I4 -------------------------------------------------------------------------------------
+; I4 delay times for reflected sound
+
+&#9;ildt&#9;=&#9;0
+
+; I4 --- component 1
+
+; I4 --- --- left channel
+
+&#9;inxl1dy&#9;=&#9;infrpl1 * 0.00289855
+&#9;&#9;inxl1dy&#9;=&#9;(inxl1dy &gt; gibufkcyc ? inxl1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(inxl1dy &gt; ildt ? inxl1dy : ildt)
+&#9;iexl1dy&#9;=&#9;iefrpl1 * 0.00289855
+&#9;&#9;iexl1dy&#9;=&#9;(iexl1dy &gt; gibufkcyc ? iexl1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iexl1dy &gt; ildt ? iexl1dy : ildt)
+&#9;isxl1dy&#9;=&#9;infrpl1 * 0.00289855
+&#9;&#9;isxl1dy&#9;=&#9;(isxl1dy &gt; gibufkcyc ? isxl1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(isxl1dy &gt; ildt ? isxl1dy : ildt)
+&#9;iwxl1dy&#9;=&#9;iefrpl1 * 0.00289855
+&#9;&#9;iwxl1dy&#9;=&#9;(iwxl1dy &gt; gibufkcyc ? iwxl1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iwxl1dy &gt; ildt ? iwxl1dy : ildt)
+
+; I4 --- --- right channel
+
+&#9;inxr1dy&#9;=&#9;infrpr1 * 0.00289855
+&#9;&#9;inxr1dy&#9;=&#9;(inxr1dy &gt; gibufkcyc ? inxr1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(inxr1dy &gt; ildt ? inxr1dy : ildt)
+&#9;iexr1dy&#9;=&#9;iefrpr1 * 0.00289855
+&#9;&#9;iexr1dy&#9;=&#9;(iexr1dy &gt; gibufkcyc ? iexr1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iexr1dy &gt; ildt ? iexr1dy : ildt)
+&#9;isxr1dy&#9;=&#9;infrpr1 * 0.00289855
+&#9;&#9;isxr1dy&#9;=&#9;(isxr1dy &gt; gibufkcyc ? isxr1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(isxr1dy &gt; ildt ? isxr1dy : ildt)
+&#9;iwxr1dy&#9;=&#9;iefrpr1 * 0.00289855
+&#9;&#9;iwxr1dy&#9;=&#9;(iwxr1dy &gt; gibufkcyc ? iwxr1dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iwxr1dy &gt; ildt ? iwxr1dy : ildt)
+
+; I4 --- component 2
+
+; I4 --- --- left channel
+
+&#9;inxl2dy&#9;=&#9;infrpl2 * 0.00289855
+&#9;&#9;inxl2dy&#9;=&#9;(inxl2dy &gt; gibufkcyc ? inxl2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(inxl2dy &gt; ildt ? inxl2dy : ildt)
+&#9;iexl2dy&#9;=&#9;iefrpl1 * 0.00289855
+&#9;&#9;iexl2dy&#9;=&#9;(iexl2dy &gt; gibufkcyc ? iexl2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iexl2dy &gt; ildt ? iexl2dy : ildt)
+&#9;isxl2dy&#9;=&#9;infrpl2 * 0.00289855
+&#9;&#9;isxl2dy&#9;=&#9;(isxl2dy &gt; gibufkcyc ? isxl2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(isxl2dy &gt; ildt ? isxl2dy : ildt)
+&#9;iwxl2dy&#9;=&#9;iefrpl1 * 0.00289855
+&#9;&#9;iwxl2dy&#9;=&#9;(iwxl2dy &gt; gibufkcyc ? iwxl2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iwxl2dy &gt; ildt ? iwxl2dy : ildt)
+
+; I4 --- --- right channel
+
+&#9;inxr2dy&#9;=&#9;infrpr2 * 0.00289855
+&#9;&#9;inxr2dy&#9;=&#9;(inxr2dy &gt; gibufkcyc ? inxr2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(inxr2dy &gt; ildt ? inxr2dy : ildt)
+&#9;iexr2dy&#9;=&#9;iefrpr1 * 0.00289855
+&#9;&#9;iexr2dy&#9;=&#9;(iexr2dy &gt; gibufkcyc ? iexr2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iexr2dy &gt; ildt ? iexr2dy : ildt)
+&#9;isxr2dy&#9;=&#9;infrpr2 * 0.00289855
+&#9;&#9;isxr2dy&#9;=&#9;(isxr2dy &gt; gibufkcyc ? isxr2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(isxr2dy &gt; ildt ? isxr2dy : ildt)
+&#9;iwxr2dy&#9;=&#9;iefrpr1 * 0.00289855
+&#9;&#9;iwxr2dy&#9;=&#9;(iwxr2dy &gt; gibufkcyc ? iwxr2dy : gibufkcyc)
+&#9;&#9;ildt&#9;=&#9;(iwxr2dy &gt; ildt ? iwxr2dy : ildt)
+
+; I4 -------------------------------------------------------------------------------------
+; I4 actual duration (p3) lengthened by longest delay time
+
+&#9;p3&#9;=&#9;idur + ildt + gibufkcyc
+
+; I4 -------------------------------------------------------------------------------------
+; I4 partial series calculations&#9;
+
+&#9;ifreq1p1&#9;=&#9;ifreq1p0 * (1 + inpdf1)
+&#9;ifreq1p2&#9;=&#9;ifreq1p0 * (1 + (2 * inpdf1))
+&#9;ifreq1p3&#9;=&#9;ifreq1p0 * (1 + (3 * inpdf1))
+&#9;ifreq1p4&#9;=&#9;ifreq1p0 * (1 + (4 * inpdf1))
+&#9;ifreq1p5&#9;=&#9;ifreq1p0 * (1 + (5 * inpdf1))
+&#9;ifreq1p6&#9;=&#9;ifreq1p0 * (1 + (6 * inpdf1))
+&#9;ifreq1p7&#9;=&#9;ifreq1p0 * (1 + (7 * inpdf1))
+&#9;ifreq2p1&#9;=&#9;ifreq2p0 * (1 + inpdf2)
+&#9;ifreq2p2&#9;=&#9;ifreq2p0 * (1 + (2 * inpdf2))
+&#9;ifreq2p3&#9;=&#9;ifreq2p0 * (1 + (3 * inpdf2))
+&#9;ifreq2p4&#9;=&#9;ifreq2p0 * (1 + (4 * inpdf2))
+&#9;ifreq2p5&#9;=&#9;ifreq2p0 * (1 + (5 * inpdf2))
+&#9;ifreq2p6&#9;=&#9;ifreq2p0 * (1 + (6 * inpdf2))
+&#9;ifreq2p7&#9;=&#9;ifreq2p0 * (1 + (7 * inpdf2))
+
+; I4 -------------------------------------------------------------------------------------
+; I4 pitch-wobble frequencies&#9;
+
+&#9;iwobfz1&#9;&#9;=&#9;ipc1 / idur
+&#9;iwobfz2&#9;&#9;=&#9;ipc2 / idur
+
+; I4 -------------------------------------------------------------------------------------
+; I4 pitch-wobble amplitudes
+
+&#9;kwobln1&#9;line&#9;iwobmt1, idur, 0
+&#9;kwobln2&#9;line&#9;iwobmt2, idur, 0
+
+; I4 -------------------------------------------------------------------------------------
+; I4 pitch-wobble paths
+
+&#9;kwobfz1&#9;line&#9;iwobfz1, idur, iwobfz1 * (1 - inpdf1)
+&#9;kwobfz2&#9;line&#9;iwobfz2, idur, iwobfz2 * (1 - inpdf2)
+
+; I4 -------------------------------------------------------------------------------------
+; I4 pitch-wobble control signals
+
+&#9;kwob1&#9;oscil&#9;kwobln1, kwobfz1, 1
+&#9;kwob2&#9;oscil&#9;kwobln2, kwobfz2, 1
+
+; I4 -------------------------------------------------------------------------------------
+; I4 amp envelopes&#9;for buzz sources
+
+&#9;aenv1&#9;envlpx&#9;ipamp1, iatk1, idur, idec1, 2, .5, .01, 0
+&#9;aenv2&#9;envlpx&#9;ipamp2, iatk2, idur, idec2, 2, .5, .01, 0&#9;
+
+; I4 -------------------------------------------------------------------------------------
+; I4 random pitch fluctuation
+
+&#9;kwarb1&#9;randi&#9;.0080 * ifreq1p0,10
+&#9;kwarb2&#9;randi&#9;.0082 * ifreq2p0,10
+
+; I4 -------------------------------------------------------------------------------------
+; I4 wobbling fundamental
+
+&#9;kfund1&#9;&#9;=&#9;ifreq1p0 + kwob1
+&#9;kfund2&#9;&#9;=&#9;ifreq2p0 + kwob2
+
+; I4 -------------------------------------------------------------------------------------
+; I4 number of harmonics in buzz source
+
+&#9;knh1&#9;&#9;=&#9;giihfsr / ifreq1p0
+&#9;knh2&#9;&#9;=&#9;giihfsr / ifreq2p0
+&#9;knh1&#9;&#9;=&#9;(knh1 &lt; 1 ? 1 : knh1)&#9;
+&#9;knh2&#9;&#9;=&#9;(knh2 &lt; 1 ? 1 : knh2)&#9;
+
+; I4 -------------------------------------------------------------------------------------
+; I4 buzz sources
+
+&#9;a1sou&#9;buzz&#9;aenv1, kfund1 + kwarb1, knh1, 4
+&#9;a2sou&#9;buzz&#9;aenv2, kfund2 + kwarb2, knh2, 4
+
+; I4 -------------------------------------------------------------------------------------
+; I4 filter banks (in parallel)
+
+&#9;a1p0&#9;reson&#9;a1sou, ifreq1p0, iwid1, 1
+&#9;a1p1&#9;reson&#9;a1sou, ifreq1p1, iwid1 * 0.9, 1
+&#9;a1p2&#9;reson&#9;a1sou, ifreq1p2, iwid1 * 0.8, 1
+&#9;a1p3&#9;reson&#9;a1sou, ifreq1p3, iwid1 * 0.7, 1
+&#9;a1p4&#9;reson&#9;a1sou, ifreq1p4, iwid1 * 0.6, 1
+&#9;a1p5&#9;reson&#9;a1sou, ifreq1p5, iwid1 * 0.5, 1
+&#9;a1p6&#9;reson&#9;a1sou, ifreq1p6, iwid1, 1
+&#9;a1p7&#9;reson&#9;a1sou, ifreq1p7, iwid1, 1
+&#9;a2p0&#9;reson&#9;a2sou, ifreq2p0, iwid2, 1
+&#9;a2p1&#9;reson&#9;a2sou, ifreq2p1, iwid2 * 0.9, 1
+&#9;a2p2&#9;reson&#9;a2sou, ifreq2p2, iwid2 * 0.8, 1
+&#9;a2p3&#9;reson&#9;a2sou, ifreq2p3, iwid2 * 0.7, 1
+&#9;a2p4&#9;reson&#9;a2sou, ifreq2p4, iwid2 * 0.6, 1
+&#9;a2p5&#9;reson&#9;a2sou, ifreq2p5, iwid2 * 0.5, 1
+&#9;a2p6&#9;reson&#9;a2sou, ifreq2p6, iwid2, 1
+&#9;a2p7&#9;reson&#9;a2sou, ifreq2p7, iwid2, 1
+
+; I4 -------------------------------------------------------------------------------------
+; I4 filter outputs summed, low-pass filtered, and balanced&#9;
+&#9;a1sum&#9;=&#9;a1p0 + (0.78 * a1p1) + (0.65 * a1p2) + (0.34 * a1p3) + (0.30 * a1p4) + (0.28 * a1p5) + (0.20 * a1p6) + (0.15 * a1p7)
+&#9;a2sum&#9;=&#9;a2p0 + (0.76 * a2p1) + (0.54 * a2p2) + (0.32 * a2p3) + (0.25 * a2p4) + (0.20 * a2p5) + (0.19 * a2p6) + (0.13 * a2p7)
+&#9;a1fil&#9;tone&#9;a1sum, 2000
+&#9;a2fil&#9;tone&#9;a2sum, 2000
+&#9;a1bal&#9;balance&#9;a1fil, a1sou
+&#9;a2bal&#9;balance&#9;a2fil, a2sou
+
+; I4 -------------------------------------------------------------------------------------
+; I4 delay lines (ITD)
+
+; I4 --- component one
+
+; I4 --- --- left channel
+
+&#9;al1d&#9;delay&#9;a1bal, il1dyd
+&#9;al1xn&#9;delay&#9;a1bal, inxl1dy
+&#9;al1xe&#9;delay&#9;a1bal, iexl1dy
+&#9;al1xs&#9;delay&#9;a1bal, isxl1dy
+&#9;al1xw&#9;delay&#9;a1bal, iwxl1dy
+
+; I4 --- --- right channel
+
+&#9;ar1d&#9;delay&#9;a1bal, ir1dyd
+&#9;ar1xn&#9;delay&#9;a1bal, inxr1dy
+&#9;ar1xe&#9;delay&#9;a1bal, iexr1dy
+&#9;ar1xs&#9;delay&#9;a1bal, isxr1dy
+&#9;ar1xw&#9;delay&#9;a1bal, iwxr1dy
+
+; I4 --- component 2
+
+; I4 --- --- left channel
+
+&#9;al2d&#9;delay&#9;a2bal, il2dyd
+&#9;al2xn&#9;delay&#9;a2bal, inxl2dy
+&#9;al2xe&#9;delay&#9;a2bal, iexl2dy
+&#9;al2xs&#9;delay&#9;a2bal, isxl2dy
+&#9;al2xw&#9;delay&#9;a2bal, iwxl2dy
+
+; I4 --- --- right channel
+
+&#9;ar2d&#9;delay&#9;a2bal, ir2dyd
+&#9;ar2xn&#9;delay&#9;a2bal, inxr2dy
+&#9;ar2xe&#9;delay&#9;a2bal, iexr2dy
+&#9;ar2xs&#9;delay&#9;a2bal, isxr2dy
+&#9;ar2xw&#9;delay&#9;a2bal, iwxr2dy
+
+; I4 -------------------------------------------------------------------------------------
+; I4 amp factors for no-reverb direct sound
+
+&#9;il1dampf&#9;=&#9;1 + (1 / il1ds)
+&#9;ir1dampf&#9;=&#9;1 + (1 / ir1ds)
+&#9;il2dampf&#9;=&#9;1 + (1 / il2ds)
+&#9;ir2dampf&#9;=&#9;1 + (1 / ir2ds)
+
+; I4 -------------------------------------------------------------------------------------
+; I4 amp factors for no-reverb first-reflected sound
+
+; I4 --- component 1
+
+; I4 --- --- left channel
+
+&#9;il1xnampf&#9;=&#9;1 + (1 / infrpl1)
+&#9;il1xeampf&#9;=&#9;1 + (1 / iefrpl1)
+&#9;il1xsampf&#9;=&#9;1 + (1 / isfrpl1)
+&#9;il1xwampf&#9;=&#9;1 + (1 / iwfrpl1)
+
+; I4 --- --- right channel
+
+&#9;ir1xnampf&#9;=&#9;1 + (1 / infrpr1)
+&#9;ir1xeampf&#9;=&#9;1 + (1 / iefrpr1)
+&#9;ir1xsampf&#9;=&#9;1 + (1 / isfrpr1)
+&#9;ir1xwampf&#9;=&#9;1 + (1 / iwfrpr1)
+
+; I4 --- component 2
+
+; I4 --- --- left channel
+
+&#9;il2xnampf&#9;=&#9;1 + (1 / infrpl2)
+&#9;il2xeampf&#9;=&#9;1 + (1 / iefrpl2)
+&#9;il2xsampf&#9;=&#9;1 + (1 / isfrpl2)
+&#9;il2xwampf&#9;=&#9;1 + (1 / iwfrpl2)
+
+; I4 --- --- right channel
+
+&#9;ir2xnampf&#9;=&#9;1 + (1 / infrpr2)
+&#9;ir2xeampf&#9;=&#9;1 + (1 / iefrpr2)
+&#9;ir2xsampf&#9;=&#9;1 + (1 / isfrpr2)
+&#9;ir2xwampf&#9;=&#9;1 + (1 / iwfrpr2)
+
+; I4 -------------------------------------------------------------------------------------
+; I4 amp factors for reverb-input direct sound
+
+&#9;il1revdampf&#9;=&#9;1 + (1 / (il1ds * il1ds))
+&#9;ir1revdampf&#9;=&#9;1 + (1 / (ir1ds * ir1ds))
+&#9;il2revdampf&#9;=&#9;1 + (1 / (il2ds * il2ds))
+&#9;ir2revdampf&#9;=&#9;1 + (1 / (ir2ds * ir2ds))
+
+; I4 -------------------------------------------------------------------------------------
+; I4 amp factors for reverb-input first-reflected sound
+
+; I4 --- component 1
+
+; I4 --- --- left channel
+
+&#9;il1revxnampf&#9;=&#9;1 + (1 / (infrpl1 * infrpl1))
+&#9;il1revxeampf&#9;=&#9;1 + (1 / (iefrpl1 * iefrpl1))
+&#9;il1revxsampf&#9;=&#9;1 + (1 / (isfrpl1 * isfrpl1))
+&#9;il1revxwampf&#9;=&#9;1 + (1 / (iwfrpl1 * iwfrpl1))
+
+; I4 --- --- right channel
+
+&#9;ir1revxnampf&#9;=&#9;1 + (1 / (infrpr1 * infrpr1))
+&#9;ir1revxeampf&#9;=&#9;1 + (1 / (iefrpr1 * iefrpr1))
+&#9;ir1revxsampf&#9;=&#9;1 + (1 / (isfrpr1 * isfrpr1))
+&#9;ir1revxwampf&#9;=&#9;1 + (1 / (iwfrpr1 * iwfrpr1))
+
+; I4 --- component 2
+
+; I4 --- --- left channel
+
+&#9;il2revxnampf&#9;=&#9;1 + (1 / (infrpl2 * infrpl2))
+&#9;il2revxeampf&#9;=&#9;1 + (1 / (iefrpl2 * iefrpl2))
+&#9;il2revxsampf&#9;=&#9;1 + (1 / (isfrpl2 * isfrpl2))
+&#9;il2revxwampf&#9;=&#9;1 + (1 / (iwfrpl2 * iwfrpl2))
+
+; I4 --- --- right channel
+
+&#9;ir2revxnampf&#9;=&#9;1 + (1 / (infrpr2 * infrpr2))
+&#9;ir2revxeampf&#9;=&#9;1 + (1 / (iefrpr2 * iefrpr2))
+&#9;ir2revxsampf&#9;=&#9;1 + (1 / (isfrpr2 * isfrpr2))
+&#9;ir2revxwampf&#9;=&#9;1 + (1 / (iwfrpr2 * iwfrpr2))
+
+; I4 -------------------------------------------------------------------------------------
+; I4 no-reverb sound&#9;
+
+; I4 --- direct sound
+
+&#9;al1d&#9;=&#9;(al1d * il1dampf)
+&#9;ar1d&#9;=&#9;(ar1d * ir1dampf)
+&#9;al2d&#9;=&#9;(al2d * il2dampf)
+&#9;ar2d&#9;=&#9;(ar2d * ir2dampf)
+
+; I4 --- first reflections
+
+&#9;al1x&#9;=&#9;(al1xn * il1xnampf) + (al1xe * il1xeampf) + (al1xs * il1xsampf) + (al1xw * il1xwampf)
+&#9;ar1x&#9;=&#9;(ar1xn * ir1xnampf) + (ar1xe * ir1xeampf) + (ar1xs * ir1xsampf) + (ar1xw * ir1xwampf)
+&#9;al2x&#9;=&#9;(al2xn * il2xnampf) + (al2xe * il2xeampf) + (al2xs * il2xsampf) + (al2xw * il2xwampf)
+&#9;ar2x&#9;=&#9;(ar2xn * ir2xnampf) + (ar2xe * ir2xeampf) + (ar2xs * ir2xsampf) + (ar2xw * ir2xwampf)
+
+; I4 --- sum
+
+&#9;alnorev&#9;=&#9;al1d + al2d + al1x + al2x
+&#9;arnorev&#9;=&#9;ar1d + ar2d + ar1x + ar2x
+
+; I4 -------------------------------------------------------------------------------------
+; I4 reverb-input sound&#9;
+
+; I4 --- direct sound
+
+&#9;al1revd&#9;=&#9;(al1d * il1revdampf)
+&#9;ar1revd&#9;=&#9;(ar1d * ir1revdampf)
+&#9;al2revd&#9;=&#9;(al2d * il2revdampf)
+&#9;ar2revd&#9;=&#9;(ar2d * ir2revdampf)
+
+; I4 --- first reflections
+
+&#9;al1revx&#9;=&#9;(al1xn * il1revxnampf) + (al1xe * il1revxeampf) + (al1xs * il1revxsampf) + (al1xw * il1revxwampf)
+&#9;ar1revx&#9;=&#9;(ar1xn * ir1revxnampf) + (ar1xe * ir1revxeampf) + (ar1xs * ir1revxsampf) + (ar1xw * ir1revxwampf)
+&#9;al2revx&#9;=&#9;(al2xn * il2revxnampf) + (al2xe * il2revxeampf) + (al2xs * il2revxsampf) + (al2xw * il2revxwampf)
+&#9;ar2revx&#9;=&#9;(ar2xn * ir2revxnampf) + (ar2xe * ir2revxeampf) + (ar2xs * ir2revxsampf) + (ar2xw * ir2revxwampf)
+
+; I4 --- sum
+
+&#9;alrev&#9;=&#9;al1revd + al2revd + al1revx + al2revx
+&#9;arrev&#9;=&#9;ar1revd + ar2revd + ar1revx + ar2revx
+&#9;
+; I4 -------------------------------------------------------------------------------------
+; I4 no-reverb sound scaled and out
+&#9;&#9;outs&#9;giscalef * alnorev, giscalef * arnorev
+
+; I4 -------------------------------------------------------------------------------------
+; I4 reverb-input sound to global reverb signal
+
+&#9;gai2lrev&#9;=&#9;gai2lrev + alrev
+&#9;gai2rrev&#9;=&#9;gai2rrev + arrev
+
+; I4 -------------------------------------------------------------------------------------
+; I4 end
+
+endin
+
+<A NAME="instr91">; I91 =====================================================================================</A>
+; I91  Instrument 91
+; I91 =====================================================================================
+
+instr 91
+
+&#9;irt&#9;&#9;=&#9;&#9;p4&#9;&#9;; average reverb time
+
+; I91 -------------------------------------------------------------------------------------
+; I91 varying reverb path
+
+&#9;kvv&#9;&#9;randh&#9;2, 2
+&#9;klrtv&#9;randi&#9;irt * 0.4, kvv + 2.01
+&#9;krrtv&#9;randi&#9;irt * 0.4, kvv + 2.01
+
+&#9;aleft&#9;reverb&#9;gai1lrev, klrtv + irt
+&#9;aright&#9;reverb&#9;gai1rrev, krrtv + irt
+
+&#9;&#9;outs&#9;giscalef * aleft, giscalef * aright
+
+&#9;gai1lrev&#9;=&#9;0
+&#9;gai1rrev&#9;=&#9;0
+
+; I91 -------------------------------------------------------------------------------------
+; I91 end
+
+endin
+
+<A NAME="instr92">; I92 =====================================================================================</A>
+; I92  Instrument 92
+; I92 =====================================================================================
+
+instr 92
+
+&#9;irt&#9;&#9;=&#9;&#9;p4&#9;&#9;; average reverb time
+
+; I92 -------------------------------------------------------------------------------------
+; I92 varying reverb path
+
+&#9;kvv&#9;&#9;randh&#9;2, 2
+&#9;klrtv&#9;randi&#9;irt * 0.6, kvv + 2.01
+&#9;krrtv&#9;randi&#9;irt *  .6, kvv + 2.01
+
+&#9;aleft&#9;reverb&#9;gai2lrev, klrtv + irt
+&#9;aright&#9;reverb&#9;gai2rrev, krrtv + irt
+
+&#9;&#9;outs&#9;giscalef * aleft, giscalef * aright
+
+&#9;gai2lrev&#9;=&#9;0
+&#9;gai2rrev&#9;=&#9;0
+
+; I92 -------------------------------------------------------------------------------------
+; I92 end
+
+endin
+
+<A NAME="instr94">; I94 =====================================================================================</A>
+; I94  Instrument 94
+; I94 =====================================================================================
+
+instr 94
+
+&#9;irt&#9;&#9;=&#9;&#9;p4&#9;&#9;; average reverb time
+
+; I94 -------------------------------------------------------------------------------------
+; I94 varying reverb path
+
+&#9;kvv&#9;&#9;randh&#9;2, 2
+&#9;klrtv&#9;randi&#9;irt * 0.8, kvv + 2.01
+&#9;krrtv&#9;randi&#9;irt * 0.8, kvv + 2.01
+
+&#9;aleft&#9;reverb&#9;gai4lrev, klrtv + irt
+&#9;aright&#9;reverb&#9;gai4rrev, krrtv + irt
+
+&#9;&#9;outs&#9;aleft, aright
+
+&#9;gai4lrev&#9;=&#9;0
+&#9;gai4rrev&#9;=&#9;0
+
+; I94 -------------------------------------------------------------------------------------
+; I94 end
+
+endin</PRE></BODY>
+</HTML>

@@ -1,0 +1,125 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<title>SPATIALISATION - STEREO AND AMBISONIC</title>
+		<meta name="generator" content="Adobe GoLive 4">
+	</head>
+
+	<body link="blue" bgcolor="white">
+		<div align="justify">
+			<h1>24. SPATIALISATION - STEREO AND AMBISONIC</h1>
+			<h2>Richard W.E. Furse</h2>
+			<p><b>INTRODUCTION</b></p>
+			<p>This chapter discusses an approach to generating stereo or Ambisonic sound images using Csound. The focus here is not on the acoustics of the human head but on modelling sound in an acoustic space. We will use Csound to produce a &#145;virtual&#146; acoustic space in which to move sounds and make recordings.</p>
+			<p>Stereo recordings will be made using pairs of simple virtual microphones rather than Head-Related Transfer Functions (HRTFs). This is analogous to recording with a stereo pair of microphones rather than with a dummy head. The virtual microphone approach is cruder, but simpler and faster.</p>
+			<p>Ambisonic recordings are made using a virtual Ambisonic microphone. These recordings can be played back through an Ambisonic speaker rig, producing an image of the virtual acoustic space in real acoustic space.</p>
+			<p>The major advantage of using a model of a physical space is that characteristics of the real space arise within the virtual space. For instance, delay lines can model the time it takes for sound to travel from source to ear or microphone. This provides a model of inter-aural delay for stereo, and when a sound moves quickly past the listener, it also results in &#145;Doppler shift,&#146; whereby pitch is perceived to change.</p>
+			<p>This chapter describes a number of techniques, of which some or all can be integrated into Csound instruments, to give a sense of space and motion to sound material. A program is provided that uses Csound to create stereo or Ambisonic mixes using a common script.</p>
+			<p><b>AN INTRODUCTION TO AMBISONICS</b></p>
+			<p>Ambisonics was developed in the 70s, primarily from the theories of Michael Gerzon of the University of Oxford. Ambisonics provides a way to record and reproduce complete three-dimensional sound fields. Recordings can be made with an Ambisonic microphone which produces a &#145;B-Format&#146; signal made up of four channels, commonly labelled W, X, Y and Z. The W channel is omni-directional and the other channels provide directional information. The encoding makes no assumptions about the number of speakers that are to be used to replay the sound - this is an issue for the &#145;decoding&#146; stage. An advantage is that the sound field is independent of the rig it is played back over so that the same B-Format recording can be played over different arrangements of speakers. A typical small rig uses four speakers in a horizontal square, discarding the height information held in the sound field. A more satisfactory arrangement places eight speakers at the corners of a cube, but rigs with many more speakers are possible.</p>
+			<p>Another advantage of the &#145;abstract&#146; encoding is that it is possible to manipulate a complex sound field mathematically to change the location and character of sounds within it.</p>
+			<p>For a detailed discussion of Ambisonics I recommend a look at Dave Malham&#146;s web pages at <a href="http://www.york.ac.uk/inst/mustech/3d_audio/ambison.htm">http://www.york.ac.uk/inst/mustech/3d_audio/ambison.htm</a>.</p>
+			<p><b>MODELLING AN ACOUSTIC SPACE IN CSOUND</b></p>
+			<p>Csound has good facilities for the manipulation of signals and is a natural language to express a model of many aspects of acoustic space. In this model sound locations are expressed using three dimensions: <i>x</i>, <i>y</i> (both horizontal) and <i>z</i> (vertical). For the purposes of this text, the &#145;<i>x</i>&#146; axis is arranged so that positive <i>x</i> is ahead and negative <i>x</i> behind, the &#145;<i>y</i>&#146; axis is arranged so that positive <i>y</i> is to the left and negative <i>y</i> to the right and the &#145;<i>z</i>&#146; axis is arranged so that positive <i>z</i> is above and negative <i>z</i> below. This arrangement of axes can seem confusing at first. The listener is assumed to be at the origin.</p>
+			<p>This text assumes a moving source, located by three control signals <i>kx</i>, <i>ky</i> and <i>kz</i>. For a fixed source, <i>ix</i>, <i>iy</i> and <i>iz</i> can be used instead and many calculations can be performed at instrument initialisation time allowing much faster processing.</p>
+			<p><b>THE INVERSE SQUARE LAW</b></p>
+			<p>As a sound wavefront spreads away from its point of origin its sound energy diminishes so that when the sound is <i>n</i> times away from its origin, the signal energy will be <i>n</i><sup>2</sup> times smaller. This can be modelled by multiplying the signal amplitude by 1/<i>n</i>. The relative amplitude of different signals and the overall reverberation in the room provide important distance cues (see reverberation below).</p>
+			<p>This law is simple to implement in Csound. Assuming we have an orchestra using <i>kx</i>, <i>ky</i> and <i>kz</i> to control the location of a moving sound source, we find:</p>
+			<p>kd = sqrt(kx*kx+ky*ky+kz*kz)<br>
+			kamp = 1/kd</p>
+			<p>where <i>kd</i> is the distance of sound from the origin and <i>kamp</i> is the relative amplitude of the sound as it arrives. <i>kd</i> will be used in other expressions below.</p>
+			<p>There is a practical problem with the above equations: <i>kamp</i> becomes extremely loud as the sound source moves near to the origin. A solution to this problem is to limit the maximum value of <i>kamp</i> by adding a small amount to the divisor. Without this, Csound may stop with a division-by-zero error if the sound actually passes directly through the origin.</p>
+			<p>kd = sqrt(kx*kx+ky*ky+kz*kz)<br>
+			kamp = 1/(kd+0.1)</p>
+			<p>This problem affects other processing below - in general it is best to keep sounds a realistic distance from the virtual microphone.</p>
+			<p><b>DELAY</b></p>
+			<p>Sound travels at a fixed speed through air, approximately 332m/s, although the exact speed varies with atmospheric conditions such as temperature and wind. The difference in time taken for the sound to reach each ear (the &#145;inter-aural&#146; difference) provides important clues to the direction to the sound source. If a sound is angled more towards the right ear then the sound will reach the right ear first and then there will be a tiny delay (typically less than 1.5ms) before it reaches the left. In fact different frequencies are delayed different amounts because of the shape of the head. However in our model we are using virtual microphones rather than a model of the human head and so will use delay with a flat frequency response.</p>
+			<p>If physical delay is modelled, at least crudely, then our acoustic model will also exhibit the phenomenon of Doppler Shift - a sound moving at speed causes its wave fronts to bunch up and stretch out, ahead of and behind the source: this causes a raising and lowering of pitch. The traditional example of this is a train moving past a listener at speed: the sound of the train seems to jump downwards in pitch as it passes. This is a useful auditory cue.</p>
+		</div>
+		<p><img src="image1.gif" width="637" height="386"></p>
+		<div align="justify">
+			<p><b>Figure 1</b></p>
+		</div>
+		<div align="justify">
+			<p>&nbsp;</p>
+		</div>
+		<div align="justify">
+			<p>Csound&#146;s delay lines are not ideally suited to the task of modelling moving sources. Csound&#146;s <b>delayw</b>, <b>delayr</b> and <b>deltapi </b>units will be used here, however changing the time setting on <b>deltapi</b> is more equivalent to moving the listener rather than the sound source. The effect is qualitatively acceptable using Csound code such as the following:</p>
+			<p>adummy delayr 5 ; do not need a delay over 5secs<br>
+			adelayed deltapi kd/332<br>
+			delayw asigundelayed</p>
+			<p>where <i>asigundelayed</i> is the input signal and <i>adelayed</i> is the delayed signal, <i>kd</i> is the distance of the sound from the origin (as calculated above) and 332 is the speed of sound in air at room temperature.</p>
+			<p><b>AIR FILTERING</b></p>
+			<p>Sound waves are transmitted by many tiny air molecules bouncing off one another. These molecules absorb energy and different amounts are absorbed at different frequencies, with the highest frequencies damped most (in fact the characteristics vary with atmospheric conditions). We shall give an impression of this damping using a low-pass filter provided by Csound&#146;s <b>tone</b> unit generator. This gives a steeper slope than is natural but is easy to implement:</p>
+			<p>afilt tone ain,22000/(1+kd)</p>
+			<p>where <i>ain</i> is the sound before filtering, <i>afilt</i> is the signal after and <i>kd</i> is the distance of the sound from the origin as calculated above.</p>
+			<p><b>REVERBERATION - EARLY REFLECTIONS</b></p>
+			<p>The first, &#145;early&#146; reflections of a sound source as compared to the &#145;direct&#146; sound provide important cues to localisation of the source. Their timing, amplitudes and angles are important and a model of these can provide strong auditory cues, both for direction and distance.</p>
+			<p>The locations of imaginary &#145;reflected&#146; sound sources can be calculated using techniques similar to those used in graphical &#145;ray-tracing&#146; systems. These techniques are not simple. The reflection of a sound source off a flat surface can be modelled by imagining another source, with a 180-degree phase shift, behind the reflecting surface. Note that moving sound sources produce moving reflections. Sound is also absorbed by surfaces and the signal will not have the same amplitude and frequency characteristics as the signal before reflection.</p>
+			<p>Vector manipulation is not easy in Csound and I would not recommend attempting it. A relatively simple implementation of early reflections uses C program code that generates imaginary sound sources by reflecting the actual sound sources off the walls of a box-shaped room. Reflected sound sources are passed to Csound in the same way as direct sound sources with certain modifications. These modifications include a 180-degree phase shift on reflection and the absorption of a proportion of signal amplitude. Absorption on real surfaces would not have a flat frequency response but using one simplifies calculation.</p>
+			<p>Reflected sound sources will be further away than the direct sound source and can be processed as if they originated at a more distant sound source for the purposes of modelling other distance cues.</p>
+			<p><b>REVERBERATION - LATE REFLECTIONS</b></p>
+			<p>The later and denser reflections (typically those after about 80ms) provide information through overall density and timbre rather than through individual characteristics. These &#145;late&#146; reflections tend to have a fairly static overall level regardless of where in the room a sound source is, unlike the direct sound, which is affected by the inverse square law. The relative level of direct and reverberated sound is an important distance cue. For Ambisonic purposes, late reflections are usually fed direct into the &#145;direction-less&#146; W channel.</p>
+			<p>Late reflections can be provided by passing all sound sources to a single &#145;conventional&#146; reverberation instrument with early reflections disabled. It is worth applying low-pass filtering and delay before passing the sound to the reverberation unit as otherwise the reverberated sound risks arriving earlier and brighter than the direct sound.</p>
+			<p><b>VIRTUAL MICROPHONES FOR STEREO</b></p>
+			<p>Many microphones have a &#145;cardioid&#146; response, meaning that the relative amplitude (<i>r</i>) of a sound depends on the angle of the sound from the microphone (<i>q</i>) with the equation</p>
+			<p><i>r</i> = 0.5(cos(<i>q</i>) + 1)</p>
+			<p>A larger family of microphones has responses characterised by the more general equation</p>
+			<p><i>r</i> = <i>a</i>cos(<i>q</i>) + <i>b</i></p>
+			<p>where <i>a</i> and <i>b</i> are constants. Specific values of <i>a</i> and <i>b</i> give different microphone responses. When <i>a</i> = <i>b</i> = 0.5 we have the cardioid response as before. When <i>a</i> = 0 and <i>b</i> = 1 we have an &#145;omni-directional&#146; response. When <i>a</i> = 1 and <i>b</i> = 0 we have a &#145;figure-of-eight&#146; response. For microphones pointing along the &#145;x&#146; axis, these responses can be shown as follows:</p>
+			<p><img src="image2.gif" width="1015" height="399"><b>Figure 2</b></p>
+			<p>It is simple enough to express the above equations in Csound. However it can be harder to work out the angle of the sound to the microphone, particularly when the microphone is angled. However with a little trigonometry we find equations which can be expressed in Csound as:</p>
+			<p>iangleofmike = 0.7854 ; equals 45 degrees<br>
+			imikea = 0.5 ; basic cardioid response<br>
+			imikeb = 0.5 ; basic cardioid response<br>
+			icosaom = cos(iangleofmike)<br>
+			isinaom = sin(iangleofmike)<br>
+			kcosangletomike = (icosaom*kx+isinaom*ky)/kd<br>
+			kresp = imikea*kcosmikesoundangle+imikeb<br>
+			amikeoutput = asig*kresp</p>
+			<p>Placing two such microphones angled at pi/4 and -pi/4 (0.7854 and -0.7854) provides a standard &#145;crossed-pair&#146; configuration at right angles, flat, at the origin and with &#145;forwards&#146; along the x-axis. Note that angles are expressed in radians, not degrees. pi/4 (0.7854) radians correspond to 45 degrees.</p>
+			<p>Placing both microphones at the origin will cause the sound to arrive at both microphones at the same time. As these two microphones are placed at the same point, sounds will arrive at them at the same time, losing the advantages of delay lines above. With a little more mathematics microphones can be placed at arbitrary points and angles to produce an microphone configuration suiting the style of recording required.</p>
+			<p><b>A VIRTUAL AMBISONIC MICROPHONE</b></p>
+			<p>An Ambisonic microphone records four related signals rather than one. We assume that the microphone is placed at the origin of our three-dimensional co-ordinate system and that the sound source is located at the anti-clockwise angle <i>a</i> from the positive x-axis (directly ahead) and with an angle of elevation <i>e</i>. In this case the response of the microphone on each channel is:</p>
+			<p><i>aw</i> = 0.707<br>
+			<i>ax</i> = cos(<i>a</i>) cos(<i>e</i>)<br>
+			<i>ay</i> = sin(<i>a</i>) cos(<i>e</i>)<br>
+			<i>az</i> = sin(<i>e</i>)</p>
+			<p>With some trigonometry the above can be rearranged and expressed in Csound as:</p>
+			<p>iaw = 0.707<br>
+			kax = kx/kd<br>
+			kay = ky/kd<br>
+			kaz = kz/kd</p>
+			<p>where <i>kx</i>, <i>ky</i> and <i>kz</i> provide the co-ordinates of the sound and <i>kd</i> is the distance of the sound from the origin, as calculated above. We can now generate an Ambisonic signal using</p>
+			<p>aambw = asig*iaw<br>
+			aambx = asig*kax<br>
+			aamby = asig*kay<br>
+			aambz = asig*kaz<br>
+			outq aambw,aambx,aamby,aambz</p>
+			<p>where <i>asig</i> is a mono signal processed for other distance cues. Note that this <b>outq</b> statement assumes that the four output channels are ordered W, X, Y, Z. For historical reasons some Ambisonic hardware expects the order X, W, Y, Z but this can easily be handled while wiring the system.</p>
+			<p><b>DECODING AMBISONICS IN CSOUND</b></p>
+			<p>An Ambisonic signal <i>aambw, aambx, aamby, aambz</i> can be decoded for four channels using the following Csound code:</p>
+			<p>afl = aambw+0.707*(aambx+aamby)<br>
+			abl = aambw+0.707*(aamby-aambx)<br>
+			abr = aambw-0.707*(aambx+aamby)<br>
+			afr = aambw+0.707*(aambx-aamby)<br>
+			outq afr,abl,abr,afr</p>
+			<p>This produces feeds for four speakers that are expected to be located on the corners of a square around the listener in the following order: front-left, back-left, back-right, front-right. This throws away the Z channel and the &#145;height&#146; information contained within it.</p>
+			<p><b>MANIPULATING AMBISONIC SOUND FIELDS IN CSOUND</b></p>
+			<p>One of the advantages of Ambisonic encoding is that entire sound fields can be manipulated. A simple example of this is the following Csound code that rotates a sound field horizontally around the listener by angle <i>kangle</i> anticlockwise:</p>
+			<p>abw = aaw<br>
+			abx = aax*cos(kangle)-aay*sin(kangle)<br>
+			aby = aax*sin(kangle)+aay*cos(kangle)<br>
+			abz = aaz</p>
+			<p>where <i>aaw, aax, aay, aaz</i> form the Ambisonic input signal, <i>kangle</i> is a varying angle and <i>abw, abx, aby, abz</i> form the output. Much more complex manipulations are possible, again by embedding equations within Csound orchestras. Possibilities include tumbling a sound field with a moving angle of rotation, shrinking or expanding the sound field and zooming towards a point within it.</p>
+			<p><b>THE &#145;SPACE&#146; PROGRAM</b></p>
+			<p>Included on the CDROM with this book is a C program that reads simple scripts describing the mixing and movement of sound sources and which then uses Csound to generate stereo or Ambisonic soundfiles. Mono soundfiles can also be produced quickly but crudely to check that sounds have been mixed sensibly. The program models the aspects of spatialisation described below with some refinement. For the latest version of this and related programs see <a href="http://www.muse.demon.co.uk">http://www.muse.demon.co.uk</a>.</p>
+			<p>There is also an alternative system for Ambisonic output using a Csound orchestra without supporting C code. This is difficult to use and does not provide early reflections, however it only requires Csound to run and allows more complex paths for moving sources.</p>
+			<p><b>USING THE MODEL</b></p>
+			<p>Using a virtual acoustic space allows a piece to be developed with careful control over the whereabouts of sound within it. An analytical approach to modelling the space can provide independence from the method used to reproduce the sound, allowing a piece to be developed and performed with different equipment but using a single spatialisation script. The techniques described above and the &#145;Space&#146; program provide facilities to produce recordings suitable for spatialisation using techniques from mono and stereo to full Ambisonic sound production.</p>
+			<p><b>THANKS</b></p>
+			<p>Thanks to Dave Malham and Dylan Menzies-Gow of the University of York for assistance with previous Ambisonic projects and to Dave Malham for his advice on this text.</div>
+	</body>
+
+</html>

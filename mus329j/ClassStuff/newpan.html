@@ -1,0 +1,64 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft FrontPage 4.0">
+<TITLE>Panning and Crossfade Instrs</TITLE>
+<META NAME="Template" CONTENT="E:\MSOFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080" BGCOLOR="#c0c0c0">
+
+<pre>;=================================================<br>;Dynamic panning and Timbral Crossfade Instruments <br>;Made in class on 9/14/06<br>;RP<br>;=================================================<br>	sr	=	44100<br>	kr	=	4410<br>	ksmps	=	10<br>	nchnls	=	2</pre>
+<pre>	instr	1	;dynamic panning instrument
+ ; initialization section
+ iamp	=	p4
+ icps	=	cpspch(p5)
+ irise	=	p6
+ idecay	=	p7
+ ipanfn	=	p8
+ ipandel	=	p9
+ ; performance section
+ kamp	linen	iamp,irise,p3,idecay
+ asig	oscili	kamp,icps,1	;wave table is in fn1
+ kpan	oscil1i	ipandel,1,p3-ipandel,ipanfn
+ kleft	=	sqrt(kpan)
+ kright	=	sqrt(1-kpan)
+ 	outs	asig*kleft,asig*kright
+ 	endin</pre>
+<pre> 	instr	2	;dynamic timbre exchange instrument
+ ; initialization section
+ iamp	=	p4
+ icps	=	cpspch(p5)
+ irise	=	p6
+ idecay	=	p7
+ ixfadfn	=	p8
+ ixfadel	=	p9
+ iwave1	=	p10
+ iwave2	=	p11
+ ; performance section
+ kamp	linen	iamp,irise,p3,idecay
+ asig1	oscili	kamp,icps,iwave1	;wave table1 is in p10
+ asig2	oscili	kamp,icps,iwave2	;wave table2 is in p11
+ kfade	oscil1i	ixfadel,1,p3-ixfadel,ixfadfn
+ kfad1	= 	kfade	;crossfade function
+ kfad2	= 	1-kfade	;inverse of crossfade func
+ asig	=	asig1*kfad1 + asig2*kfad2
+ 	outs	asig,asig
+ 	endin</pre>
+<HR>
+
+<pre>;lovely sound?<br>f01	0	16385	11	32<br>;pan control function 1 (3 pan cycles)<br>f02	0	257	19	3	1	90	1<br>;<br>f03	0	257	7	0	128	1	129	0<br>;play two test notes<br>;			amp	pch	rise	dec	panfn	pandel<br>i01	0	6	20000	8.03	.5	1	2	0<br>i01	8	.	.	8.05	.	.	3	2<br>f0	20<br>s<br>;wave 1<br>f04	0	8192	10	1	.5<br>;wave 2<br>f05	0	8192	10	0	.5	0	1<br>;play two test notes<br>;			amp	pch	rise	dec	xfadfn	xfadel	wave1fn	wave2fn<br>i02	0	6	20000	7.07	.5	1	2	0	4	5<br>i02	8	.	.	7.07	.	.	3	2</pre>
+<p></p>
+<HR>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=7 WIDTH=638>
+<TR><TD WIDTH="31%" VALIGN="TOP">
+<P><a HREF="../../../dwnld/classorc/newpan.orc">Download
+newpan.orc</a></TD>
+<TD WIDTH="36%" VALIGN="TOP">
+  <P ALIGN="center">&nbsp;</TD>
+<TD WIDTH="33%" VALIGN="TOP"><a HREF="../../../dwnld/classsco/newpan.sco">Download
+    newpan.sco</a></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

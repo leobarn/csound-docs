@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN12</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN11.html" title="GEN11" />
+    <link rel="next" href="GEN13.html" title="GEN13" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN12</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN11.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN13.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="GEN12">
+      <a id="GEN12"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN12" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN12</span>
+        </h2>
+        <p>GEN12 — 
+      Generates the log of a modified Bessel function of the second kind.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id4065923"></a>
+        <h2>Description</h2>
+        <p>
+      This generates the log of a modified Bessel function of the second kind, order 0, suitable for use in amplitude-modulated FM.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id4065937"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 12 xint</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id4066791"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size </em></span> -- number of points in the table. Must be a power of 2 or a power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>). The normal value is power-of-2 plus 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>xint</em></span> -- specifies the <span class="emphasis"><em>x</em></span> interval [0 to <span class="emphasis"><em>+xint</em></span>] over which the function is defined.
+    </p>
+        <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" type="disc">
+                    <li class="listitem">
+                      <p>
+              This subroutine draws the natural log of a modified Bessel function of the second kind, order 0 (commonly written as <span class="emphasis"><em>I</em></span> subscript 0), over the x-interval requested. The call should have rescaling inhibited.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              The function is useful as an amplitude scaling factor in cycle-synchronous amplitude-modulated FM. (See Palamin &amp; Palamin, <span class="emphasis"><em>J. Audio Eng. Soc., 36/9</em></span>, Sept. 1988, pp.671-684.) The algorithm is interesting because it permits the normally symmetric FM spectrum to be made asymmetric around a frequency other than the carrier, and is thereby useful for formant positioning. By using a table lookup index of <span class="emphasis"><em>I</em></span>(r - 1/r), where <span class="emphasis"><em>I</em></span> is the FM modulation index and <span class="emphasis"><em>r</em></span> is an exponential parameter affecting partial strengths, the Palamin algorithm becomes relatively efficient, requiring only oscil's, table lookups, and a single <span class="emphasis"><em>exp</em></span> call.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id4066897"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the GEN12 routine. It uses the file <a class="ulink" href="examples/gen12.csd" target="_top"><em class="citetitle">gen12.csd</em></a>. It generates the function <span class="emphasis"><em>ln</em></span>(<span class="emphasis"><em>I<sub>0</sub></em></span>(<span class="emphasis"><em>x</em></span>)) from 0 to 20. Here is its diagram:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen12.png" alt="Diagram of the waveform generated by GEN12." />
+          <div class="caption">
+            <p>Diagram of the waveform generated by GEN12.</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="example">
+          <a id="id4066956"></a>
+          <p class="title">
+            <b>Example 645. A simple example of the GEN12 routine.</b>
+          </p>
+          <div class="example-contents">
+            <p>
+          See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.
+        </p>
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in</span>
+-odac           -iadc    <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o gen12.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+
+<span class="comment">; Initialize the global variables.</span>
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">kr</span> <span class="op">=</span> 4410
+<span class="ohdr">ksmps</span> <span class="op">=</span> 10
+<span class="ohdr">nchnls</span> <span class="op">=</span> 1
+
+<span class="comment">; Instrument #1.</span>
+<span class="oblock">instr</span> 1
+  <span class="comment">; Create an index over the length of our entire note.</span>
+  kcps <span class="opc">init</span> 1<span class="op">/</span>p3
+  kndx <span class="opc">phasor</span> kcps
+
+  <span class="comment">; Read Table #1 with our index.</span>
+  ifn <span class="op">=</span> 1
+  ixmode <span class="op">=</span> 1
+  kamp <span class="opc">tablei</span> kndx, ifn, ixmode
+
+  <span class="comment">; Create a sine wave, use the Table #1 values to control</span>
+  <span class="comment">; the amplitude. This creates a sound with a long attack.</span>
+  a1 <span class="opc">oscil</span> kamp<span class="op">*</span>30000, 440, 2
+  <span class="opc">out</span> a1
+<span class="oblock">endin</span>
+
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+
+<span class="comment">; Table #1: a modified Bessel function (using GEN12).</span>
+<span class="stamnt">f</span> 1 0 2049 12 20
+<span class="comment">; Table #2, a sine wave.</span>
+<span class="stamnt">f</span> 2 0 16384 10 1
+
+<span class="comment">; Play Instrument #1 for 2 seconds.</span>
+<span class="stamnt">i</span> 1 0 2
+<span class="stamnt">e</span>
+
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id4066995"></a>
+        <h2>Credits</h2>
+        <p>Example written by Kevin Conder</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN11.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN13.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN11 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN13</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

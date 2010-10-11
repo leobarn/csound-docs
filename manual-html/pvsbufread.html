@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsbufread</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsbuffer.html" title="pvsbuffer" />
+    <link rel="next" href="pvscale.html" title="pvscale" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsbufread</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsbuffer.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvscale.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="pvsbufread">
+      <a id="pvsbufread"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsbufread" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsbufread</span>
+        </h2>
+        <p>pvsbufread — 
+      This opcode reads a circular buffer of f-signals (streaming PV signals).
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3505078"></a>
+        <h2>Description</h2>
+        <p>
+        This opcode  sets up and writes to a circular buffer of length ilen (secs),
+        giving a handle for the buffer and a time pointer, which holds the
+        current write position (also in seconds). It can be used with one or 
+        more pvsbufread opcodes. Writing is circular, wrapping around at the
+        end of the buffer.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3505800"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsbufread</strong></span>  ktime, khandle[, ilo, ihi] </pre>
+      </div>
+      <div class="refsect1" title="Initialisation">
+        <a id="id3505818"></a>
+        <h2>Initialisation</h2>
+        <p>
+      <span class="emphasis"><em>ilo, ihi</em></span> -- set the lowest and highest freqs to be read from the buffer (defaults to 0, Nyquist).
+    </p>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>ktime</em></span> -- time position of reading pointer (in secs).
+    </p>
+        <p>
+      <span class="emphasis"><em>khandle</em></span> -- handle identifying the buffer to be read. When using k-rate
+handles, it is important to initialise the k-rate variable to a given existing handle. When changing
+buffers, fsig buffers need to be compatible (same fsig format).
+    </p>
+        <p>
+      <span class="emphasis"><em>pvsbufread</em></span> reads f-signals from a buffer created by 
+    </p>
+        <p>
+        With this opcode and <a class="link" href="pvsbuffer.html" title="pvsbuffer"><em class="citetitle">pvsbuffer</em></a>, it is possible to, among other things:
+    </p>
+        <table border="0" summary="Simple list" class="simplelist"></table>
+        <p>
+  </p>
+        <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>It is important that the handle value passed to <span class="emphasis"><em>pvsbufread</em></span> is valid and was created by <a class="link" href="pvsbuffer.html" title="pvsbuffer"><em class="citetitle">pvsbuffer</em></a>. Csound will crash with invalid handles.
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3505941"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pvsbufread opcode. It does 'brassage' by switching between two buffers.
+      </p>
+        <div class="example">
+          <a id="id3505953"></a>
+          <p class="title">
+            <b>Example 405. Example of the pvsbufread opcode</b>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <pre class="programlisting">
+fsig1   pvsanal   asig1,1024,256,1024,1
+fsig2   pvsanal   asig2,1024,256,1024,1
+
+
+ibuf1,kt1   pvsbuffer   fsig1, 10  ; 10-sec buf with fsig1
+ibuf2,kt2   pvsbuffer  fsig2, 7      ; 7-sec buf with fsig2
+
+
+khan init ibuf1    ; initialise handle to buf1
+
+
+if  ktrig  &gt; 0 then   ; switch buffers according to trigger
+khan = ibuf2
+else
+khan = ibuf1
+endif
+
+
+fsb  pvsbufread  kt1, khan   ; read buffer
+        </pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is an example of the pvsbufread opcode. It uses the file <a class="ulink" href="examples/pvsbufread.csd" target="_top"><em class="citetitle">pvsbufread.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="id3506015"></a>
+          <p class="title">
+            <b>Example 406. Example of the pvsbufread opcode.</b>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in</span>
+-odac    <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o pvsbufread.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">ksmps</span> <span class="op">=</span> 16
+<span class="ohdr">nchnls</span> <span class="op">=</span> 1
+<span class="ohdr">0dbfs</span> <span class="op">=</span> 1
+
+<span class="comment">;; example written by joachim heintz 2009</span>
+
+<span class="oblock">opcode</span> FileToPvsBuf, iik, Siiii
+<span class="comment">;;writes an audio file at the first k-cycle to a fft-buffer (via pvsbuffer)</span>
+Sfile, ifftsize, ioverlap, iwinsize, iwinshape <span class="opc">xin</span>
+ktimek		<span class="opc">timeinstk</span>
+<span class="octrl">if</span> ktimek <span class="op">==</span> 1 then
+ilen		<span class="opc">filelen</span>	Sfile
+kcycles	<span class="op">=</span>		ilen <span class="op">*</span> <span class="ohdr">kr</span><span class="comment">; number of k-cycles to write the fft-buffer</span>
+kcount		<span class="opc">init</span>		0
+<span class="olabel">loop</span><span class="op">:</span>
+ain		<span class="opc">soundin</span>	Sfile
+fftin		<span class="opc">pvsanal</span>	ain, ifftsize, ioverlap, iwinsize, iwinshape
+ibuf, ktim	<span class="opc">pvsbuffer</span>	fftin, ilen <span class="op">+</span> (ifftsize <span class="op">/</span> sr)
+		<span class="octrl">loop_lt</span>	kcount, 1, kcycles, <span class="olabel">loop</span>
+		<span class="opc">xout</span>		ibuf, ilen, ktim
+<span class="octrl">endif</span>
+<span class="oblock">endop</span>
+
+
+<span class="oblock">instr</span> 1
+ifftsize	<span class="op">=</span>		1024
+ioverlap	<span class="op">=</span>		ifftsize <span class="op">/</span> 4
+iwinsize	<span class="op">=</span>		ifftsize
+iwinshape	<span class="op">=</span>		1<span class="comment">; von-Hann window</span>
+ibuffer, ilen, k0		FileToPvsBuf	"fox.wav", ifftsize, ioverlap, iwinsize, iwinshape
+ktmpnt		<span class="opc">linseg</span>		ilen, p3, 0<span class="comment">; reads the buffer backwards in p3 seconds</span>
+fread 		<span class="opc">pvsbufread</span>  	ktmpnt, ibuffer
+aout		<span class="opc">pvsynth</span>	fread
+		<span class="opc">out</span>		aout
+<span class="oblock">endin</span>
+
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+<span class="stamnt">i</span> 1 0 5
+<span class="stamnt">e</span>
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3506053"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a>,
+      <a class="link" href="pvsynth.html" title="pvsynth"><em class="citetitle">pvsynth</em></a>,
+      <a class="link" href="pvsbuffer.html" title="pvsbuffer"><em class="citetitle">pvsbuffer</em></a>,
+      <a class="link" href="pvsadsyn.html" title="pvsadsyn"><em class="citetitle">pvsadsyn</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3506095"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>July 2007</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsbuffer.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvscale.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsbuffer </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvscale</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

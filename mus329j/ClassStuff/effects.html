@@ -1,0 +1,491 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=FrontPage.Editor.Document>
+<meta name=Generator content="Microsoft FrontPage 4.0">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./effects_files/filelist.xml">
+<link rel=Edit-Time-Data href="./effects_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Comb, Alpass, Reverb, Reverb2 Tests</title>
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{margin-right:0in;
+	mso-margin-top-alt:auto;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+pre
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Courier New";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+<meta name=Template content="E:\MSOFFICE\OFFICE\html.dot">
+</head>
+
+<body bgcolor=silver lang=EN-US link=blue vlink=purple style='tab-interval:
+.5in'>
+
+<div class=Section1><pre><span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>sr<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>44100<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>kr<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>=<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>4410<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>ksmps<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>10<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>nchnls<span style='mso-tab-count:1'>&nbsp; </span>=<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre>gamixl<span
+style='mso-tab-count:1'>&nbsp; </span>init<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;declare and init the global send variables<o:p></o:p></pre><pre>gamixr<span
+style='mso-tab-count:1'>&nbsp; </span>init<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre>;N.B. All the effects instruments must be used in conjunction with instr 100, which<o:p></o:p></pre><pre>;zeros the global variables after each sample.<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>instr <span style='mso-tab-count:1'>&nbsp; </span>1<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;initial gain factor<o:p></o:p></pre><pre>ifileno<span
+style='mso-tab-count:1'> </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;soundin file number<o:p></o:p></pre><pre>iwet<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;proportion of signal to effects<o:p></o:p></pre><pre>idry<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p7<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;proportion of signal output dry<o:p></o:p></pre><pre>iskip<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p8<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;optional skip time in file<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre>al,ar<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>soundin<span style='mso-tab-count:1'> </span>ifileno,iskip<o:p></o:p></pre><pre>al<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>al * igain<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>;adjust initial gains<span
+style='mso-tab-count:1'>&nbsp; </span><o:p></o:p></pre><pre>ar<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>ar * igain<o:p></o:p></pre><pre>gamixl<span
+style='mso-tab-count:1'>&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>gamixl + al * iwet<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>;proportions to effects<o:p></o:p></pre><pre>gamixr<span
+style='mso-tab-count:1'>&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>gamixr + ar * iwet<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>outs<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>al * idry, ar * idry<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>;proportions straight out<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>endin<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>instr<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>90<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;straight comb<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;overall gain factor<o:p></o:p></pre><pre>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;reverb time<o:p></o:p></pre><pre>ilpt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;loop time (delay)<o:p></o:p></pre><pre>aleft<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>comb<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>gamixl,irvt,ilpt<o:p></o:p></pre><pre>aright<span
+style='mso-tab-count:1'>&nbsp; </span>comb<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>gamixr,irvt,ilpt<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>outs<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>aleft*igain,aright*igain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>endin<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>instr<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>91<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;straight alpass<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;overall gain factor<o:p></o:p></pre><pre>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;reverb time<o:p></o:p></pre><pre>ilpt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;loop time (delay)<o:p></o:p></pre><pre>aleft<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>alpass<span style='mso-tab-count:1'>&nbsp; </span>gamixl,irvt,ilpt<o:p></o:p></pre><pre>aright<span
+style='mso-tab-count:1'>&nbsp; </span>alpass<span style='mso-tab-count:1'>&nbsp; </span>gamixr,irvt,ilpt<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>outs<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>aleft*igain,aright*igain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>endin<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>instr<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>92<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;straight csound reverb<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;overall gain factor<o:p></o:p></pre><pre>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;reverb time<o:p></o:p></pre><pre>aleft<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>reverb<span style='mso-tab-count:1'>&nbsp; </span>gamixl,irvt<o:p></o:p></pre><pre>aright<span
+style='mso-tab-count:1'>&nbsp; </span>reverb<span style='mso-tab-count:1'>&nbsp; </span>gamixr,irvt<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>outs<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>aleft*igain,aright*igain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>endin<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>instr<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;straight csound reverb2<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;overall gain factor<o:p></o:p></pre><pre>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;reverb time<o:p></o:p></pre><pre>ihdiff<span
+style='mso-tab-count:1'>&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;high freq diffusion factor (0-1)<o:p></o:p></pre><pre>aleft<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>reverb2<span style='mso-tab-count:1'> </span>gamixl,irvt,ihdiff<o:p></o:p></pre><pre>aright<span
+style='mso-tab-count:1'>&nbsp; </span>reverb2<span style='mso-tab-count:1'> </span>gamixr,irvt,ihdiff<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>outs<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>aleft*igain,aright*igain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>endin<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>instr<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>94<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;homemade comb/resonator<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;overall gain factor<o:p></o:p></pre><pre>ifeed<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p5<o:p></o:p></pre><pre>idelay<span
+style='mso-tab-count:1'>&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;must be &gt; 1/krate<o:p></o:p></pre><pre>aleft<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>init<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>aright<span
+style='mso-tab-count:1'>&nbsp; </span>init<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>ainl<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>gamixl+aleft*ifeed<o:p></o:p></pre><pre>ainr<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>gamixr+aright*ifeed<o:p></o:p></pre><pre>aleft<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>delay<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>ainl,idelay<o:p></o:p></pre><pre>aright<span
+style='mso-tab-count:1'>&nbsp; </span>delay<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>ainr,idelay<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>outs<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>aleft*igain,aright*igain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>endin<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>instr<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>99<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;comb variant for tuned resonance<o:p></o:p></pre><pre>igain<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;overall gain factor<o:p></o:p></pre><pre>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>p5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;reverb time<o:p></o:p></pre><pre>ilpt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1/cpspch(p6)<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>;compute ilpt from desired pitch<o:p></o:p></pre><pre>aleft<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>comb<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>gamixl,irvt,ilpt<o:p></o:p></pre><pre>aright<span
+style='mso-tab-count:1'>&nbsp; </span>comb<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>gamixr,irvt,ilpt<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>outs<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>aleft*igain,aright*igain<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>endin<o:p></o:p></pre><pre><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>instr<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>100<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>;zero the globals<o:p></o:p></pre><pre>gamixl<span
+style='mso-tab-count:1'>&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>;zero the global variables<o:p></o:p></pre><pre>gamixr<span
+style='mso-tab-count:1'>&nbsp; </span>=<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>endin<span style='mso-tab-count:5'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></pre><pre><span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></pre>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+<pre>;test various comb, alpass, and reverb effects on input sounds<o:p></o:p></pre><pre>;soundin.300 = balloons.wav<o:p></o:p></pre><pre>;soundin.301 = blackorpheus.wav<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>ifile<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>iwet<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>idry<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>iskip<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>300<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span
+style='mso-tab-count:2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>12<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>18<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>24<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>30<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>36<o:p></o:p></pre><pre>;comb instrument<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>ilpt<o:p></o:p></pre><pre>i90<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<o:p></o:p></pre><pre>i90<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.005<o:p></o:p></pre><pre>i90<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.4<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.001<o:p></o:p></pre><pre>i90<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<o:p></o:p></pre><pre>i90<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.005<o:p></o:p></pre><pre>i90<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.3<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.001<o:p></o:p></pre><pre>;zero the globals instrument<o:p></o:p></pre><pre>i100<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>42<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>ifile<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>iwet<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>idry<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>iskip<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>300<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span
+style='mso-tab-count:2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>12<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>18<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>24<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>32<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>40<o:p></o:p></pre><pre>;alpass instrument<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>ilpt<o:p></o:p></pre><pre>i91<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<o:p></o:p></pre><pre>i91<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>12<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.005<o:p></o:p></pre><pre>i91<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>18<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.4<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.001<o:p></o:p></pre><pre>i91<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>24<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>8<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>3<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<o:p></o:p></pre><pre>i91<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>32<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.005<o:p></o:p></pre><pre>i91<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>40<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.001<o:p></o:p></pre><pre>;zero the globals instrument<o:p></o:p></pre><pre>i100<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>48<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>300<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span
+style='mso-tab-count:2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>12<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>18<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>24<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>30<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>36<o:p></o:p></pre><pre>;delay/feedback instrument<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>ifeed<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>ilpt<o:p></o:p></pre><pre>i94<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.7<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<o:p></o:p></pre><pre>i94<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.005<o:p></o:p></pre><pre>i94<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.4<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.001<o:p></o:p></pre><pre>i94<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.9<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<o:p></o:p></pre><pre>i94<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.005<o:p></o:p></pre><pre>i94<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>+<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.3<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.001<o:p></o:p></pre><pre>;zero the globals instrument<o:p></o:p></pre><pre>i100<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>42<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>ifile<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>iwet<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>idry<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>iskip<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>300<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<o:p></o:p></pre><pre>;comb resonator instrument. same as i90, but specify desired pitch in p6<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>ipch<o:p></o:p></pre><pre>i99<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>7.00<o:p></o:p></pre><pre>i99<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>7.07<o:p></o:p></pre><pre>i99<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>8.04<o:p></o:p></pre><pre>i99<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>7.00<o:p></o:p></pre><pre>i99<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>7.07<o:p></o:p></pre><pre>i99<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>8.04<o:p></o:p></pre><pre>i100<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>12<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>ifile<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>iwet<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>idry<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>iskip<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>300<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>300<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>14<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>24<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>10<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>301<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>35<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>10<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>301<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>48<o:p></o:p></pre><pre>;reverb instrument<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i92<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>6<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>7<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.4<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i92<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>14<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>9<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i92<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>35<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>12<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<o:p></o:p></pre><pre>i92<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>48<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>14<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>;zero the globals instrument<o:p></o:p></pre><pre>i100<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>62<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>ifile<span
+style='mso-tab-count:1'>&nbsp;&nbsp; </span>iwet<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>idry<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>iskip<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>5<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>300<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>8<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>16<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>24<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>34<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>44<o:p></o:p></pre><pre>;reverb2 instrument<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>ihdif<span style='mso-tab-count:1'>&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>7<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.4<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>8<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>16<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>24<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>9<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>34<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>44<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>;zero the globals instrument<o:p></o:p></pre><pre>i100<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>53<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>f0<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>s<o:p></o:p></pre><pre>;repeat reverb2 tests with soundin 301<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>10<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>301<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>13<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>26<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>38<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>53<o:p></o:p></pre><pre>i01<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>68<o:p></o:p></pre><pre>;reverb2 instrument<o:p></o:p></pre><pre>;<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>st<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dur<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>igain<span style='mso-tab-count:1'>&nbsp;&nbsp; </span>irvt<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>ihdif<span style='mso-tab-count:1'>&nbsp;&nbsp; </span><o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>12<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.4<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>13<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>26<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>38<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>14<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>4<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>0<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>53<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.5<o:p></o:p></pre><pre>i93<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp; </span>68<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<o:p></o:p></pre><pre>;zero the globals instrument<o:p></o:p></pre><pre>i100<span
+style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp; </span>0<span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>82<o:p></o:p></pre><pre>e<span
+style='mso-tab-count:2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></pre>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+
+<table border=0 cellspacing=0 cellpadding=0 width=638 style='width:478.5pt;
+ mso-cellspacing:0in;mso-padding-alt:5.25pt 5.25pt 5.25pt 5.25pt'>
+ <tr>
+  <td width="30%" valign=top style='width:30.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p><a
+  href="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/effects.orc">Download
+  effects.orc</a></p>
+  </td>
+  <td width="38%" valign=top style='width:38.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p align=center style='text-align:center'><a
+  href="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/effsnds.zip">Download
+  effsnds.zip</a></p>
+  </td>
+  <td width="32%" valign=top style='width:32.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt'>
+  <p align=right style='text-align:right'><a
+  href="ftp://indigo.music.utexas.edu/pub/Csound/ClassExamples/effects.sco">Download
+  effects.sco</a></p>
+  </td>
+ </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

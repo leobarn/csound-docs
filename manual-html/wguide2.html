@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wguide2</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="wguide1.html" title="wguide1" />
+    <link rel="next" href="wiiconnect.html" title="wiiconnect" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wguide2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="wguide1.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wiiconnect.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="wguide2">
+      <a id="wguide2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWguide2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wguide2</span>
+        </h2>
+        <p>wguide2 — 
+      A model of beaten plate consisting of two parallel delay-lines and two first-order lowpass filters.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3721588"></a>
+        <h2>Description</h2>
+        <p>
+      A model of beaten plate consisting of two parallel delay-lines and two first-order lowpass filters.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3721781"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>wguide2</strong></span> asig, xfreq1, xfreq2, kcutoff1, kcutoff2, \
+      kfeedback1, kfeedback2</pre>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3721802"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- the input of excitation noise
+    </p>
+        <p>
+      <span class="emphasis"><em>xfreq1, xfreq2</em></span> -- the frequency (i.e. the inverse of delay time) Changed to x-rate in Csound version 3.59.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcutoff1, kcutoff2</em></span> -- the filter cutoff frequency in Hz.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfeedback1, kfeedback2</em></span> -- the feedback factor
+    </p>
+        <p>
+      <span class="emphasis"><em>wguide2</em></span> is a model of beaten plate consisting of two parallel delay-lines and two first-order lowpass filters. The two feedback lines are mixed and sent to the delay again each cycle.
+    </p>
+        <p>
+      Implementing waveguide algorithms as opcodes, instead of orc instruments, allows the  user to set <span class="emphasis"><em>kr</em></span> different than <span class="emphasis"><em>sr</em></span>, allowing better performance particulary when using real-time.
+    </p>
+        <p>
+      </p>
+        <div class="mediaobject">
+          <img src="images/wguide2.png" alt="wguide2." />
+          <div class="caption">
+            <p>wguide2.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        As a rule of thumb, to avoid making <span class="emphasis"><em>wguide2</em></span> unstable, the sum of the two feedback values should be below 0.5.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3722561"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the wguide2 opcode. It uses the file <a class="ulink" href="examples/wguide2.csd" target="_top"><em class="citetitle">wguide2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="id3722578"></a>
+          <p class="title">
+            <b>Example 608. Example of the wguide1 opcode.</b>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o wguide1.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+<span class="ohdr">sr</span> <span class="op">=</span> 44100
+<span class="ohdr">nchnls</span> <span class="op">=</span> 2
+<span class="oblock">instr</span> 1
+  afrq  <span class="opc">line</span>    50, 10, 100
+  asig  <span class="opc">oscil</span>   3000, afrq, 1
+  aenv  <span class="opc">expon</span>   1,10,0.000001
+  aexc  <span class="op">=</span>       aenv<span class="op">*</span>asig
+  ares  <span class="opc">wguide2</span> aexc, 500, 1200, 777, 1500, 0.2, 0.25
+        <span class="opc">out</span> ares,asig
+<span class="oblock">endin</span>
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+<span class="stamnt">f</span>1 0 4096 10 1
+<span class="stamnt">i</span>1 0 3
+<span class="stamnt">e</span>
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3722615"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="wguide1.html" title="wguide1"><em class="citetitle">wguide1</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3722633"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>October 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.49</p>
+        <p>Example written by John ffitch</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="wguide1.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wiiconnect.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">wguide1 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wiiconnect</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

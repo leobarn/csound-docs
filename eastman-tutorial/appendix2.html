@@ -1,0 +1,290 @@
+<HTML>
+<HEAD>
+  <TITLE>APPENDIX 2</TITLE>
+<meta name="description" value="Eastman Csound Tutorial Appendix by Allan Schindler">
+<meta name="resource-type" value="document">
+<meta name="distribution" value="global">
+</HEAD>
+<BODY>
+
+
+<HR><CENTER><FONTSIZE="-1"><I>Eastman Csound Tutorial</I></FONT></CENTER>
+<PRE>
+<H5> <A HREF="index.html#TOC">Table of Contents</A>
+   <A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html#">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#_wmh3_847375111">CHAPTER 6</A></H5><HR></PRE>
+
+<H3><CENTER>APPENDIX 2</H3>
+<H4><A NAME="Appendix_2">Extensions to F.M. Procedures : Multiple Carrier and Modulator Algorithms</A></H4>
+</CENTER>
+
+<P>Our survey of Csound unit generators and of synthesis algorithms is necessarily
+at an introductory level. More sophisticated implementations of many of
+these procedures are possible, and sometimes are necessary to achieve desired
+results. To illustrate somewhat more advanced applications of some basic
+procedures we have examined, we will look at two extensions to &quot;classical&quot;
+frequency modulation technique. Both of these extensions can be applied
+to amplitude modulation techniques as well.</P>
+<P>&quot;Simple&quot; F.M., in which a carrier sine wave is phase modulated by another
+sine wave, is but one of many possible available <B>waveshaping</B> techniques, in which one or more periodic control signals are applied to
+a waveform, reshaping it over time, and thereby varying the frequency spectrum
+and resulting timbre. Frequency modulation is conceptually fairly simple
+and computationally very efficient, but also suffers from several limitations.
+These include :</P>
+<OL>
+<LI>the symmetry of the upper and lower sidebands around the carrier: (natural
+acoustic sounds rarely produce such sym- metry in spectral components) 
+<LI>the limited number of significant frequency components produced by any given
+modulation index; 
+<LI>difficulties in band-limiting upper sidebands to avoid aliasing; and, most
+importantly, 
+<LI>frequent inability to create particular frequency and amplitude ratios with
+sufficient precision. With F.M., one must often settle for ball-park approximations,
+and hope to &quot;like what we get&quot; rather than &quot;getting what we want.&quot; 
+</OL>
+<P>Various alternative waveshaping procedures have been devised and implemented
+to address some of these problems.
+<DD><FONT SIZE="2">For some examples, see the discussions of <I>gen13, gen14 </I>and<I> gen15</I> in the the Csound reference manual, and articles by such authors as Marc
+LeBrun, Daniel Arfib and J. A. Moorer in back issues of<I> Computer Music Journal </I>and the yearly <I>Proceedings of the International Computer Music Conference. </I>For a good introductory article on alternative waveshaping techniques see
+&quot;A Tutorial on Nonlinear Distortion or Waveshaping Synthesis&quot; by Curtis
+Roads, on pages 83-94 in <I>Foundations of Computer Music</I>, edited by Roads and Strawn.</FONT> 
+<P>In addition, various types of extensions to &quot;classical&quot; F.M. have been explored,
+by John Chowning, Barry Truax and many others, Chowning's &quot;vocal&quot; F. M.
+timbres, for example, include front-end programs to calculate modulation
+indices, so that frequencies in pre-defined formant regions will be emphasized,
+regardless of fundamental frequency. The most widely used extensions to
+classical F.M., however, involve :</P>
+<OL>
+<LI>The use of two or more carrier oscillators, each with its own modulator(s)
+and index envelope, which produce different portions of a complex timbral
+spectrum. For example, one carrier might produce lower frequency components
+within a timbral spectrum, the other carrier higher frequencies. Or the
+two carriers could receive similar arguments, but be detuned slightly. 
+<LI>The use of two, three or more modulating oscillators, all modulating a single
+carrier. In this case, sets of upper and lower sidebands are created for
+every combination of modulating and carrier frequencies. Because so many
+sidebands are generated, modulation indices are usually much lower than
+in &quot;simple&quot; F.M. synthesis algorithms.
+<DD><FONT SIZE="2">The article &quot;The Simulation of Natural Instrument Tones Using Frequency
+Modulation with a Complex Modulating Wave&quot; by Bill Schottstaedt , reprinted
+in <I>Foundations of Computer Music, </I>edited by Roads and Strawn, provides pertinent technical and background
+information on these two procedures.</FONT> 
+
+<P>This appendix provides
+an example of each of these procedures in Csound code. Soundfile example <I>exapp2-1 </I>was created by means to the following double-carrier instrument: 
+</OL>
+<PRE>
+<B>  ;  #############################################################</B>
+<B>  ;  soundfile exapp2-1  : Double carrier F.M. instrument with formant</B>
+<B>  ;  #############################################################</B>
+<B>  Orchestra file used to create this soundfile:</B>
+
+<B>  ; fm instrument with 2 carriers</B>
+<I>;  NORMALLY THIS WOULD BE A MONO INSTRUMENT. THE TWO CARRIER OUTPUTS</I>
+<I>; ARE SENT TO THE LEFT AND RIGHT CHANNELS IN THIS EXAMPLE ONLY SO THAT THE</I>
+<I>; OUTPUT OF EACH CARRIER CAN BE HEARD INDIVIDUALLY. TO HEAR THE 2 CHANNELS</I>
+<I>; (CARRIERS) INDIVIDUALLY, MOVE THE BALANCE POT BACK ON THE CS-115 BACK &</I>
+<I>; FORTH BETWEEN LEFT & RIGHT CHANNEL OUTPUTS</I>
+<B>  ; p-fields :</B>
+<B>  ; p3 = duration ;  p4 = pitch        ;p5  = amplitude   ;p6 = attack time</B>
+<B>  ; p7 = decay time  ; p8 = atss       ;p9 = rise function</B>
+<B>  ; FM p-fields :</B>
+<B>  ; p10  = 1st carrier freq. (*p4)  ;  p11 = 1st mod. freq. (*p4)</B>
+<B>  ; p12  = 2nd carrier freq. (*p4)  ;  p13  2nd mod. freq. (*p4)</B>
+<B>  ; Modulation index envelope:</B>
+<B>  ;  p14 = opening index; p15  = index after p6; p16 = index before p7</B>
+<B>  ; Amplitude % for 2nd carrier : p17 = opening ; p18 = after p6 ; p19 = before p7</B>
+<B>  ; p20 = attack hardness (1. ord)</B>
+
+<B>  sr = 44100</B>
+<B>  kr = 2205</B>
+<B>  ksmps = 20</B>
+<B>  nchnls = 2</B>
+
+<B>  instr 2</B>
+<B>  ipitch = cpspch(p4)</B>
+<B>  amp envlpx p5,  p6,  p3,  p7,  p9,  p8,  .005  ; amplitude envelope</B>
+
+<B>  ; Random frequency deviation ( for attack noise)</B>
+<B>   iscale =  octcps(ipitch)</B>
+<B>   iscale =  (18-iscale) * .1     ; scalar : c4 = 1.,c5 =.9, c3 = 1.1, etc.</B>
+<B>  k1 expseg .5*p20,  p20*p6,  .003,  p3,  .002</B>
+<B>  k2 expseg 999,  p20*p6,  15</B>
+<B>  krandpitch  randi  k1*ipitch ,  k2</B>
+<B>  kpitch = ipitch + krandpitch            ; pitch</B>
+
+<B>  ; Fm index:</B>
+<B>  k2 expseg p14,p6,p15,p3-(p6+p7),p16,p7,.5*p7</B>
+
+<B>  acar1 foscili amp, kpitch, p10, p11, k2, 100  ; 1st carrier</B>
+<B>  acar2 foscili amp, kpitch, p12, p13, k2, 100  ; 2nd carrier</B>
+<B>   ; The  2nd carrier usually produces  (usually higher frequencies)</B>
+
+<B>   ; signal &quot;kmix&quot; is an envelope that determines the mix of the 2 carriers</B>
+<B>  kmix expseg  p17, p6, p18, p3-(p6+p7), p19, p7, .5*p19</B>
+
+<B>  ;  COMMENT The next five lines are the normal output of this algorithm :</B>
+<B>  ;  COMMENT audio  = (kmix * acar2) + ((1-kmix) * acar1)</B>
+<B>  ;  COMMENT afilt  reson audio , p21, p22, 1        ; provide a formant</B>
+<B>  ;  COMMENT   ;  restore amplitude lost in filtering :</B>
+<B>  ;  COMMENT audio balance (.5 * afilt) +( .5 * audio) , audio ; restore gain</B>
+<B>  ;  COMMENT out audio</B>
+
+<B>  ; COMMENT The following lines send the output of carrier 1 to the left channel</B>
+<B>  ; COMMENT and the output of carrier two to the right channel, so that these</B>
+<B>  ; COMMENT two signals can be auditioned independently</B>
+<B>  afilt1 reson acar1, p21, p22, 1        ; formant for carrier 1</B>
+<B>  afilt2 reson acar2, p21, p22, 1        ; same formant for carrier 2</B>
+<B>  audio1 balance (.5 * acar1) +(.5 * afilt1) , acar1</B>
+<B>  ;  restore gain to filtered carrier 1 &amp; carrier 2 signals</B>
+<B>  audio2 balance (.5 * acar2) +(.5 * afilt2) , acar2</B>
+<B>  outs  (1. - kmix) * audio1 , kmix * audio2</B>
+<B>  endin</B>
+<B>  -----------------------------------------------------------</B>
+
+
+<B>   &lt; score11 file used to create soundfile &quot;exapp2-1&quot;:</B>
+<B>   * f60 0 65 5 .005 64 1. ;   &lt;exponential rise ( envlpx rise function)</B>
+<B>   * f70 0 65 9 .25 1. 0;      &lt; another rise function (1st quarter of sine wave)</B>
+<B>   * f100 0 512 10 1.;         &lt; SINE WAVE</B>
+
+<B>   i2 0 0 5;   &lt; play  5  notes</B>
+<B>   p3 nu 2*4/ 4.;</B>
+<B>   p4 no b3;</B>
+<B>   p5 7000;</B>
+<B>   p6 nu .075/ .08/ .015/ .085/ .8;        &lt; rise time</B>
+<B>   p7 nu .3/ .2/ .5/ .15/ 1.1;             &lt; decay time</B>
+<B>   p8 nu .9/ .94/ .7/ .82/ .3;             &lt; atss</B>
+<B>   p9 nu 60/ 70/  60///;                   &lt; rise function</B>
+<B>   &lt; f, m, parameters :</B>
+<B>   p10 nu     1./ 1.002/ 1.996/ .998/ 1.4; &lt; carrier 1 freq. (*p4)</B>
+<B>   p11 nu 1.998/ .998 / 3.002/ 1.008/ 3.1; &lt; mod. freq. for car. 1 (*p4)</B>
+<B>   &lt; 2nd carrier</B>
+<B>   p12 nu 2.001/ 6.  / 3.005/ 2.003/ 1.;   &lt; carrier 2 freq.(*p4)</B>
+<B>   p13 nu 2.003/ 1.002/ 2.996/ .997 / 2.4; &lt; mod. freq.for car. 2 (*p4)</B>
+<B>   &lt; modulation index</B>
+<B>   p14 nu 1.7 / 3. /  1./  1.6 / .25;      &lt; opening value</B>
+<B>   p15 nu 1.4 / 2.2/ .8 / 1.3/  .8;        &lt; value after p6</B>
+<B>   p16 nu 1.1/ 1.9/  .6/  1. / 1.5;        &lt; value before p7</B>
+<B>   &lt; % of amplitude of 2nd carrier</B>
+<B>   p17 nu   .6/ .6/ .7 / .5 / .05;         &lt; opening decimal %</B>
+<B>   p18 nu .49/  .4/ .55/ .52/ .1;          &lt; decimal % after p6</B>
+<B>   p19 nu .44/ .36/  .4/  .43/ .95 ;       &lt; % before p7</B>
+<B> </B>
+<B>   p20 nu  1./ 1.2/  1. /  .9/ .5;         &lt; attack hardness</B>
+<B>   p21 nu 420/ 500/ 900/ 600/ 300;         &lt; formant center freq.</B>
+<B>   p22 nu 200/ 350/ 60/ 400/ 700;          &lt; formant bandwidth</B>
+<B>   end;</B>
+</PRE>
+<P>As noted in the comments within <I>exapp2-1</I>, the &quot;normal&quot; output of this instrument has been commented out, and replaced
+by code which sends the output of carrier 1 to the left channel and the
+output of carrier 2 to the right channel, so that the outpus of these
+carriers can be heard separately.
+<P>In <I>exapp2-2,</I> the outputs of three modulators are passed to a single carrier. If the
+frequency of the third modulator is set to 0 in <I>p12, </I>only two modulators will be used. Notice that the characteristic F.M. &quot;signiture&quot;
+(&quot;color,&quot; or &quot;twang&quot;) is much less apparent when multiple modulators are
+used than with &quot;simple FM.&quot;</P>
+<PRE>
+<B>   ;  #############################################################</B>
+<B>   ;  soundfile exapp2-2 : F.M. instrument with 2 or 3 modulators</B>
+<B>   ;  #############################################################</B>
+<B>   Orchestra file :</B>
+
+<B>   ; Functions needed: 50 51 52 100</B>
+<B>   ;  p6 = attack time (.001-.01) ;        p7 = % tremolo (.2 - .33)</B>
+<B>   ;  p8 = 1st tremolo (2. - 5.);          p9 = 2nd tremolo rate</B>
+<B>   ;  p10 = c:m1                           p11 = c:m2</B>
+<B>   ;  p12 = c:m3                           p13 = modulation indx</B>
+<B>   ;  p14 = function to vary tremolo rate (usually 50; also 52,51)</B>
+<B>   ;  p15 = attack hardness        ; p16 atss for mod. indx</B>
+
+
+<B>   sr = 22050</B>
+<B>   kr = 2205</B>
+<B>   ksmps = 10</B>
+<B>   nchnls = 1</B>
+
+<B>   instr 3</B>
+<B>   ipitch = (p 4 &lt;15 ? cpspch(p4) : p4)    ; pch or cps input</B>
+<B>   iscale = octcps(ipitch)</B>
+<B>   iscale = (18-iscale) * .1                 ; scalar</B>
+
+<B>   ; ENVELOPE</B>
+<B>   amp linseg 0,p6,1.,.05/p15-p6,(p15+iscale+1)/3*.56,.1*p3,.3,.15*p3,.12,.25*p3,.06,.5*p3-(.05/p15),0</B>
+<B>   p5 = iscale * ((p15+1)/2) * p5</B>
+<B>   amp = amp * p5</B>
+
+<B>   ; TREMOLO</B>
+<B>     k1 randi p15*.07,2.2/p15</B>
+<B>     k2 oscil p9-p8,1/p3,p14               ;varies rate of tremolo</B>
+<B>   ktrem oscili p7+k1*p7,p8+k2,100         ;tremolo</B>
+<B>   ; Random Amplitude Deviation</B>
+<B>     k1 expseg p15*.2,p15*p6,p15*.05,p3,p15*.04</B>
+<B>   krandamp randi k1,50/p15</B>
+<B>   amp = amp + ((ktrem+krandamp)*amp)        ;TOTAL AMPLITUDE</B>
+
+<B>   ; RANDOM FREQUENCY DEVIATION</B>
+<B>   k1 expseg p15*.9*iscale,p6,p15*.003,p3,.002</B>
+<B>   i4 = 800/(iscale&gt;1?iscale:(1/iscale))</B>
+<B>   k2 expseg 750/(iscale&gt;1?iscale:1/iscale),p6,45/iscale,p3,60/iscale</B>
+<B>   krandpitch randi k1*.5*ipitch,k2</B>
+<B>   kpitch = ipitch + krandpitch              ; FREQUENCY</B>
+
+<B>   ; FREQUENCY  MODULATION - 3 oscillators</B>
+<B>   kindex expseg p15,p15*iscale*.055,p15*.6,.1*p3,.3,.15*p3,.12,.25*p3,.06,.5*p3-.055,.01</B>
+<B>   kindex = kindex * p13 * iscale            ; MODULATION INDEX</B>
+<B>   ; modulating oscillator 1</B>
+<B>     kmod1 = p10*kpitch</B>
+<B>   amod1 oscili kindex * kmod1, kmod1, 100</B>
+<B>   ; Freq. Modulation oscillator 2</B>
+<B>     kmod2 = p11 * kpitch</B>
+<B>   amod2 oscili kindex * kmod2, kmod2, 100</B>
+<B>   if p12=0 goto ready</B>
+<B>   ; Freq. Modulation oscillator 3</B>
+<B>       kmod3 = p12 * kpitch</B>
+<B>       amod3 oscili kindex * kmod3, kmod3, 100</B>
+<B>    amod2 = amod2+amod3</B>
+
+<B>   ready:</B>
+<B>   kdepth expon  p15, p3, iscale * p16 * p13      ; modulation depth</B>
+<B>   a1 oscili amp, kpitch + (kdepth*(amod1+amod2)), 100  ; carrier</B>
+
+<B>   out a1</B>
+<B>   endin</B>
+<B>   -----------------------------------------------------------</B>
+
+
+
+<B>  &lt; score11 file used to create  &quot;exapp2-2&quot; : f.m. instrument with 2 or 3 modulators</B>
+<B>  * f50 0 65 7 0 64 1.;          &lt; linear rise</B>
+<B>  * f52 0 65 7 0 32 1. 32 0;     &lt; linear pyramid: up &amp; down</B>
+<B>  * f100 0 256 10 1.;            &lt; SINE WAVE</B>
+ 
+<B>  i3 0 0 3;   &lt; play 3 notes</B>
+<B>  p3 4.5;</B>
+<B>  du 305.5;</B>
+<B>  &lt; 3 sounds : 1 is &quot;gong-like' ; 2 is &quot;harp-like&quot; ; 3 is like a  high bell</B>
+<B>  p4 no f3/  fs3/  d8;           &lt; pch or cps</B>
+<B>  p5 6000;</B>
+<B>  p6 nu .005/ .017/ .008;        &lt; rise time .003-.02</B>
+<B>  p7  nu .2/ .11/ .35;           &lt; tremolo %  (.1-.2 ord)</B>
+<B>  p8 nu 5.5/ 4./ 7.;             &lt; 1st tremolo rate  (c.6)</B>
+<B>  p9 nu 4./ 2.5/ 3.3;            &lt; 2nd &quot;     &quot;   (c. 4.5)</B>
+
+<B>  p10 nu 2.7/ 3.05/ 1.05;        &lt; c:m 1</B>
+<B>  p11 nu 8.1/ 4.08/ 1.4;         &lt; c:m 2</B>
+<B>  p12 nu 11.3/ 9.15/ .65;        &lt; c:m 3</B>
+<B>  p13 nu .4/ .11/ .3;            &lt; modulation index (.2-1.2 ord.)</B>
+<B>  p14 nu 50/ 52/ 50;             &lt; function to vary tremolo rate</B>
+<B>  p15 nu 1.2/ .9/ 1.1;           &lt; attack hardness(.8-1.2)</B>
+<B>  p16 nu .1/ .2/ .3;             &lt; index atss(c. .2 ord.)</B>
+<B>  end;</B>
+<B> -----------------------------------------------------------</B>
+</PRE>
+<HR><CENTER><FONTSIZE="-2">Eastman Csound Tutorial: End of <I>Appendix 2</I></FONT></CENTER><BR>
+<PRE>
+<H5> <A HREF="index.html#TOC">Table of Contents</A>
+<A HREF="chapter1.html#">CHAPTER 1</A>  --  <A HREF="chapter2.html#">CHAPTER 2</A>  --  <A HREF="chapter3.html#">CHAPTER 3</A>  --   <A HREF="chapter4.html#">CHAPTER 4</A>  --  <A HREF="chapter5.html#">CHAPTER 5</A>  --  <A HREF="chapter6.html#">CHAPTER 6</H5><HR></PRE>
+
+</BODY>
+</HTML>
+

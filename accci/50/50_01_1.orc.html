@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>50_01_1.orc.html</title>
+<meta name="FORMATTER" content="Microsoft FrontPage 2.0">
+</head>
+
+<body stylesrc="../admin/adporc.html"
+background="../admin/AccciDefaultBackground.gif"
+bgcolor="#FFFFFF">
+
+<pre>; ************************************************************************
+; ACCCI:     50_01_1.ORC
+; timbre:    bands of noise
+; synthesis: subtractive synthesis(50)
+;            basic design(01)
+;            RAND source(1)
+; coded:     jpg 11/93
+
+
+sr = 44100
+kr  =  441
+ksmps= 100
+nchnls = 1
+
+
+instr 1; *****************************************************************
+idur  = p3
+iamp  = p4
+icfq  = cpspch(p5)
+ibw   = p6*icfq
+
+ 
+   anoise  rand   iamp                        ; white noise
+   a1      reson  anoise,  icfq, ibw, 2       ; filter
+   a1      linen  a1, .1, idur, .1
+           out    a1
+
+endin
+</pre>
+</body>
+</html>

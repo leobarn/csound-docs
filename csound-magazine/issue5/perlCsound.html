@@ -1,0 +1,530 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+<title>Csound Journal</title>
+<link href="PerlCsoundArticle/PerlAndCsound.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+
+<div id="wrap">
+<div id="navigation"> CSOUND JOURNAL: <a href="../index.html">Home</a> |&nbsp;<a href="index.html">Issue 5</a> </div>
+
+
+<div id="header">
+<h2>Perl and Csound - Part I</h2>
+  Jacob Joaquin<br>
+jacobjoaquin AT gmail.com
+</div>
+
+<div id="content">
+
+
+
+<h2 id="Introduction">Introduction</h2>
+<p>Csound is a powerful computer music language capable of just about every type of digital synthesis one can imagine[<a href="perlCsound.html#References">1</a>]. Due to the inherent disadvantages of hand coding orchestra and score files, much of Csound's potential is often looked over or ignored. The limits of the syntax can also hinder the composer's ability to translate their musical ideas to code.</p> 
+
+<p>With Perl we can overcome many of these obstacles. Perl can manage and generate massive amounts of orchestra and score code that would be otherwise unfeasible using strictly Csound. The flexibility of Perl allows computer musicians to design tools that cater to their own compositional thought processes while retaining all of Csound's functions and capabilities.</p>
+
+<p>Since I began experimenting with integrating Csound and Perl, I've discovered what works well, and what does not.  My hope is that by sharing some of my findings here, you will be inspired to try incorporating Perl into your Csound experiences.   There is no right way or wrong way of integrating Perl with Csound, and once you've used Perl enough, you will find your own methods of exploration.</p>
+
+
+
+
+
+<h2 id="Overview">I. Overview</h2>
+
+<h3 id="PerlAQuickSynopsis">Perl - A Quick Synopsis</h3>
+
+<p>Perl stands for "Practical Extraction and Report Language[<a href="perlCsound.html#References">2</a>]."   It is a scripting language, meaning it is interpreted at run-time. The language was designed to create scripts quickly and efficiently. The trade-off is that Perl is slow compared to number-crunching languages such as C and Fortran. However, since we will be using Perl to generate text and not digital audio, this drawback is not an issue when generating Csound code.</p>
+
+<h3 id="HelloWorld">Hello World! - A Brief Glimpse of Perl Syntax</h3>
+
+<p>The following example is the traditional "Hello World!" program often written by programmers when they learn a new computer language[<a href="perlCsound.html#References">3</a>].</p>
+ 
+<div class="example"><pre id="Figure1.0">#!/usr/bin/Perl
+print "Hello World!";</pre></div>
+
+<div id="figure"><b>Figure 1.0</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="PerlCsoundArticle/helloworld.pl"><i>helloworld.pl</i></a> prints "Hello World!" to the terminal window.</div>
+
+<p>The first line, <code>#!/usr/bin/Perl/</code>, indicates to the operating system or shell to use the Perl interpreter. The second line writes the message <code>Hello World!</code> to the terminal or output window.</p>
+
+<h3 id="HowDoesItWork">How does it work?</h3>
+
+<p>In a nutshell, Perl is used to generate orchestra and score data.  However, it can be thought of as more than just a code generator.  Perl can also be used to process and filter Csound code, make self sufficient sound objects, and aid in the realization of algorithmic/process music.</p>
+
+<p>The way this entire process works can be quantified into three stages.  First, a Csounder writes a Perl script that is designed to generate Csound files.  Second, the Perl file is executed, and if successful, a pure Csound file is generated.  The last stage is rendering the generated file or files with Csound, producing an audio file or a real-time audio stream.</p>
+
+<p id="Figure1.1"><center><img src="PerlCsoundArticle/FlowChart.gif" width=340px height=491px></center></p>
+
+<div id="figure"><b>Figure 1.1</b>&nbsp;&nbsp;&nbsp;&nbsp;The three stages of using Perl and Csound.</div>
+
+<h3 id="WhyUsePerlWithCsound">Why use Perl with Csound?</h3>
+
+<p>Using Perl with Csound is quite simple, once you get the hang of it.  Though I believe that Perl can benefit all Csounders, I realize that this method of using Csound isn't for everyone.  I will list what I consider to be the pros and cons, and let you decide for yourself whether or not Perl will benefit you.</p>
+
+<div id="proscons">
+<p><b>Pros</b></p>
+
+<ul><li>Generate massive scores
+<li>Dynamically create instruments
+<li>Manipulate existing Csound files
+<li>Allows finer control over algorithmic and process music
+<li>More flexible than the built-in Csound macro system
+<li>Explore new methods of synthesis and composition
+<li>Files generated are 100% pure Csound
+<li>Both Perl and Csound are cross platform
+<li>Do things that are otherwise impractical
+<li>Customize the syntax to make Csound your own
+</ul>
+
+<p><b>Cons</b></p>
+
+<ul><li>Having to think through an extra layer of code
+<li>Potentially steep learning curve
+<li>Must know your way around the command line
+<li>Must be a programmer versed in both Perl and Csound
+<li>Code can quickly get ugly and hard to read
+</ul>
+</div>
+
+<h3 id="OtherScriptingLanguages">Other Scripting Languages</h3>
+
+<p>Scripting languages other than Perl will also generate Csound code. Javascript, Lisp, PHP, Python and Ruby are all great candidates. I recommend avoiding using languages such as C and Java, as they are particularly unwieldy in processing and managing text compared to the languages I've just mentioned.</p>
+
+
+
+
+
+
+<h2 id="PerlBuildingBlocks">II. Perl Building Blocks</h2>
+
+<p>In this section, I will build a foundation of Perl specific functions, and how they can be applied to Csound.  My intent was to design the simplest and cleanest methods possible for demonstration purposes.  I'm also using unified Csound csd files, which helps reduce the number of files we work with.</p>
+
+<h3 id="ASimpleCsoundFileWithPerl">A Simple Csound File with Perl</h3>
+
+<p>Creating a Csound file requires very little Perl code.  We start with creating a file called <a href="PerlCsoundArticle/simple.pl"><i>simple.pl</i></a>.  When executed, the <b>open</b> function creates a unified Csound file called <i>simple.csd</i>.  If <a href="PerlCsoundArticle/simple.csd"><i>simple.csd</i></a> already exists, the original file is destroyed "in favor of its new matrix[<a href="perlCsound.html#References">4</a>]."  <code>CSD</code> is the name of the filehandle we use to refer to the opened file.  All of the Csound code between <code>print CSD &lt;&lt; "END";</code> and <code>END</code> is written to <code>CSD</code>[<a href="perlCsound.html#References">5</a>].  The <b>close</b> function finalizes <code>CSD</code>.</p>
+
+<pre id="Figure2.0">#!/usr/bin/Perl
+
+open( CSD, "&gt; simple.csd" ) || die "Can't write file simple.csd: $!";
+
+print CSD &lt;&lt; "END";
+&lt;CsoundSynthesizer&gt;
+
+&lt;CsInstruments&gt;
+sr     = 44100
+kr     = 4410
+ksmps  = 10
+nchnls = 1
+
+instr 1
+    aosc oscil 30000, 440, 1
+    out aosc
+endin
+
+&lt;/CsInstruments&gt;
+
+&lt;CsScore&gt;
+f1 0 8192 10 1
+i1 0 10
+e
+&lt;/CsScore&gt;
+
+&lt;/CsoundSynthesizer&gt;
+
+END
+
+close CSD;
+</pre>
+
+<div id="figure"><b>Figure 2.0</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="PerlCsoundArticle/simple.pl"><i>simple.pl</i></a> demonstrates one of the simplest Perl scripts for generating a valid unified Csound file.</div>
+
+<p>Disregarding white space, only five lines of Perl code have been added.  Later, we'll see how these hybrid scripts can be much shorter than the generated orc, sco and csd files.</p>
+
+<p><i>* See <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlop.html#%3c%3cEOF">&lt;&lt;EOF</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/close.html">close</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/open.html">open</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/print.html">print</a></i></p>
+
+
+
+
+
+
+<h3 id="Scalars">Scalars</h3>
+
+<p>In languages such as C, data is stored in variables.  Perl also stores data in variables, though in Perl, they are referred to as scalars.  A scalar has the prefix <code>$</code> attached.   An advantage that scalars have over C variables is that your don't need to manually cast their datatypes.  Any scalar can hold an integer, float, or string.  Perl can usually distinguish between datatypes, based on the context in which each instance of a scalar is used.</p>
+
+<pre id="Figure2.1">#!/usr/bin/Perl
+use strict;
+
+my $foo = "Csound";
+my $bar = "5.04";
+
+print "Have you upgraded to $foo version $bar, yet?\n"</pre>
+
+<div id="figure"><b>Figure 2.1</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="PerlCsoundArticle/scalar.pl"><i>scalar.pl</i></a> demonstrates that a scalar can hold both numbers and strings.</div>
+
+<p><a href="PerlCsoundArticle/scalar.pl"><i>scalar.pl</i></a> writes the following to the terminal window:</p>
+
+<pre id="Figure2.2">Have you upgraded to Csound version 5.04, yet?</pre>
+
+<div id="figure"><b>Figure 2.2</b>&nbsp;&nbsp;&nbsp;&nbsp;This is the output of <a href="PerlCsoundArticle/scalar.pl"><i>scalar.pl</i></a>.</div>
+
+<p>In this script, I've introduced <code>use strict</code> which, when used, requires all scalars, arrays and hashes to defined using the <b>my</b> function.  One of the benefits of <code>use strict</code> is that it encourages programmers to write cleaner code.</p>
+
+<p><i>* See <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/my.html">my</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlintro.html#Scalars">Scalars</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/lib/strict.html">use strict</a></i>.</p>
+
+
+
+
+
+
+<h3 id="Random">Random</h3>
+
+<p>The following excerpt demonstrates generating score data with Perl's built-in random function, <b>rand</b>.</p> 
+
+<pre id="Figure2.3">my $frequency = rand() * 900 + 100;
+
+print CSD "i1 0 4 $frequency\n";</pre>
+
+<div id="figure"><b>Figure 2.3</b>&nbsp;&nbsp;&nbsp;&nbsp;This excerpt from <a href="PerlCsoundArticle/random.pl"><i>random.pl</i></a> generates a score event with a random frequency between the values 100 and 1000.</div>
+
+<p><b>rand</b> returns a float between 0 and 1, including 0 and excluding 1[<a href="perlCsound.html#References">6</a>]. The statement <code>$frequency = rand() * 900 + 100</code> creates bias, so that the final value will fall between 100 and 1000, including 100 and excluding 1000.</p>
+
+<pre id="Figure2.4">i1 0 4 787.613566146414</pre>
+
+<div id="figure"><b>Figure 2.4</b>&nbsp;&nbsp;&nbsp;&nbsp;This score event was generated with the code found in figure 2.3.  See <a href="PerlCsoundArticle/random.csd"><i>random.csd</i></a>.</div>
+
+<p><i>* See <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/rand.html">rand</a></i>.</p>
+
+
+
+
+
+
+<h3 id="FormattingNumbersWithPrintf">Formatting Numbers with printf</h3>
+
+<p>The <b>printf</b> function is a wonderful tool for formatting numbers.  The generated frequency found in figure 2.4 is <code>787.613566146414</code>.  We can use <b>printf</b> to shave off extraneous levels of precision.  Since the just noticeable difference for frequency is ±5 cents, we can get away with two decimal places of precision[<a href="perlCsound.html#References">7</a>].  I usually work with four or six decimal places.</p>
+
+<p>If we are generating the scores, then why does it matter if we use six decimal places versus twelve?  Untamed, generated Csound code can be hard to read.  There will be times when it is necessary to analyze generated code to be sure the Perl script is doing what is expected.  By shaving off unnecessary precision, you get the best of both worlds:  precise enough numbers and cleaner Csound code.</p>
+
+<p>To format numbers with <b>printf</b>, we use simple format codes.  The two most important codes for generating Csound are <code>%d</code> for integers and <code>%.f</code> floating point numbers.  To specify the precision of the float, we insert a number between the <code>%.</code> and the <code>f</code>.  When the <b>printf</b> function is called, these format codes are replaced by the numbers located in parameters two and higher, in the same sequence in which they are used in the first parameter.</p>
+
+<pre id="Figure2.5">my $frequency = rand() * 900 + 100;
+
+printf CSD ( "i%d %.4f %.4f %.6f\n", 1, 0, 4, $frequency );</pre>
+
+<div id="figure"><b>Figure 2.5</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="PerlCsoundArticle/printf.pl"><i>printf.pl</i></a> demonstrates formatting numbers in score events.</div>
+
+<pre id="Figure2.6">i1 0.0000 4.0000 312.478207</pre>
+
+<div id="figure"><b>Figure 2.6</b>&nbsp;&nbsp;&nbsp;&nbsp;This score event was generated with the code in figure 2.5.  See <a href="PerlCsoundArticle/printf.csd">printf.csd</a>.</div>
+
+<p>Here I used one integer, two floats with a precision of four, and a float with a precision of six.  As you can see, <b>printf</b> when used proPerly will help straighten your columns, producing cleaner code.</p>
+
+<p><i>* See <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/printf.html">printf</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/sprintf.html">sprintf</a></i>.</p>
+
+
+
+
+
+<h3 id="Loops">Loops</h3>
+
+<p>Loops are perhaps the most important mechanism for generating code.  With loops, we can automate certain processes to repeat over and over until a defined condition is met.</p>
+
+<p>Perl comes with various types of loops, including the for-loop, the while-loop and the do-while-loop.  Perl also has a few loop variants that make certain tasks easier, including the foreach-loop, the until-loop and the do-until-loop.</p>
+
+Here is a basic for-loop in Perl:
+
+<pre id="Figure2.7">for( $i = 1; $i <= 10; $i++ )
+{
+    print "$i\n";	
+}</pre>
+
+<div id="figure"><b>Figure 2.7</b>&nbsp;&nbsp;&nbsp;&nbsp;This for-loop prints the numbers 1 through 10. See <a href="PerlCsoundArticle/forloop.pl"><i>forloop.pl</i></a>.</div>
+
+<p>Perl provides an alternative to the for-loop that is easier to implement, and easier to read.  Here is the equivalent of the previous example with the foreach-loop:</p>
+
+<pre id="Figure2.8">foreach( 1 .. 10 )
+{
+	print "$_\n";	
+}</pre>
+
+<div id="figure"><b>Figure 2.8</b>&nbsp;&nbsp;&nbsp;&nbsp;Though the foreach loop differs from the for-loop in figure 2.7, the output is identical. See <a href="PerlCsoundArticle/forloop.pl"><i>forloop.pl</i></a>.</div>
+
+<p>The <code>$_</code> is a special scalar built into Perl that automatically retains iterated values.  In the case of the for-each loop in figure 2.8, <code>$_</code> holds a value between 1 and 10 depending on which iteration the loop is currently on.  In cases where using the <code>$_</code> doesn't make sense, one can specify a scalar that will instead hold the values.  For example: <code>foreach $value ( 1 .. 10 ) { }</code></p>
+
+<p>For a working Perl-Csound example, I have chosen to use the while-loop.  This loop will continue generating new events at a random time interval between one-eighth of a second and one second, until the scalar <code>$startTime</code> exceeds four seconds.</p>
+
+<pre id="Figure2.9">my $startTime = 0;
+my $frequency;
+
+while( $startTime < 4 )
+{
+    $frequency = rand() * 900 + 100;
+
+    printf CSD ( "i1 %.4f 0.5 %.6f\n", $startTime, $frequency );
+
+    $startTime = $startTime + rand() * 0.825 + 0.125;    
+}</pre>
+
+<div id="figure"><b>Figure 2.9</b>&nbsp;&nbsp;&nbsp;&nbsp;The while-loop in <a href="PerlCsoundArticle/whileloop.pl"><i>whileloop.pl</i></a> continues to generate score events at random time intervals until <code>$startTime</code> reaches or exceeds the value 4.</div>
+
+<pre id="Figure2.10">i1 0.0000 0.5 894.709577
+i1 0.4779 0.5 109.692073
+i1 0.8381 0.5 289.274825
+i1 0.9852 0.5 216.057307
+i1 1.3320 0.5 280.710331
+i1 1.6873 0.5 321.337319
+i1 1.9777 0.5 115.167399
+i1 2.2663 0.5 623.591924
+i1 2.8348 0.5 918.851922
+i1 3.7560 0.5 336.182481</pre>
+
+<div id="figure"><b>Figure 2.10</b>&nbsp;&nbsp;&nbsp;&nbsp;These score events were generated with the code in figure 2.9.  See <a href="PerlCsoundArticle/whileloop.csd"><i>whileloop.csd</i></a>.</div>
+
+<p><i>* See <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlvar.html#%24_">$_</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlop.html#Range-Operators">Range Operators</a>.</i></p>
+
+
+
+
+<h3 id="Subroutines">Subroutines</h3>
+
+<p>A <b>sub</b> is Perl's definition of a user-defined function or subroutine.  Subroutines are a great way of consolidating code for reusability and help programmers save time of having to manually type blocks of code over and over.</p>  
+
+<pre id="Figure2.11">sub sineCluster
+{
+    my $instr    = shift;  # instrument number
+    my $start    = shift;  # start time of score event
+    my $duration = shift;  # duration of score event
+    my $nVoices  = shift;  # the number of voices to generate
+    my $amp      = shift;  # the amplitude of the pad
+    my $minFreq  = shift;  # minimum possible frequency for pad voices
+    my $maxFreq  = shift;  # maximum possible frequency for pad voices
+    my $rise     = shift;  # attack time of the pad
+    my $score    = '';     # stores the score events
+    
+    
+    for( 1 .. $nVoices )
+    {
+        $score .= sprintf( "i%d %.4f %.4f %.4f %.4f %.4f\n",
+                           $instr,
+                           $start,
+                           $duration,
+                           $amp / $nVoices,
+                           rand() * ( $maxFreq - $minFreq ) + $minFreq,
+                           $rise );
+                
+    }
+    
+    return $score;
+}</pre>
+
+<div id="figure"><b>Figure 2.11</b>&nbsp;&nbsp;&nbsp;&nbsp;The user-defined subroutine <code>sineCluster</code> returns a string of generated score events.  See <a href="PerlCsoundArticle/sub.pl"><i>sub.pl</i></a>.</div>
+
+<p>To use our custom subroutine <code>sineCluster</code>, we call it as we would call any Perl built-in function.  <code>sineCluster</code> returns a block of score code as a string.  Since we want this code to be written to our file, we print it directly to the the filehandle <code>CSD</code>.</p>
+
+<pre id="Figure2.12">print CSD sineCluster( 1, 0.00, 8.00, 8, 30000, 100, 300, 0.500 );</pre>
+
+<div id="figure"><b>Figure 2.12</b>&nbsp;&nbsp;&nbsp;&nbsp;This calls the custom subroutine <code>sineCluster</code> and writes the results to the <a href="PerlCsoundArticle/sub.csd"><i>sub.csd</i></a>. See <a href="PerlCsoundArticle/sub.pl"><i>sub.pl</i></a>.</div>
+
+<pre id="Figure2.13">i1 0.0000 8.0000 3750.0000 213.6142 0.5000
+i1 0.0000 8.0000 3750.0000 206.5978 0.5000
+i1 0.0000 8.0000 3750.0000 209.8422 0.5000
+i1 0.0000 8.0000 3750.0000 195.3327 0.5000
+i1 0.0000 8.0000 3750.0000 274.6884 0.5000
+i1 0.0000 8.0000 3750.0000 113.7666 0.5000
+i1 0.0000 8.0000 3750.0000 249.6883 0.5000
+i1 0.0000 8.0000 3750.0000 188.4543 0.5000</pre>
+
+<div id="figure"><b>Figure 2.13</b>&nbsp;&nbsp;&nbsp;&nbsp;These score events were generated with the call to <code>sineCluster</code> in figure 2.12.  See <a href="PerlCsoundArticle/sub.csd"><i>sub.csd</i></a>.</div>
+
+<p>One point of interest is that the number of parameters passed to <code>sineCluster</code> is larger than the number of p-fields in <i>instr 1</i>.</p>
+
+
+<p><i>* See <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlsub.html">sub</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/return.html">return</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/shift.html">shift</a>.</i></p>
+
+
+
+
+
+
+<h3 id="Arrays">Arrays</h3>
+
+<p>Much like a table in Csound, an array can hold multiple values of data.  An array is denoted in Perl with the prefix <code>@</code>.  However, when you want to use a single value in an array, you need treat the value as if it were a scalar using the prefix <code>$</code>.  To specify which value you would like to access in an array, an index must be provided.</p>
+
+For example, <code>@foo</code> refers to the array.  <code>$foo[ 0 ]</code> refers to the first value of array <code>@foo</code>.
+
+In this example, I have created an array called <code>@pitchTable</code> which holds five different pitch values, which are chosen using the <b>rand</b> function.
+
+<pre id="Figure2.14">my $startTime;
+my $index;
+my $pitch;
+
+my @pitchTable = ( 8.00, 8.02, 8.03, 8.07, 8.09 );
+
+foreach $startTime ( 0 .. 9 )
+{
+    $index = int( rand() * scalar( @pitchTable ) );
+    $pitch = $pitchTable[ $index ];
+	
+    printf CSD ( "i1 %d 1 %.2f\n", $startTime, $pitch ); 	
+}</pre>
+
+<div id="figure"><b>Figure 2.14</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="PerlCsoundArticle/array.pl"><i>array.pl</i></a> randomly selects values found in the array <code>@pitchTable</code>.</div>
+
+<pre id="Figure2.15">i1 0 1 8.03
+i1 1 1 8.07
+i1 2 1 8.07
+i1 3 1 8.09
+i1 4 1 8.02
+i1 5 1 8.07
+i1 6 1 8.00
+i1 7 1 8.09
+i1 8 1 8.03
+i1 9 1 8.03</pre>
+
+<div id="figure"><b>Figure 2.15</b>&nbsp;&nbsp;&nbsp;&nbsp;The score events in <a href="PerlCsoundArticle/array.csd"><i>array.csd</i></a> were generated with the code in figure 2.15.</div>
+
+<p><i>* See <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlintro.html#Arrays">Arrays</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlintro.html#for">for</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlintro.html#foreach">foreach</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/int.html">int</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/func/scalar.html">scalar</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlintro.html#while">while</a></i></p
+
+@, int, scalar
+
+
+
+><h3 id="ConditionalBranching">Conditional Branching</h3>
+
+<p>With the use of the branching statements <code>if</code>, <code>else</code>, <code>elsif</code> and <code>unless</code>, we can design smarter Perl scripts that make decisions about which code to execute and which code to ignore based on defined conditions.  When the simple <code>if</code> is used, the conditional statement is checked for truth.  When the conditional statement is true, the proceeding code, either a single line of code or a block of code contained within two curly brackets, is executed.  When the statement is false, the proceeding code is bypassed.</p>
+
+<p>The conditional statement <code>$frequency > 22050</code> in figure 2.16 checks if <code>$frequency</code> is greater than <code>22050</code>.</p>
+
+<pre id="Figure2.16">if( $frequency > 22050 )
+{
+	$frequency = 22050;
+}</pre>
+
+<div id="figure"><b>Figure 2.16</b>&nbsp;&nbsp;&nbsp;&nbsp;The scalar <code>$frequency</code> is only set to <code>22050</code> if the value of <code>$frequency</code> is greater than <code>22050</code>.</div>
+
+<p>The if-else is a compound statement that chooses between which two blocks of code to execute:  The code block proceeding the <code>if</code> or the code block proceeding the <code>else</code>.</p>
+
+<pre id="Figure2.17">if( $bool == TRUE )
+{
+	print "Hello World!\n";
+}
+else
+{
+	print "Goodbye World!\n";
+}</pre>
+
+<div id="figure"><b>Figure 2.17</b>&nbsp;&nbsp;&nbsp;&nbsp;If <code>$bool</code> is true, <code>Hello World!</code> is written to the terminal window.  Otherwise, <code>Goodbye World!</code> is written.</div>
+
+<p>This next demonstration uses the <code>elsif</code> conditional branch to choose between three possible waveforms based on the frequency of the score event.</p>  
+
+<pre id="Figure2.18">my $frequency = 50;
+my $startTime = 0;
+my $waveshape;
+
+while( $frequency &lt;= 1600 )
+{
+
+    if( $frequency &gt;= 800 )
+    {
+        # Sine wave
+        $waveshape = 1;
+    }
+    elsif ( ( $frequency &gt;= 200 ) && ( $frequency &lt; 1000 ) )
+    {
+        # Triangle Wave
+        $waveshape = 2;
+    }
+    else
+    {
+        # Saw wave
+        $waveshape = 3;
+    }
+    
+    printf CSD ( "i1 %d 1 %.6f %d\n", $startTime, $frequency, $waveshape );
+
+    $startTime = $startTime + 1;
+    $frequency = $frequency * 2;
+}</pre>
+
+<div id="figure"><b>Figure 2.18</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="PerlCsoundArticle/ifelse.pl"><i>ifelse.pl</i></a> changes the timbre of <i>instr 1</i> by choosing between three wave forms (sine, triangle and saw) based on frequency.</div>
+
+<pre id="Figure2.19">i1 0 1 50.000000 3
+i1 1 1 100.000000 3
+i1 2 1 200.000000 2
+i1 3 1 400.000000 2
+i1 4 1 800.000000 1
+i1 5 1 1600.000000 1</pre>
+
+
+<div id="figure"><b>Figure 2.19</b>&nbsp;&nbsp;&nbsp;&nbsp;P-field six indicates the waveshape table chosen by the conditional branches in figure 2.18.  See <a href="PerlCsoundArticle/ifelse.csd"><i>ifelse.csd</i></a>.</div>
+
+
+<p><i>* See <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlsyn.html#Simple-Statements">Simple statements</a>, <a href="http://www.ayni.com/perldoc/perl5.8.0/pod/perlsyn.html#Compound-Statements">Compound statements</a></i>.</p>
+
+
+
+
+
+<h2 id="FurtherStudyOfPerl">III. Further Study of Perl</h2>
+
+<p>The task of writing code that generates code can seem daunting at first.  With a little bit of time and a little bit of persistence, you will soon start reaping the benefits of integrating Perl into your Csound compositions.  I hope at this point I have provided enough information to get you started.</p>
+
+<p>If you are interesting in learning more about Perl, there is a wealth of information on the net.  I recommend starting with the community website, <a href="http://www.perlmonks.org/">PerlMonks.org</a>.  There you will find a very comprehensive list of <a href="http://www.perlmonks.org/?node=Tutorials">Perl tutorials</a> and a thorough database of <a href="http://www.perlmonks.org/?node=Categorized%20Questions%20and%20Answers">Questions and Answers</a>.</p>  
+
+<p>There are also three books that I personally recommend.  The first is <i>Learning Perl</i> by Randal L. Schwartz and Tom Phoenix.  My first baby steps in Perl were taken with this book.  It's perfect for those with little to no prior programming experience.  If you are already a solid programmer, you can skip this title.  The second book is the <i>Perl Cookbook</i> by Tom Christiansen and Nathan Torkington, which contains nothing but solutions for the most common Perl problems.  The third is <i>Programming Perl</i> by Larry Wall, Tom Christiansen and Randal L. Schwartz.  This book is often referred to as the "Camel Book" and is considered by many to be the "Perl Bible."  I always have this book by my side when I do any serious Perl scripting.  If you want to know Perl, you need to read this book.</p>
+
+	
+
+
+
+<h2 id="ToBeContinued">To Be Continued...</h2>
+
+<p>Now that the basic foundation of using Perl with Csound has been laid, I look forward to writing Part II.  As of now, the power that Perl brings to Csound might not yet be apparent.  However, in the next issue, I will showcase more advanced Perl-Csound techniques that will act as guides for you to design your own custom scripts and complex instruments, such as creating your own custom syntax to augment Csound's score environment.</p>  
+
+<p>In the meantime, if you have any questions or comments, feel free to email me at jacobjoaquin@gmail.com.  I will do my best to help you in any way I can.</p>
+
+<p>Until next time,<br>
+Jacob Joaquin</p>
+
+<br><br><br><hr>
+
+<h3 id="Files">Files</h3>
+<a href="PerlCsoundArticle/PerlCsound.zip">PerlCsound.zip</a> - All the Perl scripts and unified Csound csd files for this article.</a><br>
+
+<h3 id="Links">Links</h3>
+<a href="http://www.csounds.com/">Csounds.com</a> - ... almost everything Csound.<br>
+<a href="http://www.csounds.com/journal/">Csound Journal</a> - Inspiration in Ezine form.</a><br>
+<a href="http://www.perl.com/pub/a/2004/08/31/livecode.html">Hacking Perl in Nightclubs</a> - By Alex Mclean<br>
+<a href="http://www.adp-gmbh.ch/csound/granular/granul01.html">Granul 01</a> - Perl Granular Instrument Generator by Ren&eacute; Nyffenegger.<br>
+<a href="http://www.csounds.com/ezine/trees/index.html">Harmonic Trees</a> - Perl-Csound related compositions and theory by Jacob Joaquin.<br>
+<a href="http://perlmonks.org/">PerlMonks.org</a> - An Online Monastery of Perl Programmers and Perl Resources.<br>
+<a href="http://www.ayni.com/perldoc/index.html">Perldoc.com</a> - Perl Documentation Online<br>
+<a href="http://www.thumbuki.com/">Thumbuki.com</a> - The Cosmos in 20 Words or Less.<br>
+
+	
+
+<h3 id="References">References</h3>
+
+[1] Boulanger, R. 2000. <i>Introduction to Sound Design in Csound</i>.  Cambridge, Mass.: MIT Press <a href="http://www.Csounds.com/chapter1/index.html">http://www.Csounds.com/chapter1/index.html</a><br>
+
+[2] Perl. Wikipedia.org. <a href="http://en.wikipedia.org/wiki/Perl">http://en.wikipedia.org/wiki/Perl</a><br>
+
+[3] Hello world program. Wikipedia.org. <a href="http://en.wikipedia.org/wiki/Hello_World">http://en.wikipedia.org/wiki/Hello_World</a><br>
+
+[4] Spock. 1982. Quote from <i>Star Trek II: The Wrath of Khan</i>. Paramount Pictures.<br>
+
+[5] I discovered the <code>&lt;&lt; 'END'</code> method in Granul 01 by Ren&eacute; Nyffenegger.  <a href="http://www.adp-gmbh.ch/csound/granular/granul01.html">http://www.adp-gmbh.ch/csound/granular/granul01.html</a><br>
+
+[6] Siever E., Spainhour S. & Patwardhan N. 1999. <i>Perl In A Nutshell</i>. O'Reilly & Associates.  <a href="http://www.goldfish.org/books/O'Reilly%20Perl%20CD%20Bookshelf%202.0/perlnut/c05_117.htm">http://www.goldfish.org/books/O'Reilly%20Perl%20CD%20Bookshelf%202.0/Perlnut/c05_117.htm</a><br>
+
+[7] Just noticeable difference. Wikipedia.org. <a href="http://en.wikipedia.org/wiki/Just_noticeable_difference">http://en.wikipedia.org/wiki/Just_noticeable_difference</a><br>
+
+
+</div>
+</div>
+</body>
+</html>

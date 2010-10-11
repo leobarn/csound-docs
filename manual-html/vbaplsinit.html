@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vbaplsinit</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vbap8move.html" title="vbap8move" />
+    <link rel="next" href="vbapz.html" title="vbapz" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vbaplsinit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vbap8move.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vbapz.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="vbaplsinit">
+      <a id="vbaplsinit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVbaplsinit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vbaplsinit</span>
+        </h2>
+        <p>vbaplsinit — 
+      Configures VBAP output according to loudspeaker parameters.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3669093"></a>
+        <h2>Description</h2>
+        <p>
+      Configures VBAP output according to loudspeaker parameters.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3669105"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vbaplsinit</strong></span> idim, ilsnum [, idir1] [, idir2] [...] [, idir32]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3669160"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idim</em></span> -- dimensionality of loudspeaker array. Either 2 or 3.
+    </p>
+        <p>
+      <span class="emphasis"><em>ilsnum</em></span> -- number of loudspeakers. In two dimensions, the number can vary from 2 to 16. In three dimensions, the number can vary from 3 and 16.
+    </p>
+        <p>
+      <span class="emphasis"><em>idir1, idir2, ..., idir32</em></span> -- directions of loudspeakers. Number of directions must be less than or equal to 16. In two-dimensional loudspeaker positioning, <span class="emphasis"><em>idir</em></span>n is the azimuth angle respective to <span class="emphasis"><em>n</em></span>th channel.  In three-dimensional loudspeaker positioning, fields are the azimuth and elevation angles of each loudspeaker consequently (<span class="emphasis"><em>azi1</em></span>, <span class="emphasis"><em>ele1</em></span>, <span class="emphasis"><em>azi2</em></span>, <span class="emphasis"><em>ele2</em></span>, etc.).
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3669217"></a>
+        <h2>Performance</h2>
+        <p>
+      VBAP distributes the signal using loudspeaker data configured with <span class="emphasis"><em>vbaplsinit</em></span>. The signal is applied to, at most, two loudspeakers in 2-D loudspeaker configurations, and three loudspeakers in 3-D loudspeaker configurations. If the virtual source is panned outside the region spanned by loudspeakers, the nearest loudspeakers are used in panning.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3670190"></a>
+        <h2>Examples</h2>
+        <p>
+      See the entry for <a class="link" href="vbap16move.html" title="vbap16move"><em class="citetitle">vbap16move</em></a> and <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a> for examples of usage of the <span class="emphasis"><em>vbap</em></span> opcodes.
+
+    </p>
+      </div>
+      <div class="refsect1" title="Reference">
+        <a id="id3670220"></a>
+        <h2>Reference</h2>
+        <p>
+      Ville Pulkki: <span class="quote">“<span class="quote">Virtual Sound Source Positioning Using Vector Base Amplitude Panning</span>”</span> <span class="emphasis"><em>Journal of the Audio Engineering Society</em></span>, 1997 June, Vol. 45/6, p. 456.
+    </p>
+      </div>
+      <div class="refsect1" title="See Also">
+        <a id="id3670257"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vbap16.html" title="vbap16"><em class="citetitle">vbap16</em></a>,
+      <a class="link" href="vbap16move.html" title="vbap16move"><em class="citetitle">vbap16move</em></a>,
+      <a class="link" href="vbap4.html" title="vbap4"><em class="citetitle">vbap4</em></a>,
+      <a class="link" href="vbap4move.html" title="vbap4move"><em class="citetitle">vbap4move</em></a>,
+      <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a>,
+      <a class="link" href="vbap8move.html" title="vbap8move"><em class="citetitle">vbap8move</em></a>,
+      <a class="link" href="vbapz.html" title="vbapz"><em class="citetitle">vbapz</em></a>,
+      <a class="link" href="vbapzmove.html" title="vbapzmove"><em class="citetitle">vbapzmove</em></a>
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3670330"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Ville Pulkki</td>
+          </tr>
+          <tr>
+            <td>Sibelius Academy Computer Music Studio</td>
+          </tr>
+          <tr>
+            <td>Laboratory of Acoustics and Audio Signal Processing</td>
+          </tr>
+          <tr>
+            <td>Helsinki University of Technology</td>
+          </tr>
+          <tr>
+            <td>Helsinki, Finland</td>
+          </tr>
+          <tr>
+            <td>May 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 4.07</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vbap8move.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vbapz.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vbap8move </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vbapz</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

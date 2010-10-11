@@ -1,0 +1,478 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Csound Journal</title>
+<link href="csoundJournal.css" rel="stylesheet" type="text/css">
+<style>
+
+.example {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #CCCCCC;
+}
+
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="navigation">CSOUND JOURNAL: <a href="../index.html">Home</a> | <a href="index.html">Spring 2006</a> </div>
+  <center>
+    <div id="header">
+      <h2>Control Flow - Part I</h2>
+      Steven Yi <br/>
+      Email: stevenyi AT gmail.com </div>
+  </center>
+  <div id="content">
+    <h2>Introduction</h2>
+    When designing Csound instruments, there are times when, depending a
+    certain condition, we would rather have one part of the instrument code
+    run or another. &nbsp;At other times, depending on a certain
+    condition, we'd like to have one section of code run multiple times
+    with slightly changing properties. &nbsp;In most programming
+    languages, these situations come up often and are dealt with by using <span style="font-style: italic;">control flow</span> constructs built into the language, and Csound has these possibilities
+    too.<br/>
+    <br/>
+    This article will discuss methods of controlling the flow of operation in Csound instruments, how to use
+    the opcodes for implementing the various techniques, and demonstrate
+    some possible ways to use these techniques for musical purposes.&nbsp;
+    <h2><br/>
+      I. Branching: goto-label, if-goto, if-then</h2>
+    <p><span style="font-weight: bold;">goto and labels</span><br/>
+      To begin we'll start off with discussing goto's and label's. &nbsp;In
+    the normal flow of evaluating instrument code, Csound wil run line by
+    line, opcode to opcode. &nbsp;In the following:  
+    <div class="example"><code>ivalue = 10<br/>
+      ivalue = ivalue + 2<br/>
+      ivalue = ivalue + 10<br/>
+      print ivalue</code></div>
+    
+    <p>Csound will first assign ivalue to the number 10, then increase
+      the value of ivalue by 2, then increase the value of ivalue by 10, and
+      finally print the value of ivalue, which will equal 22. Now if we add a
+    label and a goto:</p>
+    <div class="example"><code>ivalue = 10<br/>
+      ivalue = ivalue + 2<br/>
+      <strong>igoto skipSection<br/>
+      <br>
+      </strong>;this code will not be evaluated    </code><code><br/>
+        ivalue = ivalue + 10<br/>
+        <br/>
+        <strong>skipSection:</strong><br/>
+        print ivalue</code></div>
+    <br/>
+      The value of ivalue, when printed, will be 12. &nbsp;Why? &nbsp;Because
+      then Csound evaluates the igoto statement, it reads "From here, jump to
+      the label marked as skipSection". &nbsp;So the Csound first assigns
+      ivalue to the number 10, then increases the value of ivalue by 2, then
+    jumps to "skipSection", and finally prints ivalue.</p>
+    <ul>
+      <li>A <span style="font-style: italic;">goto</span> statement is one that, when that line is evaluated, jumps to a label.</li>
+      <li> A <span style="font-style: italic;">label</span> is a point of code that is labelled for the purpose of jumping to from another point of code</li>
+    </ul>
+    <p><span style="font-weight: bold;"><br>
+      if-goto</span><br/>
+      <br/>
+      Gotos and labels by themselves are not so useful as they
+    will always jump from one place to another when evaluated, but together
+    with <span style="font-style: italic;">conditional branching</span>, the use of gotos and labels will enable us to express certain ideas.</p>
+    <p>A <em>conditional branch</em> is one where, depending on a certain condition, the evaluation of code will proceed or not down a certain branch. The number of branches can be one or many, depending on what is necessary to express what you want. When coding up instruments, we sometimes come to a point where we want
+    to express an idea in the form of "if this condition is true, do this".
+    &nbsp;That may continue on with other criteria: &quot;If this condition is true, do this, otherwise if this other condition is true, do this, and if no condition passes then do this&quot;. </p>
+    <p>In Csound, the syntax for implementing a condition goto is:</p>
+    <pre><div class="example">if (test) goto label  </div></pre>
+    <p>where test is the conditional statement. Let's say we create an instrument where we want to print the value of an i-rate variable only if p5 is equal to 1, we can do so with the following code:</p>
+    <pre><div class="example">
+&lt;CsoundSynthesizer&gt;
+&lt;CsInstruments&gt;
+	instr 1
+
+ipch = cpspch(p4)
+iprint = p5
+
+; print p3 so we know which note instance this is
+print p3
+
+if (iprint != 1) igoto skipPrint
+
+print ipch
+
+skipPrint:
+
+	endin
+
+&lt;/CsInstruments&gt;
+&lt;CsScore&gt;
+
+sr = 44100
+ksmps = 1
+nchnls = 2
+
+i1 0 .5 8.00 0
+i1 0 .5 8.01 1 ; this note will print it's ipch value
+i1 0 .5 8.02 2
+
+
+&lt;/CsScore&gt;
+&lt;/CsoundSynthesizer&gt;</div></pre>
+    <p>The code in instrument 1 says &quot;if the value of p5 is not equal to 1, goto the label&quot;, which results in anything but one will skip to the label and if a 1 is given, the statements between the if and the label will be executed. </p>
+    <p>Running this you should have received output like the following:</p>
+    <pre><div class="example">new alloc for instr 1:
+instr 1:  p2 = 0.000
+B  0.000 ..  0.500 T  0.500 TT  0.500 M:      0.0
+instr 1:  p2 = 0.500
+<strong>instr 1:  ipch = 277.167</strong>
+B  0.500 ..  1.000 T  1.000 TT  1.000 M:      0.0
+instr 1:  p2 = 1.000
+B  1.000 ..  1.500 T  1.500 TT  1.500 M:      0.0</div></pre>
+    <p>Notice the line in bold and compare it to the score in the CSD. Only the second note has a p5 value equal to 1, and only that note printed out its ipch, as expressed in the code. </p>
+    <p><em>NOTE: </em>For Csound versions prior to 5.01, one thing to be careful about in using the <strong>if</strong> statement is to make sure there is a space after the <strong>if</strong> and before the parenthesis. Programmers used to writing code like:</p>
+    <pre><div class="example">if(test){</div></pre>
+    <p>will find that Csound  will give an error and one that might not be easy to understand that the problem is a missing space.  </p>
+    <p>For the types of tests one can do inside the parenthesis, please see the manual entries for <a href="http://www.csounds.com/manual/html/if.html">if</a> or <a href="http://www.csounds.com/manual/html/ControlConditional.html">Conditional Values</a>. </p>
+    <p>&nbsp;</p>
+    <p><strong>A Musical Example </strong></p>
+    <p>Let's look at  musical situation for using ifs, gotos, and labels. In my own instrument design, I use a pfield to designate what kind of articulation the instrument should use for it's amplitude envelope. Depending on what number is given, a number of different envelope types can be used. The following is a simplified example of this idea:</p>
+    <pre><div class="example">
+&lt;CsoundSynthesizer&gt;
+&lt;CsInstruments&gt;
+	instr 1
+
+ipch = cpspch(p4)
+iamp = ampdb(p5)
+ienv = p6
+
+<strong>if (ienv == 0) kgoto envelope0
+if (ienv == 1) kgoto envelope1
+if (ienv == 2) kgoto envelope2
+
+envelope0:
+;ADSR
+kenv adsr 0.05, 0.05, .95, .05
+kgoto endEnvelope
+
+envelope1:
+;Linear Triangular Envelope
+kenv linseg 0, p3 * .5, 1, p3 * .5, 0
+kgoto endEnvelope
+
+envelope2:
+;Ramp Up
+kenv	linseg 0, p3 - .01, 1, .01, 0
+kgoto endEnvelope
+
+endEnvelope:</strong>
+
+aout	vco2 	1, ipch, 10
+aout	moogvcf	aout, ipch + (kenv * 4 * ipch) , .05
+
+aout = aout * iamp * kenv
+
+outc aout, aout
+
+	endin
+
+&lt;/CsInstruments&gt;
+&lt;CsScore&gt;
+
+sr = 44100
+ksmps = 1
+nchnls = 2
+
+;Triangle Ostinato
+i1 0 1.333  7.03 80 1
+i1 + .  7.04  
+i1 + .  7.02
+i1 + .  7.03 
+i1 + .  7.04  
+i1 + .  7.02
+i1 + .  7.03 
+i1 + .  7.04  
+i1 + .  7.02
+i1 + .  7.03 
+i1 + .  7.04  
+i1 + .  7.02
+
+;ADSR Chords
+i1 0 2 8.00 76 0
+i1 . .  8.01 
+i1 . .  8.02
+
+i1 5 2 8.00 74 0
+i1 . .  8.01 
+i1 . .  8.02
+
+i1 10 2 8.00 72 0
+i1 . .  8.01 
+i1 . .  8.02
+
+;Ramp Lines
+i1 2 4 9.00 70 2
+i1 7 4 9.01 70 2
+i1 12 4 8.11 70 2
+
+&lt;/CsScore&gt;
+&lt;/CsoundSynthesizer&gt;</div></pre>
+    <p>The section of code above marked in bold 
+      shows how the goto's and label's are being used. Notice  the use of kgoto, as the code within each labelled group needs to operate at k-rate. Making sure rates match can be tricky and is dependent on the code within the code branches. As a general rule, you'll want to make sure that the code in the different labelled code branches run at the same rate, and that the type goto you use after the if(test) matches.<br/>
+    <br/>
+    <br/>
+    <span style="font-weight: bold;">if-then-elseif-else<br/>
+    </span><br/>
+    Using the if-goto-label form of conditional branching can be tedious with a large number of branches and it can sometimes be awkward to express the intention of the code, as in the example for the <strong>if-goto</strong> section, where one has to almost say the code backwards compared to what one is trying to express. </p>
+    <p>Another way to express conditional branching beyond using if-goto's and
+      labels is to use the if-then form in Csound. &nbsp;This was introduced
+      much later in Csound's history than if-goto, so it is common to see
+      if-goto in older Csound ORC/SCO's while it is more common to find
+      if-then in newer Csound files.<br/>
+      <br/>
+      The syntax of if-then style conditional code looks like the following:<br/>
+    <div class="example"><code>if (test) then<br/>
+  &nbsp; ...do something...<br/>
+        endif</code></div>
+     </p>
+    <p>      If there are multiple branches to the condition, you can append to the code using elseif-then:
+    <br/>
+    <div class="example"><code>if (test) then<br/>
+  &nbsp; &nbsp;...do something...<br/>
+        elseif (test) then<br/>
+  &nbsp; &nbsp;...do something else...<br/>
+        endif</code></div>
+<br/>
+      You can add as many elseif branches as necessary to express what you
+      are interested in expressing. &nbsp;Finally, to add default condition,
+      something that happens if none of the other conditions for the other
+    branches pass, you can do so using else:</p>
+	  
+      <pre><div class="example">if (test) then
+	...do something...
+elseif (test) then
+	...do something else...
+else
+	...do this if none of the other tests pass...
+endif
+</div></pre>
+
+    <p>Rewrting the code from the previous example, the instrument would become </p>
+	<div class="example">
+    <pre>
+	instr 1
+
+ipch = cpspch(p4)
+iamp = ampdb(p5)
+ienv = p6
+
+
+<strong>if (ienv == 0) kthen 	
+	;ADSR
+	kenv adsr 0.05, 0.05, .95, .05
+elseif (ienv == 1) kthen 
+	;Linear Triangular Envelope
+	kenv linseg 0, p3 * .5, 1, p3 * .5, 0
+elseif (ienv == 2) kthen 
+	;Ramp Up
+	kenv	linseg 0, p3 - .01, 1, .01, 0
+endif
+</strong><strong>
+</strong>aout	vco2 	1, ipch, 10
+aout	moogvcf	aout, ipch + (kenv * 4 * ipch) , .05
+
+aout = aout * iamp * kenv
+
+outc aout, aout
+
+	endin</pre></div>
+    <p>The text in bold shows the previous code rewritten using the if-then form of conditional branching. The same code idea has been expressed in much fewer lines of code and is generally easier to read and edit in my opinion. I highly recommend using this form of writing conditional code for current Csound practice. <br>
+    </p>
+    <p><span style="font-weight: bold;">      Ternary Expressions<br/>
+      <span style="font-weight: bold;"><br/>
+      </span></span>A common shorthand found in many programming languages is
+      the ternary expression. &nbsp;It is used in situations where one wants
+      to express "if this is true, do this, otherwise do that", and where
+      what is to be done is a simple expression, usually an assignment. &nbsp;<br/>
+      <br/>
+      A popular ternary expression used in Csound is the following:
+      <br/>
+      
+    <div class="example"><code>ifreq &nbsp;&nbsp; = (p4 &lt; 15 ? cpspch(p4) : p4)</code></div>
+      <p>        What this bit of code says is "If p4 is less than the value of
+      15, assign ifreq to cpspch(p4), otherwise set ifreq to p4". &nbsp;For
+      ternary expressions, the syntax is: </p>
+      <div class="example"><code>(expression <span style="font-weight: bold;">?</span> value1 <span style="font-weight: bold;">:</span> value2</code>)</div>
+      <br/>
+      The above code is useful for designing instruments that can take in p4
+      values that are either in Csound's PCH format or as frequency in hertz.
+      &nbsp;The assumption above is that values for Csound PCH do not go
+      above 15 for the octave part of the PCH, and values given in hertz do not go
+      below 15 as it is below the limits of human hearing. &nbsp;<br/>
+      <br/>
+      The above could be rewritten with as the following if-then statement:<br/>
+      <br/>
+      <code>
+      <div class="example">if (p4 &lt; 15) then<br/>
+  &nbsp; &nbsp; ifreq = cpspch(p4)<br/>
+        else<br/>
+  &nbsp; &nbsp; ifreq = p4<br/>
+        endif</div>
+      </code><br/>
+      but it would be much more verbose. &nbsp;One might prefer to use this
+      syntax if one finds the ternary syntax awkward, but the ternary syntax
+      is more concise and can be read quickly once one knows its syntax. Ultimately when and where to use the ternary statement in one's code becomes a matter of taste and experience with when it makes sense ot use and when it doesn't. <br/>
+      <span style="font-weight: bold;"><span style="font-weight: bold;"></span> </span>    </p>
+    <h2><br>
+    II. Looping: loop opcodes&nbsp;</h2>
+    <p><strong>General Information </strong></p>
+    <p>Looping(often called <em>iteration</em> in more technical settings) is a technique use to repeatedly execute a section of code
+      until a condition is met. &nbsp;To express an idea like "I want this
+      section of code to repeat n times" or "I want this section of code to
+      repeat for every position in the ftable", we could either write the
+      code n number of times for each time we'd like to do that part of code,
+      or we could write a loop.<br/>
+      <br/>
+      First let's take a look at what would be required to invert every
+      position in an ftable about the zero axis. &nbsp;For an 8 point table,
+      the code required would be:
+    <br/>
+    <div class="example"><code>f1 0 8 -2 0 1 2 3 4 5 6 7<br/>
+        <br/>
+      ival tablei 0, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, 0, 1<br/>
+      <br/>
+      ival tablei 1, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, 1, 1 <br/>
+      <br/>
+      ival tablei 2, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, 2, 1<br/>
+      <br/>
+      ival tablei 3, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, 3, 1<br/>
+      <br/>
+      ival tablei 4, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, 4, 1<br/>
+      <br/>
+      ival tablei 5, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, 5, 1<br/>
+      <br/>
+      ival tablei 6, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, 6, 1<br/>
+      <br/>
+      ival tablei 7, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, 7, 1</code></div>
+    <br/>
+      
+      The above code works, but there's many limitations to coding like this:
+      </p>
+    <ul>
+      <li>Fixed Size: Only works for the above fixed size ftable; if use wants to
+        use bigger tables, they will have to add more and more lines of code </li>
+      <li>Verbose: Coding  the above is very long and would require many lines of
+        code if there were many items in the ftable</li>
+    </ul>
+    <p><strong><br>
+    Creating a Loop </strong></p>
+    <p>If we take a closer look at the above code, it's mostly the same set of things
+      happening over and over, but with just one difference of where in the ftable
+      it is reading. The code below shows what is the same about each fragment of
+      code and what is different<code>
+      </code></p>
+    <code><div class="example">ival tablei <strong>i_index</strong>, 1<br/>
+      ival = ival * -1<br/>
+      tableiw ival, <strong>i_index</strong>, 1 </div>
+    </code></p>
+    <p>In the original code, the only difference between each fragment of code was
+      the index into the ftable (what position of the ftable) used to read from,
+      invert, and write back to. </p>
+    <p>To code more clearly and concisely and also in a manner that can scale to
+      any size ftable, instead doing the operation each time by hand coding for each
+      index, let's use a loop of code. A loop is where a single fragment of code
+      is evaluated line by line, and then at the end of the line returns to the beginning
+      of the fragment to evaluate once again. Now, if this was just it, we'd easily
+      find ourselves in an infinite loop, a bug that would cause Csound to hang.
+      Loops are often used with a conditional expression to break out of the loop. </p>
+    <p>So, let's rewrite the initial code, but this time using an if-goto statement
+      to create a loop: </p>
+	<div class="example">
+	<pre>
+i_index = 0
+
+loopStart:
+
+	ival tablei i_index, 1
+	ival = ival * -1
+	tableiw ival, i_index, 1
+
+    i_index = i_index + 1
+
+if (i_index &lt; 8) igoto loopStart
+</pre></div>
+    <p>Let's take a look at the above code. We start off setting a variable, i_index,
+      equal to 0, which is the first position in the ftable we're going to operate
+      on. Next we have a label called "loopStart", the place we'll want to return
+      to for looping through the following code. After that we have the code we saw
+      earlier that does the reading from the ftable location, the inversion of the
+      value, and the rewriting of the value into the ftable. </p>
+    <p>In the next line we increment the value of i_index by 1, then we evaluate
+      an if statement, "If the value of the index is less than 8 (the size of the
+      ftable), go back to the start of the loop and run again". Now if you read through
+      the code line by line, you'll see that i_index starts at 0, runs through the
+      inversion code, increments to 1, then loops over, again and again, until i_index
+      is equal to 8. When i_index is equal to 8, the condition to go to the loop
+      start no longer passes so the if statement doesn't jump back to the beginning
+      of the loop and then breaks out to contnue beyond that point in the code. </p>
+    <p>To make this bit of code a little more generic and easier to reuse with other ftables, let's modify it so we're not directly referencing the ftable's number but instead referencing an i-rate variable that holds the table number (itable). Also, instead of having to know the size of the table before hand, let's inspect the table itself to get the table size by using ftlen: </p>
+    <div class="example"><pre>
+itable = 1
+itablesize = ftlen(itable)
+i_index = 0
+
+
+loopStart:
+
+
+	ival tablei i_index, itable
+	ival = ival * -1
+	tableiw ival, i_index, itable 
+	i_index = i_index + 1 
+
+
+if (i_index &lt; itablesize) igoto loopStart
+  </pre></div>
+    <p>With this final version of this bit of code, we can now change the itable to any number and the rest of the code will work, no matter how large the the table size. </p>
+    <p><em>NOTE: </em>With loops, it's very easy when is not used to writing them to get into a state where the loop never ends. If the above code did not have:</p>
+    <div class="example"><code>i_index = i_index + 1 </code></div></p>
+    <p>Then the value for the test in the loop would always pass and igoto would always jump to loopStart:, and Csound would not on its own stop until you killed the process manually. Be very careful when creating loops!</p>
+    <p><strong><br>
+    Loop Opcodes  </strong></p>
+    <p>In Csound5, Istvan Varga introduced the loop family of opcodes which makes coding loops a litle more concise. The type of loop opcode used is dependent on the type of test one wants to make, but all of the more used cases are covered. The following shows the previous example using the loop opcodes:</p>
+    <div class="example"><pre>
+itable = 1
+itablesize = ftlen(itable)
+i_index = 0
+
+
+loopStart:
+
+
+	ival tablei i_index, itable
+	ival = ival * -1
+	tableiw ival, i_index, itable 
+
+
+loop_lt i_index, 1, itablesize, loopStart
+</pre></div>
+    <p>By using the loop opcode, the line of code that involves incrementing the index is automatically done as part of the opcode, and in my opinion seeing the word &quot;loop&quot; helps to quickly see what that section of code is doing. In my opinion, the loop opcodes help to clarify code, especially when one uses nested loops (loops within loops). </p>
+    <h2><br>
+      Conclusion - Part I </h2>
+    <p>When building instruments, often times cases arise where using conditional branching and looping can help to express ideas more concisely and/or ideas which can not be expressed in any other way. These techniques take time to learn not only how to use them but also when to use them, but learning to use these techniques can help to open up new expressive possibilities with your instrument design.</p>
+    <p>In Part II of this article, we'll take a look at the programming techniques of subroutines and recursion by using Csound's User-Defined Opcode system, which will further open up ways to design and reuse your instrument code. </p>
+  </div>
+</div>
+</body>
+</html>

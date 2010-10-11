@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>50_51_1.orc.html</title>
+<meta name="FORMATTER" content="Microsoft FrontPage 2.0">
+</head>
+
+<body stylesrc="../admin/adporc.html"
+background="../admin/AccciDefaultBackground.gif"
+bgcolor="#FFFFFF">
+
+<pre>; ************************************************************************
+; ACCCI:     50_51_1.ORC
+; synthesis: subtractive synthesis(50)
+;            spectrum proportional to amplitude(51)
+; coded:     jpg 11/93
+
+
+sr = 44100
+kr  =  441
+ksmps= 100
+nchnls = 1
+
+
+instr 1; *****************************************************************
+idur   = p3
+iamp   = p4
+ifq    = cpspch(p5)
+irise  = .2
+idec   = .2
+inh    = sr/2/ifq
+iscale = .1
+
+   kenv    linen  iamp, irise, idur, idec
+   abuzz   gbuzz  kenv, ifq, inh, 1, .9, 5
+   a1      reson  abuzz, 0, kenv * iscale, 2
+           out    a1
+
+endin
+</pre>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>flooper2</title>
+    <link rel="stylesheet" href="csound.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="flooper.html" title="flooper" />
+    <link rel="next" href="floor.html" title="floor" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">flooper2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="flooper.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="floor.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry" title="flooper2">
+      <a id="flooper2"></a>
+      <div class="titlepage"></div>
+      <a id="Indexflooper2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">flooper2</span>
+        </h2>
+        <p>flooper2 — 
+      Function-table-based crossfading looper.
+    </p>
+      </div>
+      <div class="refsect1" title="Description">
+        <a id="id3255260"></a>
+        <h2>Description</h2>
+        <p>
+   This opcode implements a crossfading looper with variable loop parameters and three
+  looping modes, optionally using a table for its crossfade shape. It accepts 
+  non-power-of-two tables for its source sounds, such as deferred-allocation
+   GEN01 tables.
+    </p>
+      </div>
+      <div class="refsect1" title="Syntax">
+        <a id="id3255275"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>flooper2</strong></span> kamp, kpitch, kloopstart, kloopend, kcrossfade, ifn \
+      [, istart, imode, ifenv, iskip]</pre>
+      </div>
+      <div class="refsect1" title="Initialization">
+        <a id="id3256257"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn </em></span> -- sound source function table number, generally created using GEN01
+    </p>
+        <p>
+      <span class="emphasis"><em>istart </em></span> -- playback start pos in seconds
+    </p>
+        <p>
+      <span class="emphasis"><em>imode </em></span> -- loop modes: 0 forward, 1 backward, 2 back-and-forth [def: 0]
+    </p>
+        <p>
+      <span class="emphasis"><em>ifenv </em></span> -- if non-zero, crossfade envelope shape table number. The default, 0, sets
+the crossfade to linear.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip </em></span> -- if 1, the opcode initialisation is skipped, for tied notes, performance
+continues from the position in the loop where the previous note stopped. The default, 0, does not skip
+initialisation
+    </p>
+      </div>
+      <div class="refsect1" title="Performance">
+        <a id="id3256306"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- output sig
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude control </p>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- pitch control (transposition ratio); negative values are not allowed.
+    </p>
+        <p>
+      <span class="emphasis"><em>kloopstart</em></span> -- loop start point (secs). Note that although k-rate, loop parameters
+such as this are only updated once per loop cycle.
+</p>
+        <p>
+      <span class="emphasis"><em>kloopend</em></span> -- loop end point (secs), updated once per loop cycle.
+</p>
+        <p>
+      <span class="emphasis"><em>kcrossfade </em></span> -- crossfade length (secs), updated once per loop cycle and limited to
+loop length.</p>
+        <p>
+      Mode 1 for <span class="emphasis"><em>imode </em></span> will only loop backwards from the end point to the start point.
+    </p>
+      </div>
+      <div class="refsect1" title="Examples">
+        <a id="id3256368"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="id3256376"></a>
+          <p class="title">
+            <b>Example 169. Example</b>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+aout <span class="opc">flooper2</span> 16000, 1, 1, 5, 0.05, 1  <span class="comment">; loop starts at 1 sec, for 4 secs, 0.05 crossfade</span>
+     <span class="opc">out</span>      aout</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+The example above shows the basic operation of <span class="emphasis"><em>flooper2</em></span>. Pitch can
+be controlled at the k-rate, as well as amplitude and loop parameters. 
+The example assumes
+table 1 to contain at least 5.05 seconds of audio (4 secs loop duration,
+starting 1 sec into the table, using 0.05 secs after the loop end for the
+crossfade). Looping is in mode 0 (normal forward loop).
+    </p>
+      </div>
+      <div class="refsect1" title="Credits">
+        <a id="id3256422"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>July 2006 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>July 2006.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="flooper.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="floor.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">flooper </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> floor</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
